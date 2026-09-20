@@ -1,0 +1,165 @@
+/* ==========================================================================
+   AEGISVAULT — ANIMATIONS & CINEMATIC MOTION
+   CSS Transitions, Keyframes, Micro-interactions, & Reduced-Motion
+   (No Blurs - 100% Crisp Artwork & Typography)
+   ========================================================================== */
+
+/* ==========================================================================
+   1. KEYFRAME DEFINITIONS
+   ========================================================================== */
+
+/* Toast Slide Up */
+@keyframes toastSlideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(16px) scale(0.97);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Badge Pulsing Dot */
+@keyframes dotPulse {
+    0% {
+        transform: scale(0.9);
+        box-shadow: 0 0 0 0 rgba(244, 90, 31, 0.7);
+    }
+    70% {
+        transform: scale(1.2);
+        box-shadow: 0 0 0 5px rgba(244, 90, 31, 0);
+    }
+    100% {
+        transform: scale(0.9);
+        box-shadow: 0 0 0 0 rgba(244, 90, 31, 0);
+    }
+}
+
+/* Hero Entrance Sequence */
+@keyframes heroFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Button Ripple Expansion */
+@keyframes btnRipple {
+    0% {
+        transform: scale(0);
+        opacity: 0.4;
+    }
+    100% {
+        transform: scale(2.5);
+        opacity: 0;
+    }
+}
+
+/* ==========================================================================
+   2. HERO ENTRANCE SEQUENCE
+   ========================================================================== */
+.hero-badge {
+    animation: heroFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+.hero-headline {
+    animation: heroFadeIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+}
+
+.hero-description {
+    animation: heroFadeIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+}
+
+.hero-cta-group {
+    animation: heroFadeIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.55s both;
+}
+
+.hero-indicators-strip {
+    animation: heroFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
+}
+
+.badge-dot {
+    animation: dotPulse 2s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   3. SCROLL REVEAL (NO BLUR)
+   ========================================================================== */
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Stagger Delays */
+.reveal-on-scroll[data-delay="100"] { transition-delay: 0.1s; }
+.reveal-on-scroll[data-delay="200"] { transition-delay: 0.2s; }
+.reveal-on-scroll[data-delay="300"] { transition-delay: 0.3s; }
+.reveal-on-scroll[data-delay="400"] { transition-delay: 0.4s; }
+
+/* ==========================================================================
+   4. MICRO-INTERACTIONS
+   ========================================================================== */
+.btn:hover .btn-arrow {
+    transform: translateX(4px);
+}
+
+.feature-card:hover .feature-icon-box,
+.security-card:hover .sec-card-icon {
+    transform: scale(1.06);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-link::after {
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+    transform: scaleX(1);
+}
+
+.btn-ripple-effect {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.35);
+    pointer-events: none;
+    animation: btnRipple 0.6s linear forwards;
+}
+
+/* ==========================================================================
+   5. ACCESSIBILITY & PREFERS-REDUCED-MOTION
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .reveal-on-scroll {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    .badge-dot {
+        animation: none !important;
+    }
+}

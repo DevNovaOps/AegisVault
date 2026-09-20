@@ -1,0 +1,280 @@
+/* ==========================================================================
+   AegisVault — Responsive Layout & Media Queries
+   Breakpoints: 1920px, 1440px, 1024px, 768px, 430px, 375px, 320px
+   ========================================================================== */
+
+/* 1. Large Displays (1440px - 1920px) */
+@media (min-width: 1440px) {
+    .main-workspace {
+        max-width: 1560px;
+    }
+
+    .hero-banner {
+        min-height: 200px;
+    }
+
+    .hero-heading {
+        font-size: 2.15rem;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 58fr 42fr;
+        gap: 1.5rem;
+    }
+}
+
+/* 2. Standard Laptops & Tablets Landscape (1025px - 1200px) */
+@media (max-width: 1200px) {
+    :root {
+        --sidebar-width: 155px;
+    }
+
+    .hero-heading {
+        font-size: 1.65rem;
+    }
+
+    .methods-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* 3. Tablets & Small Laptops (max-width: 1024px) */
+@media (max-width: 1024px) {
+    /* Header adjustments */
+    .hamburger-btn {
+        display: flex;
+    }
+
+    .header-center {
+        width: 260px;
+    }
+
+    .user-name-text {
+        display: none;
+    }
+
+    /* Convert Sidebar into Collapsible Slide-in Drawer */
+    .sidebar {
+        position: fixed;
+        top: var(--header-height);
+        bottom: 0;
+        left: 0;
+        width: 240px;
+        z-index: 95;
+        background: var(--bg-primary);
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.6);
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .sidebar.drawer-open {
+        transform: translateX(0);
+    }
+
+    .main-workspace {
+        width: 100%;
+        padding: 1rem;
+    }
+
+    /* Stack Dashboard Grid */
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+
+    .methods-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    .hero-banner {
+        background-position: 85% center;
+    }
+}
+
+/* 4. Small Tablets & Phablets (max-width: 768px) */
+@media (max-width: 768px) {
+    .main-header {
+        padding: 0 1rem;
+    }
+
+    .brand-subtitle {
+        display: none;
+    }
+
+    .header-center {
+        display: none; /* Accessible via mobile modal or collapsible */
+    }
+
+    /* Hero Banner Mobile Stacking */
+    .hero-banner {
+        background-position: right top;
+        background-size: cover;
+    }
+
+    .hero-content-wrapper {
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    .hero-left-col {
+        max-width: 100%;
+    }
+
+    .hero-heading {
+        font-size: 1.5rem;
+    }
+
+    .hero-right-col {
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    .hero-relationships-row {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    /* Horizontal Scroll for Verification Timeline */
+    .timeline-container {
+        overflow-x: auto;
+        padding: 0.5rem 0 1rem;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .timeline-steps {
+        min-width: 480px;
+    }
+
+    .timeline-track-line {
+        left: 2rem;
+        right: 2rem;
+    }
+
+    /* Methods Grid 2 Columns */
+    .methods-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .method-card:last-child {
+        grid-column: 1 / -1;
+    }
+
+    /* Split Row Stacking */
+    .security-split-row {
+        grid-template-columns: 1fr;
+    }
+
+    /* Verification Rows on Mobile */
+    .verification-row {
+        padding: 0.75rem 0.85rem;
+    }
+
+    .row-title {
+        font-size: 0.82rem;
+    }
+
+    .row-description {
+        font-size: 0.7rem;
+    }
+
+    /* Footer Mobile */
+    .main-footer {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+        padding: 1.5rem 1rem;
+    }
+
+    .footer-left, .footer-right {
+        justify-content: center;
+    }
+}
+
+/* 5. Mobile Handsets (max-width: 430px) */
+@media (max-width: 430px) {
+    .main-workspace {
+        padding: 0.75rem 0.5rem 1.5rem;
+    }
+
+    .hero-heading {
+        font-size: 1.35rem;
+    }
+
+    .hero-features-row {
+        gap: 0.75rem;
+    }
+
+    .hero-feature-chip {
+        width: 100%;
+    }
+
+    .trustee-header-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.85rem;
+    }
+
+    .trustee-actions-right {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .methods-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .method-card:last-child {
+        grid-column: auto;
+    }
+
+    .verification-meta-grid,
+    .trustee-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .toast-container {
+        right: 12px;
+        left: 12px;
+        bottom: 12px;
+    }
+
+    .toast-message {
+        min-width: auto;
+        max-width: 100%;
+    }
+}
+
+/* 6. Extra Small Handsets (max-width: 375px and 320px) */
+@media (max-width: 375px) {
+    .brand-title {
+        font-size: 1rem;
+    }
+
+    .card {
+        padding: 0.95rem 0.75rem;
+    }
+
+    .row-badge-action .status-badge {
+        font-size: 0.68rem;
+        padding: 0.2rem 0.45rem;
+    }
+
+    .btn {
+        padding: 0.4rem 0.65rem;
+        font-size: 0.74rem;
+    }
+}
+
+@media (max-width: 320px) {
+    .hero-heading {
+        font-size: 1.2rem;
+    }
+
+    .card-title-text h3 {
+        font-size: 0.9rem;
+    }
+
+    .status-badge {
+        font-size: 0.65rem;
+    }
+}

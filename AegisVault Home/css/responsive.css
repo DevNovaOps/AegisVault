@@ -1,0 +1,316 @@
+/* ==========================================================================
+   AEGISVAULT — RESPONSIVE STYLESHEET
+   Supports 320px, 375px, 430px, 768px, 1024px, 1280px, 1440px, 1920px
+   ========================================================================== */
+
+/* ==========================================================================
+   1. LARGE DESKTOP SCREENS (>= 1440px)
+   ========================================================================== */
+@media (min-width: 1440px) {
+    .section-container,
+    .nav-container,
+    .footer-container {
+        max-width: 1380px;
+    }
+
+    .hero-headline {
+        font-size: 4.4rem;
+    }
+
+    .hero-content-wrapper {
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 60px;
+    }
+}
+
+/* ==========================================================================
+   2. DESKTOP & LAPTOP (1024px - 1280px)
+   ========================================================================== */
+@media (max-width: 1280px) {
+    .why-grid-layout {
+        grid-template-columns: 260px 1fr;
+    }
+
+    .editorial-script-accent {
+        display: none;
+    }
+
+    .how-layout-grid {
+        grid-template-columns: 1.2fr 1fr;
+        gap: 20px;
+    }
+
+    .trusted-strip-container {
+        padding: 16px 20px;
+        gap: 16px;
+    }
+
+    .trusted-logos-grid {
+        gap: 20px;
+    }
+}
+
+/* ==========================================================================
+   3. TABLET (768px - 1023px)
+   ========================================================================== */
+@media (max-width: 1023px) {
+    :root {
+        --nav-height: 70px;
+    }
+
+    .nav-links-center {
+        display: none;
+    }
+
+    .hamburger-btn {
+        display: flex;
+    }
+
+    .hero-section {
+        min-height: auto;
+        padding-top: calc(var(--nav-height) + 20px);
+        padding-bottom: 70px;
+    }
+
+    .hero-content-wrapper {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .hero-left-column {
+        max-width: 100%;
+    }
+
+    .hero-right-zone {
+        display: none;
+    }
+
+    .trusted-strip-container {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .laurel-badge-wrapper {
+        border-left: none;
+        border-top: 1px solid var(--border-color);
+        padding-left: 0;
+        padding-top: 14px;
+        justify-content: center;
+    }
+
+    .why-grid-layout {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+
+    .why-cards-row {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .how-layout-grid {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+
+    .stats-strip-card {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .security-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .pricing-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .pricing-card.featured-plan {
+        grid-column: span 2;
+    }
+
+    .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+    }
+
+    .footer-brand-col,
+    .footer-newsletter-col {
+        grid-column: span 2;
+    }
+}
+
+/* ==========================================================================
+   4. MOBILE DEVICES (<= 767px)
+   ========================================================================== */
+@media (max-width: 767px) {
+    :root {
+        --container-padding: 16px;
+    }
+
+    .nav-actions-right #btn-sign-in {
+        display: none;
+    }
+
+    .nav-actions-right #btn-get-started {
+        display: none;
+    }
+
+    .hero-headline {
+        font-size: 2.3rem;
+    }
+
+    .hero-description {
+        font-size: 0.95rem;
+    }
+
+    .hero-cta-group {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .hero-cta-group .btn {
+        width: 100%;
+    }
+
+    .hero-indicators-strip {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+    }
+
+    .why-cards-row {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    /* Vertical Timeline */
+    .timeline-container {
+        padding: 24px 18px;
+    }
+
+    .timeline-track-line {
+        top: 36px;
+        bottom: 36px;
+        left: 36px;
+        right: auto;
+        width: 2.5px;
+        height: calc(100% - 72px);
+    }
+
+    .timeline-steps-wrapper {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .timeline-step {
+        flex-direction: row;
+        align-items: flex-start;
+        text-align: left;
+        gap: 16px;
+    }
+
+    .step-node {
+        margin-bottom: 0;
+        flex-shrink: 0;
+        width: 40px;
+        height: 40px;
+    }
+
+    .step-content {
+        padding-top: 2px;
+    }
+
+    .stats-strip-card {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .security-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .categories-flex-wrap {
+        grid-template-columns: 1fr;
+    }
+
+    .pricing-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .pricing-card.featured-plan {
+        grid-column: span 1;
+    }
+
+    .about-card-wrap {
+        padding: 32px 18px;
+    }
+
+    .about-stats-inline {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .final-cta-card {
+        padding: 44px 18px;
+    }
+
+    .final-cta-actions {
+        flex-direction: column;
+        width: 100%;
+        gap: 12px;
+    }
+
+    .final-cta-actions .btn {
+        width: 100%;
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .footer-brand-col,
+    .footer-newsletter-col {
+        grid-column: span 1;
+    }
+
+    .footer-bottom-row {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .modal-card {
+        padding: 28px 18px;
+    }
+
+    .toast-container {
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+    }
+}
+
+/* ==========================================================================
+   5. SMALL MOBILE SCREENS (<= 375px)
+   ========================================================================== */
+@media (max-width: 375px) {
+    .hero-headline {
+        font-size: 1.95rem;
+    }
+
+    .hero-indicators-strip {
+        grid-template-columns: 1fr;
+    }
+
+    .trusted-logos-grid {
+        gap: 14px;
+    }
+}
