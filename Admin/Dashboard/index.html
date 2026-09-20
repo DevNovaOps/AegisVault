@@ -6,10 +6,8 @@
     <title>AegisVault — Admin Dashboard</title>
     <meta name="description" content="AegisVault Enterprise Admin Dashboard — Automated Time-Locked Digital Asset & Legacy Custody Protocol. System surveillance, user management, and security intelligence.">
 
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/admin-dashboard.css">
-    <link rel="stylesheet" href="css/responsive.css">
-    <link rel="stylesheet" href="css/animations.css">
+    <!-- Main Stylesheet (Design, Layout, Themes, Animations & Responsive) -->
+    <link rel="stylesheet" href="css/dashboard.css">
 </head>
 <body class="light-theme">
     <div class="app-layout">
@@ -223,14 +221,14 @@
                         </li>
                         <!-- 6. Audit & Logs -->
                         <li>
-                            <a href="#audit-logs" class="nav-link-item" data-target="audit-logs">
+                            <a href="../Audit Logs/index.html" class="nav-link-item" data-target="audit-logs">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                     <polyline points="14 2 14 8 20 8"></polyline>
                                     <line x1="16" y1="13" x2="8" y2="13"></line>
                                     <line x1="16" y1="17" x2="8" y2="17"></line>
                                 </svg>
-                                <span class="nav-label">Audit & Logs</span>
+                                <span class="nav-label">Audit Logs</span>
                             </a>
                         </li>
                         <!-- 7. Notifications -->
@@ -551,7 +549,7 @@
                                 </span>
                                 <h2 class="card-main-title">Recent Users</h2>
                             </div>
-                            <a href="#user-management" class="card-view-all-link" id="link-view-all-users">
+                            <a href="../User Management/index.html" class="card-view-all-link" id="link-view-all-users" title="View all users in User Management">
                                 <span>View All</span>
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                             </a>
@@ -584,7 +582,7 @@
                                 </span>
                                 <h2 class="card-main-title">Recent Security Events</h2>
                             </div>
-                            <a href="#audit-logs" class="card-view-all-link" id="link-view-all-events">
+                            <a href="../Audit Logs/index.html" class="card-view-all-link" id="link-view-all-events">
                                 <span>View All</span>
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                             </a>
@@ -964,10 +962,8 @@
     <!-- Toast Notifications Container -->
     <div class="toast-container" aria-live="polite"></div>
 
-    <!-- Core JavaScript Modules -->
+    <!-- Core Scripts: Demo Mock Data & Complete Dashboard Functionality -->
     <script src="js/mockData.js"></script>
-    <script src="js/charts.js"></script>
-    <script src="js/interactions.js"></script>
     <script src="js/dashboard.js"></script>
 </body>
 </html>

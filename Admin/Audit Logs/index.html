@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AegisVault — User Management Admin Console</title>
-    <meta name="description" content="AegisVault User Management — View, manage, and monitor all users and trustees on the AegisVault automated custody protocol.">
+    <title>AegisVault — Audit Logs Admin Console</title>
+    <meta name="description" content="AegisVault Audit Logs — Complete, tamper-evident log of all system activities, custody events, and zero-knowledge security records.">
     <meta name="theme-color" content="#F4F6FA">
 
-    <!-- Typography (Plus Jakarta Sans, Playfair Display, JetBrains Mono) -->
+    <!-- Google Fonts Typography (Plus Jakarta Sans, Playfair Display, JetBrains Mono) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-    <!-- Main Stylesheet (Design, Layout, Themes, Animations & Responsive) -->
-    <link rel="stylesheet" href="css/user-management.css">
+    <!-- Main Stylesheet (Design, Themes, Animations & Responsive Layouts) -->
+    <link rel="stylesheet" href="css/audit-logs.css">
 </head>
 <body class="light-theme">
 
@@ -59,7 +59,7 @@
                     <input type="text" 
                            id="global-header-search" 
                            class="search-input" 
-                           placeholder="Search users, trustees, vaults, logs, or settings..." 
+                           placeholder="Search logs, events, IP addresses, sessions..." 
                            autocomplete="off"
                            aria-label="Global search">
                     <span class="search-shortcut-pill">/</span>
@@ -68,7 +68,7 @@
 
             <!-- Right: Theme Switcher, Notifications, Admin Profile -->
             <div class="header-right">
-                <!-- Theme Switcher Pill Toggle (Matching Reference Image 2) -->
+                <!-- Theme Switcher Pill Toggle -->
                 <button class="theme-toggle-btn" id="btn-theme-toggle" aria-label="Toggle light and dark theme" title="Toggle theme">
                     <div class="theme-toggle-track">
                         <span class="theme-track-icon theme-track-sun" aria-hidden="true">
@@ -125,9 +125,9 @@
                             <span style="font-size: 0.7rem; color: var(--brand-orange); cursor: pointer;" onclick="window.AegisInteractions.showToast('All notifications marked as read', 'info');">Mark read</span>
                         </div>
                         <div style="padding: 0.75rem 1rem; font-size: 0.78rem;">
-                            <div style="font-weight: 600; color: var(--text-heading);">New Trustee Onboarding</div>
-                            <div style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 2px;">Meera Patel accepted invitation from Kunal Desai.</div>
-                            <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 4px;">10 minutes ago</div>
+                            <div style="font-weight: 600; color: var(--text-heading);">Security Alert: Suspicious Login Blocked</div>
+                            <div style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 2px;">IP 185.220.101.5 blocked after 5 failed authentication attempts.</div>
+                            <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 4px;">12 minutes ago</div>
                         </div>
                     </div>
                 </div>
@@ -148,10 +148,10 @@
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                             <span>Security Settings</span>
                         </button>
-                        <a href="../Audit Logs/index.html" class="profile-menu-item">
+                        <button class="profile-menu-item" onclick="window.AegisInteractions.showToast('Already on Audit Logs Console', 'info');">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
                             <span>Audit Logs</span>
-                        </a>
+                        </button>
                         <button class="profile-menu-item" onclick="window.AegisInteractions.showToast('Logged out of Admin Session (Mock)', 'warning');">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                             <span>Sign Out</span>
@@ -183,9 +183,9 @@
                                 <span class="nav-label">Dashboard</span>
                             </a>
                         </li>
-                        <!-- 2. User Management (Active) -->
+                        <!-- 2. User Management -->
                         <li>
-                            <a href="index.html" class="nav-link-item active" data-target="user-management">
+                            <a href="../User Management/index.html" class="nav-link-item" data-target="user-management">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                     <circle cx="12" cy="7" r="4"></circle>
@@ -225,9 +225,9 @@
                                 <span class="nav-label">Security Monitoring</span>
                             </a>
                         </li>
-                        <!-- 6. Audit Logs -->
+                        <!-- 6. Audit Logs (Active) -->
                         <li>
-                            <a href="../Audit Logs/index.html" class="nav-link-item" data-target="audit-logs">
+                            <a href="index.html" class="nav-link-item active" data-target="audit-logs">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                     <polyline points="14 2 14 8 20 8"></polyline>
@@ -306,514 +306,496 @@
                 <!-- Lower Sidebar Mountain Landscape Card (Shared Assets) -->
                 <div class="sidebar-bottom-landscape-card" aria-hidden="true">
                     <img class="sidebar-landscape-img sidebar-img-light" src="../assets/sidebar-bg-light.png" alt="Alpine Mountain Landscape">
-                    <img class="sidebar-landscape-img sidebar-img-dark" src="../assets/sidebar-bg-dark.png" alt="Alpine Mountain Landscape">
+                    <img class="sidebar-landscape-img sidebar-img-dark" src="../assets/sidebar-bg-dark.png" alt="Alpine Mountain Night Landscape">
                     <div class="sidebar-landscape-overlay"></div>
                     <div class="sidebar-landscape-text">
-                        Stronger<br>Security.<br>Brighter<br>Tomorrows.
+                        Stronger Security.<br>
+                        Brighter Tomorrows.
                     </div>
                 </div>
             </aside>
 
-            <!-- ==============================================================
+            <!-- ==================================================================
                  3. MAIN WORKSPACE
-                 ============================================================== -->
-            <main class="main-workspace" id="main-content" role="main">
-                
-                <!-- Breadcrumb Navigation -->
-                <div class="breadcrumb-row">
+                 ================================================================== -->
+            <main class="main-workspace" id="main-workspace">
+
+                <!-- Breadcrumb -->
+                <nav class="breadcrumb-row" aria-label="Breadcrumb">
                     <a href="../Dashboard/index.html" class="breadcrumb-link">Admin</a>
                     <span class="breadcrumb-separator">/</span>
-                    <span class="breadcrumb-current">User Management</span>
-                </div>
+                    <span class="breadcrumb-current">Audit Logs</span>
+                </nav>
 
-                <!-- A. HERO SECTION -->
-                <section class="hero-card" aria-label="User Management Overview">
+                <!-- Hero Section Card with Mountain Panorama Cutout & Badge Card -->
+                <section class="hero-card" aria-labelledby="hero-title-id">
+                    <!-- Left: Titles -->
                     <div class="hero-left-col">
-                        <h1 class="hero-title">User Management</h1>
-                        <p class="hero-subtitle">View, manage, and monitor all users on the AegisVault platform.</p>
+                        <h1 class="hero-title" id="hero-title-id">Audit Logs</h1>
+                        <p class="hero-subtitle">Complete, tamper-evident log of all system activities, access events, and security actions.</p>
                     </div>
 
-                    <!-- Center Panoramic Mountain Cutout Card (Shared Assets) -->
+                    <!-- Center: Mountain Panorama Cutout -->
                     <div class="hero-center-col" aria-hidden="true">
-                        <img class="hero-panorama-img hero-img-light" src="../assets/light-background.png" alt="Mountain Panorama">
-                        <img class="hero-panorama-img hero-img-dark" src="../assets/dark-background.png" alt="Mountain Panorama">
+                        <img class="hero-panorama-img hero-img-light" src="../assets/light-background.png" alt="Mountain Landscape">
+                        <img class="hero-panorama-img hero-img-dark" src="../assets/dark-background.png" alt="Mountain Night Panorama">
                         <div class="hero-panorama-fade-left"></div>
-                        <p class="hero-quote-text">“People build legacies.<br>We help protect them.”</p>
                         <div class="hero-panorama-fade-right"></div>
+                        <div class="hero-quote-text">
+                            “Transparency today,<br>
+                            a safer tomorrow.”
+                        </div>
                     </div>
 
-                    <!-- Right Column: Add New User CTA -->
+                    <!-- Right: Immutable Records Card -->
                     <div class="hero-right-col">
-                        <button class="btn-add-user" id="btn-add-new-user" aria-label="Add New User">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="8.5" cy="7" r="4"></circle>
-                                <line x1="20" y1="8" x2="20" y2="14"></line>
-                                <line x1="23" y1="11" x2="17" y2="11"></line>
-                            </svg>
-                            <span>Add New User</span>
-                        </button>
+                        <div class="immutable-badge-card">
+                            <div class="immutable-icon-wrap">
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                    <polyline points="9 12 11 14 15 10"></polyline>
+                                </svg>
+                            </div>
+                            <div class="immutable-text-col">
+                                <span class="immutable-title">Immutable Records</span>
+                                <span class="immutable-subtitle">for a Trusted Future.</span>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
-                <!-- B. KPI SUMMARY METRIC CARDS (4 Cards) -->
-                <section class="overview-metrics-grid" aria-label="Key User Metrics">
-                    <!-- 1. Total Users -->
+                <!-- 5 KPI Summary Metric Cards Grid -->
+                <section class="overview-metrics-grid-5" aria-label="Audit Metrics Overview">
+                    <!-- 1. Total Logs -->
                     <div class="metric-overview-card metric-blue">
                         <div class="metric-icon-circle">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="9" cy="7" r="4"></circle>
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
                             </svg>
                         </div>
                         <div class="metric-content-col">
                             <div class="metric-number-row">
-                                <span class="metric-number-display" id="kpi-total-users">1,248</span>
-                                <span class="trend-badge positive">↑ 12%</span>
+                                <span class="metric-number-display" id="kpi-total-logs">12,482</span>
+                                <span class="trend-badge positive">↑ 18%</span>
                             </div>
-                            <span class="metric-title-text">Total Users</span>
-                            <span class="metric-subtext-label">+134 this month</span>
+                            <span class="metric-title-text">Total Logs</span>
+                            <span class="metric-subtext-label">+1,902 this month</span>
                         </div>
                     </div>
 
-                    <!-- 2. Active Users -->
+                    <!-- 2. User Actions -->
+                    <div class="metric-overview-card metric-blue">
+                        <div class="metric-icon-circle">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <div class="metric-content-col">
+                            <div class="metric-number-row">
+                                <span class="metric-number-display" id="kpi-user-actions">6,214</span>
+                                <span class="trend-badge positive">↑ 12%</span>
+                            </div>
+                            <span class="metric-title-text">User Actions</span>
+                            <span class="metric-subtext-label">49.8% of total</span>
+                        </div>
+                    </div>
+
+                    <!-- 3. Vault Actions -->
                     <div class="metric-overview-card metric-emerald">
                         <div class="metric-icon-circle">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="8.5" cy="7" r="4"></circle>
-                                <polyline points="17 11 19 13 23 9"></polyline>
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                             </svg>
                         </div>
                         <div class="metric-content-col">
                             <div class="metric-number-row">
-                                <span class="metric-number-display" id="kpi-active-users">982</span>
-                                <span class="trend-badge positive">↑ 6%</span>
+                                <span class="metric-number-display" id="kpi-vault-actions">3,156</span>
+                                <span class="trend-badge positive">↑ 25%</span>
                             </div>
-                            <span class="metric-title-text">Active Users</span>
-                            <span class="metric-subtext-label">78.7% of total</span>
+                            <span class="metric-title-text">Vault Actions</span>
+                            <span class="metric-subtext-label">25.3% of total</span>
                         </div>
                     </div>
 
-                    <!-- 3. Suspended Users -->
+                    <!-- 4. Security Events -->
                     <div class="metric-overview-card metric-coral">
                         <div class="metric-icon-circle">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="8.5" cy="7" r="4"></circle>
-                                <line x1="18" y1="8" x2="23" y2="13"></line>
-                                <line x1="23" y1="8" x2="18" y2="13"></line>
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
                             </svg>
                         </div>
                         <div class="metric-content-col">
                             <div class="metric-number-row">
-                                <span class="metric-number-display" id="kpi-suspended-users">173</span>
-                                <span class="trend-badge negative">↑ 28%</span>
+                                <span class="metric-number-display" id="kpi-security-events">1,892</span>
+                                <span class="trend-badge positive">↑ 40%</span>
                             </div>
-                            <span class="metric-title-text">Suspended Users</span>
-                            <span class="metric-subtext-label">13.9% of total</span>
+                            <span class="metric-title-text">Security Events</span>
+                            <span class="metric-subtext-label">15.2% of total</span>
                         </div>
                     </div>
 
-                    <!-- 4. Pending Verifications -->
+                    <!-- 5. Admin Actions -->
                     <div class="metric-overview-card metric-amber">
                         <div class="metric-icon-circle">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <polyline points="12 6 12 12 16 14"></polyline>
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                             </svg>
                         </div>
                         <div class="metric-content-col">
                             <div class="metric-number-row">
-                                <span class="metric-number-display" id="kpi-pending-verifications">93</span>
-                                <span class="trend-badge negative">↓ 15%</span>
+                                <span class="metric-number-display" id="kpi-admin-actions">1,220</span>
+                                <span class="trend-badge positive">↑ 8%</span>
                             </div>
-                            <span class="metric-title-text">Pending Verifications</span>
-                            <span class="metric-subtext-label">7.5% of total</span>
+                            <span class="metric-title-text">Admin Actions</span>
+                            <span class="metric-subtext-label">9.7% of total</span>
                         </div>
                     </div>
                 </section>
 
-                <!-- C. SEARCH & FILTER TOOLBAR -->
-                <section class="filters-toolbar" aria-label="User Filter Controls">
+                <!-- Filters & Search Toolbar -->
+                <section class="filters-toolbar" aria-label="Audit Logs Filtering">
                     <div class="filters-left-group">
-                        <!-- Search Field -->
+                        <!-- Search Box -->
                         <div class="filter-search-wrap">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="11" cy="11" r="8"></circle>
                                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                             </svg>
                             <input type="text" 
-                                   id="user-table-search" 
+                                   id="audit-table-search" 
                                    class="filter-search-input" 
-                                   placeholder="Search by name, email, or user ID..."
-                                   aria-label="Search users table">
+                                   placeholder="Search logs..." 
+                                   aria-label="Filter logs search">
                         </div>
 
-                        <!-- Role Filter -->
+                        <!-- Action Filter -->
                         <div class="filter-select-wrap">
-                            <select id="filter-role" class="filter-select" aria-label="Filter by role">
-                                <option value="all">All Roles</option>
-                                <option value="Owner">Owner</option>
-                                <option value="Trustee">Trustee</option>
+                            <select id="filter-action" class="filter-select" aria-label="Filter by Action">
+                                <option value="all">All Actions</option>
+                                <option value="LOGIN">LOGIN</option>
+                                <option value="USER_UPDATE">USER_UPDATE</option>
+                                <option value="VAULT_ACCESS">VAULT_ACCESS</option>
+                                <option value="TRUSTEE_ADDED">TRUSTEE_ADDED</option>
+                                <option value="FAILED_LOGIN">FAILED_LOGIN</option>
+                                <option value="SETTINGS_CHANGE">SETTINGS_CHANGE</option>
+                                <option value="VAULT_SHARE">VAULT_SHARE</option>
+                                <option value="DATA_EXPORT">DATA_EXPORT</option>
+                                <option value="ROLE_CHANGE">ROLE_CHANGE</option>
+                                <option value="ACCOUNT_SUSPENDED">ACCOUNT_SUSPENDED</option>
                             </select>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
                         </div>
 
-                        <!-- Status Filter -->
+                        <!-- User Filter -->
                         <div class="filter-select-wrap">
-                            <select id="filter-status" class="filter-select" aria-label="Filter by status">
-                                <option value="all">All Status</option>
-                                <option value="Active">Active</option>
-                                <option value="Pending">Pending</option>
-                                <option value="Suspended">Suspended</option>
+                            <select id="filter-user" class="filter-select" aria-label="Filter by User">
+                                <option value="all">All Users</option>
+                                <option value="Aarav Sharma">Aarav Sharma</option>
+                                <option value="Dr. Vikram Malhotra">Dr. Vikram Malhotra</option>
+                                <option value="Ananya Iyer">Ananya Iyer</option>
+                                <option value="Kavita Reddy">Kavita Reddy</option>
+                                <option value="Rohan Kapoor">Rohan Kapoor</option>
+                                <option value="Siddharth Rao">Siddharth Rao</option>
+                                <option value="Rajesh Verma">Rajesh Verma</option>
+                                <option value="Pooja Joshi">Pooja Joshi</option>
+                                <option value="Admin">Admin AP</option>
                             </select>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
                         </div>
 
-                        <!-- Join Date Filter -->
+                        <!-- Module Filter -->
                         <div class="filter-select-wrap">
-                            <select id="filter-date" class="filter-select" aria-label="Filter by join date">
-                                <option value="all">All Join Dates</option>
-                                <option value="Sep 2025">Sep 2025</option>
-                                <option value="Aug 2025">Aug 2025</option>
+                            <select id="filter-module" class="filter-select" aria-label="Filter by Module">
+                                <option value="all">All Modules</option>
+                                <option value="Auth">Auth</option>
+                                <option value="User Mgmt">User Mgmt</option>
+                                <option value="Vaults">Vaults</option>
+                                <option value="Trustees">Trustees</option>
+                                <option value="Settings">Settings</option>
+                                <option value="Analytics">Analytics</option>
+                                <option value="Security">Security</option>
                             </select>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
                         </div>
+
+                        <!-- Date Range Display Button -->
+                        <button class="filter-date-btn" id="btn-date-range" title="Select Date Range" onclick="window.AegisInteractions.showToast('Filtering for: 12 Sep 2025 - 12 Sep 2025', 'info');">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            <span>12 Sep 2025 - 12 Sep 2025</span>
+                        </button>
                     </div>
 
-                    <!-- Filter Action Buttons -->
+                    <!-- Right Buttons: Reset, Filter, Export Logs -->
                     <div class="filters-right-group">
-                        <button class="btn-reset-filter" id="btn-reset-filters" aria-label="Reset filters">Reset</button>
-                        <button class="btn-apply-filter" id="btn-apply-filters" aria-label="Apply filters">
+                        <button class="btn-reset-filter" id="btn-reset-filters">Reset</button>
+                        <button class="btn-apply-filter" id="btn-apply-filters">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
                             </svg>
                             <span>Filter</span>
                         </button>
-                        <button class="btn-export-users" id="btn-export-users" aria-label="Export users to CSV" title="Export users to CSV" style="height: 36px; padding: 0 0.95rem; border: 1px solid var(--border-color); background-color: var(--bg-page); border-radius: var(--radius-sm); font-size: 0.82rem; font-weight: 600; color: var(--text-heading); display: inline-flex; align-items: center; gap: 0.45rem; cursor: pointer; transition: var(--transition);">
-                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                        <button class="btn-export-logs" id="btn-export-logs" title="Export filtered logs to CSV">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                 <polyline points="7 10 12 15 17 10"></polyline>
                                 <line x1="12" y1="15" x2="12" y2="3"></line>
                             </svg>
-                            <span>Export</span>
+                            <span>Export Logs</span>
                         </button>
                     </div>
                 </section>
 
-                <!-- D. TWO-COLUMN WORKSPACE: TABLE (LEFT) + USER DETAILS (RIGHT) -->
+                <!-- ==============================================================
+                     4. MAIN WORKSPACE 2-COLUMN: TABLE (LEFT) + LOG DETAILS (RIGHT)
+                     ============================================================== -->
                 <div class="workspace-two-column-grid">
 
-                    <!-- Left: Users Table Card -->
-                    <div class="table-card-container">
+                    <!-- Left: Audit Table Card -->
+                    <section class="table-card-container" aria-label="Audit Records Table">
                         <div class="table-responsive-wrapper">
-                            <table class="users-data-table" aria-label="Platform Users Table">
+                            <table class="audit-data-table" id="audit-data-table">
                                 <thead>
                                     <tr>
-                                        <th style="width: 38px;">
-                                            <input type="checkbox" id="checkbox-select-all" class="table-checkbox" aria-label="Select all rows">
+                                        <th style="width: 36px;">
+                                            <input type="checkbox" class="table-checkbox" id="checkbox-select-all" aria-label="Select all rows">
                                         </th>
-                                        <th style="width: 32px;">#</th>
-                                        <th>User</th>
-                                        <th>Email</th>
-                                        <th>Role</th>
-                                        <th>Status</th>
-                                        <th style="text-align: center;">Vaults</th>
-                                        <th style="text-align: center;">Trustees</th>
-                                        <th>Joined On</th>
-                                        <th style="width: 44px; text-align: center;">Actions</th>
+                                        <th style="width: 44px;">#</th>
+                                        <th class="sortable" id="th-timestamp" title="Sort by timestamp" style="width: 145px;">
+                                            Timestamp <span id="sort-icon-timestamp">⌄</span>
+                                        </th>
+                                        <th style="width: 155px;">User</th>
+                                        <th style="width: 135px;">Action</th>
+                                        <th style="width: 105px;">Module</th>
+                                        <th>Details</th>
+                                        <th style="width: 110px;">IP Address</th>
+                                        <th style="width: 95px;">Status</th>
+                                        <th style="width: 40px;"></th>
                                     </tr>
                                 </thead>
-                                <tbody id="users-table-tbody">
-                                    <!-- Dynamic rows populated by user-management.js -->
+                                <tbody id="audit-table-tbody">
+                                    <!-- Populated dynamically by js/audit-logs.js -->
                                 </tbody>
                             </table>
                         </div>
 
                         <!-- Table Pagination Bar -->
                         <div class="table-pagination-row">
-                            <div id="pagination-info-text">Showing 1–10 of 1,248 users</div>
+                            <span id="pagination-info-text">Showing 1–10 of 12,482 logs</span>
 
-                            <div class="pagination-controls" aria-label="Pagination Navigation">
-                                <button class="page-btn" id="btn-page-prev" onclick="window.AegisUserManagement.goToPage(window.AegisUserManagement.currentPage - 1);" aria-label="Previous page">‹</button>
-                                <button class="page-btn active" onclick="window.AegisUserManagement.goToPage(1);">1</button>
-                                <button class="page-btn" onclick="window.AegisUserManagement.goToPage(2);">2</button>
-                                <button class="page-btn" onclick="window.AegisUserManagement.goToPage(3);">3</button>
-                                <button class="page-btn" onclick="window.AegisUserManagement.goToPage(4);">4</button>
-                                <button class="page-btn" onclick="window.AegisUserManagement.goToPage(5);">5</button>
+                            <div class="pagination-controls">
+                                <button class="page-btn" id="btn-page-prev" onclick="window.AegisAuditLogs.goToPage(window.AegisAuditLogs.currentPage - 1);" aria-label="Previous Page">&lt;</button>
+                                <button class="page-btn active" id="page-1" onclick="window.AegisAuditLogs.goToPage(1);">1</button>
+                                <button class="page-btn" id="page-2" onclick="window.AegisAuditLogs.goToPage(2);">2</button>
+                                <button class="page-btn" id="page-3" onclick="window.AegisAuditLogs.goToPage(3);">3</button>
                                 <span class="page-ellipsis">...</span>
-                                <button class="page-btn" onclick="window.AegisUserManagement.goToPage(125);">125</button>
-                                <button class="page-btn" id="btn-page-next" onclick="window.AegisUserManagement.goToPage(window.AegisUserManagement.currentPage + 1);" aria-label="Next page">›</button>
+                                <button class="page-btn" id="page-125" onclick="window.AegisAuditLogs.goToPage(125);">125</button>
+                                <button class="page-btn" id="btn-page-next" onclick="window.AegisAuditLogs.goToPage(window.AegisAuditLogs.currentPage + 1);" aria-label="Next Page">&gt;</button>
                             </div>
 
                             <div class="per-page-select-wrap">
-                                <select id="per-page-select" class="per-page-select" aria-label="Rows per page">
-                                    <option value="10" selected>10 per page</option>
-                                    <option value="25">25 per page</option>
-                                    <option value="50">50 per page</option>
+                                <span>Per page:</span>
+                                <select class="per-page-select" id="per-page-select" aria-label="Logs per page">
+                                    <option value="10" selected>10</option>
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
                                 </select>
                             </div>
                         </div>
-                    </div>
+                    </section>
 
-                    <!-- Right: User Details Inspector Panel -->
-                    <aside class="user-details-card" id="user-details-panel" aria-label="Selected User Details">
+                    <!-- Right: Log Details Inspector Panel -->
+                    <aside class="log-details-card" id="log-details-panel" aria-labelledby="details-title-id">
                         <div class="details-card-header">
-                            <h2 class="details-card-title">User Details</h2>
-                            <button class="btn-close-details" id="btn-close-details" aria-label="Close user details inspector">✕</button>
+                            <span class="details-card-title" id="details-title-id">Log Details</span>
+                            <button class="btn-close-details" id="btn-close-details" aria-label="Collapse details panel">✕</button>
                         </div>
 
-                        <!-- User Profile Header -->
-                        <div class="inspector-user-box">
-                            <div class="inspector-avatar" id="details-user-avatar">RS</div>
+                        <!-- Selected Log Header Box -->
+                        <div class="inspector-log-box">
+                            <div class="inspector-action-icon-circle">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                            </div>
                             <div class="inspector-meta">
-                                <h3 class="inspector-name" id="details-user-name">Rohit Sharma</h3>
-                                <div class="inspector-email" id="details-user-email">rohit@example.com</div>
-                                <div class="inspector-id-row">
-                                    <span class="inspector-user-id" id="details-user-id">User ID: USR001248</span>
-                                    <span class="badge-status active" id="details-user-status">
+                                <div class="inspector-title-row">
+                                    <span class="inspector-action-title" id="details-log-title">VAULT_ACCESS</span>
+                                    <span class="badge-status success" id="details-log-status">
                                         <span class="status-dot"></span>
-                                        <span>Active</span>
+                                        <span>Success</span>
                                     </span>
                                 </div>
+                                <span class="inspector-timestamp" id="details-log-time">Today, 14:32:10</span>
                             </div>
                         </div>
 
-                        <!-- Navigation Tabs (Overview, Activity, Security, Vaults) -->
-                        <div class="details-tabs-nav" role="tablist">
-                            <button class="details-tab-btn active" data-tab="overview" role="tab">Overview</button>
-                            <button class="details-tab-btn" data-tab="activity" role="tab">Activity</button>
-                            <button class="details-tab-btn" data-tab="security" role="tab">Security</button>
-                            <button class="details-tab-btn" data-tab="vaults" role="tab">Vaults</button>
+                        <!-- Navigation Tabs: Details & Raw Data -->
+                        <div class="details-tabs-nav">
+                            <button class="details-tab-btn active" data-tab="details">Details</button>
+                            <button class="details-tab-btn" data-tab="raw">Raw Data</button>
                         </div>
 
-                        <!-- Tab 1: Overview -->
-                        <div class="details-tab-panel active" id="tab-panel-overview" role="tabpanel">
+                        <!-- Details Tab Panel -->
+                        <div class="details-tab-panel active" id="tab-panel-details">
                             <div class="meta-info-row">
                                 <div class="meta-info-label-group">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                                    <span>Role</span>
+                                    <span>User</span>
                                 </div>
-                                <span class="meta-info-value" id="meta-val-role">Vault Owner</span>
+                                <span class="meta-info-value" id="meta-log-user">Aarav Sharma</span>
                             </div>
 
                             <div class="meta-info-row">
                                 <div class="meta-info-label-group">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                                    <span>Joined On</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                                    <span>Action</span>
                                 </div>
-                                <span class="meta-info-value" id="meta-val-joined">12 Sep 2025, 09:14 AM</span>
+                                <span class="meta-info-value" id="meta-log-action">VAULT_ACCESS</span>
                             </div>
 
                             <div class="meta-info-row">
                                 <div class="meta-info-label-group">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                                    <span>Last Login</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                                    <span>Module</span>
                                 </div>
-                                <span class="meta-info-value" id="meta-val-lastlogin">11 Sep 2025, 08:22 PM</span>
+                                <span class="meta-info-value" id="meta-log-module">Vault Management</span>
                             </div>
 
                             <div class="meta-info-row">
                                 <div class="meta-info-label-group">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
-                                    <span>Email Verified</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                    <span>Description</span>
                                 </div>
-                                <span class="meta-info-value" id="meta-val-emailver">Yes</span>
+                                <span class="meta-info-value" id="meta-log-description">Accessed Primary Vault #VLT-001</span>
                             </div>
 
                             <div class="meta-info-row">
                                 <div class="meta-info-label-group">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
-                                    <span>Phone Verified</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                                    <span>IP Address</span>
                                 </div>
-                                <span class="meta-info-value" id="meta-val-phonever">Yes</span>
+                                <span class="meta-info-value" id="meta-log-ip">192.168.1.42</span>
+                            </div>
+
+                            <div class="meta-info-row">
+                                <div class="meta-info-label-group">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                    <span>Location</span>
+                                </div>
+                                <span class="meta-info-value" id="meta-log-location">🇮🇳 Mumbai, India</span>
+                            </div>
+
+                            <div class="meta-info-row">
+                                <div class="meta-info-label-group">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                                    <span>Device</span>
+                                </div>
+                                <span class="meta-info-value" id="meta-log-device">Chrome 118 / macOS</span>
                             </div>
 
                             <div class="meta-info-row">
                                 <div class="meta-info-label-group">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                                    <span>Total Vaults</span>
+                                    <span>Session ID</span>
                                 </div>
-                                <span class="meta-info-value" id="meta-val-vaults">2</span>
+                                <span class="meta-info-value" id="meta-log-session">
+                                    <span class="session-id-wrap" onclick="window.AegisInteractions.copyToClipboard('sess_9f8a2b3c4d5e6f7a8b9c0d1e2f3a4b', 'Session ID copied!')">
+                                        <span>sess_9f8a2b3c4d5e6f...</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                    </span>
+                                </span>
                             </div>
 
                             <div class="meta-info-row">
                                 <div class="meta-info-label-group">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                                    <span>Total Trustees</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+                                    <span>Status</span>
                                 </div>
-                                <span class="meta-info-value" id="meta-val-trustees">3</span>
+                                <span class="meta-info-value" id="meta-log-status">
+                                    <span class="badge-status success">
+                                        <span class="status-dot"></span>
+                                        <span>Success</span>
+                                    </span>
+                                </span>
                             </div>
                         </div>
 
-                        <!-- Tab 2: Activity -->
-                        <div class="details-tab-panel" id="tab-panel-activity" role="tabpanel">
-                            <!-- Populated dynamically -->
+                        <!-- Raw Data Tab Panel -->
+                        <div class="details-tab-panel" id="tab-panel-raw">
+                            <pre class="raw-json-viewer"><code id="raw-json-code">{
+  "eventId": "LOG-012482",
+  "action": "VAULT_ACCESS",
+  "module": "Vault Management",
+  "actor": {
+    "userId": "USR-00412",
+    "name": "Aarav Sharma"
+  },
+  "ipAddress": "192.168.1.42",
+  "status": "Success"
+}</code></pre>
                         </div>
 
-                        <!-- Tab 3: Security -->
-                        <div class="details-tab-panel" id="tab-panel-security" role="tabpanel">
-                            <!-- Populated dynamically -->
-                        </div>
+                        <!-- Related Logs Section -->
+                        <div class="related-logs-section">
+                            <div class="related-logs-header">
+                                <span class="related-logs-title">Related Logs</span>
+                                <a href="javascript:void(0)" class="related-view-all-link" onclick="window.AegisInteractions.showToast('Filtering for user session events', 'info');">View All →</a>
+                            </div>
 
-                        <!-- Tab 4: Vaults -->
-                        <div class="details-tab-panel" id="tab-panel-vaults" role="tabpanel">
-                            <!-- Populated dynamically -->
-                        </div>
-
-                        <!-- Action Buttons Grid (4 Buttons) -->
-                        <div class="details-actions-grid">
-                            <button class="btn-detail-action btn-edit-user" id="btn-action-edit" title="Edit User">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M12 20h9"></path>
-                                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-                                </svg>
-                                <span>Edit User</span>
-                            </button>
-
-                            <button class="btn-detail-action btn-reset-pwd" id="btn-action-reset-pwd" title="Reset Password">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="8" cy="15" r="4"></circle>
-                                    <path d="M10.85 12.15L19 4"></path>
-                                    <path d="M18 5l2 2"></path>
-                                    <path d="M15 8l2 2"></path>
-                                </svg>
-                                <span>Reset Password</span>
-                            </button>
-
-                            <button class="btn-detail-action btn-suspend-user" id="btn-action-suspend" title="Toggle User Suspension">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <line x1="10" y1="15" x2="10" y2="9"></line>
-                                    <line x1="14" y1="15" x2="14" y2="9"></line>
-                                </svg>
-                                <span>Suspend User</span>
-                            </button>
-
-                            <button class="btn-detail-action btn-delete-user" id="btn-action-delete" title="Delete User">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="3 6 5 6 21 6"></polyline>
-                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                </svg>
-                                <span>Delete User</span>
-                            </button>
+                            <div id="related-logs-container">
+                                <!-- Populated dynamically by audit-logs.js -->
+                            </div>
                         </div>
                     </aside>
+
                 </div>
+
             </main>
         </div>
 
         <!-- ==================================================================
-             4. APPLICATION FOOTER
+             5. APPLICATION FOOTER
              ================================================================== -->
         <footer class="app-footer" role="contentinfo">
             <div class="footer-left">
-                <svg class="brand-logo-svg" style="width:20px; height:24px;" viewBox="0 0 36 36" fill="none">
-                    <path d="M18 2L5 7.5V17C5 25.5 10.5 32.5 18 34.5C25.5 32.5 31 25.5 31 17V7.5L18 2Z" fill="#F45A1F"/>
-                    <path d="M18 5L7.5 9.4V17C7.5 24 12 29.8 18 31.6C24 29.8 28.5 24 28.5 17V9.4L18 5Z" fill="#FF7A2F"/>
-                    <rect x="13" y="15" width="10" height="9" rx="2" fill="#FFFFFF"/>
-                </svg>
-                <div class="brand-text-col">
-                    <span class="brand-name" style="font-size: 0.95rem;">AegisVault</span>
-                    <span class="brand-tagline">What matters, lives on.</span>
-                </div>
+                <span>© 2025 AegisVault Protocol. All rights reserved.</span>
             </div>
-
             <div class="footer-center">
-                “Because what matters today, should matter tomorrow too.”
+                “In cryptographic certainty, we secure the future.”
             </div>
-
             <div class="footer-right">
-                <a href="#privacy" class="footer-link" onclick="window.AegisInteractions.showToast('Zero-Knowledge Privacy Policy', 'info');">Privacy</a>
-                <a href="#terms" class="footer-link" onclick="window.AegisInteractions.showToast('Custody Protocol Terms', 'info');">Terms</a>
-                <a href="#help" class="footer-link" onclick="window.AegisInteractions.showToast('Administrator Support Portal', 'info');">Help</a>
+                <a href="javascript:void(0)" class="footer-link" onclick="window.AegisInteractions.showToast('Security Documentation: Zero-Knowledge Architecture', 'info');">Security Documentation</a>
+                <a href="javascript:void(0)" class="footer-link" onclick="window.AegisInteractions.showToast('Zero-Knowledge Whitepaper v2.4 PDF (Simulated)', 'info');">Zero-Knowledge Whitepaper</a>
+                <a href="javascript:void(0)" class="footer-link" onclick="window.AegisInteractions.showToast('Protocol Status: All Custody Systems Operational (100% Uptime)', 'success');">API Status: Operational</a>
             </div>
         </footer>
 
     </div>
 
-    <!-- ======================================================================
-         5. MODALS & DIALOGS
-         ====================================================================== -->
-    <!-- Add New User Modal -->
-    <div class="modal-backdrop" id="modal-add-user" role="dialog" aria-modal="true" aria-labelledby="modal-add-title">
-        <div class="modal-window">
-            <div class="modal-header">
-                <h3 class="modal-title" id="modal-add-title">Add New Platform User</h3>
-                <button class="btn-modal-close btn-close-modal" aria-label="Close modal">✕</button>
-            </div>
-            <form id="form-add-user">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label class="form-label" for="add-user-name">Full Name</label>
-                        <input type="text" id="add-user-name" class="form-input" placeholder="e.g. Vikram Singhania" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="add-user-email">Email Address</label>
-                        <input type="email" id="add-user-email" class="form-input" placeholder="e.g. vikram@example.com" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="add-user-role">Platform Role</label>
-                        <select id="add-user-role" class="form-select">
-                            <option value="Owner">Vault Owner</option>
-                            <option value="Trustee">Designated Trustee</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn-cancel btn-close-modal">Cancel</button>
-                    <button type="submit" class="btn-submit">Create User</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Edit User Modal -->
-    <div class="modal-backdrop" id="modal-edit-user" role="dialog" aria-modal="true" aria-labelledby="modal-edit-title">
-        <div class="modal-window">
-            <div class="modal-header">
-                <h3 class="modal-title" id="modal-edit-title">Edit User Profile</h3>
-                <button class="btn-modal-close btn-close-modal" aria-label="Close modal">✕</button>
-            </div>
-            <form id="form-edit-user">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label class="form-label" for="edit-user-name">Full Name</label>
-                        <input type="text" id="edit-user-name" class="form-input" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="edit-user-email">Email Address</label>
-                        <input type="email" id="edit-user-email" class="form-input" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="edit-user-role">Role</label>
-                        <select id="edit-user-role" class="form-select">
-                            <option value="Owner">Vault Owner</option>
-                            <option value="Trustee">Designated Trustee</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="edit-user-status">Account Status</label>
-                        <select id="edit-user-status" class="form-select">
-                            <option value="Active">Active</option>
-                            <option value="Pending">Pending</option>
-                            <option value="Suspended">Suspended</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn-cancel btn-close-modal">Cancel</button>
-                    <button type="submit" class="btn-submit">Save Changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Core Scripts: Demo Mock Data & Complete User Management Functionality -->
+    <!-- Scripts: Demo Mock Data and Audit Logs Functionality -->
     <script src="js/mockData.js"></script>
-    <script src="js/user-management.js"></script>
+    <script src="js/audit-logs.js"></script>
 </body>
 </html>

@@ -382,23 +382,29 @@ const AegisMockData = {
         total: 1248,
         totalLabel: "Users",
         segments: [
-            { label: "Vault Owners", percent: 62, count: 774, color: "#3B82F6", darkColor: "#38BDF8" },
-            { label: "Trustees", percent: 30, count: 374, color: "#00D9A5", darkColor: "#00D9A5" },
-            { label: "Admins", percent: 5, count: 62, color: "#F59E0B", darkColor: "#F5A84B" },
-            { label: "Others", percent: 3, count: 38, color: "#EF4444", darkColor: "#FF5757" }
+            { label: "Vault Owners", percent: 62, count: 774, value: 774, color: "#3B82F6", darkColor: "#38BDF8" },
+            { label: "Trustees", percent: 30, count: 374, value: 374, color: "#00D9A5", darkColor: "#00D9A5" },
+            { label: "Admins", percent: 5, count: 62, value: 62, color: "#F59E0B", darkColor: "#F5A84B" },
+            { label: "Others", percent: 3, count: 38, value: 38, color: "#EF4444", darkColor: "#FF5757" }
         ]
     },
+    userRoles: [
+        { label: "Vault Owners", percent: 62, count: 774, value: 774, color: "#3B82F6", darkColor: "#38BDF8" },
+        { label: "Trustees", percent: 30, count: 374, value: 374, color: "#00D9A5", darkColor: "#00D9A5" },
+        { label: "Admins", percent: 5, count: 62, value: 62, color: "#F59E0B", darkColor: "#F5A84B" },
+        { label: "Others", percent: 3, count: 38, value: 38, color: "#EF4444", darkColor: "#FF5757" }
+    ],
 
     // 9. Vault Categories Donut Chart
     vaultCategories: {
         total: 982,
         totalLabel: "Vaults",
         segments: [
-            { label: "Personal", percent: 34, count: 334, color: "#3B82F6", darkColor: "#38BDF8" },
-            { label: "Financial", percent: 28, count: 275, color: "#00D9A5", darkColor: "#00D9A5" },
-            { label: "Professional", percent: 18, count: 177, color: "#F59E0B", darkColor: "#F5A84B" },
-            { label: "Health", percent: 10, count: 98, color: "#8B5CF6", darkColor: "#A78BFA" },
-            { label: "Others", percent: 10, count: 98, color: "#0B192C", darkColor: "#64748B" }
+            { label: "Personal", percent: 34, count: 334, value: 334, color: "#3B82F6", darkColor: "#38BDF8" },
+            { label: "Financial", percent: 28, count: 275, value: 275, color: "#00D9A5", darkColor: "#00D9A5" },
+            { label: "Professional", percent: 18, count: 177, value: 177, color: "#F59E0B", darkColor: "#F5A84B" },
+            { label: "Health", percent: 10, count: 98, value: 98, color: "#8B5CF6", darkColor: "#A78BFA" },
+            { label: "Others", percent: 10, count: 98, value: 98, color: "#0B192C", darkColor: "#64748B" }
         ]
     },
 
