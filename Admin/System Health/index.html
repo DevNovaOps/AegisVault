@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AegisVault — System Health & Infrastructure Telemetry</title>
+    <meta name="description" content="AegisVault System Health — Real-time infrastructure telemetry, microservice uptime monitoring, and cryptographic protocol diagnostics.">
+    <meta name="theme-color" content="#F4F6FA">
+
+    <!-- Google Fonts Typography (Plus Jakarta Sans, Playfair Display, JetBrains Mono) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="css/system-health.css">
+</head>
+<body class="light-theme">
+
+    <div class="app-layout">
+
+        <!-- ==================================================================
+             1. APPLICATION HEADER (Identical to Dashboard, Audit Logs, User Mgmt)
+             ================================================================== -->
+        <header class="app-header" role="banner">
+            <!-- Left: Brand Logo & Title -->
+            <div class="header-left">
+                <button class="hamburger-btn" id="btn-hamburger" aria-label="Toggle Sidebar Menu">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+
+                <a href="../Dashboard/index.html" class="brand-link" aria-label="AegisVault Admin Console">
+                    <svg class="brand-logo-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 2L5 7.5V17C5 25.5 10.5 32.5 18 34.5C25.5 32.5 31 25.5 31 17V7.5L18 2Z" fill="#F45A1F"/>
+                        <path d="M18 5L7.5 9.4V17C7.5 24 12 29.8 18 31.6C24 29.8 28.5 24 28.5 17V9.4L18 5Z" fill="#FF7A2F"/>
+                        <rect x="13" y="15" width="10" height="9" rx="2" fill="#FFFFFF"/>
+                        <path d="M15 15V12.8C15 11.25 16.34 10 18 10C19.66 10 21 11.25 21 12.8V15" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/>
+                        <circle cx="18" cy="18.5" r="1.3" fill="#F45A1F"/>
+                        <path d="M18 19.8V21.5" stroke="#F45A1F" stroke-width="1.3" stroke-linecap="round"/>
+                    </svg>
+                    <div class="brand-text-col">
+                        <span class="brand-name">AegisVault</span>
+                        <span class="brand-tagline">What matters, lives on.</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Center: Search Bar -->
+            <div class="header-center">
+                <div class="search-container">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" 
+                           id="global-header-search" 
+                           class="search-input" 
+                           placeholder="Search users, trustees, vaults, logs, or settings..." 
+                           autocomplete="off"
+                           aria-label="Global search">
+                    <span class="search-shortcut-pill">/</span>
+
+                    <!-- Search Results Dropdown -->
+                    <div class="search-dropdown" id="search-results-dropdown"></div>
+                </div>
+            </div>
+
+            <!-- Right: Theme Switcher Pill, Notifications, Admin Profile -->
+            <div class="header-right">
+                <!-- Theme Switcher Pill Toggle (Exact same as Dashboard, Audit Logs, User Mgmt) -->
+                <button class="theme-toggle-btn" id="btn-theme-toggle" aria-label="Toggle light and dark theme" title="Toggle theme">
+                    <div class="theme-toggle-track">
+                        <span class="theme-track-icon theme-track-sun" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="4"></circle>
+                                <line x1="12" y1="2" x2="12" y2="4"></line>
+                                <line x1="12" y1="20" x2="12" y2="22"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="2" y1="12" x2="4" y2="12"></line>
+                                <line x1="20" y1="12" x2="22" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                        </span>
+                        <span class="theme-track-icon theme-track-moon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
+                        </span>
+                        <div class="theme-toggle-thumb">
+                            <svg class="thumb-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                <circle cx="12" cy="12" r="4"></circle>
+                                <line x1="12" y1="2" x2="12" y2="4"></line>
+                                <line x1="12" y1="20" x2="12" y2="22"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="2" y1="12" x2="4" y2="12"></line>
+                                <line x1="20" y1="12" x2="22" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                            <svg class="thumb-icon-moon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </button>
+
+                <!-- Notifications Bell with Red Badge -->
+                <div class="notif-wrapper">
+                    <button class="header-icon-btn" id="btn-notifications" aria-label="Notifications" title="Notifications">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="notif-badge-pill" id="notif-badge-indicator">1</span>
+                    </button>
+
+                    <!-- Notifications Dropdown -->
+                    <div class="notifications-dropdown" id="notifications-dropdown">
+                        <div style="padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-weight: 700; font-size: 0.82rem; color: var(--text-heading);">Notifications</span>
+                            <span style="font-size: 0.7rem; color: var(--brand-orange); cursor: pointer;" onclick="window.AegisSystemHealth.showToast('All notifications marked as read', 'info');">Mark read</span>
+                        </div>
+                        <div style="padding: 0.75rem 1rem; font-size: 0.78rem;">
+                            <div style="font-weight: 600; color: var(--text-heading);">Database Replica Catch-up Complete</div>
+                            <div style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 2px;">Replica lag decreased to 0.4ms across all nodes.</div>
+                            <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 4px;">4 minutes ago</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Profile Menu -->
+                <div class="profile-wrapper">
+                    <button class="profile-btn" id="user-profile-btn" aria-label="Admin Profile Menu">
+                        <div class="avatar-initials-circle">AP</div>
+                        <div class="profile-info-col">
+                            <span class="profile-name">Admin</span>
+                            <span class="profile-role">System Administrator</span>
+                        </div>
+                    </button>
+
+                    <!-- Profile Dropdown -->
+                    <div class="profile-dropdown" id="profile-dropdown">
+                        <button class="profile-menu-item" onclick="window.AegisSystemHealth.showToast('Infrastructure Security Settings Panel', 'info');">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                            <span>Security Settings</span>
+                        </button>
+                        <button class="profile-menu-item" onclick="window.location.href='../Audit Logs/index.html'">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                            <span>Audit Logs</span>
+                        </button>
+                        <button class="profile-menu-item" onclick="window.AegisSystemHealth.showToast('Logged out of Admin Session (Mock)', 'warning');">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                            <span>Sign Out</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ==================================================================
+             2. APP BODY: SIDEBAR + MAIN WORKSPACE (Exact same structure as other modules)
+             ================================================================== -->
+        <div class="app-body-container">
+            <!-- Mobile Sidebar Backdrop -->
+            <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+            <!-- Admin Sidebar Navigation (Exact same markup as Dashboard, Audit Logs, User Mgmt) -->
+            <aside class="app-sidebar" id="app-sidebar" role="navigation" aria-label="Admin Navigation">
+                <div class="sidebar-top-group">
+                    <div class="sidebar-section-label">ADMIN</div>
+                    <ul class="sidebar-nav-list">
+                        <!-- 1. Dashboard -->
+                        <li>
+                            <a href="../Dashboard/index.html" class="nav-link-item" data-target="dashboard">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                                <span class="nav-label">Dashboard</span>
+                            </a>
+                        </li>
+                        <!-- 2. User Management -->
+                        <li>
+                            <a href="../User Management/index.html" class="nav-link-item" data-target="user-management">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                <span class="nav-label">User Management</span>
+                            </a>
+                        </li>
+                        <!-- 3. Trustee Management -->
+                        <li>
+                            <a href="#trustee-management" class="nav-link-item" onclick="window.AegisSystemHealth.showToast('Trustee Management module', 'info');">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                                <span class="nav-label">Trustee Management</span>
+                            </a>
+                        </li>
+                        <!-- 4. Vault Management -->
+                        <li>
+                            <a href="#vault-management" class="nav-link-item" onclick="window.AegisSystemHealth.showToast('Vault Management module', 'info');">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                                <span class="nav-label">Vault Management</span>
+                            </a>
+                        </li>
+                        <!-- 5. Security Monitoring -->
+                        <li>
+                            <a href="#security-monitoring" class="nav-link-item" onclick="window.AegisSystemHealth.showToast('Security Monitoring module', 'info');">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                    <polyline points="9 12 11 14 15 10"></polyline>
+                                </svg>
+                                <span class="nav-label">Security Monitoring</span>
+                            </a>
+                        </li>
+                        <!-- 6. Audit Logs -->
+                        <li>
+                            <a href="../Audit Logs/index.html" class="nav-link-item" data-target="audit-logs">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                </svg>
+                                <span class="nav-label">Audit Logs</span>
+                            </a>
+                        </li>
+                        <!-- 7. Notifications -->
+                        <li>
+                            <a href="#notifications" class="nav-link-item" onclick="window.AegisSystemHealth.showToast('System Notifications', 'info');">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                                </svg>
+                                <span class="nav-label">Notifications</span>
+                            </a>
+                        </li>
+                        <!-- 8. System Health (Active) -->
+                        <li>
+                            <a href="index.html" class="nav-link-item active" data-target="system-health">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                                </svg>
+                                <span class="nav-label">System Health</span>
+                            </a>
+                        </li>
+                        <!-- 9. Analytics -->
+                        <li>
+                            <a href="#analytics" class="nav-link-item" onclick="window.AegisSystemHealth.showToast('Custody Analytics', 'info');">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                                </svg>
+                                <span class="nav-label">Analytics</span>
+                            </a>
+                        </li>
+                        <!-- 10. Reports -->
+                        <li>
+                            <a href="#reports" class="nav-link-item" onclick="window.AegisSystemHealth.showToast('Custody Reports export', 'info');">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10 9 9 9 8 9"></polyline>
+                                </svg>
+                                <span class="nav-label">Reports</span>
+                            </a>
+                        </li>
+                        <!-- 11. Settings -->
+                        <li>
+                            <a href="#settings" class="nav-link-item" onclick="window.AegisSystemHealth.showToast('Platform Settings', 'info');">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                </svg>
+                                <span class="nav-label">Settings</span>
+                            </a>
+                        </li>
+                        <!-- 12. Admin Support -->
+                        <li>
+                            <a href="#admin-support" class="nav-link-item" onclick="window.AegisSystemHealth.showToast('Enterprise Operations Support', 'info');">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                                    <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+                                </svg>
+                                <span class="nav-label">Admin Support</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Lower Sidebar Mountain Landscape Card (Shared Assets) -->
+                <div class="sidebar-bottom-landscape-card" aria-hidden="true">
+                    <img class="sidebar-landscape-img sidebar-img-light" src="../assets/sidebar-bg-light.png" alt="Alpine Mountain Landscape">
+                    <img class="sidebar-landscape-img sidebar-img-dark" src="../assets/sidebar-bg-dark.png" alt="Alpine Mountain Night Landscape">
+                    <div class="sidebar-landscape-overlay"></div>
+                    <div class="sidebar-landscape-text">
+                        Stronger Security.<br>
+                        Brighter Tomorrows.
+                    </div>
+                </div>
+            </aside>
+
+            <!-- ==================================================================
+                 3. MAIN WORKSPACE
+                 ================================================================== -->
+            <main class="main-workspace app-workspace-content" id="main-workspace">
+
+                <!-- Breadcrumb Navigation -->
+                <nav class="breadcrumb-row" aria-label="Breadcrumb">
+                    <a href="../Dashboard/index.html" class="breadcrumb-link">Admin</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-current">System Health</span>
+                </nav>
+
+                <!-- Hero Section Card matching screenshots -->
+                <section class="hero-card" aria-label="System Health Overview">
+                    <!-- Hero Left: Title & Subtitle -->
+                    <div class="hero-left-col">
+                        <h1 class="hero-title hero-main-title">System Health</h1>
+                        <p class="hero-subtitle hero-sub-title">Monitor system performance, services, and infrastructure in real-time.</p>
+                    </div>
+
+                    <!-- Hero Center: Wide Mountain Landscape Cutout with Inspiring Quote -->
+                    <div class="hero-center-col" aria-hidden="true">
+                        <img class="hero-panorama-img hero-img-light" src="../assets/light-background.png" alt="Alpine Mountain Panorama">
+                        <img class="hero-panorama-img hero-img-dark" src="../assets/dark-background.png" alt="Alpine Mountain Sunset">
+                        <div class="hero-fade-overlay hero-fade-left"></div>
+                        <div class="hero-fade-overlay hero-fade-right"></div>
+                        <span class="hero-quote-text">“A stable system<br>guards a brighter tomorrow.”</span>
+                    </div>
+
+                    <!-- Hero Right: Floating All Systems Operational Status Card -->
+                    <div class="hero-status-banner" id="hero-status-banner" title="Click to trigger system health check sweep">
+                        <div class="pulse-status-dot"></div>
+                        <div class="hero-status-text-col">
+                            <span class="hero-status-title">All Systems Operational</span>
+                            <span class="hero-status-updated" id="hero-status-updated-text">Last updated: 12 Sep 2025, <span id="hero-live-clock">10:24 AM</span></span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==============================================================
+                     4. ROW 1: 5 OVERVIEW METRICS KPI CARDS
+                     ============================================================== -->
+                <section class="overview-metrics-grid" aria-label="Key Health Metrics">
+                    <!-- Card 1: System Uptime -->
+                    <div class="metric-kpi-card card-pulse" onclick="window.AegisSystemHealth.simulateHealthRefresh();" title="System SLA Uptime">
+                        <div class="metric-icon-circle">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                            </svg>
+                        </div>
+                        <div class="metric-content-col">
+                            <div class="metric-number-display">99.8%</div>
+                            <div class="metric-title-trend-row">
+                                <span class="metric-title-text">System Uptime</span>
+                                <span class="metric-trend-badge">↑ 0.2%</span>
+                            </div>
+                            <span class="metric-subtext-label">Last 30 days</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Active Users -->
+                    <div class="metric-kpi-card card-users" onclick="window.location.href='../User Management/index.html'" title="View Active Users">
+                        <div class="metric-icon-circle">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <div class="metric-content-col">
+                            <div class="metric-number-display">1,248</div>
+                            <div class="metric-title-trend-row">
+                                <span class="metric-title-text">Active Users</span>
+                                <span class="metric-trend-badge">↑ 12%</span>
+                            </div>
+                            <span class="metric-subtext-label">Currently online: 86</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Storage Used -->
+                    <div class="metric-kpi-card card-database" onclick="window.AegisSystemHealth.openModal('server-detail-modal')" title="View Storage Cluster Specs">
+                        <div class="metric-icon-circle">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                            </svg>
+                        </div>
+                        <div class="metric-content-col">
+                            <div class="metric-number-display">245 GB</div>
+                            <div class="metric-title-trend-row">
+                                <span class="metric-title-text">Storage Used</span>
+                            </div>
+                            <div class="storage-progress-bar-wrap">
+                                <div class="storage-progress-fill" style="width: 49%;"></div>
+                            </div>
+                            <div class="storage-labels-row">
+                                <span>500 GB</span>
+                                <span>49%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: CPU Usage -->
+                    <div class="metric-kpi-card card-cpu" onclick="window.AegisSystemHealth.showToast('CPU load stable at 32% (8 vCPU Cluster)', 'info')" title="CPU Cluster Utilization">
+                        <div class="metric-icon-circle">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                                <rect x="9" y="9" width="6" height="6"></rect>
+                                <line x1="9" y1="1" x2="9" y2="4"></line>
+                                <line x1="15" y1="1" x2="15" y2="4"></line>
+                                <line x1="9" y1="20" x2="9" y2="23"></line>
+                                <line x1="15" y1="20" x2="15" y2="23"></line>
+                                <line x1="20" y1="9" x2="23" y2="9"></line>
+                                <line x1="20" y1="14" x2="23" y2="14"></line>
+                                <line x1="1" y1="9" x2="4" y2="9"></line>
+                                <line x1="1" y1="14" x2="4" y2="14"></line>
+                            </svg>
+                        </div>
+                        <div class="metric-content-col">
+                            <div class="metric-number-display">32%</div>
+                            <div class="metric-title-trend-row">
+                                <span class="metric-title-text">CPU Usage</span>
+                                <span class="metric-trend-badge badge-cpu-down">↓ 18%</span>
+                            </div>
+                            <span class="metric-subtext-label">8 vCPU</span>
+                        </div>
+                    </div>
+
+                    <!-- Card 5: Memory Usage -->
+                    <div class="metric-kpi-card card-memory" onclick="window.AegisSystemHealth.showToast('Memory allocation: 10.2 GB out of 16 GB dedicated RAM', 'info')" title="Dedicated Memory Allocation">
+                        <div class="metric-icon-circle">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                                <line x1="7" y1="15" x2="7" y2="19"></line>
+                                <line x1="11" y1="15" x2="11" y2="19"></line>
+                                <line x1="15" y1="15" x2="15" y2="19"></line>
+                                <line x1="7" y1="5" x2="7" y2="9"></line>
+                                <line x1="11" y1="5" x2="11" y2="9"></line>
+                                <line x1="15" y1="5" x2="15" y2="9"></line>
+                            </svg>
+                        </div>
+                        <div class="metric-content-col">
+                            <div class="metric-number-display">64%</div>
+                            <div class="metric-title-trend-row">
+                                <span class="metric-title-text">Memory Usage</span>
+                                <span class="metric-trend-badge badge-memory-down">↓ 12%</span>
+                            </div>
+                            <span class="metric-subtext-label">10.2 GB / 16 GB</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==============================================================
+                     5. ROW 2: DUAL COLUMNS (SERVICE STATUS + RESOURCE USAGE)
+                     ============================================================== -->
+                <div class="two-col-grid-row">
+                    <!-- Left: Service Status Table Card -->
+                    <div class="dashboard-card" style="min-height: 400px;">
+                        <div class="card-header-row">
+                            <div class="card-header-left">
+                                <h2 class="card-main-title">Service Status</h2>
+                            </div>
+                            <a class="card-header-badge-link" id="link-all-services" href="javascript:void(0);">
+                                <span class="status-badge-dot" style="background-color: #10B981;"></span>
+                                <span>All Services Operational</span>
+                                <span style="font-size: 0.85rem; margin-left: 2px;">&rsaquo;</span>
+                            </a>
+                        </div>
+
+                        <div class="table-responsive-wrapper">
+                            <table class="health-data-table" aria-label="Microservice Statuses">
+                                <thead>
+                                    <tr>
+                                        <th>Service</th>
+                                        <th>Status</th>
+                                        <th>Uptime</th>
+                                        <th>Response Time</th>
+                                        <th>Last Checked</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="services-table-tbody">
+                                    <!-- Populated dynamically by system-health.js -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Right: Resource Usage Card with Area Sparklines -->
+                    <div class="dashboard-card" style="min-height: 400px;">
+                        <div class="card-header-row">
+                            <div class="card-header-left">
+                                <h2 class="card-main-title">Resource Usage</h2>
+                            </div>
+                            <select class="card-header-select" id="resource-timeframe-select" aria-label="Select Resource Timeframe">
+                                <option value="24h" selected>Last 24 Hours</option>
+                                <option value="1h">Last 1 Hour</option>
+                                <option value="7d">Last 7 Days</option>
+                            </select>
+                        </div>
+
+                        <!-- 2x2 Area Sparkline Grid -->
+                        <div class="resource-charts-grid">
+                            <!-- 1. CPU Usage Sparkline Box -->
+                            <div class="resource-sparkline-box">
+                                <div class="sparkline-header-row">
+                                    <span class="sparkline-title">CPU Usage</span>
+                                    <span class="sparkline-current-val val-orange" id="val-cpu-current">32%</span>
+                                </div>
+                                <div class="sparkline-svg-container" id="chart-cpu-svg">
+                                    <!-- Dynamic SVG Sparkline injected here -->
+                                </div>
+                            </div>
+
+                            <!-- 2. Memory Usage Sparkline Box -->
+                            <div class="resource-sparkline-box">
+                                <div class="sparkline-header-row">
+                                    <span class="sparkline-title">Memory Usage</span>
+                                    <span class="sparkline-current-val val-blue" id="val-memory-current">64%</span>
+                                </div>
+                                <div class="sparkline-svg-container" id="chart-memory-svg">
+                                    <!-- Dynamic SVG Sparkline injected here -->
+                                </div>
+                            </div>
+
+                            <!-- 3. Disk Usage Sparkline Box -->
+                            <div class="resource-sparkline-box">
+                                <div class="sparkline-header-row">
+                                    <span class="sparkline-title">Disk Usage</span>
+                                    <span class="sparkline-current-val val-green" id="val-disk-current">49%</span>
+                                </div>
+                                <div class="sparkline-svg-container" id="chart-disk-svg">
+                                    <!-- Dynamic SVG Sparkline injected here -->
+                                </div>
+                            </div>
+
+                            <!-- 4. Network I/O Sparkline Box -->
+                            <div class="resource-sparkline-box">
+                                <div class="sparkline-header-row">
+                                    <span class="sparkline-title">Network I/O</span>
+                                    <span class="sparkline-current-val val-purple" id="val-network-current">12.4 MB/s</span>
+                                </div>
+                                <div class="sparkline-svg-container" id="chart-network-svg">
+                                    <!-- Dynamic SVG Sparkline injected here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==============================================================
+                     6. ROW 3: DUAL COLUMNS (RECENT EVENTS + SYSTEM INFORMATION)
+                     ============================================================== -->
+                <div class="two-col-grid-row">
+                    <!-- Left: Recent System Events Card -->
+                    <div class="dashboard-card" style="min-height: 290px;">
+                        <div class="card-header-row">
+                            <div class="card-header-left">
+                                <h2 class="card-main-title">Recent System Events</h2>
+                            </div>
+                            <a class="card-view-all-link" id="link-view-all-events" href="javascript:void(0);">
+                                <span>View All</span>
+                                <span>&rarr;</span>
+                            </a>
+                        </div>
+
+                        <div class="table-responsive-wrapper">
+                            <table class="health-data-table" aria-label="Recent System Events">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Level</th>
+                                        <th>Service</th>
+                                        <th>Message</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-events-tbody">
+                                    <!-- Populated dynamically by system-health.js -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Right: System Information Card -->
+                    <div class="dashboard-card" style="min-height: 290px;">
+                        <div class="card-header-row">
+                            <div class="card-header-left" style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span class="spec-header-icon">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                    </svg>
+                                </span>
+                                <h2 class="card-main-title">System Information</h2>
+                            </div>
+                            <a class="card-view-all-link" id="link-server-details" href="javascript:void(0);">
+                                <span>Server Details</span>
+                                <span>&rarr;</span>
+                            </a>
+                        </div>
+
+                        <!-- 2-Column Specification Key-Value Pairs -->
+                        <div class="system-info-grid">
+                            <div class="system-info-col" id="system-info-col1">
+                                <!-- Col 1 specs injected dynamically -->
+                            </div>
+                            <div class="system-info-col" id="system-info-col2">
+                                <!-- Col 2 specs injected dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+
+        <!-- ==================================================================
+             7. APPLICATION FOOTER
+             ================================================================== -->
+        <footer class="app-footer" role="contentinfo">
+            <div class="footer-left">
+                <svg class="footer-logo-svg" viewBox="0 0 36 36" fill="none">
+                    <path d="M18 2L5 7.5V17C5 25.5 10.5 32.5 18 34.5C25.5 32.5 31 25.5 31 17V7.5L18 2Z" fill="#F45A1F"/>
+                    <path d="M18 5L7.5 9.4V17C7.5 24 12 29.8 18 31.6C24 29.8 28.5 24 28.5 17V9.4L18 5Z" fill="#FF7A2F"/>
+                    <rect x="13" y="15" width="10" height="9" rx="2" fill="#FFFFFF"/>
+                </svg>
+                <div class="footer-brand-text">
+                    <span class="footer-brand-title">AegisVault</span>
+                    <span class="footer-brand-tagline">What matters, lives on.</span>
+                </div>
+            </div>
+
+            <div class="footer-center">
+                <span class="footer-motto-text">“Because what matters today, should matter tomorrow too.”</span>
+                <div class="footer-motto-accent-bar"></div>
+            </div>
+
+            <div class="footer-right">
+                <a href="#privacy" class="footer-link" onclick="window.AegisSystemHealth.showToast('Security & Data Privacy Policy', 'info');">Privacy</a>
+                <a href="#terms" class="footer-link" onclick="window.AegisSystemHealth.showToast('Terms of Custody Service', 'info');">Terms</a>
+                <a href="#help" class="footer-link" onclick="window.AegisSystemHealth.showToast('Enterprise Support Hotline', 'info');">Help</a>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- ======================================================================
+         8. MODALS (SERVICE TELEMETRY, EVENT DETAILS, SERVER SPECS)
+         ====================================================================== -->
+
+    <!-- Service Detail Modal -->
+    <div class="modal-overlay" id="service-detail-modal" role="dialog" aria-modal="true" aria-labelledby="modal-service-name">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--brand-orange)" stroke-width="2">
+                        <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                        <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                        <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                        <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                    </svg>
+                    <h3 id="modal-service-name">Service Details</h3>
+                </div>
+                <button class="modal-close-btn" data-close-modal aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-grid-details">
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Status</span>
+                        <span class="modal-detail-value" id="modal-service-status" style="color: #10B981;">Operational</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">SLA Uptime</span>
+                        <span class="modal-detail-value" id="modal-service-uptime">99.98%</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Average Latency</span>
+                        <span class="modal-detail-value" id="modal-service-latency">18ms</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Service Version</span>
+                        <span class="modal-detail-value" id="modal-service-version">v2.4.1</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Request Throughput</span>
+                        <span class="modal-detail-value" id="modal-service-requests">1,840 req/min</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Error Rate</span>
+                        <span class="modal-detail-value" id="modal-service-error-rate">0.002%</span>
+                    </div>
+                </div>
+                <div class="modal-detail-item" style="margin-top: 0.5rem;">
+                    <span class="modal-detail-label">Service Architecture & Purpose</span>
+                    <p style="font-size: 0.8rem; color: var(--text-body); line-height: 1.5; margin-top: 4px;" id="modal-service-desc">
+                        Core microservice handling protocol requests and telemetry.
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" data-close-modal>Close</button>
+                <button class="btn-primary" onclick="window.AegisSystemHealth.simulateHealthRefresh(); window.AegisSystemHealth.closeModal('service-detail-modal');">Run Diagnostic Ping</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Event Detail Modal -->
+    <div class="modal-overlay" id="event-detail-modal" role="dialog" aria-modal="true" aria-labelledby="modal-event-title">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--brand-orange)" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    <h3>Event Forensic Trace</h3>
+                </div>
+                <button class="modal-close-btn" data-close-modal aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h4 id="modal-event-title" style="font-size: 0.95rem; color: var(--text-heading); font-weight: 700;">Event Message</h4>
+                <div class="modal-grid-details" style="margin-top: 0.5rem;">
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Timestamp</span>
+                        <span class="modal-detail-value mono-stat" id="modal-event-time">10:42 AM</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Severity Level</span>
+                        <span class="modal-detail-value" id="modal-event-level">INFO</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Originating Service</span>
+                        <span class="modal-detail-value" id="modal-event-service">Backup Service</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Security Protocol</span>
+                        <span class="modal-detail-value">SHA-256 Verified</span>
+                    </div>
+                </div>
+                <div class="modal-detail-item" style="margin-top: 0.5rem;">
+                    <span class="modal-detail-label">Detailed Audit Payload</span>
+                    <pre style="background: var(--bg-card-subtle); border: 1px solid var(--border-color); padding: 0.75rem; border-radius: var(--radius-sm); font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-body); white-space: pre-wrap; margin-top: 4px;" id="modal-event-detail"></pre>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" data-close-modal>Dismiss</button>
+                <button class="btn-primary" onclick="window.location.href='../Audit Logs/index.html'">View in Audit Logs</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Server Detail Modal -->
+    <div class="modal-overlay" id="server-detail-modal" role="dialog" aria-modal="true" aria-labelledby="modal-server-title">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--brand-orange)" stroke-width="2">
+                        <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                        <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                        <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                        <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                    </svg>
+                    <h3 id="modal-server-title">AegisVault Infrastructure Specifications</h3>
+                </div>
+                <button class="modal-close-btn" data-close-modal aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-grid-details">
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Hardware Architecture</span>
+                        <span class="modal-detail-value">8 vCPU • 16 GB ECC RAM • NVMe Tier 1</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Primary Region</span>
+                        <span class="modal-detail-value">ap-south-1 (Mumbai Tier 4 Datacenter)</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Failover Secondary</span>
+                        <span class="modal-detail-value">eu-central-1 (Frankfurt High Security)</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Database Clustering</span>
+                        <span class="modal-detail-value">PostgreSQL 16.2 • Master-Replica Sync</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Cryptographic Engine</span>
+                        <span class="modal-detail-value">AES-256-GCM + Shamir Secret Sharing (3-of-5)</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Zero Knowledge Proofs</span>
+                        <span class="modal-detail-value">zk-SNARKs Protocol Verification Engine</span>
+                    </div>
+                </div>
+                <div class="modal-detail-item" style="margin-top: 0.5rem;">
+                    <span class="modal-detail-label">Health Monitoring & Auto-Remediation</span>
+                    <p style="font-size: 0.8rem; color: var(--text-body); line-height: 1.5; margin-top: 4px;">
+                        Continuous automated health heartbeat sweeps every 30 seconds. Zero-downtime rolling updates enabled via Docker Swarm & NGINX reverse-proxy keep-alive pooling.
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" data-close-modal>Close</button>
+                <button class="btn-primary" onclick="window.AegisSystemHealth.showToast('Cryptographic server audit report downloaded', 'success'); window.AegisSystemHealth.closeModal('server-detail-modal');">Export System Audit Report</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================================
+         9. SCRIPTS (MOCK DATA + SYSTEM HEALTH CONTROLLER)
+         ====================================================================== -->
+    <script src="js/mockData.js"></script>
+    <script src="js/system-health.js"></script>
+</body>
+</html>
