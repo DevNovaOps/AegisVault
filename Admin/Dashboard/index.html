@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AegisVault — Admin Dashboard</title>
+    <meta name="description" content="AegisVault Enterprise Admin Dashboard — Automated Time-Locked Digital Asset & Legacy Custody Protocol. System surveillance, user management, and security intelligence.">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/admin-dashboard.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body class="light-theme">
+    <div class="app-layout">
+
+        <!-- ==================================================================
+             1. APPLICATION HEADER
+             ================================================================== -->
+        <header class="app-header" role="banner">
+            <!-- Left: Mobile Menu Trigger & Brand Identity -->
+            <div class="header-left">
+                <button class="hamburger-btn" id="btn-mobile-menu" aria-label="Toggle navigation drawer">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+
+                <a href="#dashboard" class="brand-link" aria-label="AegisVault Home">
+                    <svg class="brand-logo-svg" viewBox="0 0 32 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 2L3 7V16C3 24.5 8.5 32.2 16 34C23.5 32.2 29 24.5 29 16V7L16 2Z" fill="#E86326" stroke="#F5A84B" stroke-width="2"/>
+                        <path d="M16 6L7 9.8V16C7 22.2 10.8 27.9 16 29.5C21.2 27.9 25 22.2 25 16V9.8L16 6Z" fill="#1B0C06" stroke="#F5A84B" stroke-width="1.2"/>
+                        <path d="M16 11L11 13.5V17C11 20.3 13.1 23.3 16 24.2C18.9 23.3 21 20.3 21 17V13.5L16 11Z" fill="#F5A84B"/>
+                    </svg>
+                    <div class="brand-text-col">
+                        <span class="brand-name">AegisVault</span>
+                        <span class="brand-tagline">What matters, lives on.</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Center: Interactive Search Bar -->
+            <div class="header-center">
+                <div class="search-container">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" 
+                           id="global-search-input" 
+                           class="search-input" 
+                           placeholder="Search users, trustees, vaults, logs, or settings..." 
+                           autocomplete="off"
+                           aria-label="Global search">
+                    <span class="search-shortcut-pill">/</span>
+
+                    <!-- Live Results Dropdown -->
+                    <div class="search-dropdown" id="search-results-dropdown" role="listbox">
+                        <!-- Populated by interactions.js -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Actions, Notifications, Profile -->
+            <div class="header-right">
+                <!-- Theme Switcher Pill Toggle (Matching Reference Image 2) -->
+                <button class="theme-toggle-btn" id="btn-theme-toggle" aria-label="Toggle light and dark theme" title="Toggle theme">
+                    <div class="theme-toggle-track">
+                        <span class="theme-track-icon theme-track-sun" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="4"></circle>
+                                <line x1="12" y1="2" x2="12" y2="4"></line>
+                                <line x1="12" y1="20" x2="12" y2="22"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="2" y1="12" x2="4" y2="12"></line>
+                                <line x1="20" y1="12" x2="22" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                        </span>
+                        <span class="theme-track-icon theme-track-moon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
+                        </span>
+                        <div class="theme-toggle-thumb">
+                            <svg class="thumb-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                <circle cx="12" cy="12" r="4"></circle>
+                                <line x1="12" y1="2" x2="12" y2="4"></line>
+                                <line x1="12" y1="20" x2="12" y2="22"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="2" y1="12" x2="4" y2="12"></line>
+                                <line x1="20" y1="12" x2="22" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                            <svg class="thumb-icon-moon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </button>
+
+                <!-- Notifications Bell -->
+                <div class="notif-wrapper">
+                    <button class="header-icon-btn" id="btn-notifications" aria-label="Notifications" title="Notifications">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="notif-badge-pill" id="notif-badge-indicator">3</span>
+                    </button>
+
+                    <!-- Notifications Dropdown -->
+                    <div class="notifications-dropdown" id="notifications-dropdown">
+                        <div class="notif-dropdown-header">
+                            <h4>Notifications</h4>
+                            <button class="mark-read-btn" id="btn-mark-all-read">Mark all as read</button>
+                        </div>
+                        <div class="notifications-list" id="notifications-list-container">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Profile Menu -->
+                <div class="profile-wrapper">
+                    <button class="profile-btn" id="user-profile-btn" aria-label="Admin Profile Menu">
+                        <div class="avatar-initials-circle">AP</div>
+                        <div class="profile-info-col">
+                            <span class="profile-name">Admin</span>
+                            <span class="profile-role">System Administrator</span>
+                        </div>
+                    </button>
+
+                    <!-- Profile Dropdown -->
+                    <div class="profile-dropdown" id="profile-dropdown">
+                        <button class="profile-menu-item" onclick="AegisInteractions.showToast('Platform Security & Access Policies', 'info');">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                            <span>Security Settings</span>
+                        </button>
+                        <button class="profile-menu-item" onclick="AegisInteractions.showToast('Generating Cryptographic Audit Log...', 'info');">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                            <span>Audit Logs</span>
+                        </button>
+                        <button class="profile-menu-item" onclick="AegisInteractions.showToast('Admin session logged out (Mock).', 'warning');">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                            <span>Sign Out</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ==================================================================
+             2. APP BODY (SIDEBAR + MAIN WORKSPACE)
+             ================================================================== -->
+        <div class="app-body-container">
+            
+            <!-- Mobile Sidebar Backdrop -->
+            <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+            <!-- Admin Sidebar Navigation -->
+            <aside class="app-sidebar" id="app-sidebar" role="navigation" aria-label="Admin Navigation">
+                <div class="sidebar-top-group">
+                    <div class="sidebar-section-label">ADMIN</div>
+                    <ul class="sidebar-nav-list">
+                        <!-- 1. Dashboard (Active) -->
+                        <li>
+                            <a href="#dashboard" class="nav-link-item active" data-target="dashboard">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                                <span class="nav-label">Dashboard</span>
+                            </a>
+                        </li>
+                        <!-- 2. User Management -->
+                        <li>
+                            <a href="#user-management" class="nav-link-item" data-target="user-management">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                <span class="nav-label">User Management</span>
+                            </a>
+                        </li>
+                        <!-- 3. Trustee Management -->
+                        <li>
+                            <a href="#trustee-management" class="nav-link-item" data-target="trustee-management">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                                <span class="nav-label">Trustee Management</span>
+                            </a>
+                        </li>
+                        <!-- 4. Vault Management -->
+                        <li>
+                            <a href="#vault-management" class="nav-link-item" data-target="vault-management">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                                <span class="nav-label">Vault Management</span>
+                            </a>
+                        </li>
+                        <!-- 5. Security Monitoring -->
+                        <li>
+                            <a href="#security-monitoring" class="nav-link-item" data-target="security-monitoring">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                    <polyline points="9 12 11 14 15 10"></polyline>
+                                </svg>
+                                <span class="nav-label">Security Monitoring</span>
+                            </a>
+                        </li>
+                        <!-- 6. Audit & Logs -->
+                        <li>
+                            <a href="#audit-logs" class="nav-link-item" data-target="audit-logs">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                </svg>
+                                <span class="nav-label">Audit & Logs</span>
+                            </a>
+                        </li>
+                        <!-- 7. Notifications -->
+                        <li>
+                            <a href="#notifications" class="nav-link-item" data-target="notifications">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                                </svg>
+                                <span class="nav-label">Notifications</span>
+                            </a>
+                        </li>
+                        <!-- 8. System Health -->
+                        <li>
+                            <a href="#system-health" class="nav-link-item" data-target="system-health">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                                </svg>
+                                <span class="nav-label">System Health</span>
+                            </a>
+                        </li>
+                        <!-- 9. Analytics -->
+                        <li>
+                            <a href="#analytics" class="nav-link-item" data-target="analytics">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                                </svg>
+                                <span class="nav-label">Analytics</span>
+                            </a>
+                        </li>
+                        <!-- 10. Settings -->
+                        <li>
+                            <a href="#settings" class="nav-link-item" data-target="settings">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                </svg>
+                                <span class="nav-label">Settings</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Lower Sidebar Mountain Landscape Card -->
+                <div class="sidebar-bottom-landscape-card" aria-hidden="true">
+                    <img class="sidebar-landscape-img sidebar-img-light" src="../assets/sidebar-bg-light.png" alt="Alpine Forest Landscape">
+                    <img class="sidebar-landscape-img sidebar-img-dark" src="../assets/sidebar-bg-dark.png" alt="Alpine Forest Landscape">
+                    <div class="sidebar-landscape-overlay"></div>
+                    <div class="sidebar-landscape-text">
+                        A safer<br>tomorrow,<br>for everyone.
+                    </div>
+                </div>
+            </aside>
+
+            <!-- ==============================================================
+                 3. MAIN WORKSPACE CONTENT
+                 ============================================================== -->
+            <main class="main-workspace" id="dashboard" role="main">
+
+                <!-- A. HERO SECTION -->
+                <section class="hero-card" aria-label="Dashboard Hero Overview">
+                    <div class="hero-left-col">
+                        <h1 class="hero-title">Admin Dashboard</h1>
+                        <p class="hero-subtitle">Monitor. Manage. Secure. A safer tomorrow for everyone.</p>
+                    </div>
+
+                    <!-- Center Panoramic Mountain Cutout -->
+                    <div class="hero-center-col" aria-hidden="true">
+                        <img class="hero-panorama-img hero-img-light" src="../assets/light-background.png" alt="Mountain Panorama">
+                        <img class="hero-panorama-img hero-img-dark" src="../assets/dark-background.png" alt="Mountain Panorama">
+                        <div class="hero-panorama-fade-left"></div>
+                        <p class="hero-quote-text">“Stronger systems.<br>Safer tomorrows.”</p>
+                        <div class="hero-panorama-fade-right"></div>
+                    </div>
+
+                    <!-- Right Column: Date/Time + Generate Report -->
+                    <div class="hero-right-col">
+                        <div class="hero-datetime-box">
+                            <div class="datetime-icon-wrap">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                            </div>
+                            <div class="datetime-text-col">
+                                <span class="datetime-date" id="hero-live-date">Friday, 12 Sep 2025</span>
+                                <span class="datetime-time" id="hero-live-time">10:24 AM</span>
+                            </div>
+                        </div>
+
+                        <button class="btn-generate-report" id="btn-generate-report" aria-label="Generate System Report">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            <span>Generate Report</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- B. SYSTEM OVERVIEW METRICS (6 Cards) -->
+                <section class="overview-metrics-grid" aria-label="System Key Performance Indicators">
+                    <!-- 1. Total Users -->
+                    <div class="metric-overview-card metric-blue" id="metric-card-users">
+                        <div class="metric-icon-circle">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </div>
+                        <div class="metric-content-col">
+                            <span class="metric-title-text">Total Users</span>
+                            <span class="metric-number-display">1,248</span>
+                            <div class="metric-trend-row">
+                                <span class="trend-badge positive">↑ 12%</span>
+                                <span class="metric-subtext-label">+134 this month</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Total Trustees -->
+                    <div class="metric-overview-card metric-cyan" id="metric-card-trustees">
+                        <div class="metric-icon-circle">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <div class="metric-content-col">
+                            <span class="metric-title-text">Total Trustees</span>
+                            <span class="metric-number-display">3,562</span>
+                            <div class="metric-trend-row">
+                                <span class="trend-badge positive">↑ 8%</span>
+                                <span class="metric-subtext-label">+263 this month</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Active Vaults -->
+                    <div class="metric-overview-card metric-emerald" id="metric-card-vaults">
+                        <div class="metric-icon-circle">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                        </div>
+                        <div class="metric-content-col">
+                            <span class="metric-title-text">Active Vaults</span>
+                            <span class="metric-number-display">982</span>
+                            <div class="metric-trend-row">
+                                <span class="trend-badge positive">↑ 6%</span>
+                                <span class="metric-subtext-label">+54 this month</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Pending Requests -->
+                    <div class="metric-overview-card metric-amber" id="metric-card-requests">
+                        <div class="metric-icon-circle">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </div>
+                        <div class="metric-content-col">
+                            <span class="metric-title-text">Pending Requests</span>
+                            <span class="metric-number-display">18</span>
+                            <div class="metric-trend-row">
+                                <span class="trend-badge negative">↓ 25%</span>
+                                <span class="metric-subtext-label">-6 from last week</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. Security Events -->
+                    <div class="metric-overview-card metric-coral" id="metric-card-events">
+                        <div class="metric-icon-circle">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                        </div>
+                        <div class="metric-content-col">
+                            <span class="metric-title-text">Security Events</span>
+                            <span class="metric-number-display">7</span>
+                            <div class="metric-trend-row">
+                                <span class="trend-badge alert">↑ 40%</span>
+                                <span class="metric-subtext-label">+2 from last week</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. System Uptime -->
+                    <div class="metric-overview-card metric-blue" id="metric-card-uptime">
+                        <div class="metric-icon-circle">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                                <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                                <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                                <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                            </svg>
+                        </div>
+                        <div class="metric-content-col">
+                            <span class="metric-title-text">System Uptime</span>
+                            <span class="metric-number-display">99.98%</span>
+                            <div class="metric-trend-row">
+                                <span class="trend-badge positive">↑ 0.2%</span>
+                                <span class="metric-subtext-label">Last 30 days</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- C. ROW 2: USER GROWTH, VAULT ACTIVITY, SYSTEM HEALTH -->
+                <section class="dashboard-grid-row" aria-label="Activity & Surveillance">
+                    
+                    <!-- 1. User Growth Line Chart -->
+                    <div class="dashboard-card" id="card-user-growth">
+                        <div class="card-header-row">
+                            <div class="card-header-left">
+                                <span class="card-header-icon icon-blue">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                </span>
+                                <div class="card-title-text-group">
+                                    <h2 class="card-main-title">User Growth</h2>
+                                    <span class="card-sub-title">New users joining the platform</span>
+                                </div>
+                            </div>
+                            <select class="card-header-select" id="user-growth-timeframe" aria-label="Filter user growth timeframe">
+                                <option value="6m" selected>Last 6 Months</option>
+                                <option value="30d">Last 30 Days</option>
+                                <option value="1y">This Year</option>
+                            </select>
+                        </div>
+
+                        <div class="chart-container-box" id="user-growth-chart-wrap">
+                            <!-- Populated dynamically by charts.js -->
+                        </div>
+                    </div>
+
+                    <!-- 2. Vault Activity Grouped Bar Chart -->
+                    <div class="dashboard-card" id="card-vault-activity">
+                        <div class="card-header-row">
+                            <div class="card-header-left">
+                                <span class="card-header-icon icon-orange">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                                </span>
+                                <div class="card-title-text-group">
+                                    <h2 class="card-main-title">Vault Activity</h2>
+                                    <span class="card-sub-title">Vaults created, accessed and released</span>
+                                </div>
+                            </div>
+                            <select class="card-header-select" id="vault-activity-timeframe" aria-label="Filter vault activity timeframe">
+                                <option value="6m" selected>Last 6 Months</option>
+                                <option value="30d">Last 30 Days</option>
+                                <option value="1y">This Year</option>
+                            </select>
+                        </div>
+
+                        <!-- Legend Matching Screenshot -->
+                        <div class="chart-legend-row">
+                            <div class="legend-pill-item">
+                                <span class="legend-pill-dot dot-created"></span>
+                                <span>Created</span>
+                            </div>
+                            <div class="legend-pill-item">
+                                <span class="legend-pill-dot dot-accessed"></span>
+                                <span>Accessed</span>
+                            </div>
+                            <div class="legend-pill-item">
+                                <span class="legend-pill-dot dot-released"></span>
+                                <span>Released</span>
+                            </div>
+                        </div>
+
+                        <div class="chart-container-box" id="vault-activity-chart-wrap">
+                            <!-- Populated dynamically by charts.js -->
+                        </div>
+                    </div>
+
+                    <!-- 3. System Health Checklist -->
+                    <div class="dashboard-card" id="card-system-health">
+                        <div class="card-header-row">
+                            <div class="card-header-left">
+                                <span class="card-header-icon icon-green">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                                </span>
+                                <h2 class="card-main-title">System Health</h2>
+                            </div>
+                            <a href="#system-health" class="card-view-all-link" id="link-view-health-details">
+                                <span>View Details</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                            </a>
+                        </div>
+
+                        <div class="services-health-list" id="system-health-services-list">
+                            <!-- Populated dynamically by dashboard.js -->
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- D. ROW 3: RECENT USERS, RECENT SECURITY EVENTS, PENDING ACTIONS -->
+                <section class="dashboard-grid-row" aria-label="Management and Security Events">
+                    
+                    <!-- 1. Recent Users Table -->
+                    <div class="dashboard-card" id="card-recent-users">
+                        <div class="card-header-row">
+                            <div class="card-header-left">
+                                <span class="card-header-icon icon-blue">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                </span>
+                                <h2 class="card-main-title">Recent Users</h2>
+                            </div>
+                            <a href="#user-management" class="card-view-all-link" id="link-view-all-users">
+                                <span>View All</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                            </a>
+                        </div>
+
+                        <div class="table-responsive-wrapper">
+                            <table class="admin-data-table" aria-label="Recent registered users table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Joined</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-users-tbody">
+                                    <!-- Populated dynamically by dashboard.js -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 2. Recent Security Events Table -->
+                    <div class="dashboard-card" id="card-recent-events">
+                        <div class="card-header-row">
+                            <div class="card-header-left">
+                                <span class="card-header-icon icon-red">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                </span>
+                                <h2 class="card-main-title">Recent Security Events</h2>
+                            </div>
+                            <a href="#audit-logs" class="card-view-all-link" id="link-view-all-events">
+                                <span>View All</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                            </a>
+                        </div>
+
+                        <div class="table-responsive-wrapper">
+                            <table class="admin-data-table" aria-label="Recent security logs table">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Event</th>
+                                        <th>Severity</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-security-events-tbody">
+                                    <!-- Populated dynamically by dashboard.js -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 3. Pending Actions -->
+                    <div class="dashboard-card" id="card-pending-actions">
+                        <div class="card-header-row">
+                            <div class="card-header-left">
+                                <span class="card-header-icon icon-purple">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                </span>
+                                <h2 class="card-main-title">Pending Actions</h2>
+                            </div>
+                            <a href="#pending-actions" class="card-view-all-link" id="link-view-all-actions">
+                                <span>View All</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                            </a>
+                        </div>
+
+                        <div class="pending-actions-list" id="pending-actions-list-container">
+                            <!-- Populated dynamically by dashboard.js -->
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- E. ROW 4: USER ROLES, VAULT CATEGORIES, EVERYTHING UNDER CONTROL -->
+                <section class="dashboard-grid-row" aria-label="Distributions & Operational State">
+                    
+                    <!-- 1. User Role Distribution Donut -->
+                    <div class="dashboard-card" id="card-user-roles">
+                        <div class="card-header-row">
+                            <div class="card-header-left">
+                                <span class="card-header-icon icon-blue">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                </span>
+                                <h2 class="card-main-title">User Role Distribution</h2>
+                            </div>
+                        </div>
+
+                        <div class="donut-chart-container">
+                            <div class="donut-svg-wrap" id="user-role-donut-svg">
+                                <!-- Populated dynamically by charts.js -->
+                            </div>
+                            <div class="donut-legend-col" id="user-role-legend-list">
+                                <!-- Populated dynamically by charts.js -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Vault Categories Donut -->
+                    <div class="dashboard-card" id="card-vault-categories">
+                        <div class="card-header-row">
+                            <div class="card-header-left">
+                                <span class="card-header-icon icon-blue">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                                </span>
+                                <h2 class="card-main-title">Vault Categories</h2>
+                            </div>
+                        </div>
+
+                        <div class="donut-chart-container">
+                            <div class="donut-svg-wrap" id="vault-categories-donut-svg">
+                                <!-- Populated dynamically by charts.js -->
+                            </div>
+                            <div class="donut-legend-col" id="vault-categories-legend-list">
+                                <!-- Populated dynamically by charts.js -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Everything under control Status Box -->
+                    <div class="status-summary-card" id="card-status-summary">
+                        <div class="status-shield-badge">
+                            <svg class="status-shield-icon" viewBox="0 0 32 36" fill="none">
+                                <path d="M16 2L3 7V16C3 24.5 8.5 32.2 16 34C23.5 32.2 29 24.5 29 16V7L16 2Z" fill="#E86326"/>
+                                <path d="M11 16L15 20L21 13" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="status-summary-col">
+                            <h2 class="status-summary-title">Everything under control</h2>
+                            <p class="status-summary-desc">Your platform is running smoothly. Keep building stronger tomorrows.</p>
+                            <p class="status-summary-quote">“Because what matters today, should matter tomorrow too.”</p>
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- F. APPLICATION FOOTER -->
+                <footer class="app-footer" role="contentinfo">
+                    <div class="footer-left">
+                        <svg class="footer-logo-svg" viewBox="0 0 32 36" fill="none">
+                            <path d="M16 2L3 7V16C3 24.5 8.5 32.2 16 34C23.5 32.2 29 24.5 29 16V7L16 2Z" fill="#E86326"/>
+                        </svg>
+                        <span class="footer-brand-title">AegisVault</span>
+                        <span class="footer-brand-tagline">What matters, lives on.</span>
+                    </div>
+
+                    <div class="footer-center">
+                        <span class="footer-motto-text">“Because what matters today, should matter tomorrow too.”</span>
+                        <div class="footer-motto-accent-bar"></div>
+                    </div>
+
+                    <div class="footer-right">
+                        <a href="#privacy" class="footer-link" onclick="AegisInteractions.showToast('Zero-Knowledge Custody Privacy Policy', 'info');">Privacy</a>
+                        <a href="#terms" class="footer-link" onclick="AegisInteractions.showToast('Protocol Terms of Service', 'info');">Terms</a>
+                        <a href="#help" class="footer-link" onclick="AegisInteractions.showToast('AegisVault Admin Support Desk', 'info');">Help</a>
+                    </div>
+                </footer>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- ======================================================================
+         4. MODALS & INTERACTIVE OVERLAYS
+         ====================================================================== -->
+
+    <!-- User Details Modal -->
+    <div class="modal-overlay" id="user-detail-modal" role="dialog" aria-modal="true" aria-labelledby="modal-user-name">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <span class="user-avatar-badge avatar-blue" id="modal-user-avatar">R</span>
+                    <h3 id="modal-user-name">User Profile</h3>
+                </div>
+                <button class="modal-close-btn" data-close-modal aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-grid-details">
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Email</span>
+                        <span class="modal-detail-value" id="modal-user-email">--</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Role</span>
+                        <span class="modal-detail-value" id="modal-user-role">--</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Status</span>
+                        <span class="modal-detail-value" id="modal-user-status">--</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Joined Date</span>
+                        <span class="modal-detail-value" id="modal-user-joined">--</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Vaults Owned</span>
+                        <span class="modal-detail-value" id="modal-user-vaults">--</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Trustees Appointed</span>
+                        <span class="modal-detail-value" id="modal-user-trustees">--</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Account Tier</span>
+                        <span class="modal-detail-value" id="modal-user-tier">--</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Heartbeat Status</span>
+                        <span class="modal-detail-value" id="modal-user-heartbeat">--</span>
+                    </div>
+                </div>
+                <p style="font-size: 0.74rem; color: var(--text-secondary); background: var(--bg-card-subtle); padding: 0.65rem; border-radius: 6px; border: 1px solid var(--border-color);">
+                    🔒 <strong>Zero-Knowledge Architecture:</strong> Administrator accounts can verify custodian identity and telemetry, but have zero access to vault decryption keys or plaintext assets.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" data-close-modal>Close</button>
+                <button class="btn-primary" onclick="AegisInteractions.showToast('User telemetry audit refreshed.', 'info'); AegisInteractions.closeModal('user-detail-modal');">Audit Activity</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Security Event Modal -->
+    <div class="modal-overlay" id="event-detail-modal" role="dialog" aria-modal="true" aria-labelledby="modal-event-title">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <h3 id="modal-event-title">Security Event Audit</h3>
+                </div>
+                <button class="modal-close-btn" data-close-modal aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-grid-details">
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Timestamp</span>
+                        <span class="modal-detail-value" id="modal-event-time">--</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Severity</span>
+                        <span class="modal-detail-value" id="modal-event-severity">--</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Source IP</span>
+                        <span class="modal-detail-value" id="modal-event-ip" style="font-family: var(--font-mono);">--</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Origin Location</span>
+                        <span class="modal-detail-value" id="modal-event-location">--</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Target Principal</span>
+                        <span class="modal-detail-value" id="modal-event-user">--</span>
+                    </div>
+                </div>
+                <div style="margin-top: 0.5rem;">
+                    <span class="modal-detail-label">Diagnostic Details</span>
+                    <div id="modal-event-details" style="font-size: 0.8rem; margin-top: 4px; padding: 0.65rem; background: var(--bg-card-subtle); border-radius: 6px; border: 1px solid var(--border-color); color: var(--text-body);">--</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" data-close-modal>Close</button>
+                <button class="btn-primary" onclick="AegisInteractions.showToast('Firewall block rule deployed to Edge Gateway.', 'success'); AegisInteractions.closeModal('event-detail-modal');">Block IP</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Health Service Modal -->
+    <div class="modal-overlay" id="service-detail-modal" role="dialog" aria-modal="true" aria-labelledby="modal-service-name">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <h3 id="modal-service-name">Service Status</h3>
+                </div>
+                <button class="modal-close-btn" data-close-modal aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-grid-details">
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Operational Status</span>
+                        <span class="modal-detail-value" id="modal-service-status" style="color: var(--emerald);">Healthy</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Current Latency</span>
+                        <span class="modal-detail-value" id="modal-service-latency">--</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="modal-detail-label">Monthly SLA Uptime</span>
+                        <span class="modal-detail-value" id="modal-service-uptime">--</span>
+                    </div>
+                </div>
+                <div style="margin-top: 0.5rem;">
+                    <span class="modal-detail-label">Cluster Telemetry</span>
+                    <div id="modal-service-details" style="font-size: 0.8rem; margin-top: 4px; padding: 0.65rem; background: var(--bg-card-subtle); border-radius: 6px; border: 1px solid var(--border-color); color: var(--text-body);">--</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" data-close-modal>Close</button>
+                <button class="btn-primary" onclick="AegisInteractions.showToast('Diagnostic probe dispatched to cluster node.', 'info'); AegisInteractions.closeModal('service-detail-modal');">Run Diagnostic Probe</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generate Report Modal -->
+    <div class="modal-overlay" id="generate-report-modal" role="dialog" aria-modal="true" aria-labelledby="modal-report-title">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <h3 id="modal-report-title">Generate Platform Audit Report</h3>
+                </div>
+                <button class="modal-close-btn" data-close-modal aria-label="Close modal">&times;</button>
+            </div>
+            <form id="generate-report-form">
+                <div class="modal-body">
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                        Export an immutable, SHA-256 cryptographic audit summary of all custodians, trustee quorum states, and security events.
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+                        <div>
+                            <label style="font-size: 0.76rem; font-weight: 600; color: var(--text-heading); display: block; margin-bottom: 4px;">Report Scope</label>
+                            <select style="width: 100%; height: 36px; padding: 0 0.65rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-card-subtle); color: var(--text-heading); font-size: 0.82rem;">
+                                <option>Complete System Health & Security Intelligence (PDF + CSV)</option>
+                                <option>Trustee Verification & Quorum Pipeline</option>
+                                <option>Failed Authentication & Edge Threat Logs</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 0.76rem; font-weight: 600; color: var(--text-heading); display: block; margin-bottom: 4px;">Timeframe</label>
+                            <select style="width: 100%; height: 36px; padding: 0 0.65rem; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-card-subtle); color: var(--text-heading); font-size: 0.82rem;">
+                                <option>Rolling 30 Days (Current Cycle)</option>
+                                <option>Previous Quarter (90 Days)</option>
+                                <option>Full Year to Date</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" data-close-modal>Cancel</button>
+                    <button type="submit" class="btn-primary">Download Signed Audit Report (PDF/CSV)</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- All Users Modal -->
+    <div class="modal-overlay" id="all-users-modal" role="dialog" aria-modal="true" aria-labelledby="modal-all-users-title">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <h3 id="modal-all-users-title">All Registered Custodians</h3>
+                </div>
+                <button class="modal-close-btn" data-close-modal aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive-wrapper">
+                    <table class="admin-data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Joined</th>
+                                <th>Vaults</th>
+                            </tr>
+                        </thead>
+                        <tbody id="all-users-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" data-close-modal>Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- All Security Events Modal -->
+    <div class="modal-overlay" id="all-events-modal" role="dialog" aria-modal="true" aria-labelledby="modal-all-events-title">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <h3 id="modal-all-events-title">Complete Security Event Log</h3>
+                </div>
+                <button class="modal-close-btn" data-close-modal aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive-wrapper">
+                    <table class="admin-data-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Event</th>
+                                <th>Severity</th>
+                                <th>IP Address</th>
+                                <th>Location</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="all-events-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" data-close-modal>Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div class="toast-container" aria-live="polite"></div>
+
+    <!-- Core JavaScript Modules -->
+    <script src="js/mockData.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/interactions.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
