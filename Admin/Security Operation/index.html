@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AegisVault Admin / Security Operations Module — Automated Time-Locked Digital Asset & Legacy Custody Protocol. Real-time security monitoring, audit logging, system health, and zero-knowledge protocol oversight.">
+    <title>AegisVault — Admin / Security Operations</title>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body class="dark-theme">
+
+    <!-- ======================================================================
+         1. APPLICATION HEADER
+         ====================================================================== -->
+    <header class="app-header" role="banner">
+        <div class="header-left">
+            <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle Navigation Drawer">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+
+            <a href="#dashboard" class="brand-logo-link" aria-label="AegisVault Home">
+                <svg class="shield-logo-svg" viewBox="0 0 32 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16 2L3 7V16C3 24.5 8.5 32.2 16 34C23.5 32.2 29 24.5 29 16V7L16 2Z" fill="#E86326" stroke="#F5A84B" stroke-width="2"/>
+                    <path d="M16 6L7 9.8V16C7 22.2 10.8 27.9 16 29.5C21.2 27.9 25 22.2 25 16V9.8L16 6Z" fill="#1B0C06" stroke="#F5A84B" stroke-width="1.2"/>
+                    <path d="M16 11L11 13.5V17C11 20.3 13.1 23.3 16 24.2C18.9 23.3 21 20.3 21 17V13.5L16 11Z" fill="#F5A84B"/>
+                </svg>
+                <div class="brand-text-wrap">
+                    <span class="brand-name">AegisVault</span>
+                    <span class="brand-tagline">What matters, lives on.</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- Global Search Bar -->
+        <div class="header-center">
+            <div class="search-container">
+                <div class="search-input-wrap">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="global-search-input" class="global-search-input"
+                           placeholder="Search users, trustees, logs, or system events..."
+                           autocomplete="off" aria-label="Global search">
+                    <span class="search-kbd-hint">/</span>
+                </div>
+                <!-- Live Search Dropdown -->
+                <div class="search-results-dropdown" id="search-results-dropdown" role="region" aria-live="polite"></div>
+            </div>
+        </div>
+
+        <!-- Header Actions: Theme, Notifications, Profile -->
+        <div class="header-right">
+            <!-- Theme Toggle Pill Switch (Matching Second Image Reference) -->
+            <button class="theme-toggle-btn" id="theme-toggle-btn" title="Toggle theme (T)" aria-label="Toggle Light and Dark Theme">
+                <div class="theme-toggle-track">
+                    <span class="theme-icon theme-icon-sun" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2">
+                            <circle cx="12" cy="12" r="4"></circle>
+                            <line x1="12" y1="2" x2="12" y2="4"></line>
+                            <line x1="12" y1="20" x2="12" y2="22"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="2" y1="12" x2="4" y2="12"></line>
+                            <line x1="20" y1="12" x2="22" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </span>
+                    <span class="theme-icon theme-icon-moon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </span>
+                    <div class="theme-toggle-thumb"></div>
+                </div>
+            </button>
+
+            <!-- Notifications Bell -->
+            <div style="position: relative;">
+                <button class="header-action-btn" id="notif-btn" aria-label="Notifications" title="Security Notifications">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span class="notification-badge-dot"></span>
+                </button>
+                <!-- Notifications Dropdown -->
+                <div class="dropdown-menu notifications-dropdown" id="notifications-dropdown">
+                    <div class="dropdown-header">
+                        <span class="dropdown-header-title">Security Notifications</span>
+                        <button class="mark-all-read-btn" id="mark-all-read-btn">Mark all as read</button>
+                    </div>
+                    <div class="notification-list">
+                        <div class="notification-item unread">
+                            <span class="notification-bullet danger"></span>
+                            <div class="notification-content">
+                                <div class="notification-title">Multiple Failed Logins Blocked</div>
+                                <div class="notification-desc">IP 203.122.45.67 was blocked after 5 consecutive invalid credentials.</div>
+                                <div class="notification-time">10 mins ago</div>
+                            </div>
+                        </div>
+                        <div class="notification-item unread">
+                            <span class="notification-bullet warning"></span>
+                            <div class="notification-content">
+                                <div class="notification-title">Vault State: Grace Period</div>
+                                <div class="notification-desc">Protocol auto-triggered for amit.patel (Monthly heartbeat missed).</div>
+                                <div class="notification-time">25 mins ago</div>
+                            </div>
+                        </div>
+                        <div class="notification-item unread">
+                            <span class="notification-bullet success"></span>
+                            <div class="notification-content">
+                                <div class="notification-title">Trustee Share Submitted (3/5)</div>
+                                <div class="notification-desc">Meera Shah submitted cryptographic recovery share.</div>
+                                <div class="notification-time">1 hour ago</div>
+                            </div>
+                        </div>
+                        <div class="notification-item">
+                            <span class="notification-bullet info"></span>
+                            <div class="notification-content">
+                                <div class="notification-title">Daily Cold Storage Backup</div>
+                                <div class="notification-desc">Encrypted snapshot synchronized across geo-redundant pods.</div>
+                                <div class="notification-time">5 hours ago</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Menu -->
+            <div style="position: relative;">
+                <button class="user-profile-btn" id="profile-btn" aria-label="Admin Profile Menu">
+                    <div class="user-avatar-circle">AP</div>
+                    <span class="user-name-text">Admin Panel</span>
+                    <svg class="profile-chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </button>
+                <!-- Profile Dropdown -->
+                <div class="dropdown-menu profile-dropdown" id="profile-dropdown">
+                    <div class="profile-dropdown-header">
+                        <div style="font-weight: 700; color: var(--text-heading);">Dhruvil Dattani</div>
+                        <div class="profile-user-role">Super Administrator</div>
+                    </div>
+                    <div class="profile-menu-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        Admin Profile
+                    </div>
+                    <div class="profile-menu-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                        Security Preferences
+                    </div>
+                    <div class="profile-menu-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                        Activity Log
+                    </div>
+                    <div class="profile-divider"></div>
+                    <div class="profile-menu-item" style="color: var(--coral);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                        Logout Session
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ======================================================================
+         2. APPLICATION BODY: SIDEBAR + MAIN WORKSPACE
+         ====================================================================== -->
+    <div class="app-body">
+        
+        <!-- Mobile Sidebar Drawer Backdrop -->
+        <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+        <!-- Sidebar Navigation -->
+        <aside class="app-sidebar" id="app-sidebar" role="navigation" aria-label="Main Navigation">
+            <div class="sidebar-top-section">
+                <ul class="sidebar-nav-list">
+                    <!-- 1. Dashboard -->
+                    <li>
+                        <a href="#dashboard" class="nav-item-link">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            </svg>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <!-- 2. Security Operations (ACTIVE) -->
+                    <li>
+                        <a href="#security-operations" class="nav-item-link active">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                <polyline points="9 12 11 14 15 10"></polyline>
+                            </svg>
+                            <span>Security Operations</span>
+                        </a>
+                    </li>
+                    <!-- 3. User Management -->
+                    <li>
+                        <a href="#user-management" class="nav-item-link">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <span>User Management</span>
+                        </a>
+                    </li>
+                    <!-- 4. Trustee Management -->
+                    <li>
+                        <a href="#trustee-management" class="nav-item-link">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                            <span>Trustee Management</span>
+                        </a>
+                    </li>
+                    <!-- 5. Notifications -->
+                    <li>
+                        <a href="#notifications" class="nav-item-link">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                            </svg>
+                            <span>Notifications</span>
+                        </a>
+                    </li>
+                    <!-- 6. Audit Logs -->
+                    <li>
+                        <a href="#audit-logs" class="nav-item-link">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg>
+                            <span>Audit Logs</span>
+                        </a>
+                    </li>
+                    <!-- 7. System Health -->
+                    <li>
+                        <a href="#system-health" class="nav-item-link">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                            </svg>
+                            <span>System Health</span>
+                        </a>
+                    </li>
+                    <!-- 8. Failed Logins -->
+                    <li>
+                        <a href="#failed-logins" class="nav-item-link">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                            <span>Failed Logins</span>
+                        </a>
+                    </li>
+                    <!-- 9. Reports -->
+                    <li>
+                        <a href="#reports" class="nav-item-link">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="20" x2="18" y2="10"></line>
+                                <line x1="12" y1="20" x2="12" y2="4"></line>
+                                <line x1="6" y1="20" x2="6" y2="14"></line>
+                            </svg>
+                            <span>Reports</span>
+                        </a>
+                    </li>
+                    <!-- 10. Settings -->
+                    <li>
+                        <a href="#settings" class="nav-item-link">
+                            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                            </svg>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- 11. Admin Support Button (Prominent Red Pill) -->
+                <button class="admin-support-btn" id="admin-support-sidebar-btn" aria-label="Admin Support Desk">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                        <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+                    </svg>
+                    <span>Admin Support</span>
+                </button>
+            </div>
+
+            <!-- Lower Sidebar Landscape Card -->
+            <div class="sidebar-bottom-promo">
+                <div class="sidebar-promo-overlay"></div>
+                <div class="sidebar-promo-text">
+                    Stronger<br>Security.<br>Brighter<br>Tomorrows.
+                </div>
+            </div>
+        </aside>
+
+        <!-- ==================================================================
+             3. MAIN CONTENT WORKSPACE
+             ================================================================== -->
+        <main class="main-content" role="main">
+
+            <!-- A. HERO SECTION -->
+            <section class="hero-section animate-hero" aria-label="Operations Header">
+                <div class="hero-overlay-fade"></div>
+
+                <div class="hero-left-content">
+                    <span class="hero-tag-label">14. ADMIN / SECURITY OPERATIONS</span>
+                    <h1 class="hero-title">Monitor. Protect. <span class="hero-accent">Enable.</span></h1>
+                    <p class="hero-subtitle">Secure operations for a safer tomorrow.</p>
+
+                    <!-- Feature Highlights Pills -->
+                    <div class="hero-features-row">
+                        <div class="hero-feature-pill">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                            <span>Immutable Records</span>
+                        </div>
+                        <div class="hero-feature-pill">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <span>Detects Suspicious Activity</span>
+                        </div>
+                        <div class="hero-feature-pill">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+                            <span>Full Transparency</span>
+                        </div>
+                        <div class="hero-feature-pill">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            <span>Built for a Safer Tomorrow</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Right Quote Card -->
+                <div class="hero-quote-box">
+                    <p class="hero-quote-text">“Admins manage the system.<br>Users own their data.”</p>
+                    <div class="hero-quote-author">— ZERO ACCESS, BY DESIGN.</div>
+                </div>
+            </section>
+
+            <!-- B. SECURITY STATISTICS CARDS (5 Cards) -->
+            <section class="stats-grid" aria-label="Security Metrics Overview">
+                <!-- 1. Total Users -->
+                <div class="stat-card animate-stagger-1" id="stat-total-users">
+                    <div class="stat-icon-wrap blue">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">1,284</div>
+                        <div class="stat-label">Total Users</div>
+                        <div class="stat-trend-wrap">
+                            <span class="stat-trend positive">↑ 12%</span>
+                            <span class="stat-subtext">+136 this month</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Total Trustees -->
+                <div class="stat-card animate-stagger-2" id="stat-total-trustees">
+                    <div class="stat-icon-wrap teal">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">5,732</div>
+                        <div class="stat-label">Total Trustees</div>
+                        <div class="stat-trend-wrap">
+                            <span class="stat-trend positive">↑ 18%</span>
+                            <span class="stat-subtext">+876 this month</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Security Events -->
+                <div class="stat-card animate-stagger-3" id="stat-security-events">
+                    <div class="stat-icon-wrap coral">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">47</div>
+                        <div class="stat-label">Security Events</div>
+                        <div class="stat-trend-wrap">
+                            <span class="stat-trend alert">↑ 32%</span>
+                            <span class="stat-subtext">+12 in last 24h</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Failed Login Attempts -->
+                <div class="stat-card animate-stagger-4" id="stat-failed-logins">
+                    <div class="stat-icon-wrap coral">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">19</div>
+                        <div class="stat-label">Failed Login Attempts</div>
+                        <div class="stat-trend-wrap">
+                            <span class="stat-trend alert">↑ 56%</span>
+                            <span class="stat-subtext">in last 24h</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. System Uptime -->
+                <div class="stat-card animate-stagger-5" id="stat-system-uptime">
+                    <div class="stat-icon-wrap emerald">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">99.8%</div>
+                        <div class="stat-label">System Uptime</div>
+                        <div class="stat-trend-wrap">
+                            <span class="stat-trend healthy">Healthy</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- C. MIDDLE SECTION: Security Events, System Health, Failed Logins -->
+            <section class="middle-grid" aria-label="Operations Monitoring Grid">
+                
+                <!-- 1. Recent Security Events Panel (Left Column) -->
+                <div class="card-panel" id="recent-security-events-panel">
+                    <div class="card-panel-header">
+                        <div class="card-title-group">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                            <h2 class="card-title">Recent Security Events</h2>
+                        </div>
+                        <button class="card-action-link" id="view-all-events-btn">
+                            <span>View All</span>
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </button>
+                    </div>
+
+                    <!-- Filter Bar -->
+                    <div class="table-filter-bar">
+                        <input type="text" class="table-search-input" id="event-table-search" placeholder="Filter events..." aria-label="Filter events">
+                        <div class="filter-pills-list">
+                            <button class="filter-chip active" data-filter="ALL">All</button>
+                            <button class="filter-chip" data-filter="FAILED_LOGIN">Failed Login</button>
+                            <button class="filter-chip" data-filter="LOGIN">Login</button>
+                            <button class="filter-chip" data-filter="TRUSTEE_ADDED">Trustee</button>
+                            <button class="filter-chip" data-filter="STATE_CHANGED">State</button>
+                            <button class="filter-chip" data-filter="HEARTBEAT_MISSED">Heartbeat</button>
+                            <button class="filter-chip" data-filter="ACCOUNT_SUSPENDED">Suspended</button>
+                            <button class="filter-chip" data-filter="SHARE_SUBMITTED">Share</button>
+                            <button class="filter-chip" data-filter="VAULT_CREATED">Vault</button>
+                        </div>
+                    </div>
+
+                    <!-- Security Events Table -->
+                    <div class="table-responsive-container">
+                        <table class="data-table" aria-label="Recent Security Events Table">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Event</th>
+                                    <th>User</th>
+                                    <th>Details</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="security-events-tbody">
+                                <!-- Rendered dynamically by js/securityOperations.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 2. System Health Panel (Middle Column) -->
+                <div class="card-panel" id="system-health-panel">
+                    <div class="card-panel-header">
+                        <div class="card-title-group">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                            <h2 class="card-title">System Health</h2>
+                        </div>
+                        <div class="system-health-status-tag">All Systems Operational</div>
+                    </div>
+
+                    <div class="system-health-body">
+                        <!-- 4 Circular Progress Gauges -->
+                        <div class="gauges-grid" id="gauges-container">
+                            <!-- Rendered dynamically by js/securityOperations.js -->
+                        </div>
+
+                        <!-- Services Operational Checklist -->
+                        <div class="services-status-list" id="services-status-list">
+                            <!-- Rendered dynamically by js/securityOperations.js -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Failed Login Monitoring Panel (Right Column) -->
+                <div class="card-panel" id="failed-login-monitoring-panel">
+                    <div class="card-panel-header">
+                        <div class="card-title-group">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            <h2 class="card-title">Failed Login Monitoring</h2>
+                        </div>
+                        <button class="card-action-link" id="view-failed-logins-link">
+                            <span>View</span>
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </button>
+                    </div>
+
+                    <div class="failed-login-body">
+                        <!-- Stat Metric Row -->
+                        <div class="failed-login-metric-row">
+                            <span class="failed-metric-number">19</span>
+                            <span class="failed-metric-label">Failed Attempts (24h)</span>
+                            <span class="failed-metric-increase">↑ 56%</span>
+                        </div>
+
+                        <!-- Bar Chart -->
+                        <div class="chart-container">
+                            <div class="chart-y-axis">
+                                <span>20</span>
+                                <span>15</span>
+                                <span>10</span>
+                                <span>5</span>
+                                <span>0</span>
+                            </div>
+                            <div class="chart-bars-wrap" id="chart-bars-wrap">
+                                <!-- Bars populated by js/securityOperations.js -->
+                            </div>
+                            <div class="chart-x-axis">
+                                <span>12AM</span>
+                                <span>4AM</span>
+                                <span>8AM</span>
+                                <span>12PM</span>
+                                <span>4PM</span>
+                                <span>8PM</span>
+                            </div>
+                        </div>
+
+                        <!-- Top IP Addresses -->
+                        <div class="top-ips-section">
+                            <div class="top-ips-header">Top IP Addresses</div>
+                            <div id="top-ips-container">
+                                <!-- Populated dynamically by js/securityOperations.js -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- D. BOTTOM SECTION: User Management, Trustee Management, Admin Restriction -->
+            <section class="bottom-grid" aria-label="Management and Security Principles Grid">
+                
+                <!-- 1. User Management (Left Column) -->
+                <div class="card-panel" id="user-management-panel">
+                    <div class="card-panel-header">
+                        <div class="card-title-group">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            <h2 class="card-title">User Management</h2>
+                        </div>
+                        <button class="card-action-link" id="view-all-users-btn">
+                            <span>View All</span>
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </button>
+                    </div>
+
+                    <div class="table-responsive-container">
+                        <table class="data-table" aria-label="User Management Table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-tbody">
+                                <!-- Rendered dynamically by js/securityOperations.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 2. Trustee Management (Middle Column) -->
+                <div class="card-panel" id="trustee-management-panel">
+                    <div class="card-panel-header">
+                        <div class="card-title-group">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                            <h2 class="card-title">Trustee Management</h2>
+                        </div>
+                        <button class="card-action-link" id="view-all-trustees-btn">
+                            <span>View All</span>
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </button>
+                    </div>
+
+                    <div class="table-responsive-container">
+                        <table class="data-table" aria-label="Trustee Management Table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Linked User</th>
+                                    <th>Relation</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="trustees-tbody">
+                                <!-- Rendered dynamically by js/securityOperations.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 3. Admin Security Restriction Panel (Right Column) -->
+                <div class="card-panel security-restriction-panel" id="security-restriction-panel">
+                    <div class="restriction-panel-body">
+                        <div class="restriction-title-row">
+                            <div class="restriction-lock-icon">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+                                </svg>
+                            </div>
+                            <h2 class="restriction-title">Admin Cannot Decrypt User Vaults</h2>
+                        </div>
+
+                        <p class="restriction-desc">
+                            For your security and privacy, administrators do not have access to user vault contents. All vault data is end-to-end encrypted using user-controlled keys and threshold-based secret sharing. Even with full system access, admins cannot decrypt, view, or recover your private files.
+                        </p>
+
+                        <!-- 3 Cryptographic Principles Cards -->
+                        <div class="security-principles-grid">
+                            <div class="principle-box" title="Click to view Cryptographic Architecture">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 2l-2 2m-1.5 1.5L16 7l-1.5-1.5M16 7l-4 4-2-2-4 4 2 2-4 4 2 2 4-4-2-2 4-4 1.5 1.5L19 4l2-2z"></path>
+                                </svg>
+                                <span class="principle-title">Zero-Knowledge Architecture</span>
+                            </div>
+                            <div class="principle-box" title="Click to view Key Hierarchy">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                                <span class="principle-title">User-Controlled Encryption Keys</span>
+                            </div>
+                            <div class="principle-box" title="Click to view Shamir's Secret Sharing">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                    <path d="M12 8v4"></path>
+                                    <path d="M12 16h.01"></path>
+                                </svg>
+                                <span class="principle-title">Threshold Access Only</span>
+                            </div>
+                        </div>
+
+                        <div class="restriction-bottom-quote">
+                            “We manage the system, not your secrets.”
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- E. FOOTER -->
+            <footer class="app-footer" role="contentinfo">
+                <div class="footer-left">
+                    <svg viewBox="0 0 32 36" width="20" height="20" fill="none">
+                        <path d="M16 2L3 7V16C3 24.5 8.5 32.2 16 34C23.5 32.2 29 24.5 29 16V7L16 2Z" fill="#E86326"/>
+                    </svg>
+                    <span style="font-weight: 700; color: var(--text-heading); font-size: 0.85rem;">AegisVault</span>
+                    <span style="font-size: 0.76rem; color: var(--text-muted); margin-left: 0.5rem;">What matters, lives on.</span>
+                </div>
+
+                <div class="footer-center-motto">
+                    “Because what matters today, should matter tomorrow too.”
+                </div>
+
+                <div class="footer-right-links">
+                    <a href="#privacy" class="footer-link">Privacy</a>
+                    <a href="#terms" class="footer-link">Terms</a>
+                    <a href="#help" class="footer-link">Help</a>
+                </div>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- ======================================================================
+         4. MODALS & INTERACTIVE OVERLAYS
+         ====================================================================== -->
+
+    <!-- Event Detail Modal -->
+    <div class="modal-overlay" id="event-detail-modal" role="dialog" aria-modal="true" aria-labelledby="modal-event-title">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title" id="modal-event-title">
+                    <span id="modal-event-type" class="event-badge danger">EVENT</span>
+                    <span style="font-size: 0.9rem; color: var(--text-muted);">ID: <span id="modal-event-id">EVT-0000</span></span>
+                </div>
+                <button class="modal-close-btn" data-close-modal aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-item-label">Timestamp</span>
+                        <span class="detail-item-value" id="modal-event-time">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">Status</span>
+                        <span class="detail-item-value" id="modal-event-status">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">User Principal</span>
+                        <span class="detail-item-value" id="modal-event-user">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">IP Address</span>
+                        <span class="detail-item-value" id="modal-event-ip">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">Origin Location</span>
+                        <span class="detail-item-value" id="modal-event-location">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">Client User Agent</span>
+                        <span class="detail-item-value" id="modal-event-ua" style="font-size: 0.72rem;">--</span>
+                    </div>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-item-label">Incident Summary</span>
+                    <span class="detail-item-value" id="modal-event-details">--</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-item-label">Cryptographic Proof Hash (SHA-256)</span>
+                    <span class="detail-item-value" id="modal-event-hash" style="font-family: monospace; font-size: 0.7rem; color: var(--brand-orange);">--</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" data-close-modal>Dismiss</button>
+                <button class="btn-danger" onclick="AegisInteractions.showToast('Security incident flagged for forensic audit.', 'warning'); AegisInteractions.closeModal('event-detail-modal');">Flag for Audit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View All Events Modal -->
+    <div class="modal-overlay" id="all-events-modal" role="dialog" aria-modal="true">
+        <div class="modal-card wide">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    All Security Audit Logs
+                </div>
+                <button class="modal-close-btn" data-close-modal>&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 0;">
+                <div class="table-responsive-container" style="max-height: 480px;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Event</th>
+                                <th>User</th>
+                                <th>Details</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="all-events-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="AegisInteractions.showToast('Exporting immutable audit log to CSV...', 'info');">Export CSV</button>
+                <button class="btn-primary" data-close-modal>Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Service Status Modal -->
+    <div class="modal-overlay" id="service-status-modal" role="dialog" aria-modal="true">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span id="modal-service-name">Service Name</span>
+                    <span style="font-size: 0.72rem; color: var(--emerald); border: 1px solid var(--emerald-border); padding: 0.15rem 0.45rem; border-radius: 4px;" id="modal-service-status">Operational</span>
+                </div>
+                <button class="modal-close-btn" data-close-modal>&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="modal-service-desc" style="color: var(--text-muted); font-size: 0.82rem; line-height: 1.4;"></p>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-item-label">API Latency (p99)</span>
+                        <span class="detail-item-value" id="modal-service-latency">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">CPU / Memory Load</span>
+                        <span class="detail-item-value" id="modal-service-load">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">Replica Pods</span>
+                        <span class="detail-item-value" id="modal-service-instances">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">Last Health Ping</span>
+                        <span class="detail-item-value" id="modal-service-checked">--</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="AegisInteractions.showToast('Triggering diagnostic probe ping...', 'info');">Probe Diagnostic</button>
+                <button class="btn-primary" data-close-modal>Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- IP Detail Modal -->
+    <div class="modal-overlay" id="ip-detail-modal" role="dialog" aria-modal="true">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span>IP Threat Analysis: <span id="modal-ip-address" style="font-family: monospace; color: var(--coral);">0.0.0.0</span></span>
+                </div>
+                <button class="modal-close-btn" data-close-modal>&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-item-label">Failed Attempts</span>
+                        <span class="detail-item-value" id="modal-ip-attempts" style="color: var(--coral);">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">Geolocation</span>
+                        <span class="detail-item-value" id="modal-ip-location">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">ISP / Autonomous System</span>
+                        <span class="detail-item-value" id="modal-ip-isp">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">Target Accounts</span>
+                        <span class="detail-item-value" id="modal-ip-target">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">First Seen</span>
+                        <span class="detail-item-value" id="modal-ip-first">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">Last Probe</span>
+                        <span class="detail-item-value" id="modal-ip-last">--</span>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-item-label">Recommended Defense Protocol</span>
+                    <span class="detail-item-value" id="modal-ip-action" style="color: var(--brand-orange);">--</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" data-close-modal>Close</button>
+                <button class="btn-danger" onclick="AegisInteractions.showToast('Firewall block rule deployed to Edge Gateway.', 'success'); AegisInteractions.closeModal('ip-detail-modal');">Block IP at Firewall</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Profile Modal -->
+    <div class="modal-overlay" id="user-profile-modal" role="dialog" aria-modal="true">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span id="modal-user-name">User Name</span>
+                    <span id="modal-user-status" class="status-dot active">Active</span>
+                </div>
+                <button class="modal-close-btn" data-close-modal>&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-item-label">Email</span>
+                        <span class="detail-item-value" id="modal-user-email">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">Role</span>
+                        <span class="detail-item-value" id="modal-user-role">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">Joined On</span>
+                        <span class="detail-item-value" id="modal-user-joined">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">Active Vaults</span>
+                        <span class="detail-item-value" id="modal-user-vaults">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">Designated Trustees</span>
+                        <span class="detail-item-value" id="modal-user-trustees">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">Heartbeat Status</span>
+                        <span class="detail-item-value" id="modal-user-heartbeat">--</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" data-close-modal>Close</button>
+                <button class="btn-primary" onclick="AegisInteractions.showToast('Simulated user audit report generated.', 'info'); AegisInteractions.closeModal('user-profile-modal');">Generate Audit Dossier</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View All Users Modal -->
+    <div class="modal-overlay" id="all-users-modal" role="dialog" aria-modal="true">
+        <div class="modal-card wide">
+            <div class="modal-header">
+                <div class="modal-title">All Registered Users</div>
+                <button class="modal-close-btn" data-close-modal>&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 0;">
+                <div class="table-responsive-container" style="max-height: 480px;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Joined</th>
+                                <th>Vaults</th>
+                                <th>Trustees</th>
+                            </tr>
+                        </thead>
+                        <tbody id="all-users-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" data-close-modal>Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trustee Detail Modal -->
+    <div class="modal-overlay" id="trustee-detail-modal" role="dialog" aria-modal="true">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <span id="modal-trustee-name">Trustee Name</span>
+                    <span style="font-size: 0.75rem; color: var(--emerald);" id="modal-trustee-status">Verified</span>
+                </div>
+                <button class="modal-close-btn" data-close-modal>&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-item-label">Relationship</span>
+                        <span class="detail-item-value" id="modal-trustee-relation">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">Linked Vault Owner</span>
+                        <span class="detail-item-value" id="modal-trustee-linked">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">Encrypted Phone</span>
+                        <span class="detail-item-value" id="modal-trustee-phone">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">Cryptographic Share</span>
+                        <span class="detail-item-value" id="modal-trustee-shares">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">Designated Date</span>
+                        <span class="detail-item-value" id="modal-trustee-date">--</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">Verification Method</span>
+                        <span class="detail-item-value" id="modal-trustee-method">--</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" data-close-modal>Close</button>
+                <button class="btn-primary" onclick="AegisInteractions.showToast('Verification challenge token re-issued.', 'info'); AegisInteractions.closeModal('trustee-detail-modal');">Re-verify Trustee</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View All Trustees Modal -->
+    <div class="modal-overlay" id="all-trustees-modal" role="dialog" aria-modal="true">
+        <div class="modal-card wide">
+            <div class="modal-header">
+                <div class="modal-title">All Designated Trustees</div>
+                <button class="modal-close-btn" data-close-modal>&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 0;">
+                <div class="table-responsive-container" style="max-height: 480px;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Linked User</th>
+                                <th>Relation</th>
+                                <th>Status</th>
+                                <th>Shares Held</th>
+                                <th>Added Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="all-trustees-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" data-close-modal>Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Support Modal -->
+    <div class="modal-overlay" id="admin-support-modal" role="dialog" aria-modal="true">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+                    Admin Support & Incident Escalation
+                </div>
+                <button class="modal-close-btn" data-close-modal>&times;</button>
+            </div>
+            <form id="admin-support-form">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="support-topic">Incident Category</label>
+                        <select class="form-select" id="support-topic" required>
+                            <option value="Security Incident Report">Security Incident Report</option>
+                            <option value="System Issue">System Service Outage / Degraded Node</option>
+                            <option value="Account Assistance">Account Assistance / Compliance Request</option>
+                            <option value="KMS Hardware Escalation">KMS Hardware Enclave Escalation</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="support-severity">Urgency Level</label>
+                        <select class="form-select" id="support-severity" required>
+                            <option value="P1 - Critical">P1 — Critical (Immediate Core Escalation)</option>
+                            <option value="P2 - High">P2 — High Priority</option>
+                            <option value="P3 - Medium" selected>P3 — Medium Operational</option>
+                            <option value="P4 - Low">P4 — Informational</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="support-desc">Incident Description & Log Details</label>
+                        <textarea class="form-textarea" id="support-desc" placeholder="Provide log snippets, affected user IDs, IP addresses, and detailed symptoms..." required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" data-close-modal>Cancel</button>
+                    <button type="submit" class="btn-primary">Submit Support Ticket</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Security Restriction Modal (Zero-Knowledge Explanation) -->
+    <div class="modal-overlay" id="security-restriction-modal" role="dialog" aria-modal="true">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title" style="color: var(--coral);">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+                    AegisVault Zero-Knowledge Cryptographic Boundary
+                </div>
+                <button class="modal-close-btn" data-close-modal>&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="line-height: 1.5; color: var(--text-body);">
+                    AegisVault operates strictly on a mathematical <strong>Zero-Knowledge Architecture</strong>. By design, our server infrastructure, database instances, and administrators are technically and mathematically incapable of accessing user vault payloads.
+                </p>
+
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-item-label">Client-Side Key Generation</span>
+                        <span class="detail-item-value" style="font-size: 0.78rem;">Keys are derived on the user's local browser device via PBKDF2 + Argon2id. The master decryption key is never transmitted across the network.</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">Shamir's Secret Sharing (SSS)</span>
+                        <span class="detail-item-value" style="font-size: 0.78rem;">Vault recovery keys are split into polynomial threshold shares (k-of-n) distributed across independent, verified trustees.</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">AES-256-GCM Envelope Encryption</span>
+                        <span class="detail-item-value" style="font-size: 0.78rem;">All private files are encrypted with authenticated AES-256-GCM prior to replication to cold storage.</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-item-label">Time-Locked Grace Period</span>
+                        <span class="detail-item-value" style="font-size: 0.78rem;">Autonomous heartbeat timers protect owners from premature claim triggers with immutable grace periods.</span>
+                    </div>
+                </div>
+
+                <div style="background-color: var(--bg-card-subtle); padding: 0.85rem; border-radius: 6px; border: 1px solid var(--border-color); text-align: center;">
+                    <div style="font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--brand-orange);">
+                        “We manage the system, not your secrets.”
+                    </div>
+                    <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">
+                        AegisVault Protocol Governance Guarantee
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" data-close-modal>Understood</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+    <!-- Scripts -->
+    <script src="js/mockData.js"></script>
+    <script src="js/securityOperations.js"></script>
+    <script src="js/interactions.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
