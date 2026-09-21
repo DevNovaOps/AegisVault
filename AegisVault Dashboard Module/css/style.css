@@ -823,7 +823,9 @@ body.dark-theme .notification-item.unread {
     border-radius: var(--radius-md);
     overflow: hidden;
     position: relative;
-    height: 145px;
+    width: 100%;
+    aspect-ratio: 414 / 1024;
+    height: auto;
     background-image: var(--sidebar-bg-image);
     background-size: cover;
     background-position: center;

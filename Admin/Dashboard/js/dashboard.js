@@ -662,7 +662,7 @@ const AegisDashboard = {
     },
 
     initMobileDrawer() {
-        const hamburgerBtn = document.getElementById('btn-mobile-menu');
+        const hamburgerBtn = document.getElementById('btn-hamburger') || document.getElementById('btn-mobile-menu');
         const sidebar = document.getElementById('app-sidebar');
         const backdrop = document.getElementById('sidebar-backdrop');
 
@@ -1177,6 +1177,7 @@ const AegisDashboard = {
 // Aliases for inline HTML handlers & backwards compatibility
 window.AegisCharts = AegisDashboard;
 window.AegisInteractions = AegisDashboard;
+window.AegisDashboard = AegisDashboard;
 
 document.addEventListener('DOMContentLoaded', () => {
     AegisDashboard.init();
