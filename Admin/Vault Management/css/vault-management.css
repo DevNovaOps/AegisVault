@@ -604,6 +604,8 @@ body.dark-theme .avatar-initials-circle {
     display: flex;
     flex: 1;
     position: relative;
+    width: 100%;
+    min-width: 0;
 }
 
 /* Sidebar Navigation */
@@ -1938,61 +1940,84 @@ body.dark-theme .toast-message {
 @keyframes toastSlideIn {
     from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
 /* ==========================================================================
-   10. Application Footer (Identical to User Management)
+   10. Application Footer (Matches User Management)
    ========================================================================== */
 .app-footer {
+    border-top: 1px solid var(--border-color);
+    background-color: var(--bg-surface);
+    padding: 1.15rem 1.5rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1.25rem 0 0.5rem 0;
-    border-top: 1px solid var(--border-color);
     font-size: 0.76rem;
-    color: var(--text-muted);
-    margin-top: 1rem;
+    color: var(--text-secondary);
+    margin-top: auto;
+    width: 100%;
 }
 
 .footer-left {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.65rem;
 }
 
-.footer-logo-svg {
-    width: 22px;
-    height: 22px;
+.footer-logo-svg, .brand-logo-svg {
+    width: 20px;
+    height: 24px;
+    flex-shrink: 0;
 }
 
-.footer-brand-text {
+.footer-brand-text, .brand-text-col {
     display: flex;
     flex-direction: column;
 }
 
-.footer-brand-text .brand-name {
+.footer-brand-text .brand-name, .brand-text-col .brand-name {
     font-size: 0.95rem;
     font-weight: 700;
+    color: var(--brand-orange);
+    line-height: 1.1;
 }
 
-.footer-brand-text .brand-tagline {
+.footer-brand-text .brand-tagline, .brand-text-col .brand-tagline {
     font-size: 0.65rem;
     color: var(--text-muted);
+    line-height: 1.2;
 }
 
 .footer-center {
+    font-family: var(--font-serif);
     font-style: italic;
     color: var(--text-secondary);
     text-align: center;
+    position: relative;
+    padding-bottom: 3px;
+}
+
+.footer-center::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 45%;
+    width: 28px;
+    height: 2px;
+    background: var(--brand-orange);
+    border-radius: 2px;
 }
 
 .footer-right {
     display: flex;
     align-items: center;
-    gap: 1.25rem;
+    gap: 1.1rem;
 }
 
 .footer-link {
-    color: var(--text-muted);
-    transition: color 0.15s ease;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: var(--transition);
 }
 
 .footer-link:hover {

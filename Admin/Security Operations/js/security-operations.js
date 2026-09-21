@@ -211,7 +211,9 @@
 
     function switchTab(tabId) {
         state.currentTab = tabId;
-        window.location.hash = tabId;
+        if (window.history && window.history.replaceState) {
+            window.history.replaceState(null, null, `#${tabId}`);
+        }
 
         dom.tabButtons.forEach(btn => {
             btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
@@ -220,6 +222,8 @@
         dom.tabPanels.forEach(panel => {
             panel.classList.toggle('active', panel.id === `tab-panel-${tabId}`);
         });
+
+        window.scrollTo(0, 0);
 
         // If switching to full views, ensure their respective tables render
         if (tabId === 'events') renderFullEventsTable();

@@ -161,6 +161,8 @@ html {
     font-size: 14px;
     line-height: 1.5;
     -webkit-text-size-adjust: 100%;
+    overflow-x: hidden;
+    max-width: 100vw;
 }
 
 body {
@@ -169,6 +171,7 @@ body {
     color: var(--text-primary);
     min-height: 100vh;
     overflow-x: hidden;
+    max-width: 100vw;
     position: relative;
     transition: background-color var(--trans-normal), color var(--trans-normal);
 }
@@ -574,6 +577,28 @@ body:not(.light-theme) .thumb-icon-moon,
     flex: 1;
     min-height: calc(100vh - 60px);
     position: relative;
+    width: 100%;
+    min-width: 0;
+}
+
+.sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 85;
+}
+
+.main-workspace {
+    flex: 1 1 0%;
+    min-width: 0 !important;
+    width: calc(100% - 220px);
+    max-width: calc(100% - 220px);
+    overflow-x: hidden;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
 }
 
 /* Sidebar (Width 220px matching User Management) */
@@ -1304,6 +1329,9 @@ body:not(.light-theme) .sidebar-landscape-overlay {
     border-radius: 12px;
     box-shadow: var(--shadow-card);
     overflow: hidden;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
 }
 
 .table-card-header {
@@ -1355,11 +1383,15 @@ body:not(.light-theme) .sidebar-landscape-overlay {
 /* Table Container & Resets */
 .table-scroll-wrap {
     width: 100%;
+    min-width: 0;
+    max-width: 100%;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .ops-data-table {
     width: 100%;
+    min-width: 880px;
     border-collapse: collapse;
     font-size: 0.82rem;
     text-align: left;
@@ -1692,6 +1724,9 @@ body:not(.light-theme) .sidebar-landscape-overlay {
 .tab-panel-section {
     display: none;
     animation: fadeIn 0.25s ease forwards;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
 }
 
 .tab-panel-section.active {
@@ -2039,6 +2074,11 @@ body:not(.light-theme) .sidebar-landscape-overlay {
     .header-center {
         display: none;
     }
+    .main-workspace {
+        width: 100%;
+        max-width: 100%;
+        padding: 1rem 0.85rem;
+    }
     .main-content {
         padding: 16px;
     }
@@ -2061,4 +2101,86 @@ body:not(.light-theme) .sidebar-landscape-overlay {
     .filter-search-box {
         width: 100%;
     }
+}
+
+/* ==========================================================================
+   14. Application Footer (Matches User Management)
+   ========================================================================== */
+.app-footer {
+    border-top: 1px solid var(--border-color);
+    background-color: var(--bg-surface);
+    padding: 1.15rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.76rem;
+    color: var(--text-secondary);
+    margin-top: auto;
+    width: 100%;
+}
+
+.footer-left {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.footer-logo-svg, .brand-logo-svg {
+    width: 20px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.footer-brand-text, .brand-text-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.footer-brand-text .brand-name, .brand-text-col .brand-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--brand-orange);
+    line-height: 1.1;
+}
+
+.footer-brand-text .brand-tagline, .brand-text-col .brand-tagline {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    line-height: 1.2;
+}
+
+.footer-center {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--text-secondary);
+    text-align: center;
+    position: relative;
+    padding-bottom: 3px;
+}
+
+.footer-center::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 45%;
+    width: 28px;
+    height: 2px;
+    background: var(--brand-orange);
+    border-radius: 2px;
+}
+
+.footer-right {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+}
+
+.footer-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: var(--trans-fast);
+}
+
+.footer-link:hover {
+    color: var(--brand-orange);
 }
