@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AegisVault — Security Operations</title>
+    <meta name="description" content="AegisVault Security Operations Console — Monitor security events, active alerts, access activity, and incidents across the custody protocol.">
+    <meta name="theme-color" content="#080D1A">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Core Design System Foundation (from User Management) -->
+    <link rel="stylesheet" href="../User Management/css/user-management.css">
+    <!-- Security Operations Module Specific Styles -->
+    <link rel="stylesheet" href="css/security-operations.css">
+</head>
+<body class="dark-theme">
+
+    <div class="app-layout">
+
+        <!-- ==============================================================
+             1. UNIVERSAL APPLICATION HEADER
+             ============================================================== -->
+        <header class="app-header" role="banner">
+            <!-- Left: Brand Logo & Title -->
+            <div class="header-left">
+                <button class="hamburger-btn" id="btn-hamburger" aria-label="Toggle Sidebar Menu">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+
+                <a href="../Dashboard/index.html" class="brand-link" aria-label="AegisVault Admin Console">
+                    <svg class="brand-logo-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 2L5 7.5V17C5 25.5 10.5 32.5 18 34.5C25.5 32.5 31 25.5 31 17V7.5L18 2Z" fill="#F45A1F"/>
+                        <path d="M18 5L7.5 9.4V17C7.5 24 12 29.8 18 31.6C24 29.8 28.5 24 28.5 17V9.4L18 5Z" fill="#FF7A2F"/>
+                        <rect x="13" y="15" width="10" height="9" rx="2" fill="#FFFFFF"/>
+                        <path d="M15 15V12.8C15 11.25 16.34 10 18 10C19.66 10 21 11.25 21 12.8V15" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/>
+                        <circle cx="18" cy="18.5" r="1.3" fill="#F45A1F"/>
+                        <path d="M18 19.8V21.5" stroke="#F45A1F" stroke-width="1.3" stroke-linecap="round"/>
+                    </svg>
+                    <div class="brand-text-col">
+                        <span class="brand-name">AegisVault</span>
+                        <span class="brand-tagline">What matters, lives on.</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Center: Search Bar -->
+            <div class="header-center">
+                <div class="search-container">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" 
+                           id="global-header-search" 
+                           class="search-input" 
+                           placeholder="Search users, trustees, vaults, logs, or settings..." 
+                           autocomplete="off"
+                           aria-label="Global search">
+                    <span class="search-shortcut-pill">/</span>
+                </div>
+            </div>
+
+            <!-- Right: Theme Switcher, Notifications, Admin Profile -->
+            <div class="header-right">
+                <!-- Theme Switcher Pill Toggle -->
+                <button class="theme-toggle-btn" id="btn-theme-toggle" aria-label="Toggle light and dark theme" title="Toggle theme">
+                    <div class="theme-toggle-track">
+                        <span class="theme-track-icon theme-track-sun" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="4"></circle>
+                                <line x1="12" y1="2" x2="12" y2="4"></line>
+                                <line x1="12" y1="20" x2="12" y2="22"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="2" y1="12" x2="4" y2="12"></line>
+                                <line x1="20" y1="12" x2="22" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                        </span>
+                        <span class="theme-track-icon theme-track-moon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
+                        </span>
+                        <div class="theme-toggle-thumb">
+                            <svg class="thumb-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                <circle cx="12" cy="12" r="4"></circle>
+                                <line x1="12" y1="2" x2="12" y2="4"></line>
+                                <line x1="12" y1="20" x2="12" y2="22"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="2" y1="12" x2="4" y2="12"></line>
+                                <line x1="20" y1="12" x2="22" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                            <svg class="thumb-icon-moon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </button>
+
+                <!-- Notifications Bell with unread badge 3 matching screenshot -->
+                <div class="notif-wrapper">
+                    <button class="header-icon-btn" id="btn-notifications" aria-label="Notifications" title="Notifications" onclick="AegisSecurityModule.showToast('You have 3 high priority security notifications', 'warning')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="notif-badge-pill" id="notif-badge-indicator">3</span>
+                    </button>
+                </div>
+
+                <!-- Admin Profile Avatar AP matching screenshot -->
+                <div class="profile-wrapper">
+                    <button class="profile-btn" id="btn-user-profile" aria-label="Admin User Profile">
+                        <div class="profile-avatar-initials">AP</div>
+                        <div class="profile-info">
+                            <span class="profile-name">Admin</span>
+                            <span class="profile-role">System Administrator</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- ==============================================================
+             2. APP SHELL (SIDEBAR + MAIN WORKSPACE)
+             ============================================================== -->
+        <div class="app-body-container">
+            <!-- Mobile Backdrop -->
+            <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+            <!-- Left Admin Navigation Sidebar -->
+            <aside class="app-sidebar" id="app-sidebar" role="navigation" aria-label="Admin Navigation">
+                <div class="sidebar-top-group">
+                    <div class="sidebar-section-label">ADMIN</div>
+                    <ul class="sidebar-nav-list">
+                        <!-- 1. Dashboard -->
+                        <li>
+                            <a href="../Dashboard/index.html" class="nav-link-item" data-target="dashboard">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                                <span class="nav-label">Dashboard</span>
+                            </a>
+                        </li>
+                        <!-- 2. User Management -->
+                        <li>
+                            <a href="../User Management/index.html" class="nav-link-item" data-target="user-management">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                <span class="nav-label">User Management</span>
+                            </a>
+                        </li>
+                        <!-- 3. Trustee Management -->
+                        <li>
+                            <a href="../Trustee Management/index.html" class="nav-link-item" data-target="trustee-management">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                                <span class="nav-label">Trustee Management</span>
+                            </a>
+                        </li>
+                        <!-- 4. Vault Management -->
+                        <li>
+                            <a href="../Vault Management/index.html" class="nav-link-item" data-target="vault-management">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                                <span class="nav-label">Vault Management</span>
+                            </a>
+                        </li>
+                        <!-- 5. Security Operations (ACTIVE) -->
+                        <li>
+                            <a href="index.html" class="nav-link-item active" id="nav-security-operations" data-target="security-operations">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                    <polyline points="9 12 11 14 15 10"></polyline>
+                                </svg>
+                                <span class="nav-label">Security Operations</span>
+                            </a>
+                        </li>
+                        <!-- 6. Audit Logs -->
+                        <li>
+                            <a href="../Audit Logs/index.html" class="nav-link-item" data-target="audit-logs">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                </svg>
+                                <span class="nav-label">Audit Logs</span>
+                            </a>
+                        </li>
+                        <!-- 7. System Health -->
+                        <li>
+                            <a href="../System Health/index.html" class="nav-link-item" data-target="system-health">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                                </svg>
+                                <span class="nav-label">System Health</span>
+                            </a>
+                        </li>
+                        <!-- 8. Analytics -->
+                        <li>
+                            <a href="../Analytics/index.html" class="nav-link-item" data-target="analytics">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                                </svg>
+                                <span class="nav-label">Analytics</span>
+                            </a>
+                        </li>
+                        <!-- 9. Reports -->
+                        <li>
+                            <a href="../Reports/index.html" class="nav-link-item" data-target="reports">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10 9 9 9 8 9"></polyline>
+                                </svg>
+                                <span class="nav-label">Reports</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Lower Sidebar Mountain Landscape Card matching User Management -->
+                <div class="sidebar-bottom-landscape-card" aria-hidden="true">
+                    <img class="sidebar-landscape-img sidebar-img-light" src="../assets/sidebar-bg-light.png" alt="Alpine Mountain Landscape Light">
+                    <img class="sidebar-landscape-img sidebar-img-dark" src="../assets/sidebar-bg-dark.png" alt="Alpine Mountain Landscape Dark">
+                    <div class="sidebar-landscape-overlay"></div>
+                    <div class="sidebar-landscape-text">
+                        Stronger<br>Security.<br>Brighter<br>Tomorrows.
+                    </div>
+                </div>
+            </aside>
+
+            <!-- ==============================================================
+                 3. MAIN SECURITY OPERATIONS WORKSPACE
+                 ============================================================== -->
+            <main class="main-workspace" id="main-content" role="main">
+
+                <!-- Breadcrumbs matching User Management -->
+                <div class="breadcrumb-row">
+                    <a href="../Dashboard/index.html" class="breadcrumb-link">Admin</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-current">Security Operations</span>
+                </div>
+
+                <!-- Hero Section matching User Management -->
+                <section class="hero-card" aria-label="Security Operations Overview">
+                    <div class="hero-left-col">
+                        <h1 class="hero-title">Security Operations</h1>
+                        <p class="hero-subtitle">Detect. Investigate. Respond. Keep what matters safe.</p>
+                    </div>
+
+                    <!-- Center Panoramic Mountain Cutout Card (Shared Assets) -->
+                    <div class="hero-center-col" aria-hidden="true">
+                        <img class="hero-panorama-img hero-img-light" src="../assets/light-background.png" alt="Mountain Panorama">
+                        <img class="hero-panorama-img hero-img-dark" src="../assets/dark-background.png" alt="Mountain Panorama">
+                        <div class="hero-panorama-fade-left"></div>
+                        <p class="hero-quote-text">“Proactive today,<br>safer tomorrows.”</p>
+                        <div class="hero-panorama-fade-right"></div>
+                    </div>
+
+                    <!-- Time Range Selector Dropdown in Hero Right -->
+                    <div class="hero-right-col">
+                        <button class="time-range-select-btn" id="btn-time-range" onclick="AegisSecurityModule.refreshTelemetry()">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            <span>Last 24 Hours</span>
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Operations Navigation Sub-Tabs -->
+                <nav class="operations-tab-bar" aria-label="Security Operations Views">
+                    <button class="ops-tab-btn active" data-tab="overview">
+                        <span>Security Overview</span>
+                    </button>
+                    <button class="ops-tab-btn" data-tab="alerts">
+                        <span>Active Alerts</span>
+                        <span class="tab-badge" id="tab-alerts-count">5</span>
+                    </button>
+                    <button class="ops-tab-btn" data-tab="events">
+                        <span>Security Events</span>
+                        <span class="tab-badge">1,284</span>
+                    </button>
+                    <button class="ops-tab-btn" data-tab="access">
+                        <span>Access Activity</span>
+                        <span class="tab-badge">1,124</span>
+                    </button>
+                    <button class="ops-tab-btn" data-tab="incidents">
+                        <span>Incidents</span>
+                        <span class="tab-badge">3</span>
+                    </button>
+                </nav>
+
+                <!-- ==============================================================
+                     TAB PANEL 1: SECURITY OVERVIEW (EXACT SCREENSHOT LAYOUT)
+                     ============================================================== -->
+                <div class="tab-panel-section active" id="tab-panel-overview">
+
+                    <!-- Top 4 Summary KPI Cards matching User Management -->
+                    <section class="overview-metrics-grid" aria-label="Key Security Metrics">
+                        <!-- Card 1: Security Events -->
+                        <div class="metric-overview-card metric-blue">
+                            <div class="metric-icon-circle">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                </svg>
+                            </div>
+                            <div class="metric-content-col">
+                                <div class="metric-number-row">
+                                    <span class="metric-number-display" id="kpi-events-val">47</span>
+                                    <span class="trend-badge negative">↑ 32%</span>
+                                </div>
+                                <span class="metric-title-text">Security Events</span>
+                                <span class="metric-subtext-label">vs previous 24h</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Critical Alerts -->
+                        <div class="metric-overview-card metric-coral">
+                            <div class="metric-icon-circle">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                </svg>
+                            </div>
+                            <div class="metric-content-col">
+                                <div class="metric-number-row">
+                                    <span class="metric-number-display" id="kpi-alerts-val">5</span>
+                                    <span class="trend-badge negative">↑ 67%</span>
+                                </div>
+                                <span class="metric-title-text">Critical Alerts</span>
+                                <span class="metric-subtext-label">Requires immediate action</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 3: Active Threats -->
+                        <div class="metric-overview-card metric-emerald">
+                            <div class="metric-icon-circle">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                </svg>
+                            </div>
+                            <div class="metric-content-col">
+                                <div class="metric-number-row">
+                                    <span class="metric-number-display" id="kpi-threats-val">0</span>
+                                    <span class="trend-badge positive">↓ 100%</span>
+                                </div>
+                                <span class="metric-title-text">Active Threats</span>
+                                <span class="metric-subtext-label">No active threats</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 4: Blocked Attempts -->
+                        <div class="metric-overview-card metric-purple">
+                            <div class="metric-icon-circle">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                            </div>
+                            <div class="metric-content-col">
+                                <div class="metric-number-row">
+                                    <span class="metric-number-display" id="kpi-blocked-val">1,284</span>
+                                    <span class="trend-badge positive">↑ 18%</span>
+                                </div>
+                                <span class="metric-title-text">Blocked Attempts</span>
+                                <span class="metric-subtext-label">Suspicious activity</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Middle Row: 3 Widgets matching screenshot -->
+                    <div class="widgets-middle-grid">
+                        <!-- Widget 1: Security Event Trends (Line Chart) -->
+                        <div class="widget-card">
+                            <div class="widget-header">
+                                <div class="widget-title-group">
+                                    <svg class="widget-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                    </svg>
+                                    <span class="widget-title">Security Event Trends</span>
+                                </div>
+                                <button class="widget-select-btn" onclick="AegisSecurityModule.showToast('Timeframe: Last 7 Days', 'info')">
+                                    <span>Last 7 Days</span>
+                                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </button>
+                            </div>
+                            <!-- SVG Trend Chart Container -->
+                            <div class="chart-container-box">
+                                <div id="trend-chart-svg-wrap" style="width: 100%; height: 160px;"></div>
+                                <div class="chart-legend-row">
+                                    <div class="legend-item">
+                                        <span class="legend-dot legend-dot-red"></span>
+                                        <span>Failed Login Attempts</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="legend-dot legend-dot-blue"></span>
+                                        <span>Suspicious Activity</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Widget 2: Threat Sources (SVG World Map + Country Breakdown) -->
+                        <div class="widget-card">
+                            <div class="widget-header">
+                                <div class="widget-title-group">
+                                    <svg class="widget-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                    </svg>
+                                    <span class="widget-title">Threat Sources</span>
+                                </div>
+                                <button class="widget-select-btn" onclick="AegisSecurityModule.showToast('Timeframe: Last 30 Days', 'info')">
+                                    <span>Last 30 Days</span>
+                                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </button>
+                            </div>
+                            <!-- World Map + Breakdown List -->
+                            <div class="threat-sources-content">
+                                <div class="world-map-svg-wrap" id="world-map-svg-wrap"></div>
+                                <div class="threat-country-list" id="threat-country-list-wrap"></div>
+                            </div>
+                        </div>
+
+                        <!-- Widget 3: Security Posture (Donut Gauge + Category Scores) -->
+                        <div class="widget-card">
+                            <div class="widget-header">
+                                <div class="widget-title-group">
+                                    <svg class="widget-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                    </svg>
+                                    <span class="widget-title">Security Posture</span>
+                                </div>
+                            </div>
+                            <!-- Donut Gauge + Breakdown List -->
+                            <div class="posture-content">
+                                <div class="posture-donut-wrap">
+                                    <div id="posture-donut-svg"></div>
+                                    <div class="posture-center-text">
+                                        <span class="posture-big-score">92</span>
+                                        <span class="posture-max-score">/ 100</span>
+                                        <span class="posture-status-pill">Good</span>
+                                    </div>
+                                </div>
+                                <div class="posture-breakdown-list" id="posture-breakdown-list"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filter & Search Toolbar matching User Management -->
+                    <section class="filters-toolbar" aria-label="Security Events Filter Controls">
+                        <div class="filters-left-group">
+                            <!-- Search box with magnifying glass -->
+                            <div class="filter-search-wrap">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                                <input type="text" 
+                                       id="table-search-input" 
+                                       class="filter-search-input" 
+                                       placeholder="Search events, IP, user, or description..." 
+                                       autocomplete="off"
+                                       aria-label="Filter events">
+                            </div>
+
+                            <!-- Dropdown 1: All Event Types -->
+                            <div class="filter-select-wrap">
+                                <select class="filter-select" id="select-event-type" aria-label="Filter by Event Type">
+                                    <option value="all">All Event Types</option>
+                                    <option value="failed login">Failed Login</option>
+                                    <option value="unusual location">Unusual Location</option>
+                                    <option value="multiple failed attempts">Multiple Failed Attempts</option>
+                                    <option value="suspicious api request">Suspicious API Request</option>
+                                    <option value="new device login">New Device Login</option>
+                                    <option value="permission change">Permission Change</option>
+                                    <option value="malicious ip blocked">Malicious IP Blocked</option>
+                                    <option value="data export attempt">Data Export Attempt</option>
+                                </select>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </div>
+
+                            <!-- Dropdown 2: All Severity -->
+                            <div class="filter-select-wrap">
+                                <select class="filter-select" id="select-severity" aria-label="Filter by Severity">
+                                    <option value="all">All Severity</option>
+                                    <option value="high">High</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="low">Low</option>
+                                </select>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </div>
+
+                            <!-- Dropdown 3: All Sources -->
+                            <div class="filter-select-wrap">
+                                <select class="filter-select" id="select-source" aria-label="Filter by Source">
+                                    <option value="all">All Sources</option>
+                                    <option value="admin portal">Admin Portal</option>
+                                    <option value="vault access">Vault Access</option>
+                                    <option value="user login">User Login</option>
+                                    <option value="/api/v1/vaults">/api/v1/vaults</option>
+                                    <option value="web portal">Web Portal</option>
+                                    <option value="user management">User Management</option>
+                                    <option value="firewall">Firewall</option>
+                                    <option value="reports">Reports</option>
+                                </select>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </div>
+                        </div>
+
+                        <!-- Right Actions: Filter and Export -->
+                        <div class="filters-right-group">
+                            <button class="btn-apply-filter" id="btn-filter-apply">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                                </svg>
+                                <span>Filter</span>
+                            </button>
+                            <button class="btn-reset-filter" id="btn-export-csv" title="Export filtered events as CSV">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                <span>Export</span>
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- Bottom Row: 2-Column Operations Grid matching screenshot -->
+                    <div class="bottom-operations-grid">
+                        <!-- Left Column: Recent Security Events Table -->
+                        <div class="table-card">
+                            <div class="table-card-header">
+                                <div class="card-title-group">
+                                    <svg class="card-header-icon-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                    </svg>
+                                    <span class="card-title-text">Recent Security Events</span>
+                                </div>
+                                <a href="#events" class="view-all-link" onclick="AegisSecurityModule.switchTab('events')">
+                                    <span>View All</span>
+                                    <span>→</span>
+                                </a>
+                            </div>
+                            <div class="table-scroll-wrap">
+                                <table class="ops-data-table" aria-label="Recent Security Events">
+                                    <thead>
+                                        <tr>
+                                            <th>Time</th>
+                                            <th>Event Type</th>
+                                            <th>User / IP</th>
+                                            <th>Resource</th>
+                                            <th>Severity</th>
+                                            <th>Status</th>
+                                            <th style="text-align: right;">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="events-table-body">
+                                        <!-- Dynamically populated rows from mockData matching screenshot -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Right Column (Stacked Widgets) -->
+                        <div class="right-stacked-col">
+                            <!-- Right Card 1: Active Alerts -->
+                            <div class="alerts-card">
+                                <div class="table-card-header" style="padding: 0 0 12px 0;">
+                                    <div class="card-title-group">
+                                        <svg class="card-header-icon-orange" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                                        </svg>
+                                        <span class="card-title-text">Active Alerts</span>
+                                    </div>
+                                    <a href="#alerts" class="view-all-link" onclick="AegisSecurityModule.switchTab('alerts')">
+                                        <span>View All</span>
+                                        <span>→</span>
+                                    </a>
+                                </div>
+                                <div class="alerts-list-group" id="alerts-widget-list">
+                                    <!-- Dynamically populated 4 alert items from mockData -->
+                                </div>
+                            </div>
+
+                            <!-- Right Card 2: Quick Actions 2x2 Grid -->
+                            <div class="quick-actions-card">
+                                <div class="card-title-group" style="margin-bottom: 2px;">
+                                    <svg class="card-header-icon-orange" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                                    </svg>
+                                    <span class="card-title-text">Quick Actions</span>
+                                </div>
+                                <div class="quick-actions-2x2-grid">
+                                    <button class="btn-quick-tile" onclick="AegisSecurityModule.openBlockIpModal()">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+                                        </svg>
+                                        <span>Block IP Address</span>
+                                    </button>
+                                    <button class="btn-quick-tile" onclick="AegisSecurityModule.openRevokeAccessModal()">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="8.5" cy="7" r="4"></circle>
+                                            <line x1="18" y1="8" x2="23" y2="13"></line>
+                                            <line x1="23" y1="8" x2="18" y2="13"></line>
+                                        </svg>
+                                        <span>Revoke Access</span>
+                                    </button>
+                                    <button class="btn-quick-tile" onclick="AegisSecurityModule.openEventDetails('EVT-8941')">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="11" cy="11" r="8"></circle>
+                                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                        </svg>
+                                        <span>Investigate Event</span>
+                                    </button>
+                                    <button class="btn-quick-tile" onclick="AegisSecurityModule.openThreatIntelModal()">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                            <polyline points="14 2 14 8 20 8"></polyline>
+                                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                                        </svg>
+                                        <span>View Threat Intel</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ==============================================================
+                     TAB PANEL 2: ACTIVE ALERTS
+                     ============================================================== -->
+                <div class="tab-panel-section" id="tab-panel-alerts">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <div>
+                            <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary);">Active Security Alerts</h2>
+                            <p style="font-size: 0.88rem; color: var(--text-muted);">Review and resolve automated security alerts requiring administrative triage.</p>
+                        </div>
+                        <button class="btn-filter-action" onclick="AegisSecurityModule.showToast('All alerts currently synchronized', 'info')">
+                            Acknowledge All Filtered
+                        </button>
+                    </div>
+                    <div id="full-alerts-list">
+                        <!-- Rendered by security-operations.js -->
+                    </div>
+                </div>
+
+                <!-- ==============================================================
+                     TAB PANEL 3: SECURITY EVENTS
+                     ============================================================== -->
+                <div class="tab-panel-section" id="tab-panel-events">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <div>
+                            <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary);">Chronological Security Event Stream</h2>
+                            <p style="font-size: 0.88rem; color: var(--text-muted);">Real-time audit telemetry across authentication, vaults, trustees, and perimeter firewalls.</p>
+                        </div>
+                        <button class="btn-export-action" onclick="AegisSecurityModule.exportEventsCSV()">
+                            Export Audit CSV
+                        </button>
+                    </div>
+                    <div class="table-card">
+                        <div class="table-scroll-wrap">
+                            <table class="ops-data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Event ID</th>
+                                        <th>Time</th>
+                                        <th>Event Type</th>
+                                        <th>User / IP</th>
+                                        <th>Resource</th>
+                                        <th>Severity</th>
+                                        <th>Status</th>
+                                        <th style="text-align: right;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="full-events-table-body">
+                                    <!-- Rendered by security-operations.js -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==============================================================
+                     TAB PANEL 4: ACCESS ACTIVITY
+                     ============================================================== -->
+                <div class="tab-panel-section" id="tab-panel-access">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <div>
+                            <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary);">Access & Authentication Telemetry</h2>
+                            <p style="font-size: 0.88rem; color: var(--text-muted);">Audit log of user logins, role elevations, and cryptographic shard submissions.</p>
+                        </div>
+                        <div style="display: flex; gap: 12px;">
+                            <span class="badge-pill badge-low">1,124 Success</span>
+                            <span class="badge-pill badge-high">27 Blocked</span>
+                        </div>
+                    </div>
+                    <div class="table-card">
+                        <div class="table-scroll-wrap">
+                            <table class="ops-data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Access ID</th>
+                                        <th>User</th>
+                                        <th>Role</th>
+                                        <th>Action</th>
+                                        <th>Resource</th>
+                                        <th>IP Address</th>
+                                        <th>Device / Agent</th>
+                                        <th>Timestamp</th>
+                                        <th>Result</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="access-table-body">
+                                    <!-- Rendered by security-operations.js -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==============================================================
+                     TAB PANEL 5: INCIDENTS
+                     ============================================================== -->
+                <div class="tab-panel-section" id="tab-panel-incidents">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <div>
+                            <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary);">Security Incidents & Response Cases</h2>
+                            <p style="font-size: 0.88rem; color: var(--text-muted);">Active multi-signature, access breach, and system investigation cases.</p>
+                        </div>
+                        <button class="btn-modal-primary" onclick="AegisSecurityModule.showToast('Incident creation workflow open', 'info')">
+                            + Create Incident
+                        </button>
+                    </div>
+                    <div class="table-card">
+                        <div class="table-scroll-wrap">
+                            <table class="ops-data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Incident ID</th>
+                                        <th>Title</th>
+                                        <th>Severity</th>
+                                        <th>Affected Area</th>
+                                        <th>Created</th>
+                                        <th>Assigned To</th>
+                                        <th>Status</th>
+                                        <th style="text-align: right;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="incidents-table-body">
+                                    <!-- Rendered by security-operations.js -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- ==============================================================
+         4. INTERACTIVE MODALS & DRAWERS
+         ============================================================== -->
+
+    <!-- Modal 1: Event Details -->
+    <div class="modal-overlay" id="modal-event-details">
+        <div class="modal-window">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#3B82F6" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                    <span class="modal-title-text">Event Telemetry Details</span>
+                </div>
+                <button class="btn-close-modal" onclick="AegisSecurityModule.closeAllModals()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-meta-grid">
+                    <div>
+                        <div class="meta-field-label">EVENT ID</div>
+                        <div class="meta-field-value mono-cell" id="modal-evt-id">EVT-8941</div>
+                    </div>
+                    <div>
+                        <div class="meta-field-label">TIMESTAMP</div>
+                        <div class="meta-field-value mono-cell" id="modal-evt-time">12 Sep, 10:24 AM</div>
+                    </div>
+                    <div>
+                        <div class="meta-field-label">EVENT TYPE</div>
+                        <div class="meta-field-value" id="modal-evt-type">Failed Login</div>
+                    </div>
+                    <div>
+                        <div class="meta-field-label">SEVERITY</div>
+                        <div class="meta-field-value" id="modal-evt-severity">High</div>
+                    </div>
+                    <div>
+                        <div class="meta-field-label">ORIGIN / USER</div>
+                        <div class="meta-field-value mono-cell" id="modal-evt-user">192.168.1.45</div>
+                    </div>
+                    <div>
+                        <div class="meta-field-label">RESOURCE</div>
+                        <div class="meta-field-value mono-cell" id="modal-evt-resource">Admin Portal</div>
+                    </div>
+                </div>
+                <div>
+                    <div class="modal-input-label" style="margin-bottom: 4px;">TELEMETRY DETAILS</div>
+                    <p id="modal-evt-details" style="font-size: 0.88rem; line-height: 1.4; color: var(--text-primary);"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal-danger" id="btn-modal-block-ip">Block IP</button>
+                <button class="btn-modal-cancel" onclick="AegisSecurityModule.closeAllModals()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 2: Alert Details -->
+    <div class="modal-overlay" id="modal-alert-details">
+        <div class="modal-window">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#EF4444" stroke-width="2">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    </svg>
+                    <span class="modal-title-text" id="modal-alt-id">ALT-2041</span>
+                </div>
+                <button class="btn-close-modal" onclick="AegisSecurityModule.closeAllModals()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3 id="modal-alt-title" style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);"></h3>
+                <div class="modal-meta-grid">
+                    <div>
+                        <div class="meta-field-label">DETECTED</div>
+                        <div class="meta-field-value" id="modal-alt-time"></div>
+                    </div>
+                    <div>
+                        <div class="meta-field-label">SEVERITY</div>
+                        <div class="meta-field-value" id="modal-alt-severity"></div>
+                    </div>
+                    <div>
+                        <div class="meta-field-label">CATEGORY</div>
+                        <div class="meta-field-value" id="modal-alt-category"></div>
+                    </div>
+                    <div>
+                        <div class="meta-field-label">STATUS</div>
+                        <div class="meta-field-value" id="modal-alt-status"></div>
+                    </div>
+                    <div>
+                        <div class="meta-field-label">AFFECTED RESOURCE</div>
+                        <div class="meta-field-value mono-cell" id="modal-alt-resource"></div>
+                    </div>
+                    <div>
+                        <div class="meta-field-label">TARGET USER</div>
+                        <div class="meta-field-value" id="modal-alt-user"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="modal-input-label" style="margin-bottom: 4px;">DESCRIPTION</div>
+                    <p id="modal-alt-desc" style="font-size: 0.88rem; line-height: 1.4; color: var(--text-primary);"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal-cancel" id="btn-modal-ack-alert">Acknowledge</button>
+                <button class="btn-modal-primary" id="btn-modal-res-alert">Resolve</button>
+                <button class="btn-modal-cancel" onclick="AegisSecurityModule.closeAllModals()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3: Resolve Alert with Notes -->
+    <div class="modal-overlay" id="modal-resolve-alert">
+        <div class="modal-window">
+            <div class="modal-header">
+                <span class="modal-title-text" id="resolve-alert-title">Resolve Security Alert</span>
+                <button class="btn-close-modal" onclick="AegisSecurityModule.closeAllModals()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="resolve-alert-desc" style="color: var(--text-primary); font-weight: 600;"></p>
+                <div class="modal-input-group">
+                    <label class="modal-input-label" for="resolve-notes-input">RESOLUTION NOTES</label>
+                    <textarea class="modal-textarea" id="resolve-notes-input" rows="3" placeholder="Reviewed origin, verified user credentials, no further action required."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal-cancel" onclick="AegisSecurityModule.closeAllModals()">Cancel</button>
+                <button class="btn-modal-primary" onclick="AegisSecurityModule.confirmResolveAlert()">Confirm Resolution</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 4: Block IP Address -->
+    <div class="modal-overlay" id="modal-block-ip">
+        <div class="modal-window">
+            <div class="modal-header">
+                <span class="modal-title-text">Perimeter Firewall IP Block</span>
+                <button class="btn-close-modal" onclick="AegisSecurityModule.closeAllModals()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Enforce immediate packet drop rules across AegisVault API and web gateways.</p>
+                <div class="modal-input-group">
+                    <label class="modal-input-label" for="block-ip-input">IP ADDRESS / CIDR</label>
+                    <input type="text" class="modal-input mono-cell" id="block-ip-input" value="192.168.1.45">
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-input-label" for="block-ip-duration">BLOCK DURATION</label>
+                    <select class="filter-select" id="block-ip-duration" style="width: 100%;">
+                        <option value="60m">1 Hour (Temporary Throttle)</option>
+                        <option value="24h">24 Hours</option>
+                        <option value="7d">7 Days</option>
+                        <option value="perm">Permanent Blacklist</option>
+                    </select>
+                </div>
+                <div class="modal-input-group">
+                    <label class="modal-input-label" for="block-ip-reason">SECURITY JUSTIFICATION</label>
+                    <input type="text" class="modal-input" id="block-ip-reason" value="Coordinated brute force authentication probe">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal-cancel" onclick="AegisSecurityModule.closeAllModals()">Cancel</button>
+                <button class="btn-modal-danger" onclick="AegisSecurityModule.confirmBlockIp()">Enforce Block Rule</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 5: Revoke Access -->
+    <div class="modal-overlay" id="modal-revoke-access">
+        <div class="modal-window">
+            <div class="modal-header">
+                <span class="modal-title-text">Revoke User / Trustee Session</span>
+                <button class="btn-close-modal" onclick="AegisSecurityModule.closeAllModals()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Immediately invalidate JSON Web Tokens (JWT) and suspend active vault sessions.</p>
+                <div class="modal-input-group">
+                    <label class="modal-input-label" for="revoke-target-select">TARGET SESSION / CREDENTIAL</label>
+                    <select class="filter-select" id="revoke-target-select" style="width: 100%;">
+                        <option value="rahul@example.com (Vault Access)">rahul@example.com — Personal Archive Vault</option>
+                        <option value="user123@example.com (Auditor)">user123@example.com — Reports Engine</option>
+                        <option value="Anonymous 192.168.1.45">192.168.1.45 — Admin Portal</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal-cancel" onclick="AegisSecurityModule.closeAllModals()">Cancel</button>
+                <button class="btn-modal-danger" onclick="AegisSecurityModule.confirmRevokeAccess()">Revoke Session</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 6: Threat Intel -->
+    <div class="modal-overlay" id="modal-threat-intel">
+        <div class="modal-window">
+            <div class="modal-header">
+                <span class="modal-title-text">Threat Intelligence Lookup</span>
+                <button class="btn-close-modal" onclick="AegisSecurityModule.closeAllModals()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-meta-grid">
+                    <div>
+                        <div class="meta-field-label">TARGET IP</div>
+                        <div class="meta-field-value mono-cell">185.199.110.23</div>
+                    </div>
+                    <div>
+                        <div class="meta-field-label">RISK SCORE</div>
+                        <div class="meta-field-value" style="color: #EF4444;">88 / 100 (Malicious)</div>
+                    </div>
+                    <div>
+                        <div class="meta-field-label">LOCATION</div>
+                        <div class="meta-field-value">🇷🇺 Russia / Moscow</div>
+                    </div>
+                    <div>
+                        <div class="meta-field-label">ASN CLASSIFICATION</div>
+                        <div class="meta-field-value mono-cell">AS54321 Hosting Provider</div>
+                    </div>
+                </div>
+                <div style="font-size: 0.86rem; color: var(--text-secondary); line-height: 1.4;">
+                    <strong>Threat Intel Synopsis:</strong> Recognized botnet scanner associated with automated brute-forcing against multi-signature protocol endpoints. Automatically blacklisted by Aegis perimeter rules.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal-cancel" onclick="AegisSecurityModule.closeAllModals()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 7: Incident Details & Timeline -->
+    <div class="modal-overlay" id="modal-incident-details">
+        <div class="modal-window" style="max-width: 620px;">
+            <div class="modal-header">
+                <div>
+                    <span class="mono-cell" id="modal-inc-id" style="font-size: 0.8rem; color: var(--brand-orange);"></span>
+                    <h3 class="modal-title-text" id="modal-inc-title" style="margin-top: 2px;"></h3>
+                </div>
+                <button class="btn-close-modal" onclick="AegisSecurityModule.closeAllModals()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-meta-grid">
+                    <div>
+                        <div class="meta-field-label">SEVERITY</div>
+                        <div class="meta-field-value" id="modal-inc-severity"></div>
+                    </div>
+                    <div>
+                        <div class="meta-field-label">AFFECTED AREA</div>
+                        <div class="meta-field-value" id="modal-inc-area"></div>
+                    </div>
+                    <div>
+                        <div class="meta-field-label">ASSIGNED RESPONDER</div>
+                        <div class="meta-field-value" id="modal-inc-assigned"></div>
+                    </div>
+                    <div>
+                        <div class="meta-field-label">STATUS</div>
+                        <div class="meta-field-value" style="color: #F59E0B;">Investigating</div>
+                    </div>
+                </div>
+                <div>
+                    <div class="modal-input-label">SYNOPSIS</div>
+                    <p id="modal-inc-desc" style="font-size: 0.88rem; color: var(--text-primary); margin-top: 2px;"></p>
+                </div>
+                <div>
+                    <div class="modal-input-label">INCIDENT PROGRESSION TIMELINE</div>
+                    <div class="incident-timeline-wrap" id="modal-inc-timeline">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal-cancel" onclick="AegisSecurityModule.closeAllModals()">Close</button>
+                <button class="btn-modal-primary" onclick="AegisSecurityModule.showToast('Incident notes updated', 'success'); AegisSecurityModule.closeAllModals();">Save Updates</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Chart Tooltip -->
+    <div id="chart-tooltip-bubble" class="chart-tooltip"></div>
+
+    <!-- Toast Shelf Container -->
+    <div class="toast-shelf" id="toast-shelf" role="status" aria-live="polite"></div>
+
+    <!-- Script Imports -->
+    <script src="js/mockData.js"></script>
+    <script src="js/security-operations.js"></script>
+</body>
+</html>

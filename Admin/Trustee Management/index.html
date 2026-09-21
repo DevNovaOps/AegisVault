@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AegisVault — Trustee Management</title>
+    <meta name="description" content="AegisVault Trustee Management — Manage trustees, assign roles, and ensure secure custody access for your vaults.">
+    <meta name="theme-color" content="#F4F6FA">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="css/trustee-management.css">
+</head>
+<body class="light-theme">
+
+    <div class="app-layout">
+
+        <!-- ==============================================================
+             1. UNIVERSAL APPLICATION HEADER
+             ============================================================== -->
+        <header class="app-header" role="banner">
+            <!-- Left: Brand Logo & Title -->
+            <div class="header-left">
+                <button class="hamburger-btn" id="btn-hamburger" aria-label="Toggle Sidebar Menu">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+
+                <a href="../Dashboard/index.html" class="brand-link" aria-label="AegisVault Admin Console">
+                    <svg class="brand-logo-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 2L5 7.5V17C5 25.5 10.5 32.5 18 34.5C25.5 32.5 31 25.5 31 17V7.5L18 2Z" fill="#F45A1F"/>
+                        <path d="M18 5L7.5 9.4V17C7.5 24 12 29.8 18 31.6C24 29.8 28.5 24 28.5 17V9.4L18 5Z" fill="#FF7A2F"/>
+                        <rect x="13" y="15" width="10" height="9" rx="2" fill="#FFFFFF"/>
+                        <path d="M15 15V12.8C15 11.25 16.34 10 18 10C19.66 10 21 11.25 21 12.8V15" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/>
+                        <circle cx="18" cy="18.5" r="1.3" fill="#F45A1F"/>
+                        <path d="M18 19.8V21.5" stroke="#F45A1F" stroke-width="1.3" stroke-linecap="round"/>
+                    </svg>
+                    <div class="brand-text-col">
+                        <span class="brand-name">AegisVault</span>
+                        <span class="brand-tagline">What matters, lives on.</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Center: Search Bar -->
+            <div class="header-center">
+                <div class="search-container">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" 
+                           id="global-header-search" 
+                           class="search-input" 
+                           placeholder="Search users, trustees, vaults, logs, or settings..." 
+                           autocomplete="off"
+                           aria-label="Global search">
+                    <span class="search-shortcut-pill">/</span>
+                </div>
+            </div>
+
+            <!-- Right: Theme Switcher, Notifications, Admin Profile -->
+            <div class="header-right">
+                <!-- Theme Switcher Pill Toggle -->
+                <button class="theme-toggle-btn" id="btn-theme-toggle" aria-label="Toggle light and dark theme" title="Toggle theme">
+                    <div class="theme-toggle-track">
+                        <span class="theme-track-icon theme-track-sun" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="4"></circle>
+                                <line x1="12" y1="2" x2="12" y2="4"></line>
+                                <line x1="12" y1="20" x2="12" y2="22"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="2" y1="12" x2="4" y2="12"></line>
+                                <line x1="20" y1="12" x2="22" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                        </span>
+                        <span class="theme-track-icon theme-track-moon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
+                        </span>
+                        <div class="theme-toggle-thumb">
+                            <svg class="thumb-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                <circle cx="12" cy="12" r="4"></circle>
+                                <line x1="12" y1="2" x2="12" y2="4"></line>
+                                <line x1="12" y1="20" x2="12" y2="22"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="2" y1="12" x2="4" y2="12"></line>
+                                <line x1="20" y1="12" x2="22" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                            <svg class="thumb-icon-moon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </button>
+
+                <!-- Notifications Bell -->
+                <div class="notif-wrapper">
+                    <button class="header-icon-btn" id="btn-notifications" aria-label="Notifications" title="Notifications">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="notif-badge-pill" id="notif-badge-indicator">1</span>
+                    </button>
+
+                    <div class="notifications-dropdown" id="notifications-dropdown">
+                        <div style="padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-weight: 700; font-size: 0.82rem; color: var(--text-heading);">Notifications</span>
+                            <span style="font-size: 0.7rem; color: var(--brand-orange); cursor: pointer;" onclick="AegisTrusteeModule.showToast('All notifications marked as read', 'info');">Mark read</span>
+                        </div>
+                        <div style="padding: 0.75rem 1rem; font-size: 0.78rem;">
+                            <div style="font-weight: 600; color: var(--text-heading);">New Trustee Nominated</div>
+                            <div style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 2px;">Sneha Patel submitted KYC documents for review.</div>
+                            <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 4px;">15 minutes ago</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Profile Menu -->
+                <div class="profile-wrapper">
+                    <button class="profile-btn" id="user-profile-btn" aria-label="Admin Profile Menu">
+                        <div class="avatar-initials-circle">AP</div>
+                        <div class="profile-info-col">
+                            <span class="profile-name">Admin</span>
+                            <span class="profile-role">System Administrator</span>
+                        </div>
+                    </button>
+
+                    <div class="profile-dropdown" id="profile-dropdown">
+                        <a href="../Audit Logs/index.html" class="profile-menu-item">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                            </svg>
+                            <span>Audit Logs</span>
+                        </a>
+                        <button class="profile-menu-item" onclick="AegisTrusteeModule.showToast('Logged out of Admin Session (Demo)', 'warning');">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
+                            <span>Sign Out</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ==============================================================
+             2. APP SHELL LAYOUT (SIDEBAR + MAIN CONTENT)
+             ============================================================== -->
+        <div class="app-body-container">
+            <!-- Mobile Backdrop -->
+            <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+            <!-- Left Admin Navigation Sidebar -->
+            <aside class="app-sidebar" id="app-sidebar" role="navigation" aria-label="Admin Navigation">
+                <div class="sidebar-top-group">
+                    <div class="sidebar-section-label">ADMIN</div>
+                    <ul class="sidebar-nav-list">
+                        <!-- 1. Dashboard -->
+                        <li>
+                            <a href="../Dashboard/index.html" class="nav-link-item">
+                                <div class="nav-left-part">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                    </svg>
+                                    <span class="nav-label">Dashboard</span>
+                                </div>
+                            </a>
+                        </li>
+                        <!-- 2. User Management -->
+                        <li>
+                            <a href="../User Management/index.html" class="nav-link-item">
+                                <div class="nav-left-part">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                    <span class="nav-label">User Management</span>
+                                </div>
+                            </a>
+                        </li>
+                        <!-- 3. Trustee Management (Active) -->
+                        <li>
+                            <a href="index.html" class="nav-link-item active" id="nav-trustee-management-parent">
+                                <div class="nav-left-part">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="9" cy="7" r="4"></circle>
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                    </svg>
+                                    <span class="nav-label">Trustee Management</span>
+                                </div>
+                            </a>
+                            <!-- Nested sub-links for single page navigation -->
+                            <ul class="sidebar-sub-nav">
+                                <li><a href="#all-trustees" class="nav-sublink-item active" data-subtab="all">All Trustees</a></li>
+                                <li><a href="#pending-verification" class="nav-sublink-item" data-subtab="pending">Pending Verification</a></li>
+                                <li><a href="#verified" class="nav-sublink-item" data-subtab="verified">Verified</a></li>
+                                <li><a href="#rejected" class="nav-sublink-item" data-subtab="rejected">Rejected</a></li>
+                                <li><a href="#invitations" class="nav-sublink-item" data-subtab="invitations">Invitations</a></li>
+                                <li><a href="#permissions" class="nav-sublink-item" data-subtab="permissions">Roles & Permissions</a></li>
+                            </ul>
+                        </li>
+                        <!-- 4. Vault Management -->
+                        <li>
+                            <a href="../Vault Management/index.html" class="nav-link-item">
+                                <div class="nav-left-part">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                    </svg>
+                                    <span class="nav-label">Vault Management</span>
+                                </div>
+                            </a>
+                        </li>
+                        <!-- 5. Security Operations -->
+                        <li>
+                            <a href="../Security Operations/index.html" class="nav-link-item">
+                                <div class="nav-left-part">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                        <polyline points="9 12 11 14 15 10"></polyline>
+                                    </svg>
+                                    <span class="nav-label">Security Operations</span>
+                                </div>
+                            </a>
+                        </li>
+                        <!-- 6. Audit Logs -->
+                        <li>
+                            <a href="../Audit Logs/index.html" class="nav-link-item">
+                                <div class="nav-left-part">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    </svg>
+                                    <span class="nav-label">Audit Logs</span>
+                                </div>
+                            </a>
+                        </li>
+                        <!-- 7. System Health -->
+                        <li>
+                            <a href="../System Health/index.html" class="nav-link-item">
+                                <div class="nav-left-part">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                                    </svg>
+                                    <span class="nav-label">System Health</span>
+                                </div>
+                            </a>
+                        </li>
+                        <!-- 8. Analytics -->
+                        <li>
+                            <a href="../Analytics/index.html" class="nav-link-item">
+                                <div class="nav-left-part">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                                    </svg>
+                                    <span class="nav-label">Analytics</span>
+                                </div>
+                            </a>
+                        </li>
+                        <!-- 9. Reports -->
+                        <li>
+                            <a href="../Reports/index.html" class="nav-link-item">
+                                <div class="nav-left-part">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                                        <polyline points="10 9 9 9 8 9"></polyline>
+                                    </svg>
+                                    <span class="nav-label">Reports</span>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Lower Sidebar Mountain Landscape Card -->
+                <div class="sidebar-bottom-landscape-card" aria-hidden="true">
+                    <img class="sidebar-landscape-img sidebar-img-light" src="../assets/sidebar-bg-light.png" alt="Alpine Mountain Landscape">
+                    <img class="sidebar-landscape-img sidebar-img-dark" src="../assets/sidebar-bg-dark.png" alt="Alpine Mountain Landscape">
+                    <div class="sidebar-landscape-overlay"></div>
+                    <div class="sidebar-landscape-text">
+                        Stronger<br>Security.<br>Brighter<br>Tomorrows.
+                    </div>
+                </div>
+            </aside>
+
+            <!-- ==============================================================
+                 3. MAIN WORKSPACE CONTENT
+                 ============================================================== -->
+            <main class="main-content" role="main">
+                <!-- Breadcrumbs -->
+                <div class="breadcrumb-row">
+                    <a href="../Dashboard/index.html" class="breadcrumb-link">Admin</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-current">Trustee Management</span>
+                </div>
+
+                <!-- Hero Section matching screenshot -->
+                <section class="hero-banner-row" aria-label="Trustee Management Overview">
+                    <div class="hero-text-col">
+                        <h1 class="hero-main-title">Trustee Management</h1>
+                        <p class="hero-subtitle">Manage trustees, assign roles, and ensure secure access for your vaults.</p>
+                    </div>
+
+                    <!-- Center Mountain Panorama Cutout Box -->
+                    <div class="hero-center-col hero-panorama-box" aria-hidden="true">
+                        <img class="hero-panorama-img hero-img-light" src="../assets/light-background.png" alt="Mountain Panorama Light">
+                        <img class="hero-panorama-img hero-img-dark" src="../assets/dark-background.png" alt="Mountain Panorama Dark">
+                        <div class="hero-panorama-fade-left"></div>
+                        <p class="hero-quote-text">“Trusted people.<br>Stronger legacies.”</p>
+                        <div class="hero-panorama-fade-right"></div>
+                    </div>
+
+                    <!-- Top Right Primary Action (+ Add Trustee) -->
+                    <button class="btn-primary-action" id="btn-open-add-trustee">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span>Add Trustee</span>
+                    </button>
+                </section>
+
+                <!-- 4 KPI Summary Cards matching reference screenshot -->
+                <section class="kpi-cards-grid" aria-label="Trustee Performance Indicators">
+                    <!-- 1. Total Trustees -->
+                    <div class="kpi-stat-card">
+                        <div class="kpi-icon-wrap blue">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <div class="kpi-data-col">
+                            <div class="kpi-value-row">
+                                <span class="kpi-main-number" id="kpi-total-trustees">614</span>
+                                <span class="kpi-trend-pill up">↑ 10%</span>
+                            </div>
+                            <div class="kpi-card-title">Total Trustees</div>
+                            <div class="kpi-subtext">+56 this month</div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Verified Trustees -->
+                    <div class="kpi-stat-card">
+                        <div class="kpi-icon-wrap green">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                <polyline points="9 12 11 14 15 10"></polyline>
+                            </svg>
+                        </div>
+                        <div class="kpi-data-col">
+                            <div class="kpi-value-row">
+                                <span class="kpi-main-number" id="kpi-verified-trustees">428</span>
+                                <span class="kpi-trend-pill up">↑ 15%</span>
+                            </div>
+                            <div class="kpi-card-title">Verified Trustees</div>
+                            <div class="kpi-subtext">69.7% of total</div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Pending Verification -->
+                    <div class="kpi-stat-card">
+                        <div class="kpi-icon-wrap orange">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </div>
+                        <div class="kpi-data-col">
+                            <div class="kpi-value-row">
+                                <span class="kpi-main-number" id="kpi-pending-trustees">126</span>
+                                <span class="kpi-trend-pill down">↓ 18%</span>
+                            </div>
+                            <div class="kpi-card-title">Pending Verification</div>
+                            <div class="kpi-subtext">20.5% of total</div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Rejected / Inactive -->
+                    <div class="kpi-stat-card">
+                        <div class="kpi-icon-wrap red">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+                            </svg>
+                        </div>
+                        <div class="kpi-data-col">
+                            <div class="kpi-value-row">
+                                <span class="kpi-main-number" id="kpi-rejected-trustees">38</span>
+                                <span class="kpi-trend-pill down">↓ 5%</span>
+                            </div>
+                            <div class="kpi-card-title">Rejected / Inactive</div>
+                            <div class="kpi-subtext">6.2% of total</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Status Tabs Row -->
+                <nav class="trustee-tabs-row" aria-label="Trustee Status Tabs">
+                    <div class="tabs-nav-group">
+                        <button class="tab-btn active" data-tab="all" id="tab-btn-all">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                            </svg>
+                            <span>All Trustees</span>
+                            <span class="tab-count-badge" id="tab-count-all">614</span>
+                        </button>
+                        <button class="tab-btn" data-tab="pending" id="tab-btn-pending">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            <span>Pending Verification</span>
+                            <span class="tab-count-badge" id="tab-count-pending">126</span>
+                        </button>
+                        <button class="tab-btn" data-tab="verified" id="tab-btn-verified">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                <polyline points="9 12 11 14 15 10"></polyline>
+                            </svg>
+                            <span>Verified</span>
+                            <span class="tab-count-badge" id="tab-count-verified">428</span>
+                        </button>
+                        <button class="tab-btn" data-tab="rejected" id="tab-btn-rejected">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                            </svg>
+                            <span>Rejected</span>
+                            <span class="tab-count-badge" id="tab-count-rejected">38</span>
+                        </button>
+                        <button class="tab-btn" data-tab="inactive" id="tab-btn-inactive">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                            <span>Inactive</span>
+                            <span class="tab-count-badge" id="tab-count-inactive">22</span>
+                        </button>
+                        <button class="tab-btn" data-tab="invitations" id="tab-btn-invitations">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
+                            </svg>
+                            <span>Invitations</span>
+                            <span class="tab-count-badge" id="tab-count-invitations">5</span>
+                        </button>
+                        <button class="tab-btn" data-tab="permissions" id="tab-btn-permissions">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                            </svg>
+                            <span>Roles & Permissions</span>
+                        </button>
+                    </div>
+
+                    <div class="tab-action-group">
+                        <button class="btn-secondary-action" id="btn-toggle-filter-panel">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                            </svg>
+                            <span>Filter</span>
+                        </button>
+                        <button class="btn-secondary-action" id="btn-export-trustees">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            <span>Export</span>
+                        </button>
+                    </div>
+                </nav>
+
+                <!-- Filter Controls Bar -->
+                <div class="filter-controls-row" id="trustees-filter-row">
+                    <div class="filter-left-col">
+                        <div class="table-search-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            <input type="text" id="trustee-table-search" class="table-search-input" placeholder="Search trustees by name, email, or ID...">
+                        </div>
+                        <select class="filter-select" id="filter-trustee-type" aria-label="Filter by Trustee Type">
+                            <option value="all">All Trustee Types</option>
+                            <option value="Primary">Primary</option>
+                            <option value="Co-Trustee">Co-Trustee</option>
+                            <option value="Backup">Backup</option>
+                        </select>
+                        <select class="filter-select" id="filter-verification-status" aria-label="Filter by Verification Status">
+                            <option value="all">All Verification Status</option>
+                            <option value="Verified">Verified</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Rejected">Rejected</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                        <select class="filter-select" id="filter-vault" aria-label="Filter by Linked Vault">
+                            <option value="all">All Vaults</option>
+                            <option value="Family Legacy Vault">Family Legacy Vault</option>
+                            <option value="Digital Documents Vault">Digital Documents Vault</option>
+                            <option value="Emergency Access Vault">Emergency Access Vault</option>
+                            <option value="Personal Archive">Personal Archive</option>
+                            <option value="Crypto Cold Storage">Crypto Cold Storage</option>
+                            <option value="Offshore Trust Vault">Offshore Trust Vault</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Main Layout Grid: Table + 3 Stacked Widgets -->
+                <div class="trustee-content-grid" id="trustees-main-section">
+                    <!-- Left: Table Card -->
+                    <section class="table-card-container">
+                        <div class="table-responsive-wrapper">
+                            <table class="trustee-data-table" id="trustee-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 36px;"><input type="checkbox" class="custom-checkbox" id="select-all-trustees" aria-label="Select all rows"></th>
+                                        <th style="width: 40px;">#</th>
+                                        <th>Name</th>
+                                        <th>Email / Contact</th>
+                                        <th>Trustee Type</th>
+                                        <th>Verification Status</th>
+                                        <th>Linked Vaults</th>
+                                        <th>Added On</th>
+                                        <th style="text-align: right; min-width: 175px;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="trustee-table-body">
+                                    <!-- Populated dynamically by trustee-management.js -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Table Pagination Footer -->
+                        <div class="table-pagination-footer">
+                            <div id="pagination-info">Showing 1-10 of 614 trustees</div>
+                            <div class="pagination-controls-row" id="pagination-btns-container">
+                                <!-- Dynamic pagination buttons -->
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Right Column: 3 Stacked Widgets -->
+                    <aside class="right-widgets-stack" aria-label="Trustee Metrics and Actions">
+                        <!-- Widget 1: Verification Overview (SVG Donut Chart) -->
+                        <article class="widget-card" id="widget-verification-overview">
+                            <div class="widget-header-title">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                    <polyline points="9 12 11 14 15 10"></polyline>
+                                </svg>
+                                <span>Verification Overview</span>
+                            </div>
+
+                            <div class="donut-widget-layout">
+                                <div class="donut-canvas-container">
+                                    <svg id="verification-donut-svg" viewBox="0 0 120 120">
+                                        <!-- Rendered dynamically by trustee-management.js -->
+                                    </svg>
+                                    <div class="donut-center-metric">
+                                        <span class="donut-metric-number" id="donut-total-val">614</span>
+                                        <span class="donut-metric-label">Trustees</span>
+                                    </div>
+                                </div>
+
+                                <div class="donut-legend-rows" id="donut-legend-container">
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- Widget 2: Trustee Types Breakdown Progress Bars -->
+                        <article class="widget-card" id="widget-trustee-types">
+                            <div class="widget-header-title blue-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                                <span>Trustee Types</span>
+                            </div>
+
+                            <div class="progress-list-col" id="trustee-types-progress-container">
+                                <!-- Rendered dynamically -->
+                            </div>
+                        </article>
+
+                        <!-- Widget 3: Quick Actions -->
+                        <article class="widget-card" id="widget-quick-actions">
+                            <div class="widget-header-title orange-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                                </svg>
+                                <span>Quick Actions</span>
+                            </div>
+
+                            <div class="quick-actions-list">
+                                <div class="quick-action-item" id="quick-action-add-trustee">
+                                    <div class="quick-action-left">
+                                        <div class="quick-action-icon">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                                <circle cx="8.5" cy="7" r="4"></circle>
+                                                <line x1="20" y1="8" x2="20" y2="14"></line>
+                                                <line x1="23" y1="11" x2="17" y2="11"></line>
+                                            </svg>
+                                        </div>
+                                        <div class="quick-action-texts">
+                                            <span class="quick-action-title">Add New Trustee</span>
+                                            <span class="quick-action-sub">Invite and assign trustee</span>
+                                        </div>
+                                    </div>
+                                    <div class="quick-action-chevron">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="9 18 15 12 9 6"></polyline>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <div class="quick-action-item" id="quick-action-verify-docs" style="cursor: pointer;">
+                                    <div class="quick-action-left">
+                                        <div class="quick-action-icon" style="color: #10B981;">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                                <polyline points="14 2 14 8 20 8"></polyline>
+                                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                                <polyline points="10 9 9 9 8 9"></polyline>
+                                            </svg>
+                                        </div>
+                                        <div class="quick-action-texts">
+                                            <span class="quick-action-title">Verify Documents</span>
+                                            <span class="quick-action-sub">Review pending verifications</span>
+                                        </div>
+                                    </div>
+                                    <div class="quick-action-chevron">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="9 18 15 12 9 6"></polyline>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <div class="quick-action-item" id="quick-action-send-reminder">
+                                    <div class="quick-action-left">
+                                        <div class="quick-action-icon" style="color: #06B6D4;">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                            </svg>
+                                        </div>
+                                        <div class="quick-action-texts">
+                                            <span class="quick-action-title">Send Reminder</span>
+                                            <span class="quick-action-sub">Notify pending trustees</span>
+                                        </div>
+                                    </div>
+                                    <div class="quick-action-chevron">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="9 18 15 12 9 6"></polyline>
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <div class="quick-action-item" id="quick-action-manage-perms" style="cursor: pointer;">
+                                    <div class="quick-action-left">
+                                        <div class="quick-action-icon" style="color: #8B5CF6;">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="quick-action-texts">
+                                            <span class="quick-action-title">Manage Permissions</span>
+                                            <span class="quick-action-sub">Set access and roles</span>
+                                        </div>
+                                    </div>
+                                    <div class="quick-action-chevron">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="9 18 15 12 9 6"></polyline>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    </aside>
+                </div>
+
+                <!-- ==============================================================
+                     12. INVITATIONS VIEW (Switched when Invitations tab clicked)
+                     ============================================================== -->
+                <section class="invitations-section" id="invitations-view-section">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <div>
+                            <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--text-heading);">Trustee Invitations</h2>
+                            <p style="font-size: 0.76rem; color: var(--text-secondary); margin-top: 2px;">Track and dispatch official custody invitation requests to prospective trustees.</p>
+                        </div>
+                        <button class="btn-primary-action" id="btn-open-invite-trustee">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                            <span>Invite Trustee</span>
+                        </button>
+                    </div>
+
+                    <!-- Invitation KPI cards -->
+                    <div class="invitation-kpis-grid">
+                        <div class="kpi-stat-card">
+                            <div class="kpi-icon-wrap orange">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            </div>
+                            <div class="kpi-data-col">
+                                <div class="kpi-main-number" id="inv-kpi-pending">2</div>
+                                <div class="kpi-card-title">Pending Invitations</div>
+                            </div>
+                        </div>
+                        <div class="kpi-stat-card">
+                            <div class="kpi-icon-wrap green">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            </div>
+                            <div class="kpi-data-col">
+                                <div class="kpi-main-number" id="inv-kpi-accepted">1</div>
+                                <div class="kpi-card-title">Accepted</div>
+                            </div>
+                        </div>
+                        <div class="kpi-stat-card">
+                            <div class="kpi-icon-wrap red">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                            </div>
+                            <div class="kpi-data-col">
+                                <div class="kpi-main-number" id="inv-kpi-expired">1</div>
+                                <div class="kpi-card-title">Expired</div>
+                            </div>
+                        </div>
+                        <div class="kpi-stat-card">
+                            <div class="kpi-icon-wrap blue">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                            </div>
+                            <div class="kpi-data-col">
+                                <div class="kpi-main-number" id="inv-kpi-cancelled">1</div>
+                                <div class="kpi-card-title">Cancelled</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Invitations Table Card -->
+                    <div class="table-card-container">
+                        <div class="table-responsive-wrapper">
+                            <table class="trustee-data-table" id="invitations-table">
+                                <thead>
+                                    <tr>
+                                        <th>Recipient</th>
+                                        <th>Email</th>
+                                        <th>Trustee Type</th>
+                                        <th>Vault</th>
+                                        <th>Invited By</th>
+                                        <th>Sent On</th>
+                                        <th>Expires On</th>
+                                        <th>Status</th>
+                                        <th style="text-align: right; width: 140px;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="invitations-table-body">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==============================================================
+                     12b. ROLES & PERMISSIONS VIEW (Unified single page tab)
+                     ============================================================== -->
+                <section class="permissions-section" id="permissions-view-section">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <div>
+                            <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--text-heading);">Roles & Custody Permissions</h2>
+                            <p style="font-size: 0.76rem; color: var(--text-secondary); margin-top: 2px;">Standardized custodian classifications, authority tiers, and interactive authorization matrix.</p>
+                        </div>
+                    </div>
+
+                    <!-- 3 Role Summary Cards -->
+                    <div class="roles-summary-grid">
+                        <div class="role-card-item primary">
+                            <div class="role-card-header">
+                                <span class="role-name-title">Primary Trustee</span>
+                                <span class="badge-pill primary">Primary</span>
+                            </div>
+                            <div style="display: flex; align-items: baseline; gap: 0.5rem;">
+                                <span class="role-count-num">200</span>
+                                <span style="font-size: 0.76rem; color: var(--text-muted);">Trustees Assigned (32%)</span>
+                            </div>
+                            <div>
+                                <span class="role-access-pill">Full Custody & Release</span>
+                            </div>
+                            <p class="role-desc-text">Has unilateral authority to initiate recovery quorum, review metadata, and trigger time-locked release execution.</p>
+                        </div>
+
+                        <div class="role-card-item co-trustee">
+                            <div class="role-card-header">
+                                <span class="role-name-title">Co-Trustee</span>
+                                <span class="badge-pill co-trustee">Co-Trustee</span>
+                            </div>
+                            <div style="display: flex; align-items: baseline; gap: 0.5rem;">
+                                <span class="role-count-num">252</span>
+                                <span style="font-size: 0.76rem; color: var(--text-muted);">Trustees Assigned (41%)</span>
+                            </div>
+                            <div>
+                                <span class="role-access-pill">Consensus Dependent</span>
+                            </div>
+                            <p class="role-desc-text">Requires multi-signatory quorum with Primary Trustee to approve recovery petitions and access vault assets.</p>
+                        </div>
+
+                        <div class="role-card-item backup">
+                            <div class="role-card-header">
+                                <span class="role-name-title">Backup Trustee</span>
+                                <span class="badge-pill backup">Backup</span>
+                            </div>
+                            <div style="display: flex; align-items: baseline; gap: 0.5rem;">
+                                <span class="role-count-num">162</span>
+                                <span style="font-size: 0.76rem; color: var(--text-muted);">Trustees Assigned (27%)</span>
+                            </div>
+                            <div>
+                                <span class="role-access-pill">Dormant / Conditional</span>
+                            </div>
+                            <p class="role-desc-text">Activates only when Primary Trustee fails heartbeat responsiveness checks after designated protocol timeout.</p>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Permission Matrix -->
+                    <section class="matrix-card-wrap">
+                        <div class="matrix-card-header">
+                            <div class="matrix-title-group">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                                <div>
+                                    <h3 style="font-size: 0.92rem; font-weight: 700; color: var(--text-heading);">Trustee Permission Matrix</h3>
+                                    <div style="font-size: 0.72rem; color: var(--text-muted);">Comparative authorization matrix across custodian tiers.</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; font-size: 0.7rem;">
+                                <span class="matrix-badge allowed">✓ Allowed</span>
+                                <span class="matrix-badge conditional">⚠ Conditional</span>
+                                <span class="matrix-badge not-allowed">✕ Not Allowed</span>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive-wrapper">
+                            <table class="matrix-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 38%;">Custody Action / Authority</th>
+                                        <th style="width: 20%;"><span class="badge-pill primary">Primary Trustee</span></th>
+                                        <th style="width: 20%;"><span class="badge-pill co-trustee">Co-Trustee</span></th>
+                                        <th style="width: 20%;"><span class="badge-pill backup">Backup Trustee</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="matrix-tbody">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <!-- Security Disclaimer Card -->
+                    <div class="security-disclaimer-card">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                        <span><strong>System Security Architecture Notice:</strong> This matrix reflects client-side access privileges. Cryptographic authorization is enforced through multi-party threshold ECDSA signatures and decentralized timelock smart contracts on the AegisVault custody protocol.</span>
+                    </div>
+
+                    <!-- Vault Access Assignments Table -->
+                    <div class="table-card-container">
+                        <div style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-heading);">Active Trustee-to-Vault Access Assignments</h3>
+                                <p style="font-size: 0.74rem; color: var(--text-secondary); margin-top: 2px;">Active custody mappings binding authorized trustees to specific time-locked vaults.</p>
+                            </div>
+                        </div>
+                        <div class="table-responsive-wrapper">
+                            <table class="trustee-data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Trustee</th>
+                                        <th>Designated Role</th>
+                                        <th>Assigned Vault</th>
+                                        <th>Access Level</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="access-tbody">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- ==============================================================
+             4. UNIVERSAL FOOTER
+             ============================================================== -->
+        <footer class="app-footer">
+            <div>&copy; 2025 AegisVault Custody Protocol. All rights reserved.</div>
+            <div class="footer-links">
+                <a href="../Audit Logs/index.html">Audit Logs</a>
+                <a href="../System Health/index.html">System Health</a>
+                <a href="../Analytics/index.html">Analytics</a>
+                <a href="../Reports/index.html">Reports</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ==============================================================
+         5. MODALS & DRAWERS
+         ============================================================== -->
+    <!-- Modal 1: Add Trustee Modal -->
+    <div class="modal-backdrop" id="modal-add-trustee" role="dialog" aria-modal="true" aria-labelledby="modal-add-title">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-add-title">Add New Trustee</h3>
+                <button class="modal-close-btn" data-close-modal="modal-add-trustee" aria-label="Close modal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <form id="form-add-trustee">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="add-name">Full Name *</label>
+                        <input type="text" id="add-name" class="form-input" placeholder="e.g. Siddharth Verma" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="add-email">Email Address *</label>
+                        <input type="email" id="add-email" class="form-input" placeholder="e.g. siddharth@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="add-phone">Contact Number *</label>
+                        <input type="tel" id="add-phone" class="form-input" placeholder="e.g. +91 98111 22334" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="add-type">Trustee Type *</label>
+                        <select id="add-type" class="form-select" required>
+                            <option value="Primary">Primary Trustee</option>
+                            <option value="Co-Trustee" selected>Co-Trustee</option>
+                            <option value="Backup">Backup Trustee</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="add-vault">Vault Assignment *</label>
+                        <select id="add-vault" class="form-select" required>
+                            <option value="Family Legacy Vault">Family Legacy Vault</option>
+                            <option value="Digital Documents Vault">Digital Documents Vault</option>
+                            <option value="Emergency Access Vault">Emergency Access Vault</option>
+                            <option value="Personal Archive">Personal Archive</option>
+                            <option value="Crypto Cold Storage">Crypto Cold Storage</option>
+                            <option value="Offshore Trust Vault">Offshore Trust Vault</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="add-notes">Optional Custody Note</label>
+                        <textarea id="add-notes" class="form-textarea" placeholder="Enter instructions or mandate details..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" data-close-modal="modal-add-trustee">Cancel</button>
+                    <button type="submit" class="btn-submit">Add Trustee</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 2: View Trustee Details Modal -->
+    <div class="modal-backdrop" id="modal-view-trustee" role="dialog" aria-modal="true" aria-labelledby="modal-view-title">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-view-title">Trustee Profile Details</h3>
+                <button class="modal-close-btn" data-close-modal="modal-view-trustee" aria-label="Close modal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body" id="view-trustee-content">
+                <!-- Dynamically populated -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" data-close-modal="modal-view-trustee">Close</button>
+                <button type="button" class="btn-submit" id="btn-edit-from-view">Edit Profile</button>
+                <button type="button" class="btn-submit" id="btn-reject-from-view" style="background-color: #EF4444;">Reject</button>
+                <button type="button" class="btn-submit" id="btn-approve-from-view" style="background-color: #10B981;">Approve</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 3: Edit Trustee Modal -->
+    <div class="modal-backdrop" id="modal-edit-trustee" role="dialog" aria-modal="true" aria-labelledby="modal-edit-title">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-edit-title">Edit Trustee Profile</h3>
+                <button class="modal-close-btn" data-close-modal="modal-edit-trustee" aria-label="Close modal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <form id="form-edit-trustee">
+                <input type="hidden" id="edit-id">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="edit-name">Full Name *</label>
+                        <input type="text" id="edit-name" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="edit-email">Email Address *</label>
+                        <input type="email" id="edit-email" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="edit-phone">Contact Number *</label>
+                        <input type="tel" id="edit-phone" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="edit-type">Trustee Type *</label>
+                        <select id="edit-type" class="form-select" required>
+                            <option value="Primary">Primary Trustee</option>
+                            <option value="Co-Trustee">Co-Trustee</option>
+                            <option value="Backup">Backup Trustee</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="edit-status">Verification Status *</label>
+                        <select id="edit-status" class="form-select" required>
+                            <option value="Verified">Verified</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Rejected">Rejected</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" data-close-modal="modal-edit-trustee">Cancel</button>
+                    <button type="submit" class="btn-submit">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 4: Deactivate Trustee Confirmation Modal -->
+    <div class="modal-backdrop" id="modal-deactivate-trustee" role="dialog" aria-modal="true" aria-labelledby="modal-deact-title">
+        <div class="modal-dialog" style="max-width: 440px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-deact-title">Deactivate Trustee</h3>
+                <button class="modal-close-btn" data-close-modal="modal-deactivate-trustee" aria-label="Close modal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 0.82rem; color: var(--text-secondary);">Are you sure you want to deactivate <strong id="deact-trustee-name" style="color: var(--text-heading);">this trustee</strong>? They will immediately lose authority to participate in recovery quorum or release execution.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" data-close-modal="modal-deactivate-trustee">Cancel</button>
+                <button type="button" class="btn-submit" id="btn-confirm-deactivate" style="background-color: #EF4444;">Deactivate</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 5: Invite Trustee Modal -->
+    <div class="modal-backdrop" id="modal-invite-trustee" role="dialog" aria-modal="true" aria-labelledby="modal-invite-title">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-invite-title">Send Trustee Invitation</h3>
+                <button class="modal-close-btn" data-close-modal="modal-invite-trustee" aria-label="Close modal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <form id="form-invite-trustee">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="inv-name">Recipient Full Name *</label>
+                        <input type="text" id="inv-name" class="form-input" placeholder="e.g. Aarav Shah" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="inv-email">Recipient Email Address *</label>
+                        <input type="email" id="inv-email" class="form-input" placeholder="e.g. aarav.shah@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="inv-type">Trustee Type *</label>
+                        <select id="inv-type" class="form-select" required>
+                            <option value="Primary">Primary Trustee</option>
+                            <option value="Co-Trustee" selected>Co-Trustee</option>
+                            <option value="Backup">Backup Trustee</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="inv-vault">Vault Assignment *</label>
+                        <select id="inv-vault" class="form-select" required>
+                            <option value="Family Legacy Vault">Family Legacy Vault</option>
+                            <option value="Digital Documents Vault">Digital Documents Vault</option>
+                            <option value="Emergency Access Vault">Emergency Access Vault</option>
+                            <option value="Crypto Cold Storage">Crypto Cold Storage</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="inv-expiry">Invitation Expiry *</label>
+                        <select id="inv-expiry" class="form-select" required>
+                            <option value="7 Days">7 Days</option>
+                            <option value="14 Days" selected>14 Days</option>
+                            <option value="30 Days">30 Days</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="inv-message">Personalized Invitation Message</label>
+                        <textarea id="inv-message" class="form-textarea" placeholder="You are invited to become a verified custodian..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" data-close-modal="modal-invite-trustee">Cancel</button>
+                    <button type="submit" class="btn-submit">Send Invitation</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 6: Reject Trustee Verification Modal -->
+    <div class="modal-backdrop" id="modal-reject-trustee" role="dialog" aria-modal="true" aria-labelledby="modal-reject-title">
+        <div class="modal-dialog" style="max-width: 480px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-reject-title">Reject Trustee Verification</h3>
+                <button class="modal-close-btn" data-close-modal="modal-reject-trustee" aria-label="Close modal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <form id="form-reject-trustee">
+                <input type="hidden" id="reject-trustee-id">
+                <div class="modal-body">
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.85rem;">
+                        You are rejecting verification for <strong id="reject-trustee-name" style="color: var(--text-heading);">[Trustee Name]</strong>. The trustee will be notified with the specified rejection reason.
+                    </p>
+                    <div class="form-group">
+                        <label class="form-label" for="reject-reason">Rejection Reason *</label>
+                        <select id="reject-reason" class="form-select" required>
+                            <option value="Incomplete or blurry KYC identification document" selected>Incomplete or blurry KYC identification document</option>
+                            <option value="Government identity document mismatch">Government identity document mismatch</option>
+                            <option value="Expired passport / driver's license">Expired passport / driver's license</option>
+                            <option value="Failed liveness / biometric facial challenge">Failed liveness / biometric facial challenge</option>
+                            <option value="Address verification proof missing or unverifiable">Address verification proof missing or unverifiable</option>
+                            <option value="Security risk compliance flag">Security risk compliance flag</option>
+                            <option value="Other">Other reason</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="reject-notes">Additional Remarks (Optional)</label>
+                        <textarea id="reject-notes" class="form-textarea" rows="3" placeholder="Provide notes or specific instructions for re-submission..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" data-close-modal="modal-reject-trustee">Cancel</button>
+                    <button type="submit" class="btn-submit" style="background-color: #EF4444;">Confirm Rejection</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 7: Manage Trustee Permissions & Vault Access Modal -->
+    <div class="modal-backdrop" id="modal-trustee-permissions" role="dialog" aria-modal="true" aria-labelledby="modal-perm-title">
+        <div class="modal-dialog" style="max-width: 540px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-perm-title">Manage Trustee Permissions & Vault Access</h3>
+                <button class="modal-close-btn" data-close-modal="modal-trustee-permissions" aria-label="Close modal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <form id="form-trustee-permissions">
+                <input type="hidden" id="perm-trustee-id">
+                <div class="modal-body">
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; background-color: var(--bg-card-subtle); border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); margin-bottom: 1rem;">
+                        <div>
+                            <div id="perm-trustee-name" style="font-size: 0.92rem; font-weight: 700; color: var(--text-heading);">[Trustee Name]</div>
+                            <div id="perm-trustee-sub" style="font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono);">TRU-0001 &bull; trustee@example.com</div>
+                        </div>
+                        <span id="perm-trustee-badge" class="badge-pill primary">Primary</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Custody Authority & Quorum Privileges</label>
+                        <div class="perm-toggle-grid">
+                            <label class="perm-checkbox-item">
+                                <input type="checkbox" id="perm-quorum" checked>
+                                <span>Quorum Multi-Sig Signer</span>
+                            </label>
+                            <label class="perm-checkbox-item">
+                                <input type="checkbox" id="perm-shard" checked>
+                                <span>Key Share Shard Holder</span>
+                            </label>
+                            <label class="perm-checkbox-item">
+                                <input type="checkbox" id="perm-emergency">
+                                <span>Emergency Timelock Bypass</span>
+                            </label>
+                            <label class="perm-checkbox-item">
+                                <input type="checkbox" id="perm-decrypt" checked>
+                                <span>Beneficiary Doc Decryption</span>
+                            </label>
+                            <label class="perm-checkbox-item">
+                                <input type="checkbox" id="perm-audit" checked>
+                                <span>Audit Log & Telemetry</span>
+                            </label>
+                            <label class="perm-checkbox-item">
+                                <input type="checkbox" id="perm-witness">
+                                <span>Legal Witness Attestation</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 0.85rem;">
+                        <label class="form-label">Authorized Vault Allocations</label>
+                        <div style="display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.76rem; color: var(--text-primary);">
+                            <label class="perm-checkbox-item">
+                                <input type="checkbox" name="perm-vault-item" value="Family Legacy Vault" checked>
+                                <span>Family Legacy Vault</span>
+                            </label>
+                            <label class="perm-checkbox-item">
+                                <input type="checkbox" name="perm-vault-item" value="Digital Documents Vault" checked>
+                                <span>Digital Documents Vault</span>
+                            </label>
+                            <label class="perm-checkbox-item">
+                                <input type="checkbox" name="perm-vault-item" value="Emergency Access Vault">
+                                <span>Emergency Access Vault</span>
+                            </label>
+                            <label class="perm-checkbox-item">
+                                <input type="checkbox" name="perm-vault-item" value="Crypto Cold Storage">
+                                <span>Crypto Cold Storage</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" data-close-modal="modal-trustee-permissions">Cancel</button>
+                    <button type="submit" class="btn-submit" style="background-color: #8B5CF6;">Save Permissions</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+    <!-- Floating Tooltip -->
+    <div class="aegis-tooltip" id="aegis-tooltip"></div>
+
+    <!-- Scripts -->
+    <script src="js/mockData.js"></script>
+    <script src="js/trustee-management.js"></script>
+</body>
+</html>
