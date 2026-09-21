@@ -50,7 +50,7 @@
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
                     <input type="text" 
-                           id="global-search-input" 
+                           id="global-header-search" 
                            class="search-input" 
                            placeholder="Search users, trustees, vaults, logs, or settings..." 
                            autocomplete="off"
@@ -234,17 +234,7 @@
                                 <span class="nav-label">Audit Logs</span>
                             </a>
                         </li>
-                        <!-- 7. Notifications -->
-                        <li>
-                            <a href="#notifications" class="nav-link-item" onclick="window.AegisInteractions.showToast('System Notifications', 'info');">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                                </svg>
-                                <span class="nav-label">Notifications</span>
-                            </a>
-                        </li>
-                        <!-- 8. System Health -->
+                        <!-- 7. System Health -->
                         <li>
                             <a href="../System Health/index.html" class="nav-link-item" data-target="system-health">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -253,7 +243,7 @@
                                 <span class="nav-label">System Health</span>
                             </a>
                         </li>
-                        <!-- 9. Analytics -->
+                        <!-- 8. Analytics -->
                         <li>
                             <a href="../Analytics/index.html" class="nav-link-item" data-target="analytics">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -264,9 +254,9 @@
                                 <span class="nav-label">Analytics</span>
                             </a>
                         </li>
-                        <!-- 10. Reports -->
+                        <!-- 9. Reports -->
                         <li>
-                            <a href="#reports" class="nav-link-item" onclick="window.AegisInteractions.showToast('Custody Reports export', 'info');">
+                            <a href="../Reports/index.html" class="nav-link-item" data-target="reports">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                     <polyline points="14 2 14 8 20 8"></polyline>
@@ -275,26 +265,6 @@
                                     <polyline points="10 9 9 9 8 9"></polyline>
                                 </svg>
                                 <span class="nav-label">Reports</span>
-                            </a>
-                        </li>
-                        <!-- 11. Settings -->
-                        <li>
-                            <a href="#settings" class="nav-link-item" onclick="window.AegisInteractions.showToast('Platform Settings', 'info');">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="3"></circle>
-                                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                                </svg>
-                                <span class="nav-label">Settings</span>
-                            </a>
-                        </li>
-                        <!-- 12. Admin Support -->
-                        <li>
-                            <a href="#admin-support" class="nav-link-item" onclick="window.AegisInteractions.showToast('Enterprise Operations Support', 'info');">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
-                                    <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
-                                </svg>
-                                <span class="nav-label">Admin Support</span>
                             </a>
                         </li>
                     </ul>
@@ -714,30 +684,36 @@
 
                 </section>
 
-                <!-- F. APPLICATION FOOTER -->
-                <footer class="app-footer" role="contentinfo">
-                    <div class="footer-left">
-                        <svg class="footer-logo-svg" viewBox="0 0 32 36" fill="none">
-                            <path d="M16 2L3 7V16C3 24.5 8.5 32.2 16 34C23.5 32.2 29 24.5 29 16V7L16 2Z" fill="#E86326"/>
-                        </svg>
-                        <span class="footer-brand-title">AegisVault</span>
-                        <span class="footer-brand-tagline">What matters, lives on.</span>
-                    </div>
-
-                    <div class="footer-center">
-                        <span class="footer-motto-text">“Because what matters today, should matter tomorrow too.”</span>
-                        <div class="footer-motto-accent-bar"></div>
-                    </div>
-
-                    <div class="footer-right">
-                        <a href="#privacy" class="footer-link" onclick="AegisInteractions.showToast('Zero-Knowledge Custody Privacy Policy', 'info');">Privacy</a>
-                        <a href="#terms" class="footer-link" onclick="AegisInteractions.showToast('Protocol Terms of Service', 'info');">Terms</a>
-                        <a href="#help" class="footer-link" onclick="AegisInteractions.showToast('AegisVault Admin Support Desk', 'info');">Help</a>
-                    </div>
-                </footer>
-
             </main>
         </div>
+
+        <!-- ==================================================================
+             3. APPLICATION FOOTER (Identical to User Management)
+             ================================================================== -->
+        <footer class="app-footer" role="contentinfo">
+            <div class="footer-left">
+                <svg class="brand-logo-svg" style="width:20px; height:24px;" viewBox="0 0 36 36" fill="none">
+                    <path d="M18 2L5 7.5V17C5 25.5 10.5 32.5 18 34.5C25.5 32.5 31 25.5 31 17V7.5L18 2Z" fill="#F45A1F"/>
+                    <path d="M18 5L7.5 9.4V17C7.5 24 12 29.8 18 31.6C24 29.8 28.5 24 28.5 17V9.4L18 5Z" fill="#FF7A2F"/>
+                    <rect x="13" y="15" width="10" height="9" rx="2" fill="#FFFFFF"/>
+                </svg>
+                <div class="brand-text-col">
+                    <span class="brand-name" style="font-size: 0.95rem;">AegisVault</span>
+                    <span class="brand-tagline">What matters, lives on.</span>
+                </div>
+            </div>
+
+            <div class="footer-center">
+                “Because what matters today, should matter tomorrow too.”
+            </div>
+
+            <div class="footer-right">
+                <a href="#privacy" class="footer-link" onclick="AegisInteractions.showToast('Zero-Knowledge Privacy Policy', 'info');">Privacy</a>
+                <a href="#terms" class="footer-link" onclick="AegisInteractions.showToast('Custody Protocol Terms', 'info');">Terms</a>
+                <a href="#help" class="footer-link" onclick="AegisInteractions.showToast('Administrator Support Portal', 'info');">Help</a>
+            </div>
+        </footer>
+
     </div>
 
     <!-- ======================================================================

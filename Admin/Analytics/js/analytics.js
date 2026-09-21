@@ -105,6 +105,7 @@
         elements.html.setAttribute("data-theme", theme);
         elements.body.className = theme === "dark" ? "dark-theme" : "light-theme";
         localStorage.setItem("aegisvault_theme", theme);
+        localStorage.setItem("aegis_theme", theme);
 
         // Re-render charts to adjust SVG stroke/fill colors for the theme
         renderAllCharts();

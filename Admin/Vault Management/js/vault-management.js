@@ -83,6 +83,7 @@ const AegisVaultController = {
         }
 
         localStorage.setItem(this.THEME_KEY, theme);
+        localStorage.setItem('aegis_theme', theme);
 
         // Re-render chart so stroke colors & glows match theme
         this.renderVaultTypesDonut();

@@ -76,6 +76,7 @@ const AegisDashboard = {
         }
 
         localStorage.setItem(this.THEME_KEY, theme);
+        localStorage.setItem('aegis_theme', theme);
 
         // Re-render charts to adapt colors to the active theme
         this.reRenderAllCharts();
@@ -511,7 +512,7 @@ const AegisDashboard = {
        4. Global Search System
        ========================================================================= */
     initSearch() {
-        const input = document.getElementById('global-search-input');
+        const input = document.getElementById('global-header-search') || document.getElementById('global-search-input');
         const dropdown = document.getElementById('search-results-dropdown');
         if (!input || !dropdown || !window.AegisMockData || !AegisMockData.searchIndex) return;
 
@@ -1146,7 +1147,7 @@ const AegisDashboard = {
                 document.activeElement.tagName !== 'INPUT' && 
                 document.activeElement.tagName !== 'TEXTAREA') {
                 e.preventDefault();
-                const input = document.getElementById('global-search-input');
+                const input = document.getElementById('global-header-search') || document.getElementById('global-search-input');
                 if (input) {
                     input.focus();
                     input.select();

@@ -596,6 +596,12 @@ body.dark-theme .avatar-initials-circle {
    ========================================================================== */
 .app-layout {
     display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.app-body-container {
+    display: flex;
     flex: 1;
     position: relative;
 }
@@ -856,33 +862,47 @@ body.dark-theme .hero-panorama-box {
 }
 
 .hero-panorama-img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
     z-index: 1;
     pointer-events: none;
     transition: opacity 0.3s ease;
 }
 
-body.light-theme .hero-panorama-img.hero-img-light {
+.hero-panorama-img.hero-img-light {
     display: block;
     opacity: 1;
     object-position: center 30%;
 }
-body.light-theme .hero-panorama-img.hero-img-dark {
+.hero-panorama-img.hero-img-dark {
     display: none;
     opacity: 0;
 }
 
-body.dark-theme .hero-panorama-img.hero-img-light {
-    display: none;
-    opacity: 0;
+body.light-theme .hero-panorama-img.hero-img-light,
+[data-theme="light"] .hero-panorama-img.hero-img-light {
+    display: block !important;
+    opacity: 1 !important;
+    object-position: center 30%;
 }
-body.dark-theme .hero-panorama-img.hero-img-dark {
-    display: block;
-    opacity: 1;
+body.light-theme .hero-panorama-img.hero-img-dark,
+[data-theme="light"] .hero-panorama-img.hero-img-dark {
+    display: none !important;
+    opacity: 0 !important;
+}
+
+body.dark-theme .hero-panorama-img.hero-img-light,
+[data-theme="dark"] .hero-panorama-img.hero-img-light {
+    display: none !important;
+    opacity: 0 !important;
+}
+body.dark-theme .hero-panorama-img.hero-img-dark,
+[data-theme="dark"] .hero-panorama-img.hero-img-dark {
+    display: block !important;
+    opacity: 1 !important;
     object-position: center center;
 }
 
@@ -1918,6 +1938,65 @@ body.dark-theme .toast-message {
 @keyframes toastSlideIn {
     from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
+/* ==========================================================================
+   10. Application Footer (Identical to User Management)
+   ========================================================================== */
+.app-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 0 0.5rem 0;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    margin-top: 1rem;
+}
+
+.footer-left {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.footer-logo-svg {
+    width: 22px;
+    height: 22px;
+}
+
+.footer-brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.footer-brand-text .brand-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.footer-brand-text .brand-tagline {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}
+
+.footer-center {
+    font-style: italic;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.footer-right {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.footer-link {
+    color: var(--text-muted);
+    transition: color 0.15s ease;
+}
+
+.footer-link:hover {
+    color: var(--brand-orange);
 }
 
 /* ==========================================================================

@@ -75,6 +75,7 @@ const AegisSystemHealth = {
         }
 
         localStorage.setItem(this.THEME_KEY, theme);
+        localStorage.setItem('aegis_theme', theme);
 
         // Re-render sparkline charts with theme-adapted gradients and colors
         this.renderAllResourceCharts();

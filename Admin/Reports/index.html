@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AegisVault — Reports & Custody Audit Console</title>
+    <meta name="description" content="AegisVault Administration Reports: Comprehensive analytics, security audit event generation, and operational lifecycle reports.">
+    <meta name="theme-color" content="#F4F6FA">
+
+    <!-- Typography (Plus Jakarta Sans, Playfair Display, JetBrains Mono) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Main Stylesheet (Design, Layout, Themes, Animations & Responsive) -->
+    <link rel="stylesheet" href="css/report.css">
+</head>
+<body class="light-theme">
+
+    <div class="app-layout">
+
+        <!-- ==================================================================
+             1. APPLICATION HEADER
+             ================================================================== -->
+        <header class="app-header" role="banner">
+            <!-- Left: Brand Logo & Title -->
+            <div class="header-left">
+                <button class="hamburger-btn" id="btn-hamburger" aria-label="Toggle Sidebar Menu">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+
+                <a href="../Dashboard/index.html" class="brand-link" aria-label="AegisVault Admin Console">
+                    <svg class="brand-logo-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 2L5 7.5V17C5 25.5 10.5 32.5 18 34.5C25.5 32.5 31 25.5 31 17V7.5L18 2Z" fill="#F45A1F"/>
+                        <path d="M18 5L7.5 9.4V17C7.5 24 12 29.8 18 31.6C24 29.8 28.5 24 28.5 17V9.4L18 5Z" fill="#FF7A2F"/>
+                        <rect x="13" y="15" width="10" height="9" rx="2" fill="#FFFFFF"/>
+                        <path d="M15 15V12.8C15 11.25 16.34 10 18 10C19.66 10 21 11.25 21 12.8V15" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/>
+                        <circle cx="18" cy="18.5" r="1.3" fill="#F45A1F"/>
+                        <path d="M18 19.8V21.5" stroke="#F45A1F" stroke-width="1.3" stroke-linecap="round"/>
+                    </svg>
+                    <div class="brand-text-col">
+                        <span class="brand-name">AegisVault</span>
+                        <span class="brand-tagline">What matters, lives on.</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Center: Search Bar -->
+            <div class="header-center">
+                <div class="search-container">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" 
+                           id="global-header-search" 
+                           class="search-input" 
+                           placeholder="Search users, trustees, vaults, logs, or settings..." 
+                           autocomplete="off"
+                           aria-label="Global search">
+                    <span class="search-shortcut-pill">/</span>
+                </div>
+            </div>
+
+            <!-- Right: Theme Switcher, Notifications, Admin Profile -->
+            <div class="header-right">
+                <!-- Theme Switcher Pill Toggle (Matching Reference Image 2) -->
+                <button class="theme-toggle-btn" id="btn-theme-toggle" aria-label="Toggle light and dark theme" title="Toggle theme">
+                    <div class="theme-toggle-track">
+                        <span class="theme-track-icon theme-track-sun" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="4"></circle>
+                                <line x1="12" y1="2" x2="12" y2="4"></line>
+                                <line x1="12" y1="20" x2="12" y2="22"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="2" y1="12" x2="4" y2="12"></line>
+                                <line x1="20" y1="12" x2="22" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                        </span>
+                        <span class="theme-track-icon theme-track-moon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
+                        </span>
+                        <div class="theme-toggle-thumb">
+                            <svg class="thumb-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                <circle cx="12" cy="12" r="4"></circle>
+                                <line x1="12" y1="2" x2="12" y2="4"></line>
+                                <line x1="12" y1="20" x2="12" y2="22"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="2" y1="12" x2="4" y2="12"></line>
+                                <line x1="20" y1="12" x2="22" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                            <svg class="thumb-icon-moon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </button>
+
+                <!-- Notifications Bell -->
+                <div class="notif-wrapper">
+                    <button class="header-icon-btn" id="btn-notifications" aria-label="Notifications" title="Notifications">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="notif-badge-pill" id="notif-badge-indicator">1</span>
+                    </button>
+
+                    <!-- Notifications Dropdown -->
+                    <div class="notifications-dropdown" id="notifications-dropdown">
+                        <div style="padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-weight: 700; font-size: 0.82rem; color: var(--text-heading);">Notifications</span>
+                            <span style="font-size: 0.7rem; color: var(--brand-orange); cursor: pointer;" onclick="window.AegisReportsController.showToast('All notifications marked as read', 'info');">Mark read</span>
+                        </div>
+                        <div style="padding: 0.75rem 1rem; font-size: 0.78rem;">
+                            <div style="font-weight: 600; color: var(--text-heading);">Quarterly Audit Generated</div>
+                            <div style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 2px;">Automated compliance snapshot saved to immutable archive.</div>
+                            <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 4px;">10 minutes ago</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Profile Menu -->
+                <div class="profile-wrapper">
+                    <button class="profile-btn" id="user-profile-btn" aria-label="Admin Profile Menu">
+                        <div class="avatar-initials-circle">AP</div>
+                        <div class="profile-info-col">
+                            <span class="profile-name">Admin</span>
+                            <span class="profile-role">System Administrator</span>
+                        </div>
+                    </button>
+
+                    <!-- Profile Dropdown -->
+                    <div class="profile-dropdown" id="profile-dropdown">
+                        <button class="profile-menu-item" onclick="window.AegisReportsController.showToast('Security Settings Panel', 'info');">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                            <span>Security Settings</span>
+                        </button>
+                        <a href="../Audit Logs/index.html" class="profile-menu-item">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                            <span>Audit Logs</span>
+                        </a>
+                        <button class="profile-menu-item" onclick="window.AegisReportsController.showToast('Logged out of Admin Session (Mock)', 'warning');">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                            <span>Sign Out</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ==================================================================
+             2. APP BODY: SIDEBAR + WORKSPACE
+             ================================================================== -->
+        <div class="app-body-container">
+            <!-- Mobile Sidebar Backdrop -->
+            <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+            <!-- Admin Sidebar Navigation -->
+            <aside class="app-sidebar" id="app-sidebar" role="navigation" aria-label="Admin Navigation">
+                <div class="sidebar-top-group">
+                    <div class="sidebar-section-label">ADMIN</div>
+                    <ul class="sidebar-nav-list">
+                        <!-- 1. Dashboard -->
+                        <li>
+                            <a href="../Dashboard/index.html" class="nav-link-item" data-target="dashboard">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                                <span class="nav-label">Dashboard</span>
+                            </a>
+                        </li>
+                        <!-- 2. User Management -->
+                        <li>
+                            <a href="../User Management/index.html" class="nav-link-item" data-target="user-management">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                <span class="nav-label">User Management</span>
+                            </a>
+                        </li>
+                        <!-- 3. Trustee Management -->
+                        <li>
+                            <a href="#trustee-management" class="nav-link-item" onclick="window.AegisReportsController.showToast('Trustee Management module', 'info');">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                                <span class="nav-label">Trustee Management</span>
+                            </a>
+                        </li>
+                        <!-- 4. Vault Management -->
+                        <li>
+                            <a href="../Vault Management/index.html" class="nav-link-item" data-target="vault-management">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                                <span class="nav-label">Vault Management</span>
+                            </a>
+                        </li>
+                        <!-- 5. Security Monitoring -->
+                        <li>
+                            <a href="#security-monitoring" class="nav-link-item" onclick="window.AegisReportsController.showToast('Security Monitoring module', 'info');">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                    <polyline points="9 12 11 14 15 10"></polyline>
+                                </svg>
+                                <span class="nav-label">Security Monitoring</span>
+                            </a>
+                        </li>
+                        <!-- 6. Audit Logs -->
+                        <li>
+                            <a href="../Audit Logs/index.html" class="nav-link-item" data-target="audit-logs">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                </svg>
+                                <span class="nav-label">Audit Logs</span>
+                            </a>
+                        </li>
+                        <!-- 7. System Health -->
+                        <li>
+                            <a href="../System Health/index.html" class="nav-link-item" data-target="system-health">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                                </svg>
+                                <span class="nav-label">System Health</span>
+                            </a>
+                        </li>
+                        <!-- 8. Analytics -->
+                        <li>
+                            <a href="../Analytics/index.html" class="nav-link-item" data-target="analytics">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                                </svg>
+                                <span class="nav-label">Analytics</span>
+                            </a>
+                        </li>
+                        <!-- 9. Reports (Active Page) -->
+                        <li>
+                            <a href="index.html" class="nav-link-item active" data-target="reports">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10 9 9 9 8 9"></polyline>
+                                </svg>
+                                <span class="nav-label">Reports</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Lower Sidebar Mountain Landscape Card (Shared Assets) -->
+                <div class="sidebar-bottom-landscape-card" aria-hidden="true">
+                    <img class="sidebar-landscape-img sidebar-img-light" src="../assets/sidebar-bg-light.png" alt="Alpine Mountain Landscape">
+                    <img class="sidebar-landscape-img sidebar-img-dark" src="../assets/sidebar-bg-dark.png" alt="Alpine Mountain Night Landscape">
+                    <div class="sidebar-landscape-overlay"></div>
+                    <div class="sidebar-landscape-text">
+                        Stronger<br>Security.<br>Brighter<br>Tomorrows.
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Workspace Area -->
+            <main class="main-workspace" id="main-content" role="main">
+                <!-- Breadcrumb Navigation -->
+                <div class="breadcrumb-row">
+                    <a href="../Dashboard/index.html" class="breadcrumb-link">Admin</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-current">Reports</span>
+                </div>
+
+                <!-- Hero Section -->
+                <section class="hero-card" aria-label="Reports Overview">
+                    <div class="hero-left-col">
+                        <h1 class="hero-title" id="reports-main-title">Reports</h1>
+                        <p class="hero-subtitle">Comprehensive reports to monitor activity, security, and system usage.</p>
+                    </div>
+
+                    <!-- Mountain Panorama Cutout -->
+                    <div class="hero-center-col" aria-hidden="true">
+                        <img class="hero-panorama-img hero-img-light" src="../assets/light-background.png" alt="Mountain Panorama Light">
+                        <img class="hero-panorama-img hero-img-dark" src="../assets/dark-background.png" alt="Mountain Panorama Dark">
+                        <div class="hero-panorama-fade-left"></div>
+                        <p class="hero-quote-text">“Insights today,<br>a safer tomorrow.”</p>
+                        <div class="hero-panorama-fade-right"></div>
+                    </div>
+
+                    <!-- Right Action Card: Generate Custom Report -->
+                    <button class="hero-cta-btn" id="btn-hero-generate-custom" title="Create a custom report" aria-label="Generate Custom Report">
+                        <div class="hero-cta-icon-box">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <line x1="10" y1="9" x2="8" y2="9"></line>
+                            </svg>
+                        </div>
+                        <div class="hero-cta-text-col">
+                            <span class="hero-cta-title">Generate Custom Report</span>
+                            <span class="hero-cta-desc">Turn data into peace of mind.</span>
+                        </div>
+                    </button>
+                </section>
+
+            <!-- ==============================================================
+                 3. KPI CARDS (4 SUMMARY METRICS)
+                 ============================================================== -->
+            <section class="kpi-grid-row" aria-label="Report Metrics Overview">
+                <!-- KPI 1: Total Reports -->
+                <div class="kpi-metric-card">
+                    <div class="kpi-icon-wrap blue">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                        </svg>
+                    </div>
+                    <div class="kpi-data-col">
+                        <div class="kpi-val-row">
+                            <span class="kpi-val-num" id="kpi-total-reports">28</span>
+                            <span class="kpi-pill-tag">↑ 12%</span>
+                        </div>
+                        <span class="kpi-title-label">Total Reports</span>
+                        <span class="kpi-sub-label">+3 this month</span>
+                    </div>
+                </div>
+
+                <!-- KPI 2: User Reports -->
+                <div class="kpi-metric-card">
+                    <div class="kpi-icon-wrap teal">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <div class="kpi-data-col">
+                        <div class="kpi-val-row">
+                            <span class="kpi-val-num" id="kpi-user-reports">1,248</span>
+                            <span class="kpi-pill-tag">↑ 8%</span>
+                        </div>
+                        <span class="kpi-title-label">User Reports</span>
+                        <span class="kpi-sub-label">43.6% of total</span>
+                    </div>
+                </div>
+
+                <!-- KPI 3: Security Reports -->
+                <div class="kpi-metric-card">
+                    <div class="kpi-icon-wrap purple">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            <polygon points="12 8 13.09 10.26 15.6 10.63 13.8 12.38 14.22 14.87 12 13.7 9.78 14.87 10.2 12.38 8.4 10.63 10.91 10.26 12 8"></polygon>
+                        </svg>
+                    </div>
+                    <div class="kpi-data-col">
+                        <div class="kpi-val-row">
+                            <span class="kpi-val-num" id="kpi-security-reports">892</span>
+                            <span class="kpi-pill-tag">↑ 25%</span>
+                        </div>
+                        <span class="kpi-title-label">Security Reports</span>
+                        <span class="kpi-sub-label">31.9% of total</span>
+                    </div>
+                </div>
+
+                <!-- KPI 4: Vault Reports -->
+                <div class="kpi-metric-card">
+                    <div class="kpi-icon-wrap amber">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+                        </svg>
+                    </div>
+                    <div class="kpi-data-col">
+                        <div class="kpi-val-row">
+                            <span class="kpi-val-num" id="kpi-vault-reports">614</span>
+                            <span class="kpi-pill-tag">↑ 10%</span>
+                        </div>
+                        <span class="kpi-title-label">Vault Reports</span>
+                        <span class="kpi-sub-label">21.9% of total</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================================================
+                 4. TABS & DATE RANGE SELECTOR BAR
+                 ============================================================== -->
+            <div class="tabs-filter-bar" role="navigation" aria-label="Report Category Filter Tabs">
+                <div class="report-tabs-nav">
+                    <button class="report-tab-btn active" data-tab="Overview">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="3" y1="9" x2="21" y2="9"></line>
+                            <line x1="9" y1="21" x2="9" y2="9"></line>
+                        </svg>
+                        <span>Overview</span>
+                    </button>
+                    <button class="report-tab-btn" data-tab="User Reports">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <span>User Reports</span>
+                    </button>
+                    <button class="report-tab-btn" data-tab="Security Reports">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                        <span>Security Reports</span>
+                    </button>
+                    <button class="report-tab-btn" data-tab="Vault Reports">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        <span>Vault Reports</span>
+                    </button>
+                    <button class="report-tab-btn" data-tab="System Reports">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
+                        <span>System Reports</span>
+                    </button>
+                </div>
+
+                <!-- Date Range Pill -->
+                <button class="date-range-pill-btn" id="btn-date-range-pill" aria-label="Select Date Range">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <span>01 Sep 2025 - 12 Sep 2025</span>
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- ==============================================================
+                 5. MIDDLE SECTION: 3 CHARTS + QUICK ACTIONS
+                 ============================================================== -->
+            <section class="middle-grid-row" aria-label="Visual Analytics & Quick Actions">
+                <!-- Chart Card 1: Report Generation Trend -->
+                <div class="chart-card-box">
+                    <div class="card-header-bar">
+                        <div class="card-title-group">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="20" x2="18" y2="10"></line>
+                                <line x1="12" y1="20" x2="12" y2="4"></line>
+                                <line x1="6" y1="20" x2="6" y2="14"></line>
+                            </svg>
+                            <span>Report Generation Trend</span>
+                        </div>
+                        <select class="chart-period-select" id="select-trend-period" aria-label="Select Trend Timeline">
+                            <option value="12days" selected>Last 12 Days</option>
+                            <option value="7days">Last 7 Days</option>
+                            <option value="30days">Last 30 Days</option>
+                        </select>
+                    </div>
+
+                    <div class="line-chart-container" id="trend-chart-container">
+                        <!-- Populated dynamically by report.js -->
+                    </div>
+                </div>
+
+                <!-- Chart Card 2: Reports by Type -->
+                <div class="chart-card-box">
+                    <div class="card-header-bar">
+                        <div class="card-title-group">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                            <span>Reports by Type</span>
+                        </div>
+                    </div>
+
+                    <div class="donut-type-wrapper">
+                        <div class="donut-svg-wrap" id="donut-type-container">
+                            <!-- Populated dynamically by report.js -->
+                        </div>
+                        <div class="donut-legend-list" id="donut-type-legend">
+                            <!-- Populated dynamically by report.js -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart Card 3: Report Status -->
+                <div class="chart-card-box">
+                    <div class="card-header-bar">
+                        <div class="card-title-group status-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                            <span>Report Status</span>
+                        </div>
+                    </div>
+
+                    <div class="donut-status-wrapper">
+                        <div class="donut-svg-wrap" id="donut-status-container">
+                            <!-- Populated dynamically by report.js -->
+                        </div>
+                        <div class="donut-status-legend-row" id="donut-status-legend">
+                            <!-- Populated dynamically by report.js -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Quick Actions -->
+                <div class="widget-card-box">
+                    <div class="card-header-bar">
+                        <div class="card-title-group actions-title">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                            </svg>
+                            <span>Quick Actions</span>
+                        </div>
+                    </div>
+
+                    <div class="quick-actions-list">
+                        <!-- Action 1: Generate New Report -->
+                        <button class="quick-action-btn-row" id="qa-generate-report" title="Create a custom report">
+                            <div class="qa-left-wrap">
+                                <div class="qa-icon-wrap orange">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="12" y1="18" x2="12" y2="12"></line>
+                                        <line x1="9" y1="15" x2="15" y2="15"></line>
+                                    </svg>
+                                </div>
+                                <div class="qa-text-col">
+                                    <span class="qa-title">Generate New Report</span>
+                                    <span class="qa-subtitle">Create a custom report</span>
+                                </div>
+                            </div>
+                            <svg class="qa-arrow-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+
+                        <!-- Action 2: Schedule Report -->
+                        <button class="quick-action-btn-row" id="qa-schedule-report" title="Automate periodic reports">
+                            <div class="qa-left-wrap">
+                                <div class="qa-icon-wrap blue">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                                        <line x1="12" y1="14" x2="12" y2="18"></line>
+                                        <line x1="10" y1="16" x2="14" y2="16"></line>
+                                    </svg>
+                                </div>
+                                <div class="qa-text-col">
+                                    <span class="qa-title">Schedule Report</span>
+                                    <span class="qa-subtitle">Automate periodic reports</span>
+                                </div>
+                            </div>
+                            <svg class="qa-arrow-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+
+                        <!-- Action 3: Export All Reports -->
+                        <button class="quick-action-btn-row" id="qa-export-all" title="Download in CSV / PDF">
+                            <div class="qa-left-wrap">
+                                <div class="qa-icon-wrap blue">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="7 10 12 15 17 10"></polyline>
+                                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                                    </svg>
+                                </div>
+                                <div class="qa-text-col">
+                                    <span class="qa-title">Export All Reports</span>
+                                    <span class="qa-subtitle">Download in CSV / PDF</span>
+                                </div>
+                            </div>
+                            <svg class="qa-arrow-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==============================================================
+                 6. BOTTOM SECTION: RECENT REPORTS TABLE + REPORT FORMATS
+                 ============================================================== -->
+            <section class="bottom-grid-row" aria-label="Recent Reports Table & Formats">
+                <!-- Left: Recent Reports Table Box -->
+                <div class="table-card-box">
+                    <div class="table-controls-bar">
+                        <div class="table-title-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                            </svg>
+                            <span>Recent Reports</span>
+                        </div>
+
+                        <div class="table-filters-group">
+                            <!-- Live Search -->
+                            <div class="table-search-input-box">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                                <input type="text" 
+                                       id="search-reports-input" 
+                                       class="table-search-input" 
+                                       placeholder="Search reports..." 
+                                       autocomplete="off" 
+                                       aria-label="Search reports by title, author, or type">
+                            </div>
+
+                            <!-- Filter 1: Type -->
+                            <select id="filter-report-type" class="table-filter-select" aria-label="Filter by report type">
+                                <option value="all">All Report Types</option>
+                                <option value="User">User</option>
+                                <option value="Security">Security</option>
+                                <option value="Vault">Vault</option>
+                                <option value="System">System</option>
+                                <option value="Compliance">Compliance</option>
+                            </select>
+
+                            <!-- Filter 2: Status -->
+                            <select id="filter-report-status" class="table-filter-select" aria-label="Filter by report status">
+                                <option value="all">All Status</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Generating">Generating</option>
+                                <option value="Failed">Failed</option>
+                            </select>
+
+                            <!-- View All Link -->
+                            <a href="#view-all" class="table-view-all-link" id="link-view-all-reports">View All →</a>
+                        </div>
+                    </div>
+
+                    <!-- Table Data Container -->
+                    <div class="reports-table-wrap">
+                        <table class="reports-table" aria-label="Recent Operational Reports Ledger">
+                            <thead>
+                                <tr>
+                                    <th class="col-icon-status">#</th>
+                                    <th class="col-num">#</th>
+                                    <th>Report Name</th>
+                                    <th>Type</th>
+                                    <th>Generated By</th>
+                                    <th>Date & Time</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reports-table-body">
+                                <!-- Populated dynamically by report.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Right: Report Formats Card (2x2 Grid) -->
+                <div class="formats-card-box">
+                    <div class="card-header-bar">
+                        <div class="card-title-group">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                            <span>Report Formats</span>
+                        </div>
+                    </div>
+
+                    <div class="formats-grid-2x2">
+                        <!-- Format 1: PDF -->
+                        <button class="format-tile-box" data-format="PDF" title="Export PDF document">
+                            <div class="format-icon-wrap red">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                            </div>
+                            <span class="format-name-title">PDF</span>
+                            <span class="format-desc-text">Best for sharing</span>
+                        </button>
+
+                        <!-- Format 2: CSV -->
+                        <button class="format-tile-box" data-format="CSV" title="Export CSV spreadsheet">
+                            <div class="format-icon-wrap green">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="21 8 21 21 3 21 3 8"></polyline>
+                                    <line x1="1" y1="3" x2="23" y2="3"></line>
+                                    <path d="M10 12h4"></path>
+                                </svg>
+                            </div>
+                            <span class="format-name-title">CSV</span>
+                            <span class="format-desc-text">For data analysis</span>
+                        </button>
+
+                        <!-- Format 3: Excel -->
+                        <button class="format-tile-box" data-format="Excel" title="Export Excel workbook">
+                            <div class="format-icon-wrap blue">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="3" y1="9" x2="21" y2="9"></line>
+                                    <line x1="3" y1="15" x2="21" y2="15"></line>
+                                    <line x1="9" y1="3" x2="9" y2="21"></line>
+                                </svg>
+                            </div>
+                            <span class="format-name-title">Excel</span>
+                            <span class="format-desc-text">Detailed data</span>
+                        </button>
+
+                        <!-- Format 4: JSON -->
+                        <button class="format-tile-box" data-format="JSON" title="Export JSON integration payload">
+                            <div class="format-icon-wrap purple">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="16 18 22 12 16 6"></polyline>
+                                    <polyline points="8 6 2 12 8 18"></polyline>
+                                </svg>
+                            </div>
+                            <span class="format-name-title">JSON</span>
+                            <span class="format-desc-text">For integration</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            </main>
+        </div>
+
+        <!-- ==================================================================
+             3. APPLICATION FOOTER (Identical to User Management)
+             ================================================================== -->
+        <footer class="app-footer" role="contentinfo">
+            <div class="footer-left">
+                <svg class="brand-logo-svg" style="width:20px; height:24px;" viewBox="0 0 36 36" fill="none">
+                    <path d="M18 2L5 7.5V17C5 25.5 10.5 32.5 18 34.5C25.5 32.5 31 25.5 31 17V7.5L18 2Z" fill="#F45A1F"/>
+                    <path d="M18 5L7.5 9.4V17C7.5 24 12 29.8 18 31.6C24 29.8 28.5 24 28.5 17V9.4L18 5Z" fill="#FF7A2F"/>
+                    <rect x="13" y="15" width="10" height="9" rx="2" fill="#FFFFFF"/>
+                </svg>
+                <div class="brand-text-col">
+                    <span class="brand-name" style="font-size: 0.95rem;">AegisVault</span>
+                    <span class="brand-tagline">What matters, lives on.</span>
+                </div>
+            </div>
+
+            <div class="footer-center">
+                “Because what matters today, should matter tomorrow too.”
+            </div>
+
+            <div class="footer-right">
+                <a href="#privacy" class="footer-link" onclick="window.AegisReportsController.showToast('Zero-Knowledge Privacy Policy', 'info');">Privacy</a>
+                <a href="#terms" class="footer-link" onclick="window.AegisReportsController.showToast('Custody Protocol Terms', 'info');">Terms</a>
+                <a href="#help" class="footer-link" onclick="window.AegisReportsController.showToast('Administrator Support Portal', 'info');">Help</a>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- ==============================================================
+         8. INTERACTIVE MODALS & DIALOGS
+         ============================================================== -->
+    <!-- Modal 1: Generate Custom Report -->
+    <div class="modal-overlay" id="modal-generate-custom-report" role="dialog" aria-modal="true" aria-labelledby="modal-gen-title">
+        <div class="modal-card">
+            <div class="modal-header-bar">
+                <h3 class="modal-title-text" id="modal-gen-title">Generate Custom Operational Report</h3>
+                <button class="modal-close-btn" data-close-modal="modal-generate-custom-report" aria-label="Close dialog">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <form id="form-generate-custom-report">
+                <div class="modal-body-content">
+                    <div class="form-group-row">
+                        <label class="form-label" for="new-report-name">Report Title</label>
+                        <input type="text" id="new-report-name" class="form-input-text" placeholder="e.g., Q3 Cryptographic Shard Audit" required>
+                    </div>
+                    <div class="form-group-row">
+                        <label class="form-label" for="new-report-type">Report Category</label>
+                        <select id="new-report-type" class="form-input-select">
+                            <option value="Security">Security Events & Threat Mitigations</option>
+                            <option value="User">User Activity & Authentication Telemetry</option>
+                            <option value="Vault">Vault Operations & Shard Allocation</option>
+                            <option value="System">System Infrastructure & Heartbeat</option>
+                            <option value="Compliance">Compliance, SOC 2 & Access Ledgers</option>
+                        </select>
+                    </div>
+                    <div class="form-group-row">
+                        <label class="form-label" for="new-report-format">Export Format</label>
+                        <select id="new-report-format" class="form-input-select">
+                            <option value="PDF">PDF Document (Formatted for Audit Submission)</option>
+                            <option value="CSV">CSV Data (Raw Delimited Ledger)</option>
+                            <option value="Excel">Excel Spreadsheet (.xlsx)</option>
+                            <option value="JSON">JSON Machine-Readable Stream</option>
+                        </select>
+                    </div>
+                    <div class="form-group-row" style="margin-top: 4px;">
+                        <label class="form-checkbox-label">
+                            <input type="checkbox" checked style="accent-color: var(--brand-orange);">
+                            <span>Include Zero-Knowledge verification proof signatures</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer-bar">
+                    <button type="button" class="btn-secondary" data-close-modal="modal-generate-custom-report">Cancel</button>
+                    <button type="submit" class="btn-primary">Generate Report</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 2: Schedule Report -->
+    <div class="modal-overlay" id="modal-schedule-report" role="dialog" aria-modal="true" aria-labelledby="modal-sched-title">
+        <div class="modal-card">
+            <div class="modal-header-bar">
+                <h3 class="modal-title-text" id="modal-sched-title">Schedule Automated Report Delivery</h3>
+                <button class="modal-close-btn" data-close-modal="modal-schedule-report" aria-label="Close dialog">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <form id="form-schedule-report">
+                <div class="modal-body-content">
+                    <div class="form-group-row">
+                        <label class="form-label" for="sched-report-name">Job Description</label>
+                        <input type="text" id="sched-report-name" class="form-input-text" placeholder="e.g., Weekly Trustee Heartbeat Summary" required>
+                    </div>
+                    <div class="form-group-row">
+                        <label class="form-label" for="sched-report-cadence">Execution Cadence</label>
+                        <select id="sched-report-cadence" class="form-input-select">
+                            <option value="daily">Daily at 00:00 UTC</option>
+                            <option value="weekly" selected>Weekly (Every Monday Morning)</option>
+                            <option value="monthly">Monthly on 1st Calendar Day</option>
+                            <option value="quarterly">Quarterly Protocol Reconciliation</option>
+                        </select>
+                    </div>
+                    <div class="form-group-row">
+                        <label class="form-label" for="sched-report-email">Encrypted Dispatch Channel</label>
+                        <input type="email" id="sched-report-email" class="form-input-text" placeholder="admin@aegisvault.io" value="admin@aegisvault.io" required>
+                    </div>
+                </div>
+                <div class="modal-footer-bar">
+                    <button type="button" class="btn-secondary" data-close-modal="modal-schedule-report">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Schedule</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 3: Report Details & Inspection -->
+    <div class="modal-overlay" id="modal-report-details" role="dialog" aria-modal="true" aria-labelledby="modal-details-title">
+        <div class="modal-card" style="max-width: 600px;">
+            <div class="modal-header-bar">
+                <div>
+                    <h3 class="modal-title-text" id="modal-details-title">Report Metadata & Cryptographic Ledger</h3>
+                    <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;" id="detail-report-id">RPT-2025-0912-01</div>
+                </div>
+                <button class="modal-close-btn" data-close-modal="modal-report-details" aria-label="Close dialog">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body-content">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; background-color: var(--bg-card-subtle); padding: 0.85rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                    <div>
+                        <div style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Category</div>
+                        <div style="font-size: 0.82rem; font-weight: 600; color: var(--text-heading);" id="detail-report-type">-</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Execution Status</div>
+                        <div style="font-size: 0.82rem; font-weight: 600; color: #10B981;" id="detail-report-status">-</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Timestamp</div>
+                        <div style="font-size: 0.82rem; font-weight: 600; color: var(--text-heading);" id="detail-report-date">-</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Author / Trigger</div>
+                        <div style="font-size: 0.82rem; font-weight: 600; font-family: var(--font-mono); color: var(--text-heading);" id="detail-report-author">-</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">File Format & Size</div>
+                        <div style="font-size: 0.82rem; font-weight: 600; color: var(--text-heading);" id="detail-report-format">-</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Audited Event Count</div>
+                        <div style="font-size: 0.82rem; font-weight: 600; color: var(--text-heading);" id="detail-report-records">-</div>
+                    </div>
+                </div>
+
+                <div>
+                    <div style="font-size: 0.72rem; font-weight: 700; color: var(--text-heading); margin-bottom: 4px;">Cryptographic SHA-256 Checksum</div>
+                    <div style="font-family: var(--font-mono); font-size: 0.68rem; background-color: var(--bg-card-subtle); padding: 6px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); word-break: break-all; color: var(--brand-orange);" id="detail-report-checksum">-</div>
+                </div>
+
+                <div>
+                    <div style="font-size: 0.72rem; font-weight: 700; color: var(--text-heading); margin-bottom: 4px;">Executive Findings</div>
+                    <div style="font-size: 0.76rem; color: var(--text-secondary); line-height: 1.45;" id="detail-report-summary">-</div>
+                </div>
+            </div>
+            <div class="modal-footer-bar">
+                <button type="button" class="btn-secondary" data-close-modal="modal-report-details">Close</button>
+                <button type="button" class="btn-primary" id="btn-modal-download-report">Download File</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Messaging Outlet -->
+    <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+    <!-- Scripts -->
+    <script src="js/mockData.js"></script>
+    <script src="js/report.js"></script>
+</body>
+</html>

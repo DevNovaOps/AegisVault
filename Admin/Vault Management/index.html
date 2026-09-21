@@ -1,25 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AegisVault — Vault Management</title>
-    <meta name="description" content="AegisVault Administration: Create, manage, and monitor all secure time-locked vaults, trustees, and operational lifecycle states.">
+    <meta name="description"
+        content="AegisVault Administration: Create, manage, and monitor all secure time-locked vaults, trustees, and operational lifecycle states.">
     <meta name="theme-color" content="#F8FAFC">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,500;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,500;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
     <!-- Stylesheet -->
     <link rel="stylesheet" href="css/vault-management.css">
 </head>
+
 <body class="light-theme">
-    <!-- ==============================================================
-         1. APPLICATION HEADER
-         ============================================================== -->
-    <header class="app-header" role="banner">
+    <div class="app-layout">
+
+        <!-- ==============================================================
+             1. APPLICATION HEADER
+             ============================================================== -->
+        <header class="app-header" role="banner">
         <!-- Left: Brand Logo & Title -->
         <div class="header-left">
             <button class="hamburger-btn" id="btn-hamburger" aria-label="Toggle Sidebar Menu">
@@ -32,12 +39,15 @@
 
             <a href="../Dashboard/index.html" class="brand-link" aria-label="AegisVault Admin Console">
                 <svg class="brand-logo-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M18 2L5 7.5V17C5 25.5 10.5 32.5 18 34.5C25.5 32.5 31 25.5 31 17V7.5L18 2Z" fill="#F45A1F"/>
-                    <path d="M18 5L7.5 9.4V17C7.5 24 12 29.8 18 31.6C24 29.8 28.5 24 28.5 17V9.4L18 5Z" fill="#FF7A2F"/>
-                    <rect x="13" y="15" width="10" height="9" rx="2" fill="#FFFFFF"/>
-                    <path d="M15 15V12.8C15 11.25 16.34 10 18 10C19.66 10 21 11.25 21 12.8V15" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/>
-                    <circle cx="18" cy="18.5" r="1.3" fill="#F45A1F"/>
-                    <path d="M18 19.8V21.5" stroke="#F45A1F" stroke-width="1.3" stroke-linecap="round"/>
+                    <path d="M18 2L5 7.5V17C5 25.5 10.5 32.5 18 34.5C25.5 32.5 31 25.5 31 17V7.5L18 2Z"
+                        fill="#F45A1F" />
+                    <path d="M18 5L7.5 9.4V17C7.5 24 12 29.8 18 31.6C24 29.8 28.5 24 28.5 17V9.4L18 5Z"
+                        fill="#FF7A2F" />
+                    <rect x="13" y="15" width="10" height="9" rx="2" fill="#FFFFFF" />
+                    <path d="M15 15V12.8C15 11.25 16.34 10 18 10C19.66 10 21 11.25 21 12.8V15" stroke="#FFFFFF"
+                        stroke-width="2.2" stroke-linecap="round" />
+                    <circle cx="18" cy="18.5" r="1.3" fill="#F45A1F" />
+                    <path d="M18 19.8V21.5" stroke="#F45A1F" stroke-width="1.3" stroke-linecap="round" />
                 </svg>
                 <div class="brand-text-col">
                     <span class="brand-name">AegisVault</span>
@@ -53,12 +63,9 @@
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
-                <input type="text" 
-                       id="global-search-input" 
-                       class="search-input" 
-                       placeholder="Search users, trustees, vaults, logs, or settings..." 
-                       autocomplete="off"
-                       aria-label="Global search">
+                <input type="text" id="global-header-search" class="search-input"
+                    placeholder="Search users, trustees, vaults, logs, or settings..." autocomplete="off"
+                    aria-label="Global search">
                 <span class="search-shortcut-pill">/</span>
             </div>
         </div>
@@ -66,7 +73,8 @@
         <!-- Right: Theme Switcher, Notifications, Admin Profile -->
         <div class="header-right">
             <!-- Theme Switcher Pill Toggle (Matching Reference Image 2) -->
-            <button class="theme-toggle-btn" id="btn-theme-toggle" aria-label="Toggle light and dark theme" title="Toggle theme">
+            <button class="theme-toggle-btn" id="btn-theme-toggle" aria-label="Toggle light and dark theme"
+                title="Toggle theme">
                 <div class="theme-toggle-track">
                     <span class="theme-track-icon theme-track-sun" aria-hidden="true">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -87,7 +95,8 @@
                         </svg>
                     </span>
                     <div class="theme-toggle-thumb">
-                        <svg class="thumb-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <svg class="thumb-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.2">
                             <circle cx="12" cy="12" r="4"></circle>
                             <line x1="12" y1="2" x2="12" y2="4"></line>
                             <line x1="12" y1="20" x2="12" y2="22"></line>
@@ -117,13 +126,18 @@
 
                 <!-- Notifications Dropdown -->
                 <div class="notifications-dropdown" id="notifications-dropdown">
-                    <div style="padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-weight: 700; font-size: 0.82rem; color: var(--text-heading);">Notifications</span>
-                        <span style="font-size: 0.7rem; color: var(--brand-orange); cursor: pointer;" onclick="window.AegisVaultController.showToast('All notifications marked as read', 'info');">Mark read</span>
+                    <div
+                        style="padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+                        <span
+                            style="font-weight: 700; font-size: 0.82rem; color: var(--text-heading);">Notifications</span>
+                        <span style="font-size: 0.7rem; color: var(--brand-orange); cursor: pointer;"
+                            onclick="window.AegisVaultController.showToast('All notifications marked as read', 'info');">Mark
+                            read</span>
                     </div>
                     <div style="padding: 0.75rem 1rem; font-size: 0.78rem;">
                         <div style="font-weight: 600; color: var(--text-heading);">New Vault Created</div>
-                        <div style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 2px;">Kunal Desai initialized Master Crypto Key Archive vault.</div>
+                        <div style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 2px;">Kunal Desai
+                            initialized Master Crypto Key Archive vault.</div>
                         <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 4px;">10 minutes ago</div>
                     </div>
                 </div>
@@ -141,16 +155,35 @@
 
                 <!-- Profile Dropdown -->
                 <div class="profile-dropdown" id="profile-dropdown">
-                    <button class="profile-menu-item" onclick="window.AegisVaultController.showToast('Security Settings Panel', 'info');">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    <button class="profile-menu-item"
+                        onclick="window.AegisVaultController.showToast('Security Settings Panel', 'info');">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                            </path>
+                        </svg>
                         <span>Security Settings</span>
                     </button>
                     <a href="../Audit Logs/index.html" class="profile-menu-item">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                        </svg>
                         <span>Audit Logs</span>
                     </a>
-                    <button class="profile-menu-item" onclick="window.AegisVaultController.showToast('Logged out of Admin Session (Mock)', 'warning');">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    <button class="profile-menu-item"
+                        onclick="window.AegisVaultController.showToast('Logged out of Admin Session (Mock)', 'warning');">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
                         <span>Sign Out</span>
                     </button>
                 </div>
@@ -161,7 +194,7 @@
     <!-- ==============================================================
          2. APP SHELL LAYOUT (SIDEBAR + MAIN WORKSPACE)
          ============================================================== -->
-    <div class="app-layout">
+    <div class="app-body-container">
         <!-- Mobile Sidebar Backdrop -->
         <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
 
@@ -192,7 +225,8 @@
                     </li>
                     <!-- 3. Trustee Management -->
                     <li>
-                        <a href="#trustee-management" class="nav-link-item" onclick="window.AegisInteractions.showToast('Trustee Management module', 'info');">
+                        <a href="#trustee-management" class="nav-link-item"
+                            onclick="window.AegisInteractions.showToast('Trustee Management module', 'info');">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="9" cy="7" r="4"></circle>
@@ -214,7 +248,8 @@
                     </li>
                     <!-- 5. Security Monitoring -->
                     <li>
-                        <a href="#security-monitoring" class="nav-link-item" onclick="window.AegisInteractions.showToast('Security Monitoring module', 'info');">
+                        <a href="#security-monitoring" class="nav-link-item"
+                            onclick="window.AegisInteractions.showToast('Security Monitoring module', 'info');">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                                 <polyline points="9 12 11 14 15 10"></polyline>
@@ -234,17 +269,7 @@
                             <span class="nav-label">Audit Logs</span>
                         </a>
                     </li>
-                    <!-- 7. Notifications -->
-                    <li>
-                        <a href="#notifications" class="nav-link-item" onclick="window.AegisInteractions.showToast('System Notifications', 'info');">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                            </svg>
-                            <span class="nav-label">Notifications</span>
-                        </a>
-                    </li>
-                    <!-- 8. System Health -->
+                    <!-- 7. System Health -->
                     <li>
                         <a href="../System Health/index.html" class="nav-link-item" data-target="system-health">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -253,7 +278,7 @@
                             <span class="nav-label">System Health</span>
                         </a>
                     </li>
-                    <!-- 9. Analytics -->
+                    <!-- 8. Analytics -->
                     <li>
                         <a href="../Analytics/index.html" class="nav-link-item" data-target="analytics">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -264,9 +289,9 @@
                             <span class="nav-label">Analytics</span>
                         </a>
                     </li>
-                    <!-- 10. Reports -->
+                    <!-- 9. Reports -->
                     <li>
-                        <a href="#reports" class="nav-link-item" onclick="window.AegisInteractions.showToast('Custody Reports export', 'info');">
+                        <a href="../Reports/index.html" class="nav-link-item" data-target="reports">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                 <polyline points="14 2 14 8 20 8"></polyline>
@@ -277,33 +302,15 @@
                             <span class="nav-label">Reports</span>
                         </a>
                     </li>
-                    <!-- 11. Settings -->
-                    <li>
-                        <a href="#settings" class="nav-link-item" onclick="window.AegisInteractions.showToast('Platform Settings', 'info');">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="3"></circle>
-                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                            </svg>
-                            <span class="nav-label">Settings</span>
-                        </a>
-                    </li>
-                    <!-- 12. Admin Support -->
-                    <li>
-                        <a href="#admin-support" class="nav-link-item" onclick="window.AegisInteractions.showToast('Enterprise Operations Support', 'info');">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
-                                <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
-                            </svg>
-                            <span class="nav-label">Admin Support</span>
-                        </a>
-                    </li>
                 </ul>
             </div>
 
             <!-- Lower Sidebar Mountain Landscape Card (Shared Assets) -->
             <div class="sidebar-bottom-landscape-card" aria-hidden="true">
-                <img class="sidebar-landscape-img sidebar-img-light" src="../assets/sidebar-bg-light.png" alt="Alpine Mountain Landscape">
-                <img class="sidebar-landscape-img sidebar-img-dark" src="../assets/sidebar-bg-dark.png" alt="Alpine Mountain Landscape">
+                <img class="sidebar-landscape-img sidebar-img-light" src="../assets/sidebar-bg-light.png"
+                    alt="Alpine Mountain Landscape">
+                <img class="sidebar-landscape-img sidebar-img-dark" src="../assets/sidebar-bg-dark.png"
+                    alt="Alpine Mountain Landscape">
                 <div class="sidebar-landscape-overlay"></div>
                 <div class="sidebar-landscape-text">
                     Stronger<br>Security.<br>Brighter<br>Tomorrows.
@@ -331,8 +338,10 @@
 
                 <!-- Mountain Panorama Cutout Box (Expanded Width) -->
                 <div class="hero-center-col hero-panorama-box" aria-hidden="true">
-                    <img class="hero-panorama-img hero-img-light" src="../assets/light-background.png" alt="Mountain Panorama Light">
-                    <img class="hero-panorama-img hero-img-dark" src="../assets/dark-background.png" alt="Mountain Panorama Dark">
+                    <img class="hero-panorama-img hero-img-light" src="../assets/light-background.png"
+                        alt="Mountain Panorama Light">
+                    <img class="hero-panorama-img hero-img-dark" src="../assets/dark-background.png"
+                        alt="Mountain Panorama Dark">
                     <div class="hero-panorama-fade-left"></div>
                     <p class="hero-quote-text">“Your data today,<br>a safer tomorrow.”</p>
                     <div class="hero-panorama-fade-right"></div>
@@ -397,7 +406,8 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M5 22h14"></path>
                             <path d="M5 2h14"></path>
-                            <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"></path>
+                            <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22">
+                            </path>
                             <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"></path>
                         </svg>
                     </div>
@@ -417,7 +427,9 @@
                 <div class="kpi-stat-card">
                     <div class="kpi-icon-wrap red">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <path
+                                d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                            </path>
                             <line x1="12" y1="9" x2="12" y2="13"></line>
                             <line x1="12" y1="17" x2="12.01" y2="17"></line>
                         </svg>
@@ -440,15 +452,13 @@
                 <div class="filter-left-group">
                     <!-- Search Input -->
                     <div class="table-search-box">
-                        <svg class="table-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg class="table-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
                             <circle cx="11" cy="11" r="8"></circle>
                             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                         </svg>
-                        <input type="text"
-                               id="search-vaults-input"
-                               class="table-search-input"
-                               placeholder="Search vaults by name, owner, or ID..."
-                               autocomplete="off">
+                        <input type="text" id="search-vaults-input" class="table-search-input"
+                            placeholder="Search vaults by name, owner, or ID..." autocomplete="off">
                     </div>
 
                     <!-- Filter 1: Status -->
@@ -523,7 +533,8 @@
                             <thead>
                                 <tr>
                                     <th>
-                                        <input type="checkbox" id="checkbox-select-all" class="custom-checkbox" aria-label="Select all vaults on this page">
+                                        <input type="checkbox" id="checkbox-select-all" class="custom-checkbox"
+                                            aria-label="Select all vaults on this page">
                                     </th>
                                     <th>#</th>
                                     <th>Vault Name</th>
@@ -557,7 +568,8 @@
                     <!-- Widget 1: Vault Overview -->
                     <div class="widget-card">
                         <div class="widget-header-title">
-                            <svg class="widget-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg class="widget-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                             </svg>
                             <span>Vault Overview</span>
@@ -585,7 +597,8 @@
                     <!-- Widget 2: Vault Types (Interactive SVG Donut Chart) -->
                     <div class="widget-card">
                         <div class="widget-header-title">
-                            <svg class="widget-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg class="widget-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <path d="M12 2a10 10 0 0 1 10 10"></path>
                             </svg>
@@ -618,7 +631,8 @@
                                     <div class="quick-action-icon-circle">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                             <circle cx="12" cy="12" r="10"></circle>
-                                            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+                                            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76">
+                                            </polygon>
                                         </svg>
                                     </div>
                                     <div class="quick-action-titles">
@@ -626,7 +640,8 @@
                                         <div class="quick-action-desc">Set up a secure vault</div>
                                     </div>
                                 </div>
-                                <svg class="quick-action-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg class="quick-action-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <polyline points="9 18 15 12 9 6"></polyline>
                                 </svg>
                             </a>
@@ -647,7 +662,8 @@
                                         <div class="quick-action-desc">View and manage permissions</div>
                                     </div>
                                 </div>
-                                <svg class="quick-action-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg class="quick-action-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <polyline points="9 18 15 12 9 6"></polyline>
                                 </svg>
                             </a>
@@ -666,7 +682,8 @@
                                         <div class="quick-action-desc">Use pre-defined templates</div>
                                     </div>
                                 </div>
-                                <svg class="quick-action-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg class="quick-action-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <polyline points="9 18 15 12 9 6"></polyline>
                                 </svg>
                             </a>
@@ -678,11 +695,41 @@
     </div>
 
     <!-- ==============================================================
+         3. APPLICATION FOOTER (Identical to User Management)
+         ============================================================== -->
+    <footer class="app-footer" role="contentinfo">
+        <div class="footer-left">
+            <svg class="brand-logo-svg" style="width:20px; height:24px;" viewBox="0 0 36 36" fill="none">
+                <path d="M18 2L5 7.5V17C5 25.5 10.5 32.5 18 34.5C25.5 32.5 31 25.5 31 17V7.5L18 2Z" fill="#F45A1F"/>
+                <path d="M18 5L7.5 9.4V17C7.5 24 12 29.8 18 31.6C24 29.8 28.5 24 28.5 17V9.4L18 5Z" fill="#FF7A2F"/>
+                <rect x="13" y="15" width="10" height="9" rx="2" fill="#FFFFFF"/>
+            </svg>
+            <div class="brand-text-col">
+                <span class="brand-name" style="font-size: 0.95rem;">AegisVault</span>
+                <span class="brand-tagline">What matters, lives on.</span>
+            </div>
+        </div>
+
+        <div class="footer-center">
+            “Because what matters today, should matter tomorrow too.”
+        </div>
+
+        <div class="footer-right">
+            <a href="#privacy" class="footer-link" onclick="window.AegisVaultController.showToast('Zero-Knowledge Privacy Policy', 'info');">Privacy</a>
+            <a href="#terms" class="footer-link" onclick="window.AegisVaultController.showToast('Custody Protocol Terms', 'info');">Terms</a>
+            <a href="#help" class="footer-link" onclick="window.AegisVaultController.showToast('Administrator Support Portal', 'info');">Help</a>
+        </div>
+    </footer>
+
+</div>
+
+    <!-- ==============================================================
          4. MODAL DIALOGS (ACCESSIBLE & THEMED)
          ============================================================== -->
 
     <!-- Modal A: Vault Details Inspection Modal -->
-    <div class="modal-overlay" id="vault-details-modal" role="dialog" aria-modal="true" aria-labelledby="modal-details-title">
+    <div class="modal-overlay" id="vault-details-modal" role="dialog" aria-modal="true"
+        aria-labelledby="modal-details-title">
         <div class="modal-card">
             <div class="modal-header-bar">
                 <div class="modal-header-title-wrap">
@@ -690,7 +737,10 @@
                     <p>Strictly Zero-Knowledge &mdash; Private payload remains encrypted client-side</p>
                 </div>
                 <button class="modal-close-btn" data-close-modal="vault-details-modal" aria-label="Close modal">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
             <div class="modal-body-content">
@@ -730,7 +780,9 @@
                 </div>
 
                 <div class="form-notice-box">
-                    <strong>Zero-Knowledge Custody Policy:</strong> Administrators and background workers are cryptographically prohibited from accessing raw asset payloads. Release will strictly occur only when the threshold verification condition is met.
+                    <strong>Zero-Knowledge Custody Policy:</strong> Administrators and background workers are
+                    cryptographically prohibited from accessing raw asset payloads. Release will strictly occur only
+                    when the threshold verification condition is met.
                 </div>
             </div>
             <div class="modal-footer-bar">
@@ -741,7 +793,8 @@
     </div>
 
     <!-- Modal B: Create New Vault Modal -->
-    <div class="modal-overlay" id="create-vault-modal" role="dialog" aria-modal="true" aria-labelledby="modal-create-title">
+    <div class="modal-overlay" id="create-vault-modal" role="dialog" aria-modal="true"
+        aria-labelledby="modal-create-title">
         <div class="modal-card">
             <div class="modal-header-bar">
                 <div class="modal-header-title-wrap">
@@ -749,14 +802,18 @@
                     <p>Provision an AES-256 encrypted time-locked custody container</p>
                 </div>
                 <button class="modal-close-btn" data-close-modal="create-vault-modal" aria-label="Close modal">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
             <form id="create-vault-form">
                 <div class="modal-body-content">
                     <div class="form-group-row">
                         <label class="form-label" for="new-vault-name">Vault Name</label>
-                        <input type="text" id="new-vault-name" class="form-input-text" placeholder="e.g., Primary Family Legacy" required>
+                        <input type="text" id="new-vault-name" class="form-input-text"
+                            placeholder="e.g., Primary Family Legacy" required>
                     </div>
                     <div class="form-group-row">
                         <label class="form-label" for="new-vault-owner">Assign Owner</label>
@@ -786,7 +843,8 @@
                         </select>
                     </div>
                     <div class="form-notice-box">
-                        <strong>Protocol Notice:</strong> The initialization key will be generated on the owner's client device. Zero secrets are transmitted unencrypted to the database.
+                        <strong>Protocol Notice:</strong> The initialization key will be generated on the owner's client
+                        device. Zero secrets are transmitted unencrypted to the database.
                     </div>
                 </div>
                 <div class="modal-footer-bar">
@@ -798,7 +856,8 @@
     </div>
 
     <!-- Modal C: Manage Access & Trustees -->
-    <div class="modal-overlay" id="manage-access-modal" role="dialog" aria-modal="true" aria-labelledby="modal-access-title">
+    <div class="modal-overlay" id="manage-access-modal" role="dialog" aria-modal="true"
+        aria-labelledby="modal-access-title">
         <div class="modal-card">
             <div class="modal-header-bar">
                 <div class="modal-header-title-wrap">
@@ -806,7 +865,10 @@
                     <p>Designated Shamir's Secret Sharing trustees for this custody unit</p>
                 </div>
                 <button class="modal-close-btn" data-close-modal="manage-access-modal" aria-label="Close modal">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
             <div class="modal-body-content">
@@ -814,18 +876,22 @@
                     <!-- Dynamically rendered -->
                 </div>
                 <div class="form-notice-box">
-                    Trustees hold encrypted cryptographic shards. Reconstruction requires reaching the predetermined threshold condition upon trigger confirmation.
+                    Trustees hold encrypted cryptographic shards. Reconstruction requires reaching the predetermined
+                    threshold condition upon trigger confirmation.
                 </div>
             </div>
             <div class="modal-footer-bar">
                 <button class="btn-secondary" data-close-modal="manage-access-modal">Close</button>
-                <button class="btn-primary" onclick="AegisVaultController.showToast('Trustee verification challenges dispatched via SMTP', 'success'); AegisVaultController.closeModal('manage-access-modal');">Dispatch Verification</button>
+                <button class="btn-primary"
+                    onclick="AegisVaultController.showToast('Trustee verification challenges dispatched via SMTP', 'success'); AegisVaultController.closeModal('manage-access-modal');">Dispatch
+                    Verification</button>
             </div>
         </div>
     </div>
 
     <!-- Modal D: Vault Templates -->
-    <div class="modal-overlay" id="vault-templates-modal" role="dialog" aria-modal="true" aria-labelledby="modal-tpl-title">
+    <div class="modal-overlay" id="vault-templates-modal" role="dialog" aria-modal="true"
+        aria-labelledby="modal-tpl-title">
         <div class="modal-card">
             <div class="modal-header-bar">
                 <div class="modal-header-title-wrap">
@@ -833,7 +899,10 @@
                     <p>Standardized threshold specifications recommended for institutional & personal estates</p>
                 </div>
                 <button class="modal-close-btn" data-close-modal="vault-templates-modal" aria-label="Close modal">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
             <div class="modal-body-content" id="templates-cards-list">
@@ -854,4 +923,5 @@
     <script src="js/mockData.js"></script>
     <script src="js/vault-management.js"></script>
 </body>
+
 </html>

@@ -74,6 +74,7 @@ window.AegisUserManagement = {
         }
 
         localStorage.setItem(this.THEME_KEY, theme);
+        localStorage.setItem('aegis_theme', theme);
 
         if (showNotice) {
             this.showToast(`Switched to ${isDark ? 'Dark Theme' : 'Light Theme'}`, 'info');
