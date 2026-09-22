@@ -12,6 +12,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
+    <!-- Admin Common Stylesheet -->
+    <link rel="stylesheet" href="../common/css/admin-common.css">
     <!-- Main Stylesheet (Design, Themes, Animations & Responsive Layouts) -->
     <link rel="stylesheet" href="css/audit-logs.css">
 </head>
@@ -49,22 +51,6 @@
                 </a>
             </div>
 
-            <!-- Center: Search Bar -->
-            <div class="header-center">
-                <div class="search-container">
-                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                    <input type="text" 
-                           id="global-header-search" 
-                           class="search-input" 
-                           placeholder="Search logs, events, IP addresses, sessions..." 
-                           autocomplete="off"
-                           aria-label="Global search">
-                    <span class="search-shortcut-pill">/</span>
-                </div>
-            </div>
 
             <!-- Right: Theme Switcher, Notifications, Admin Profile -->
             <div class="header-right">
@@ -140,19 +126,17 @@
                             <span class="profile-name">Admin</span>
                             <span class="profile-role">System Administrator</span>
                         </div>
-                    </button>
-
-                    <!-- Profile Dropdown -->
+                    </button>                    <!-- Profile Dropdown -->
                     <div class="profile-dropdown" id="profile-dropdown">
-                        <button class="profile-menu-item" onclick="window.AegisInteractions.showToast('Security Settings Panel', 'info');">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                        <button class="profile-menu-item" id="btn-profile-settings" type="button">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                             <span>Security Settings</span>
                         </button>
-                        <button class="profile-menu-item" onclick="window.AegisInteractions.showToast('Already on Audit Logs Console', 'info');">
+                        <a href="audit-logs.html" class="profile-menu-item" id="btn-profile-audit">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
                             <span>Audit Logs</span>
-                        </button>
-                        <button class="profile-menu-item" onclick="window.AegisInteractions.showToast('Logged out of Admin Session (Mock)', 'warning');">
+                        </a>
+                        <button class="profile-menu-item" id="btn-profile-signout" type="button">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                             <span>Sign Out</span>
                         </button>
@@ -171,7 +155,6 @@
             <!-- Admin Sidebar Navigation -->
             <aside class="app-sidebar" id="app-sidebar" role="navigation" aria-label="Admin Navigation">
                 <div class="sidebar-top-group">
-                    <div class="sidebar-section-label">ADMIN</div>
                     <ul class="sidebar-nav-list">
                         <!-- 1. Dashboard -->
                         <li>
@@ -227,7 +210,7 @@
                         </li>
                         <!-- 6. Audit Logs (Active) -->
                         <li>
-                            <a href="index.html" class="nav-link-item active" data-target="audit-logs">
+                            <a href="audit-logs.html" class="nav-link-item active" data-target="audit-logs">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                     <polyline points="14 2 14 8 20 8"></polyline>
@@ -289,13 +272,6 @@
                  3. MAIN WORKSPACE
                  ================================================================== -->
             <main class="main-workspace" id="main-workspace">
-
-                <!-- Breadcrumb -->
-                <nav class="breadcrumb-row" aria-label="Breadcrumb">
-                    <a href="../Dashboard/admin.html" class="breadcrumb-link">Admin</a>
-                    <span class="breadcrumb-separator">/</span>
-                    <span class="breadcrumb-current">Audit Logs</span>
-                </nav>
 
                 <!-- Hero Section Card with Mountain Panorama Cutout & Badge Card -->
                 <section class="hero-card" aria-labelledby="hero-title-id">
@@ -774,7 +750,8 @@
 
     </div>
 
-    <!-- Scripts: Demo Mock Data and Audit Logs Functionality -->
+    <!-- Scripts: Admin Common Controller, Demo Mock Data and Audit Logs Functionality -->
+    <script src="../common/js/admin-common.js"></script>
     <script src="js/mockData.js"></script>
     <script src="js/audit-logs.js"></script>
 </body>

@@ -12,6 +12,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
+    <!-- Admin Common Stylesheet -->
+    <link rel="stylesheet" href="../common/css/admin-common.css">
     <!-- Stylesheet -->
     <link rel="stylesheet" href="css/trustee-management.css">
 </head>
@@ -49,22 +51,6 @@
                 </a>
             </div>
 
-            <!-- Center: Search Bar -->
-            <div class="header-center">
-                <div class="search-container">
-                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                    <input type="text" 
-                           id="global-header-search" 
-                           class="search-input" 
-                           placeholder="Search users, trustees, vaults, logs, or settings..." 
-                           autocomplete="off"
-                           aria-label="Global search">
-                    <span class="search-shortcut-pill">/</span>
-                </div>
-            </div>
 
             <!-- Right: Theme Switcher, Notifications, Admin Profile -->
             <div class="header-right">
@@ -141,8 +127,13 @@
                         </div>
                     </button>
 
+                    <!-- Profile Dropdown -->
                     <div class="profile-dropdown" id="profile-dropdown">
-                        <a href="../Audit Logs/audit-logs.html" class="profile-menu-item">
+                        <button class="profile-menu-item" id="btn-profile-settings" type="button">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                            <span>Security Settings</span>
+                        </button>
+                        <a href="../Audit Logs/audit-logs.html" class="profile-menu-item" id="btn-profile-audit">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                 <polyline points="14 2 14 8 20 8"></polyline>
@@ -151,7 +142,7 @@
                             </svg>
                             <span>Audit Logs</span>
                         </a>
-                        <button class="profile-menu-item" onclick="AegisTrusteeModule.showToast('Logged out of Admin Session (Demo)', 'warning');">
+                        <button class="profile-menu-item" id="btn-profile-signout" type="button">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                                 <polyline points="16 17 21 12 16 7"></polyline>
@@ -174,7 +165,6 @@
             <!-- Left Admin Navigation Sidebar -->
             <aside class="app-sidebar" id="app-sidebar" role="navigation" aria-label="Admin Navigation">
                 <div class="sidebar-top-group">
-                    <div class="sidebar-section-label">ADMIN</div>
                     <ul class="sidebar-nav-list">
                         <!-- 1. Dashboard -->
                         <li>
@@ -202,7 +192,7 @@
                         </li>
                         <!-- 3. Trustee Management (Active) -->
                         <li>
-                            <a href="index.html" class="nav-link-item active" id="nav-trustee-management-parent">
+                            <a href="trustee-management.html" class="nav-link-item active" id="nav-trustee-management-parent">
                                 <div class="nav-left-part">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -213,15 +203,6 @@
                                     <span class="nav-label">Trustee Management</span>
                                 </div>
                             </a>
-                            <!-- Nested sub-links for single page navigation -->
-                            <ul class="sidebar-sub-nav">
-                                <li><a href="#all-trustees" class="nav-sublink-item active" data-subtab="all">All Trustees</a></li>
-                                <li><a href="#pending-verification" class="nav-sublink-item" data-subtab="pending">Pending Verification</a></li>
-                                <li><a href="#verified" class="nav-sublink-item" data-subtab="verified">Verified</a></li>
-                                <li><a href="#rejected" class="nav-sublink-item" data-subtab="rejected">Rejected</a></li>
-                                <li><a href="#invitations" class="nav-sublink-item" data-subtab="invitations">Invitations</a></li>
-                                <li><a href="#permissions" class="nav-sublink-item" data-subtab="permissions">Roles & Permissions</a></li>
-                            </ul>
                         </li>
                         <!-- 4. Vault Management -->
                         <li>
@@ -318,13 +299,6 @@
                  3. MAIN WORKSPACE CONTENT
                  ============================================================== -->
             <main class="main-content" role="main">
-                <!-- Breadcrumbs -->
-                <div class="breadcrumb-row">
-                    <a href="../Dashboard/admin.html" class="breadcrumb-link">Admin</a>
-                    <span class="breadcrumb-separator">/</span>
-                    <span class="breadcrumb-current">Trustee Management</span>
-                </div>
-
                 <!-- Hero Section matching screenshot -->
                 <section class="hero-banner-row" aria-label="Trustee Management Overview">
                     <div class="hero-text-col">
@@ -1295,6 +1269,7 @@
     <div class="aegis-tooltip" id="aegis-tooltip"></div>
 
     <!-- Scripts -->
+    <script src="../common/js/admin-common.js"></script>
     <script src="js/mockData.js"></script>
     <script src="js/trustee-management.js"></script>
 </body>

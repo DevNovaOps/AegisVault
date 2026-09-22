@@ -38,6 +38,7 @@
         renderAlertsWidget();
         renderAccessTable();
         renderIncidentsTable();
+        initCalendar();
         checkUrlHash();
     }
 
@@ -96,57 +97,24 @@
        THEME MANAGEMENT (Dual light/dark synchronization)
        -------------------------------------------------------------- */
     function initTheme() {
-        applyTheme(state.theme);
-    }
-
-    function applyTheme(theme) {
-        state.theme = theme;
-        localStorage.setItem('aegisvault_theme', theme);
-        localStorage.setItem('aegis_theme', theme);
-
-        if (theme === 'light') {
-            dom.body.classList.remove('dark-theme');
-            dom.body.classList.add('light-theme');
-            dom.html.setAttribute('data-theme', 'light');
-        } else {
-            dom.body.classList.remove('light-theme');
-            dom.body.classList.add('dark-theme');
-            dom.html.setAttribute('data-theme', 'dark');
-        }
-
-        // Re-render SVG chart with updated theme colors
-        renderTrendChart();
+        state.theme = window.AegisAdminCommon ? (AegisAdminCommon.isDark() ? 'dark' : 'light') : (localStorage.getItem('aegisvault_theme') || 'dark');
+        window.addEventListener('aegis:themechange', (e) => {
+            state.theme = e.detail && e.detail.isDark ? 'dark' : 'light';
+            renderTrendChart();
+        });
     }
 
     function toggleTheme() {
-        const nextTheme = state.theme === 'light' ? 'dark' : 'light';
-        applyTheme(nextTheme);
-        showToast(`Switched to ${nextTheme === 'light' ? 'Light' : 'Dark'} Theme`, 'info');
+        if (window.AegisAdminCommon) {
+            const current = AegisAdminCommon.isDark() ? 'dark' : 'light';
+            AegisAdminCommon.applyTheme(current === 'dark' ? 'light' : 'dark', true);
+        }
     }
 
     /* --------------------------------------------------------------
        EVENT BINDINGS
        -------------------------------------------------------------- */
     function bindEvents() {
-        // Theme button
-        if (dom.themeToggleBtn) {
-            dom.themeToggleBtn.addEventListener('click', toggleTheme);
-        }
-
-        // Mobile Hamburger
-        if (dom.hamburgerBtn) {
-            dom.hamburgerBtn.addEventListener('click', () => {
-                dom.sidebar.classList.toggle('mobile-open');
-                dom.sidebarBackdrop.classList.toggle('active');
-            });
-        }
-        if (dom.sidebarBackdrop) {
-            dom.sidebarBackdrop.addEventListener('click', () => {
-                dom.sidebar.classList.remove('mobile-open');
-                dom.sidebarBackdrop.classList.remove('active');
-            });
-        }
-
         // Tabs
         dom.tabButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -969,27 +937,11 @@
     }
 
     function showToast(message, type = 'info') {
-        if (!dom.toastShelf) return;
-
-        const iconSvg = {
-            success: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`,
-            warning: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`,
-            danger: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`,
-            info: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`
-        }[type] || '';
-
-        const toast = document.createElement('div');
-        toast.className = `toast-pill toast-${type}`;
-        toast.innerHTML = `${iconSvg} <span>${message}</span>`;
-
-        dom.toastShelf.appendChild(toast);
-
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            toast.style.transform = 'translateY(10px)';
-            toast.style.transition = 'all 0.3s ease';
-            setTimeout(() => toast.remove(), 300);
-        }, 3600);
+        if (window.AegisAdminCommon) {
+            AegisAdminCommon.showToast(message, type === 'danger' ? 'error' : type);
+        } else {
+            alert(message);
+        }
     }
 
     /* --------------------------------------------------------------
@@ -1031,10 +983,336 @@
         document.querySelectorAll('.row-dropdown-menu').forEach(m => m.classList.remove('active'));
     }
 
+    /* --------------------------------------------------------------
+       INTERACTIVE CALENDAR & DATE RANGE PICKER
+       -------------------------------------------------------------- */
+    const calState = {
+        currentDate: new Date(),
+        viewMonth: (new Date()).getMonth(),
+        viewYear: (new Date()).getFullYear(),
+        selectedStartDate: null,
+        selectedEndDate: null,
+        currentPreset: '24h',
+        label: 'Last 24 Hours'
+    };
+
+    const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    const shortMonthNames = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+
+    function initCalendar() {
+        const today = new Date();
+        calState.viewMonth = today.getMonth();
+        calState.viewYear = today.getFullYear();
+        calState.selectedStartDate = today;
+        calState.selectedEndDate = today;
+
+        const startInput = document.getElementById('cal-start-date');
+        const endInput = document.getElementById('cal-end-date');
+        if (startInput) startInput.value = toISODate(today);
+        if (endInput) endInput.value = toISODate(today);
+
+        renderCalendarDays();
+    }
+
+    function toggleCalendarDropdown(e) {
+        if (e) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+        const popover = document.getElementById('calendar-dropdown-popover');
+        const btn = document.getElementById('btn-time-range');
+        if (!popover || !btn) return;
+
+        const isOpen = popover.classList.contains('active');
+        if (isOpen) {
+            closeCalendarDropdown();
+        } else {
+            closeAllMenus();
+            popover.classList.add('active');
+            btn.classList.add('active');
+            btn.setAttribute('aria-expanded', 'true');
+            renderCalendarDays();
+        }
+    }
+
+    function closeCalendarDropdown() {
+        const popover = document.getElementById('calendar-dropdown-popover');
+        const btn = document.getElementById('btn-time-range');
+        if (popover) popover.classList.remove('active');
+        if (btn) {
+            btn.classList.remove('active');
+            btn.setAttribute('aria-expanded', 'false');
+        }
+    }
+
+    function navigateCalendar(direction) {
+        calState.viewMonth += direction;
+        if (calState.viewMonth < 0) {
+            calState.viewMonth = 11;
+            calState.viewYear -= 1;
+        } else if (calState.viewMonth > 11) {
+            calState.viewMonth = 0;
+            calState.viewYear += 1;
+        }
+        renderCalendarDays();
+    }
+
+    function formatShortDate(d) {
+        if (!d) return '';
+        const day = d.getDate();
+        const mon = shortMonthNames[d.getMonth()];
+        const yr = d.getFullYear();
+        return `${day} ${mon} ${yr}`;
+    }
+
+    function toISODate(d) {
+        if (!d) return '';
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+    }
+
+    function parseISODate(str) {
+        if (!str) return null;
+        const [y, m, d] = str.split('-').map(Number);
+        return new Date(y, m - 1, d);
+    }
+
+    function isSameDay(d1, d2) {
+        if (!d1 || !d2) return false;
+        return d1.getFullYear() === d2.getFullYear() &&
+               d1.getMonth() === d2.getMonth() &&
+               d1.getDate() === d2.getDate();
+    }
+
+    function isBetween(d, start, end) {
+        if (!d || !start || !end) return false;
+        const time = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+        const s = new Date(start.getFullYear(), start.getMonth(), start.getDate()).getTime();
+        const e = new Date(end.getFullYear(), end.getMonth(), end.getDate()).getTime();
+        return time > s && time < e;
+    }
+
+    function renderCalendarDays() {
+        const grid = document.getElementById('calendar-days-grid');
+        const monthLabel = document.getElementById('cal-month-year-label');
+        if (!grid || !monthLabel) return;
+
+        monthLabel.textContent = `${monthNames[calState.viewMonth]} ${calState.viewYear}`;
+
+        const firstDayOfMonth = new Date(calState.viewYear, calState.viewMonth, 1).getDay();
+        const daysInCurrentMonth = new Date(calState.viewYear, calState.viewMonth + 1, 0).getDate();
+        const daysInPrevMonth = new Date(calState.viewYear, calState.viewMonth, 0).getDate();
+
+        let cellsHtml = '';
+
+        // Previous month padding days
+        for (let i = firstDayOfMonth - 1; i >= 0; i--) {
+            const dayNum = daysInPrevMonth - i;
+            cellsHtml += `<button type="button" class="cal-day-cell other-month" disabled>${dayNum}</button>`;
+        }
+
+        // Current month days
+        const today = new Date();
+        for (let day = 1; day <= daysInCurrentMonth; day++) {
+            const cellDate = new Date(calState.viewYear, calState.viewMonth, day);
+            let classes = ['cal-day-cell'];
+
+            if (isSameDay(cellDate, today)) {
+                classes.push('today');
+            }
+
+            const isStart = isSameDay(cellDate, calState.selectedStartDate);
+            const isEnd = isSameDay(cellDate, calState.selectedEndDate);
+
+            if (isStart && isEnd) {
+                classes.push('selected');
+            } else if (isStart) {
+                classes.push('selected', 'range-start');
+            } else if (isEnd) {
+                classes.push('selected', 'range-end');
+            } else if (isBetween(cellDate, calState.selectedStartDate, calState.selectedEndDate)) {
+                classes.push('in-range');
+            }
+
+            cellsHtml += `<button type="button" class="${classes.join(' ')}" onclick="AegisSecurityModule.onDayClick(${calState.viewYear}, ${calState.viewMonth}, ${day})">${day}</button>`;
+        }
+
+        // Next month padding to keep neat 7-column grid
+        const totalRendered = firstDayOfMonth + daysInCurrentMonth;
+        const remaining = (7 - (totalRendered % 7)) % 7;
+        for (let j = 1; j <= remaining; j++) {
+            cellsHtml += `<button type="button" class="cal-day-cell other-month" disabled>${j}</button>`;
+        }
+
+        grid.innerHTML = cellsHtml;
+
+        // Keep date inputs updated
+        const startInput = document.getElementById('cal-start-date');
+        const endInput = document.getElementById('cal-end-date');
+        if (startInput && calState.selectedStartDate) {
+            startInput.value = toISODate(calState.selectedStartDate);
+        }
+        if (endInput && calState.selectedEndDate) {
+            endInput.value = toISODate(calState.selectedEndDate);
+        }
+    }
+
+    function onDayClick(year, month, day) {
+        const clicked = new Date(year, month, day);
+
+        if (!calState.selectedStartDate || (calState.selectedStartDate && calState.selectedEndDate && !isSameDay(calState.selectedStartDate, calState.selectedEndDate))) {
+            // First click: select single start date
+            calState.selectedStartDate = clicked;
+            calState.selectedEndDate = clicked;
+        } else if (calState.selectedStartDate && isSameDay(calState.selectedStartDate, calState.selectedEndDate)) {
+            // Second click: create range
+            if (clicked < calState.selectedStartDate) {
+                calState.selectedEndDate = calState.selectedStartDate;
+                calState.selectedStartDate = clicked;
+            } else {
+                calState.selectedEndDate = clicked;
+            }
+        }
+
+        // De-select quick presets since user selected custom date
+        document.querySelectorAll('.cal-preset-btn').forEach(btn => btn.classList.remove('active'));
+
+        renderCalendarDays();
+    }
+
+    function onDateInputChange() {
+        const startInput = document.getElementById('cal-start-date');
+        const endInput = document.getElementById('cal-end-date');
+        if (startInput && startInput.value) {
+            calState.selectedStartDate = parseISODate(startInput.value);
+            if (calState.selectedStartDate) {
+                calState.viewYear = calState.selectedStartDate.getFullYear();
+                calState.viewMonth = calState.selectedStartDate.getMonth();
+            }
+        }
+        if (endInput && endInput.value) {
+            calState.selectedEndDate = parseISODate(endInput.value);
+        }
+        document.querySelectorAll('.cal-preset-btn').forEach(btn => btn.classList.remove('active'));
+        renderCalendarDays();
+    }
+
+    function selectPresetDate(presetKey, presetLabel) {
+        // Highlight active preset button
+        document.querySelectorAll('.cal-preset-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.getAttribute('data-preset') === presetKey);
+        });
+
+        const now = new Date();
+        let start = new Date();
+        let end = new Date();
+        let displayLabel = presetLabel;
+
+        switch (presetKey) {
+            case '24h':
+                displayLabel = 'Last 24 Hours';
+                start = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+                end = now;
+                break;
+            case 'today':
+                displayLabel = `Today (${now.getDate()} ${shortMonthNames[now.getMonth()]})`;
+                start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                break;
+            case 'yesterday':
+                const yest = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+                displayLabel = `Yesterday (${yest.getDate()} ${shortMonthNames[yest.getMonth()]})`;
+                start = new Date(yest.getFullYear(), yest.getMonth(), yest.getDate());
+                end = new Date(yest.getFullYear(), yest.getMonth(), yest.getDate());
+                break;
+            case '7d':
+                displayLabel = 'Last 7 Days';
+                start = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                end = now;
+                break;
+            case '30d':
+                displayLabel = 'Last 30 Days';
+                start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                end = now;
+                break;
+            default:
+                displayLabel = presetLabel;
+        }
+
+        calState.selectedStartDate = start;
+        calState.selectedEndDate = end;
+        calState.viewYear = start.getFullYear();
+        calState.viewMonth = start.getMonth();
+        calState.label = displayLabel;
+
+        updateTimeRangeDisplay(displayLabel);
+        renderCalendarDays();
+        closeCalendarDropdown();
+
+        showToast(`Time window updated: ${displayLabel}`, 'info');
+        refreshTelemetry();
+    }
+
+    function applyCustomCalendarDate() {
+        if (!calState.selectedStartDate && !calState.selectedEndDate) {
+            selectPresetDate('today', 'Today');
+            return;
+        }
+
+        const start = calState.selectedStartDate || calState.selectedEndDate;
+        const end = calState.selectedEndDate || calState.selectedStartDate;
+
+        let displayLabel = '';
+        if (isSameDay(start, end)) {
+            displayLabel = formatShortDate(start);
+        } else {
+            const startStr = `${start.getDate()} ${shortMonthNames[start.getMonth()]}`;
+            const endStr = `${end.getDate()} ${shortMonthNames[end.getMonth()]} ${end.getFullYear()}`;
+            displayLabel = `${startStr} – ${endStr}`;
+        }
+
+        calState.selectedStartDate = start;
+        calState.selectedEndDate = end;
+        calState.label = displayLabel;
+
+        updateTimeRangeDisplay(displayLabel);
+        closeCalendarDropdown();
+
+        showToast(`Telemetry updated for: ${displayLabel}`, 'info');
+        refreshTelemetry();
+    }
+
+    function updateTimeRangeDisplay(text) {
+        const labelEl = document.getElementById('time-range-label');
+        if (labelEl) {
+            labelEl.textContent = text;
+        }
+    }
+
     // Close menus when clicking outside
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.action-menu-container')) {
             closeAllMenus();
+        }
+        if (!e.target.closest('#hero-time-range-col')) {
+            closeCalendarDropdown();
+        }
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeCalendarDropdown();
+            closeAllMenus();
+            closeAllModals();
         }
     });
 
@@ -1059,7 +1337,15 @@
         toggleRowMenu,
         quickInvestigate,
         copyEventId,
-        closeAllMenus
+        closeAllMenus,
+        initCalendar,
+        toggleCalendarDropdown,
+        closeCalendarDropdown,
+        navigateCalendar,
+        onDayClick,
+        onDateInputChange,
+        selectPresetDate,
+        applyCustomCalendarDate
     };
 
     // Auto boot on DOM load

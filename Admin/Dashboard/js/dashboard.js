@@ -18,76 +18,28 @@ const AegisDashboard = {
     vaultActivityTimeframe: '6m',
 
     init() {
-        // 1. Initialize UI Controls & Theme
-        this.initTheme();
+        // 1. Listen for global theme changes from AegisAdminCommon to re-render charts
+        window.addEventListener('aegis:themechange', () => {
+            this.reRenderAllCharts();
+        });
+
         this.initSearch();
-        this.initDropdowns();
-        this.initMobileDrawer();
-        this.initModals();
-        this.initKeyboardShortcuts();
-        this.initSidebarNav();
+        this.initReportModal();
 
         // 2. Initialize Data Tables & Sections
+        this.renderNotifications();
         this.renderRecentUsersTable();
         this.renderSecurityEventsTable();
         this.renderPendingActionsList();
         this.renderSystemHealthList();
         this.bindActionButtons();
-        this.startLiveClock();
 
         // 3. Initialize Interactive Charts
         this.initCharts();
     },
 
-    /* =========================================================================
-       1. Dual Theme System
-       ========================================================================= */
-    initTheme() {
-        const toggleBtn = document.getElementById('btn-theme-toggle');
-        const savedTheme = localStorage.getItem(this.THEME_KEY) || 'light';
-
-        this.applyTheme(savedTheme, false);
-
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', () => {
-                const currentTheme = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                this.applyTheme(newTheme, true);
-            });
-        }
-    },
-
-    applyTheme(theme, showNotice = false) {
-        const isDark = theme === 'dark';
-        document.documentElement.setAttribute('data-theme', theme);
-
-        if (isDark) {
-            document.body.classList.add('dark-theme');
-            document.body.classList.remove('light-theme');
-        } else {
-            document.body.classList.remove('dark-theme');
-            document.body.classList.add('light-theme');
-        }
-
-        const themeBtn = document.getElementById('btn-theme-toggle');
-        if (themeBtn) {
-            themeBtn.setAttribute('title', isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme');
-            themeBtn.setAttribute('aria-label', isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme');
-        }
-
-        localStorage.setItem(this.THEME_KEY, theme);
-        localStorage.setItem('aegis_theme', theme);
-
-        // Re-render charts to adapt colors to the active theme
-        this.reRenderAllCharts();
-
-        if (showNotice) {
-            this.showToast(`Switched to ${isDark ? 'Dark Theme' : 'Light Theme'}`, 'info');
-        }
-    },
-
     isDark() {
-        return document.body.classList.contains('dark-theme');
+        return window.AegisAdminCommon ? AegisAdminCommon.isDark() : document.body.classList.contains('dark-theme');
     },
 
     /* =========================================================================
@@ -582,143 +534,7 @@ const AegisDashboard = {
         }
     },
 
-    /* =========================================================================
-       5. Header Dropdowns & Mobile Navigation Drawer
-       ========================================================================= */
-    initDropdowns() {
-        const notifBtn = document.getElementById('btn-notifications');
-        const notifDropdown = document.getElementById('notifications-dropdown');
-        const profileBtn = document.getElementById('user-profile-btn');
-        const profileDropdown = document.getElementById('profile-dropdown');
-
-        if (notifBtn && notifDropdown) {
-            notifBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (profileDropdown) profileDropdown.classList.remove('active');
-                notifDropdown.classList.toggle('active');
-            });
-        }
-
-        if (profileBtn && profileDropdown) {
-            profileBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (notifDropdown) notifDropdown.classList.remove('active');
-                profileDropdown.classList.toggle('active');
-            });
-        }
-
-        document.addEventListener('click', () => {
-            if (notifDropdown) notifDropdown.classList.remove('active');
-            if (profileDropdown) profileDropdown.classList.remove('active');
-        });
-
-        this.renderNotificationsList();
-
-        const markReadBtn = document.getElementById('btn-mark-all-read');
-        if (markReadBtn) {
-            markReadBtn.addEventListener('click', () => {
-                if (AegisMockData.notifications) {
-                    AegisMockData.notifications.forEach(n => n.unread = false);
-                    this.renderNotificationsList();
-                }
-                const indicator = document.getElementById('notif-badge-indicator');
-                if (indicator) indicator.style.display = 'none';
-                this.showToast('All notifications marked as read', 'info');
-            });
-        }
-    },
-
-    renderNotificationsList() {
-        const container = document.getElementById('notifications-list-container');
-        if (!container || !window.AegisMockData || !AegisMockData.notifications) return;
-
-        const notifs = AegisMockData.notifications;
-        const unreadCount = notifs.filter(n => n.unread).length;
-        const indicator = document.getElementById('notif-badge-indicator');
-        if (indicator) {
-            indicator.style.display = unreadCount > 0 ? 'block' : 'none';
-            indicator.textContent = unreadCount > 0 ? unreadCount : '';
-        }
-
-        container.innerHTML = notifs.map(n => `
-            <div class="notification-item ${n.unread ? 'unread' : ''}" data-id="${n.id}">
-                <div class="notification-dot ${n.type}"></div>
-                <div class="notification-content">
-                    <div class="notification-title">${this.escapeHtml(n.title)}</div>
-                    <div class="notification-message">${this.escapeHtml(n.message)}</div>
-                    <div class="notification-time">${this.escapeHtml(n.time)}</div>
-                </div>
-            </div>
-        `).join('');
-
-        container.querySelectorAll('.notification-item').forEach(item => {
-            item.addEventListener('click', () => {
-                item.classList.remove('unread');
-                const id = item.getAttribute('data-id');
-                const match = notifs.find(n => n.id === id);
-                if (match) match.unread = false;
-                this.showToast(`Viewing: ${item.querySelector('.notification-title').textContent}`, 'info');
-            });
-        });
-    },
-
-    initMobileDrawer() {
-        const hamburgerBtn = document.getElementById('btn-hamburger') || document.getElementById('btn-mobile-menu');
-        const sidebar = document.getElementById('app-sidebar');
-        const backdrop = document.getElementById('sidebar-backdrop');
-
-        if (hamburgerBtn && sidebar && backdrop) {
-            hamburgerBtn.addEventListener('click', () => {
-                sidebar.classList.toggle('open');
-                backdrop.classList.toggle('active');
-            });
-
-            backdrop.addEventListener('click', () => {
-                sidebar.classList.remove('open');
-                backdrop.classList.remove('active');
-            });
-        }
-    },
-
-    initSidebarNav() {
-        const navLinks = document.querySelectorAll('.nav-link-item');
-        const sidebar = document.getElementById('app-sidebar');
-        const backdrop = document.getElementById('sidebar-backdrop');
-
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                if (sidebar && sidebar.classList.contains('open')) {
-                    sidebar.classList.remove('open');
-                    if (backdrop) backdrop.classList.remove('active');
-                }
-
-                const target = link.getAttribute('data-target');
-                if (target === 'dashboard') {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            });
-        });
-    },
-
-    /* =========================================================================
-       6. Modals System & Trigger Handlers
-       ========================================================================= */
-    initModals() {
-        document.querySelectorAll('[data-close-modal]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const modal = btn.closest('.modal-overlay');
-                if (modal) this.closeModal(modal.id);
-            });
-        });
-
-        document.querySelectorAll('.modal-overlay').forEach(overlay => {
-            overlay.addEventListener('click', (e) => {
-                if (e.target === overlay) {
-                    this.closeModal(overlay.id);
-                }
-            });
-        });
-
+    initReportModal() {
         const reportForm = document.getElementById('generate-report-form');
         if (reportForm) {
             reportForm.addEventListener('submit', (e) => {
@@ -730,19 +546,23 @@ const AegisDashboard = {
     },
 
     openModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (!modal) return;
-        modal.classList.add('active');
+        if (window.AegisAdminCommon) {
+            AegisAdminCommon.openModal(modalId);
+        } else {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.classList.add('active');
+        }
         this.activeModal = modalId;
-        document.body.style.overflow = 'hidden';
     },
 
     closeModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (!modal) return;
-        modal.classList.remove('active');
+        if (window.AegisAdminCommon) {
+            AegisAdminCommon.closeModal(modalId);
+        } else {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.classList.remove('active');
+        }
         this.activeModal = null;
-        document.body.style.overflow = '';
     },
 
     showUserModal(user) {
@@ -1032,14 +852,14 @@ const AegisDashboard = {
         const linkViewUsers = document.getElementById('link-view-all-users') || document.getElementById('btn-view-all-users');
         if (linkViewUsers) {
             linkViewUsers.addEventListener('click', () => {
-                window.location.href = '../User Management/index.html';
+                window.location.href = '../User Management/user-management.html';
             });
         }
 
         const linkViewEvents = document.getElementById('link-view-all-events') || document.getElementById('btn-view-all-events');
         if (linkViewEvents) {
             linkViewEvents.addEventListener('click', () => {
-                window.location.href = '../Audit Logs/index.html';
+                window.location.href = '../Audit Logs/audit-logs.html';
             });
         }
 
@@ -1062,109 +882,103 @@ const AegisDashboard = {
         }
     },
 
-    startLiveClock() {
-        const dateEl = document.getElementById('hero-live-date');
-        const timeEl = document.getElementById('hero-live-time');
-        const clockEl = document.getElementById('current-live-time');
-        if (!dateEl && !timeEl && !clockEl) return;
-
-        const updateClock = () => {
-            const now = new Date();
-            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            
-            const dayName = days[now.getDay()];
-            const date = now.getDate();
-            const month = months[now.getMonth()];
-            const year = now.getFullYear();
-            
-            let hours = now.getHours();
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12 || 12;
-
-            if (dateEl) dateEl.textContent = `${dayName}, ${date} ${month} ${year}`;
-            if (timeEl) timeEl.textContent = `${hours}:${minutes} ${ampm}`;
-            if (clockEl) clockEl.textContent = `${dayName}, ${date} ${month} ${year} ${hours}:${minutes} ${ampm}`;
-        };
-
-        updateClock();
-        setInterval(updateClock, 30000);
-    },
-
     /* =========================================================================
-       8. Toast Notification System
+       Notifications System
        ========================================================================= */
-    showToast(message, type = 'info') {
-        let container = document.querySelector('.toast-container');
-        if (!container) {
-            container = document.createElement('div');
-            container.className = 'toast-container';
-            document.body.appendChild(container);
+    renderNotifications() {
+        const container = document.getElementById('notifications-list-container');
+        const badge = document.getElementById('notif-badge-indicator');
+        const markAllBtn = document.getElementById('btn-mark-all-read');
+        if (!container) return;
+
+        const notifs = (window.AegisMockData && Array.isArray(AegisMockData.notifications)) 
+            ? AegisMockData.notifications 
+            : [];
+
+        if (notifs.length === 0) {
+            container.innerHTML = `
+                <div style="padding: 2rem 1rem; text-align: center; color: var(--text-muted); font-size: 0.82rem;">
+                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 0.5rem auto; opacity: 0.5; display: block;">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    No notifications
+                </div>
+            `;
+            if (badge) badge.style.display = 'none';
+            return;
         }
 
-        const toast = document.createElement('div');
-        toast.className = `toast-item toast-${type}`;
-        toast.innerHTML = `
-            <div class="toast-message">${this.escapeHtml(message)}</div>
-            <button class="toast-close-btn" aria-label="Close">&times;</button>
-        `;
+        const updateBadge = () => {
+            const unreadCount = notifs.filter(n => n.unread).length;
+            if (badge) {
+                if (unreadCount > 0) {
+                    badge.textContent = unreadCount;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        };
 
-        toast.querySelector('.toast-close-btn').addEventListener('click', () => {
-            toast.remove();
+        container.innerHTML = notifs.map(n => `
+            <div class="notification-item ${n.unread ? 'unread' : ''}" data-id="${n.id}">
+                <span class="notification-dot ${n.type || 'info'}"></span>
+                <div class="notification-content">
+                    <div class="notification-title">${this.escapeHtml(n.title)}</div>
+                    <div class="notification-message">${this.escapeHtml(n.message)}</div>
+                    <div class="notification-time">${this.escapeHtml(n.time)}</div>
+                </div>
+            </div>
+        `).join('');
+
+        updateBadge();
+
+        // Click on individual notification item to mark as read and show toast
+        container.querySelectorAll('.notification-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const id = item.getAttribute('data-id');
+                const notifObj = notifs.find(n => n.id === id);
+                if (notifObj && notifObj.unread) {
+                    notifObj.unread = false;
+                    item.classList.remove('unread');
+                    updateBadge();
+                }
+                this.showToast(notifObj ? notifObj.title : 'Notification viewed', 'info');
+            });
         });
 
-        container.appendChild(toast);
-
-        setTimeout(() => {
-            if (toast.parentNode) {
-                toast.classList.add('toast-fadeout');
-                setTimeout(() => toast.remove(), 250);
-            }
-        }, 3600);
+        // Mark all as read button
+        if (markAllBtn && !markAllBtn.dataset.dashBound) {
+            markAllBtn.dataset.dashBound = 'true';
+            markAllBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                notifs.forEach(n => { n.unread = false; });
+                container.querySelectorAll('.notification-item.unread').forEach(item => {
+                    item.classList.remove('unread');
+                });
+                updateBadge();
+                this.showToast('All notifications marked as read', 'info');
+            });
+        }
     },
 
     /* =========================================================================
-       9. Keyboard Shortcuts
+       8. Toast & Utilities (Delegated to AegisAdminCommon)
        ========================================================================= */
-    initKeyboardShortcuts() {
-        document.addEventListener('keydown', (e) => {
-            // ESC closes modal or search dropdown
-            if (e.key === 'Escape') {
-                if (this.activeModal) {
-                    this.closeModal(this.activeModal);
-                }
-                const dropdown = document.getElementById('search-results-dropdown');
-                if (dropdown) dropdown.classList.remove('active');
-                const notifDropdown = document.getElementById('notifications-dropdown');
-                if (notifDropdown) notifDropdown.classList.remove('active');
-                const profileDropdown = document.getElementById('profile-dropdown');
-                if (profileDropdown) profileDropdown.classList.remove('active');
-            }
-
-            // "/" focuses search
-            if ((e.key === '/' || (e.ctrlKey && e.key.toLowerCase() === 'k')) && 
-                document.activeElement.tagName !== 'INPUT' && 
-                document.activeElement.tagName !== 'TEXTAREA') {
-                e.preventDefault();
-                const input = document.getElementById('global-header-search') || document.getElementById('global-search-input');
-                if (input) {
-                    input.focus();
-                    input.select();
-                }
-            }
-
-            // "t" toggles theme
-            if ((e.key === 't' || e.key === 'T') && 
-                document.activeElement.tagName !== 'INPUT' && 
-                document.activeElement.tagName !== 'TEXTAREA') {
-                const btn = document.getElementById('btn-theme-toggle');
-                if (btn) btn.click();
-            }
-        });
+    showToast(message, type = 'info') {
+        if (window.AegisAdminCommon) {
+            AegisAdminCommon.showToast(message, type);
+        } else {
+            alert(message);
+        }
     },
 
     escapeHtml(str) {
+        if (window.AegisAdminCommon) {
+            return AegisAdminCommon.escapeHtml(str);
+        }
         if (!str) return '';
         return String(str)
             .replace(/&/g, '&amp;')

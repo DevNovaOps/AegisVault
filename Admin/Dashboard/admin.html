@@ -6,6 +6,8 @@
     <title>AegisVault — Admin Dashboard</title>
     <meta name="description" content="AegisVault Enterprise Admin Dashboard — Automated Time-Locked Digital Asset & Legacy Custody Protocol. System surveillance, user management, and security intelligence.">
 
+    <!-- Admin Common Stylesheet -->
+    <link rel="stylesheet" href="../common/css/admin-common.css">
     <!-- Main Stylesheet (Design, Layout, Themes, Animations & Responsive) -->
     <link rel="stylesheet" href="css/dashboard.css">
 </head>
@@ -26,7 +28,7 @@
                     </svg>
                 </button>
 
-                <a href="index.html" class="brand-link" aria-label="AegisVault Admin Console">
+                <a href="admin.html" class="brand-link" aria-label="AegisVault Admin Console">
                     <svg class="brand-logo-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M18 2L5 7.5V17C5 25.5 10.5 32.5 18 34.5C25.5 32.5 31 25.5 31 17V7.5L18 2Z" fill="#F45A1F"/>
                         <path d="M18 5L7.5 9.4V17C7.5 24 12 29.8 18 31.6C24 29.8 28.5 24 28.5 17V9.4L18 5Z" fill="#FF7A2F"/>
@@ -42,27 +44,6 @@
                 </a>
             </div>
 
-            <!-- Center: Interactive Search Bar -->
-            <div class="header-center">
-                <div class="search-container">
-                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                    <input type="text" 
-                           id="global-header-search" 
-                           class="search-input" 
-                           placeholder="Search users, trustees, vaults, logs, or settings..." 
-                           autocomplete="off"
-                           aria-label="Global search">
-                    <span class="search-shortcut-pill">/</span>
-
-                    <!-- Live Results Dropdown -->
-                    <div class="search-dropdown" id="search-results-dropdown" role="listbox">
-                        <!-- Populated by interactions.js -->
-                    </div>
-                </div>
-            </div>
 
             <!-- Right: Actions, Notifications, Profile -->
             <div class="header-right">
@@ -123,7 +104,14 @@
                             <button class="mark-read-btn" id="btn-mark-all-read">Mark all as read</button>
                         </div>
                         <div class="notifications-list" id="notifications-list-container">
-                            <!-- Populated dynamically -->
+                            <div class="notification-item unread" data-id="notif-01">
+                                <span class="notification-dot success"></span>
+                                <div class="notification-content">
+                                    <div class="notification-title">Threshold Verification Met</div>
+                                    <div class="notification-message">Vault #AV-4921 has achieved 3-of-5 trustee Shamir quorum.</div>
+                                    <div class="notification-time">10 mins ago</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -140,19 +128,15 @@
 
                     <!-- Profile Dropdown -->
                     <div class="profile-dropdown" id="profile-dropdown">
-                        <button class="profile-menu-item" onclick="AegisInteractions.showToast('Platform Security & Access Policies', 'info');">
+                        <button class="profile-menu-item" id="btn-profile-settings" type="button">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                             <span>Security Settings</span>
                         </button>
-                        <button class="profile-menu-item" onclick="AegisInteractions.showToast('Generating Cryptographic Audit Log...', 'info');">
+                        <a href="../Audit Logs/audit-logs.html" class="profile-menu-item" id="btn-profile-audit">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
                             <span>Audit Logs</span>
-                        </button>
-                        <a href="../../AegisVault Home/auth.html" class="profile-menu-item" style="text-decoration:none; color:inherit;">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
-                            <span>Switch Role / Portal</span>
                         </a>
-                        <button class="profile-menu-item" style="color: var(--coral, #EF4444);" onclick="AegisInteractions.showToast('Signing out of SecOps session...', 'warning'); setTimeout(() => window.location.href='../../AegisVault Home/auth.html', 700);">
+                        <button class="profile-menu-item" id="btn-profile-signout" type="button">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                             <span>Sign Out</span>
                         </button>
@@ -172,7 +156,6 @@
             <!-- Admin Sidebar Navigation -->
             <aside class="app-sidebar" id="app-sidebar" role="navigation" aria-label="Admin Navigation">
                 <div class="sidebar-top-group">
-                    <div class="sidebar-section-label">ADMIN</div>
                     <ul class="sidebar-nav-list">
                         <!-- 1. Dashboard (Active) -->
                         <li>
@@ -968,7 +951,8 @@
     <!-- Toast Notifications Container -->
     <div class="toast-container" aria-live="polite"></div>
 
-    <!-- Core Scripts: Demo Mock Data & Complete Dashboard Functionality -->
+    <!-- Core Scripts: Admin Common Controller, Demo Mock Data & Complete Dashboard Functionality -->
+    <script src="../common/js/admin-common.js"></script>
     <script src="js/mockData.js"></script>
     <script src="js/dashboard.js"></script>
 </body>

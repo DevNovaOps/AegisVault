@@ -19,110 +19,29 @@ const AegisSystemHealth = {
     resourceTimeframe: '24h',
 
     init() {
-        // 1. Initialize UI Controls & Theme
-        this.initTheme();
-        this.initDropdowns();
-        this.initSearch();
-        this.initMobileDrawer();
-        this.initModals();
-        this.initKeyboardShortcuts();
+        // 1. Re-render sparkline charts when global admin theme switches
+        window.addEventListener('aegis:themechange', () => {
+            this.renderAllResourceCharts();
+        });
 
-        // 2. Initialize Data Tables & Sections
+        // 2. Initialize Module UI Controls
+        this.initSearch();
+        this.initModals();
+
+        // 3. Initialize Data Tables & Sections
         this.renderServicesTable();
         this.renderRecentEventsTable();
         this.renderSystemInfo();
         this.bindActionButtons();
-        this.startLiveClock();
 
-        // 3. Initialize Interactive Resource Charts
+        // 4. Initialize Interactive Resource Charts
         this.initResourceCharts();
     },
 
-    /* =========================================================================
-       1. Dual Theme System
-       ========================================================================= */
-    initTheme() {
-        const toggleBtn = document.getElementById('btn-theme-toggle');
-        const savedTheme = localStorage.getItem(this.THEME_KEY) || 'light';
-
-        this.applyTheme(savedTheme, false);
-
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', () => {
-                const currentTheme = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                this.applyTheme(newTheme, true);
-            });
-        }
-    },
-
-    applyTheme(theme, showNotice = false) {
-        const isDark = theme === 'dark';
-        document.documentElement.setAttribute('data-theme', theme);
-
-        if (isDark) {
-            document.body.classList.add('dark-theme');
-            document.body.classList.remove('light-theme');
-        } else {
-            document.body.classList.remove('dark-theme');
-            document.body.classList.add('light-theme');
-        }
-
-        const themeBtn = document.getElementById('btn-theme-toggle');
-        if (themeBtn) {
-            themeBtn.setAttribute('title', isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme');
-            themeBtn.setAttribute('aria-label', isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme');
-        }
-
-        localStorage.setItem(this.THEME_KEY, theme);
-        localStorage.setItem('aegis_theme', theme);
-
-        // Re-render sparkline charts with theme-adapted gradients and colors
-        this.renderAllResourceCharts();
-
-        if (showNotice) {
-            this.showToast(`Switched to ${isDark ? 'Dark Theme' : 'Light Theme'}`, 'info');
-        }
-    },
-
     isDark() {
-        return document.body.classList.contains('dark-theme');
+        return document.documentElement.getAttribute('data-theme') === 'dark' || document.body.classList.contains('dark-theme');
     },
 
-    /* =========================================================================
-       1b. Header Dropdowns System
-       ========================================================================= */
-    initDropdowns() {
-        const notifBtn = document.getElementById('btn-notifications');
-        const notifDropdown = document.getElementById('notifications-dropdown');
-        const profileBtn = document.getElementById('user-profile-btn');
-        const profileDropdown = document.getElementById('profile-dropdown');
-
-        if (notifBtn && notifDropdown) {
-            notifBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                notifDropdown.classList.toggle('active');
-                if (profileDropdown) profileDropdown.classList.remove('active');
-            });
-        }
-
-        if (profileBtn && profileDropdown) {
-            profileBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                profileDropdown.classList.toggle('active');
-                if (notifDropdown) notifDropdown.classList.remove('active');
-            });
-        }
-
-        document.addEventListener('click', (e) => {
-            if (notifDropdown && !notifDropdown.contains(e.target) && notifBtn && !notifBtn.contains(e.target)) {
-                notifDropdown.classList.remove('active');
-            }
-            if (profileDropdown && !profileDropdown.contains(e.target) && profileBtn && !profileBtn.contains(e.target)) {
-                profileDropdown.classList.remove('active');
-            }
-        });
-    },
 
     /* =========================================================================
        2. SVG Sparkline Area Charts (CPU, Memory, Disk, Network I/O)
@@ -499,8 +418,9 @@ const AegisSystemHealth = {
         // View All Events
         const linkAllEvents = document.getElementById('link-view-all-events');
         if (linkAllEvents) {
-            linkAllEvents.addEventListener('click', () => {
-                window.location.href = '../Audit Logs/index.html';
+            linkAllEvents.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.location.href = '../Audit Logs/audit-logs.html';
             });
         }
     },
@@ -621,27 +541,6 @@ const AegisSystemHealth = {
     },
 
     /* =========================================================================
-       8. Mobile Navigation Drawer
-       ========================================================================= */
-    initMobileDrawer() {
-        const hamburgerBtn = document.getElementById('btn-hamburger');
-        const sidebar = document.getElementById('app-sidebar');
-        const backdrop = document.getElementById('sidebar-backdrop');
-
-        if (hamburgerBtn && sidebar && backdrop) {
-            hamburgerBtn.addEventListener('click', () => {
-                sidebar.classList.toggle('open');
-                backdrop.classList.toggle('active');
-            });
-
-            backdrop.addEventListener('click', () => {
-                sidebar.classList.remove('open');
-                backdrop.classList.remove('active');
-            });
-        }
-    },
-
-    /* =========================================================================
        9. Modals System
        ========================================================================= */
     initModals() {
@@ -680,7 +579,12 @@ const AegisSystemHealth = {
     /* =========================================================================
        10. Toast Notification System
        ========================================================================= */
+
     showToast(message, type = 'info') {
+        if (window.AegisAdminCommon && typeof window.AegisAdminCommon.showToast === 'function') {
+            window.AegisAdminCommon.showToast(message, type);
+            return;
+        }
         let container = document.querySelector('.toast-container');
         if (!container) {
             container = document.createElement('div');
@@ -709,38 +613,6 @@ const AegisSystemHealth = {
         }, 3600);
     },
 
-    /* =========================================================================
-       11. Keyboard Shortcuts
-       ========================================================================= */
-    initKeyboardShortcuts() {
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                if (this.activeModal) {
-                    this.closeModal(this.activeModal);
-                }
-                const dropdown = document.getElementById('search-results-dropdown');
-                if (dropdown) dropdown.classList.remove('active');
-            }
-
-            if ((e.key === '/' || (e.ctrlKey && e.key.toLowerCase() === 'k')) && 
-                document.activeElement.tagName !== 'INPUT' && 
-                document.activeElement.tagName !== 'TEXTAREA') {
-                e.preventDefault();
-                const input = document.getElementById('global-header-search');
-                if (input) {
-                    input.focus();
-                    input.select();
-                }
-            }
-
-            if ((e.key === 't' || e.key === 'T') && 
-                document.activeElement.tagName !== 'INPUT' && 
-                document.activeElement.tagName !== 'TEXTAREA') {
-                const btn = document.getElementById('btn-theme-toggle');
-                if (btn) btn.click();
-            }
-        });
-    },
 
     escapeHtml(str) {
         if (!str) return '';

@@ -96,39 +96,14 @@
     }
 
     // =========================================================================
-    // 1. Theme Management (Dual Persistence)
+    // 1. Theme Management (Synced with AegisAdminCommon)
     // =========================================================================
     function initTheme() {
-        const savedTheme = localStorage.getItem('aegisvault_theme') || localStorage.getItem('aegis_theme') || 'light';
-        applyTheme(savedTheme, false);
-
-        if (el.themeToggleBtn) {
-            el.themeToggleBtn.addEventListener('click', () => {
-                const newTheme = state.theme === 'light' ? 'dark' : 'light';
-                applyTheme(newTheme, true);
-            });
-        }
-    }
-
-    function applyTheme(theme, showToastMsg) {
-        state.theme = theme;
-        localStorage.setItem('aegisvault_theme', theme);
-        localStorage.setItem('aegis_theme', theme);
-
-        if (theme === 'dark') {
-            el.body.classList.remove('light-theme');
-            el.body.classList.add('dark-theme');
-            el.html.setAttribute('data-theme', 'dark');
-        } else {
-            el.body.classList.remove('dark-theme');
-            el.body.classList.add('light-theme');
-            el.html.setAttribute('data-theme', 'light');
-        }
-
-        renderDonutChart();
-        if (showToastMsg) {
-            showToast(`${theme.charAt(0).toUpperCase() + theme.slice(1)} theme activated`, 'info');
-        }
+        state.theme = window.AegisAdminCommon ? (AegisAdminCommon.isDark() ? 'dark' : 'light') : (localStorage.getItem('aegisvault_theme') || 'light');
+        window.addEventListener('aegis:themechange', (e) => {
+            state.theme = e.detail && e.detail.isDark ? 'dark' : 'light';
+            renderDonutChart();
+        });
     }
 
     // =========================================================================
@@ -1175,31 +1150,11 @@
 
     // Toast Notification System
     function showToast(message, type = 'success') {
-        if (!el.toastContainer) return;
-
-        const toast = document.createElement('div');
-        toast.className = `toast-message ${type}`;
-
-        let iconSvg = '';
-        if (type === 'success') {
-            iconSvg = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#10B981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-        } else if (type === 'warning') {
-            iconSvg = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#F59E0B" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
-        } else if (type === 'error') {
-            iconSvg = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#EF4444" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+        if (window.AegisAdminCommon) {
+            AegisAdminCommon.showToast(message, type);
         } else {
-            iconSvg = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#3B82F6" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+            alert(message);
         }
-
-        toast.innerHTML = `${iconSvg}<span>${message}</span>`;
-        el.toastContainer.appendChild(toast);
-
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            toast.style.transform = 'translateY(10px)';
-            toast.style.transition = 'all 0.25s ease';
-            setTimeout(() => toast.remove(), 250);
-        }, 3500);
     }
 
     // Public API

@@ -23,10 +23,10 @@ const AegisVaultController = {
     activeModal: null,
 
     init() {
-        // 1. Initialize Theme, Header Dropdowns & Mobile Navigation
-        this.initTheme();
-        this.initHeaderDropdowns();
-        this.initMobileDrawer();
+        // 1. Listen for theme change to re-render charts
+        window.addEventListener('aegis:themechange', () => {
+            this.renderVaultTypesDonut();
+        });
 
         // 2. Initialize KPI and Overview widgets
         this.renderKPIs();
@@ -47,54 +47,8 @@ const AegisVaultController = {
         this.initGlobalSearch();
     },
 
-    /* =========================================================================
-       1. Theme Management (Light / Dark)
-       ========================================================================= */
-    initTheme() {
-        const toggleBtn = document.getElementById('btn-theme-toggle');
-        const savedTheme = localStorage.getItem(this.THEME_KEY) || 'light';
-        this.applyTheme(savedTheme, false);
-
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', () => {
-                const current = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
-                const nextTheme = current === 'dark' ? 'light' : 'dark';
-                this.applyTheme(nextTheme, true);
-            });
-        }
-    },
-
-    applyTheme(theme, showToastNotification = true) {
-        const isDark = theme === 'dark';
-        document.documentElement.setAttribute('data-theme', theme);
-
-        if (isDark) {
-            document.body.classList.remove('light-theme');
-            document.body.classList.add('dark-theme');
-        } else {
-            document.body.classList.remove('dark-theme');
-            document.body.classList.add('light-theme');
-        }
-
-        const themeBtn = document.getElementById('btn-theme-toggle');
-        if (themeBtn) {
-            themeBtn.setAttribute('title', isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme');
-            themeBtn.setAttribute('aria-label', isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme');
-        }
-
-        localStorage.setItem(this.THEME_KEY, theme);
-        localStorage.setItem('aegis_theme', theme);
-
-        // Re-render chart so stroke colors & glows match theme
-        this.renderVaultTypesDonut();
-
-        if (showToastNotification) {
-            this.showToast(`Switched to ${isDark ? 'Dark Theme' : 'Light Theme'}`, 'info');
-        }
-    },
-
     isDark() {
-        return document.body.classList.contains('dark-theme');
+        return window.AegisAdminCommon ? AegisAdminCommon.isDark() : document.body.classList.contains('dark-theme');
     },
 
     /* =========================================================================
@@ -852,52 +806,9 @@ const AegisVaultController = {
     /* =========================================================================
        10. Header Dropdowns, Mobile Menu & Global Search
        ========================================================================= */
-    initHeaderDropdowns() {
-        const notifBtn = document.getElementById('btn-notifications');
-        const notifDropdown = document.getElementById('notifications-dropdown');
-        const profileBtn = document.getElementById('user-profile-btn');
-        const profileDropdown = document.getElementById('profile-dropdown');
-
-        if (notifBtn && notifDropdown) {
-            notifBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (profileDropdown) profileDropdown.classList.remove('active');
-                notifDropdown.classList.toggle('active');
-            });
-        }
-
-        if (profileBtn && profileDropdown) {
-            profileBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (notifDropdown) notifDropdown.classList.remove('active');
-                profileDropdown.classList.toggle('active');
-            });
-        }
-
-        document.addEventListener('click', () => {
-            if (notifDropdown) notifDropdown.classList.remove('active');
-            if (profileDropdown) profileDropdown.classList.remove('active');
-        });
-    },
-
-    initMobileDrawer() {
-        const btn = document.getElementById('btn-hamburger') || document.getElementById('btn-mobile-menu');
-        const sidebar = document.getElementById('app-sidebar');
-        const backdrop = document.getElementById('sidebar-backdrop');
-
-        if (btn && sidebar && backdrop) {
-            btn.addEventListener('click', () => {
-                sidebar.classList.toggle('open');
-                backdrop.classList.toggle('active');
-            });
-
-            backdrop.addEventListener('click', () => {
-                sidebar.classList.remove('open');
-                backdrop.classList.remove('active');
-            });
-        }
-    },
-
+    /* =========================================================================
+       10. Global Search Sync
+       ========================================================================= */
     initGlobalSearch() {
         const globalInput = document.getElementById('global-search-input') || document.getElementById('global-header-search');
         if (globalInput) {
@@ -912,48 +823,23 @@ const AegisVaultController = {
                 }
             });
         }
-
-        // Shortcut key "/" to focus search and "Escape" to dismiss dropdowns
-        document.addEventListener('keydown', (e) => {
-            if (e.key === '/' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) {
-                e.preventDefault();
-                if (globalInput) {
-                    globalInput.focus();
-                    globalInput.select();
-                }
-            } else if (e.key === 'Escape') {
-                const notifDropdown = document.getElementById('notifications-dropdown');
-                const profileDropdown = document.getElementById('profile-dropdown');
-                if (notifDropdown) notifDropdown.classList.remove('active');
-                if (profileDropdown) profileDropdown.classList.remove('active');
-            }
-        });
     },
 
     /* =========================================================================
-       11. Toast System & Utility
+       11. Toast System & Utility (Delegated to AegisAdminCommon)
        ========================================================================= */
     showToast(message, type = 'info') {
-        const container = document.getElementById('toast-container');
-        if (!container) return;
-
-        const toast = document.createElement('div');
-        toast.className = `toast-message ${type}`;
-        toast.innerHTML = `
-            <span>${this.escapeHtml(message)}</span>
-        `;
-
-        container.appendChild(toast);
-
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            toast.style.transform = 'translateY(10px)';
-            toast.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
-            setTimeout(() => toast.remove(), 250);
-        }, 3200);
+        if (window.AegisAdminCommon) {
+            AegisAdminCommon.showToast(message, type);
+        } else {
+            alert(message);
+        }
     },
 
     escapeHtml(str) {
+        if (window.AegisAdminCommon) {
+            return AegisAdminCommon.escapeHtml(str);
+        }
         if (!str) return '';
         return String(str)
             .replace(/&/g, '&amp;')

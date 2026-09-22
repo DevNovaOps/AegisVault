@@ -329,10 +329,10 @@ const AegisAnalyticsData = {
         { title: "Geographic Distribution (India)", category: "Demographics", link: "#geo-dist-card", icon: "globe" },
         { title: "Security Overview Metrics", category: "Security", link: "#sec-overview-card", icon: "shield" },
         { title: "System Usage Trends (CPU/RAM/IO)", category: "Infrastructure", link: "#usage-trends-card", icon: "activity" },
-        { title: "Rohit Sharma (rohit@example.com)", category: "User", link: "../User Management/index.html", icon: "user" },
-        { title: "Meera Patel (meera@example.com)", category: "Trustee", link: "../User Management/index.html", icon: "key" },
+        { title: "Rohit Sharma (rohit@example.com)", category: "User", link: "../User Management/user-management.html", icon: "user" },
+        { title: "Meera Patel (meera@example.com)", category: "Trustee", link: "../User Management/user-management.html", icon: "key" },
         { title: "Personal Vault #AV-982", category: "Vault", link: "../Dashboard/admin.html", icon: "lock" },
-        { title: "Suspicious IP Blocked (117.248.12.45)", category: "Security", link: "../Audit Logs/index.html", icon: "alert-triangle" }
+        { title: "Suspicious IP Blocked (117.248.12.45)", category: "Security", link: "../Audit Logs/audit-logs.html", icon: "alert-triangle" }
     ]
 };
 

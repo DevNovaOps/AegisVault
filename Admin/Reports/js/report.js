@@ -28,10 +28,12 @@
             // 1. Clone mock data so user actions can mutate in-memory
             this.reportsData = [...(window.AegisReportMockData?.reportsList || [])];
 
-            // 2. Initialize UI mechanisms
-            this.initTheme();
-            this.initHeaderDropdowns();
-            this.initMobileDrawer();
+            // 2. Listen to global theme changes to update SVG charts
+            window.addEventListener('aegis:themechange', () => {
+                this.renderLineChart();
+                this.renderReportsByTypeDonut();
+                this.renderReportStatusDonut();
+            });
 
             // 3. Render Dashboard Components
             this.renderKPIs();
@@ -47,141 +49,8 @@
             this.bindModals();
         },
 
-        /* =========================================================================
-           1. Theme Management (Light / Dark)
-           ========================================================================= */
-        initTheme() {
-            const toggleBtn = document.getElementById('btn-theme-toggle');
-            const savedTheme = localStorage.getItem(this.THEME_KEY) || 
-                               localStorage.getItem('aegis_theme') || 'light';
-
-            this.applyTheme(savedTheme, false);
-
-            if (toggleBtn) {
-                toggleBtn.addEventListener('click', () => {
-                    const current = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
-                    const nextTheme = current === 'dark' ? 'light' : 'dark';
-                    this.applyTheme(nextTheme, true);
-                });
-            }
-        },
-
-        applyTheme(theme, showToastNotification = true) {
-            const isDark = theme === 'dark';
-            document.documentElement.setAttribute('data-theme', theme);
-
-            if (isDark) {
-                document.body.classList.remove('light-theme');
-                document.body.classList.add('dark-theme');
-            } else {
-                document.body.classList.remove('dark-theme');
-                document.body.classList.add('light-theme');
-            }
-
-            const themeBtn = document.getElementById('btn-theme-toggle');
-            if (themeBtn) {
-                themeBtn.setAttribute('title', isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme');
-                themeBtn.setAttribute('aria-label', isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme');
-            }
-
-            localStorage.setItem(this.THEME_KEY, theme);
-            localStorage.setItem('aegis_theme', theme);
-
-            // Re-render SVG charts so line & donut strokes adapt cleanly
-            this.renderLineChart();
-            this.renderReportsByTypeDonut();
-            this.renderReportStatusDonut();
-
-            if (showToastNotification) {
-                this.showToast(`Switched to ${isDark ? 'Dark Theme' : 'Light Theme'}`, 'info');
-            }
-        },
-
         isDark() {
-            return document.body.classList.contains('dark-theme');
-        },
-
-        /* =========================================================================
-           2. Header Dropdowns, Keyboard Shortcuts, and Mobile Drawer
-           ========================================================================= */
-        initHeaderDropdowns() {
-            const notifBtn = document.getElementById('btn-notifications');
-            const notifDropdown = document.getElementById('notifications-dropdown');
-            const profileBtn = document.getElementById('user-profile-btn');
-            const profileDropdown = document.getElementById('profile-dropdown');
-
-            if (notifBtn && notifDropdown) {
-                notifBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    notifDropdown.classList.toggle('active');
-                    if (profileDropdown) profileDropdown.classList.remove('active');
-                });
-            }
-
-            if (profileBtn && profileDropdown) {
-                profileBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    profileDropdown.classList.toggle('active');
-                    if (notifDropdown) notifDropdown.classList.remove('active');
-                });
-            }
-
-            document.addEventListener('click', (e) => {
-                if (notifDropdown && !notifDropdown.contains(e.target) && e.target !== notifBtn) {
-                    notifDropdown.classList.remove('active');
-                }
-                if (profileDropdown && !profileDropdown.contains(e.target) && e.target !== profileBtn) {
-                    profileDropdown.classList.remove('active');
-                }
-            });
-
-            // Global search shortcut '/'
-            const searchInput = document.getElementById('global-header-search') || document.getElementById('global-search-input');
-            document.addEventListener('keydown', (e) => {
-                if (e.key === '/' && document.activeElement !== searchInput && 
-                    !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) {
-                    e.preventDefault();
-                    if (searchInput) {
-                        searchInput.focus();
-                        searchInput.select();
-                    }
-                }
-                if (e.key === 'Escape') {
-                    if (notifDropdown) notifDropdown.classList.remove('active');
-                    if (profileDropdown) profileDropdown.classList.remove('active');
-                    this.closeAllModals();
-                }
-            });
-        },
-
-        initMobileDrawer() {
-            const hamburgerBtn = document.getElementById('btn-hamburger');
-            const sidebar = document.getElementById('app-sidebar');
-            const backdrop = document.getElementById('sidebar-backdrop');
-
-            if (hamburgerBtn && sidebar) {
-                hamburgerBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    sidebar.classList.toggle('active');
-                    if (backdrop) backdrop.classList.toggle('active');
-                });
-
-                if (backdrop) {
-                    backdrop.addEventListener('click', () => {
-                        sidebar.classList.remove('active');
-                        backdrop.classList.remove('active');
-                    });
-                }
-
-                document.addEventListener('click', (e) => {
-                    if (sidebar.classList.contains('active') && 
-                        !sidebar.contains(e.target) && 
-                        e.target !== hamburgerBtn) {
-                        sidebar.classList.remove('active');
-                        if (backdrop) backdrop.classList.remove('active');
-                    }
-                });
-            }
+            return document.documentElement.getAttribute('data-theme') === 'dark' || document.body.classList.contains('dark-theme');
         },
 
         /* =========================================================================
@@ -296,9 +165,9 @@
                     <g>${dotsSVG}</g>
                     <g>${xLabelsSVG}</g>
                 </svg>
-                <div class="chart-tooltip-box" id="chart-tooltip-box">
-                    <div class="chart-tooltip-val" id="tooltip-val">42 reports</div>
-                    <div class="chart-tooltip-date" id="tooltip-date">12 Sep 2025</div>
+                <div class="chart-tooltip-box" id="chart-tooltip-box" style="display: none;">
+                    <div class="chart-tooltip-val" id="tooltip-val"></div>
+                    <div class="chart-tooltip-date" id="tooltip-date"></div>
                 </div>
             `;
 
@@ -331,19 +200,6 @@
                     if (tooltip) tooltip.style.display = 'none';
                 });
             });
-
-            // Preset default tooltip on the last dot (12 Sep 2025, 42 reports matching reference screenshot)
-            const lastDot = dots[dots.length - 1];
-            if (lastDot && tooltip) {
-                const cx = parseFloat(lastDot.getAttribute('cx'));
-                const cy = parseFloat(lastDot.getAttribute('cy'));
-                const rect = container.getBoundingClientRect();
-                const scaleX = rect.width / width;
-                const scaleY = rect.height / height;
-                tooltip.style.left = `${cx * scaleX}px`;
-                tooltip.style.top = `${cy * scaleY}px`;
-                tooltip.style.display = 'block';
-            }
         },
 
         /* =========================================================================
@@ -912,28 +768,16 @@
            12. Toast Notification System
            ========================================================================= */
         showToast(message, type = 'info') {
+            if (window.AegisAdminCommon && typeof window.AegisAdminCommon.showToast === 'function') {
+                window.AegisAdminCommon.showToast(message, type);
+                return;
+            }
             const container = document.getElementById('toast-container');
             if (!container) return;
 
             const toast = document.createElement('div');
             toast.className = `toast-item ${type}`;
-
-            let iconSVG = '';
-            if (type === 'success') {
-                iconSVG = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#10B981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
-            } else if (type === 'warning') {
-                iconSVG = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#F59E0B" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`;
-            } else {
-                iconSVG = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
-            }
-
-            toast.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 0.55rem;">
-                    ${iconSVG}
-                    <span>${message}</span>
-                </div>
-            `;
-
+            toast.innerHTML = `<span>${message}</span>`;
             container.appendChild(toast);
 
             setTimeout(() => {

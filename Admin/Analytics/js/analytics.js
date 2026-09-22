@@ -76,17 +76,14 @@
        1. Toast Notifications Utility
        ========================================================================== */
     function showToast(message, type = "info") {
+        if (window.AegisAdminCommon && typeof window.AegisAdminCommon.showToast === "function") {
+            window.AegisAdminCommon.showToast(message, type);
+            return;
+        }
         if (!elements.toastContainer) return;
         const toast = document.createElement("div");
         toast.className = `toast-message toast-${type}`;
-        
-        const iconSvg = type === "success" 
-            ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#10B981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>'
-            : type === "warning"
-            ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#F59E0B" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>'
-            : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#E86326" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
-
-        toast.innerHTML = `${iconSvg}<span>${message}</span>`;
+        toast.innerHTML = `<span>${message}</span>`;
         elements.toastContainer.appendChild(toast);
 
         setTimeout(() => {
@@ -102,19 +99,7 @@
        ========================================================================== */
     function applyTheme(theme) {
         state.theme = theme;
-        elements.html.setAttribute("data-theme", theme);
-        elements.body.className = theme === "dark" ? "dark-theme" : "light-theme";
-        localStorage.setItem("aegisvault_theme", theme);
-        localStorage.setItem("aegis_theme", theme);
-
-        // Re-render charts to adjust SVG stroke/fill colors for the theme
         renderAllCharts();
-    }
-
-    function toggleTheme() {
-        const nextTheme = state.theme === "light" ? "dark" : "light";
-        applyTheme(nextTheme);
-        showToast(`Theme switched to ${nextTheme === "dark" ? "Dark Mode" : "Light Mode"}`, "info");
     }
 
     /* ==========================================================================
@@ -922,54 +907,6 @@
         link.remove();
     }
 
-    /* ==========================================================================
-       15. Dropdown Flyouts (Notifications & Profile)
-       ========================================================================== */
-    function initDropdowns() {
-        // Notifications Toggle
-        if (elements.btnNotifications && elements.notificationsDropdown) {
-            elements.btnNotifications.addEventListener("click", (e) => {
-                e.stopPropagation();
-                if (elements.profileDropdown) elements.profileDropdown.classList.remove("active");
-                elements.notificationsDropdown.classList.toggle("active");
-            });
-        }
-
-        // Profile Toggle
-        if (elements.btnProfile && elements.profileDropdown) {
-            elements.btnProfile.addEventListener("click", (e) => {
-                e.stopPropagation();
-                if (elements.notificationsDropdown) elements.notificationsDropdown.classList.remove("active");
-                elements.profileDropdown.classList.toggle("active");
-            });
-        }
-
-        // Close dropdowns on outside click
-        document.addEventListener("click", () => {
-            if (elements.notificationsDropdown) elements.notificationsDropdown.classList.remove("active");
-            if (elements.profileDropdown) elements.profileDropdown.classList.remove("active");
-        });
-    }
-
-    /* ==========================================================================
-       16. Mobile Sidebar Drawer Toggle
-       ========================================================================== */
-    function initMobileSidebar() {
-        if (!elements.btnHamburger || !elements.appSidebar || !elements.sidebarBackdrop) return;
-
-        function toggleSidebar() {
-            elements.appSidebar.classList.toggle("active");
-            elements.sidebarBackdrop.classList.toggle("active");
-        }
-
-        function closeSidebar() {
-            elements.appSidebar.classList.remove("active");
-            elements.sidebarBackdrop.classList.remove("active");
-        }
-
-        elements.btnHamburger.addEventListener("click", toggleSidebar);
-        elements.sidebarBackdrop.addEventListener("click", closeSidebar);
-    }
 
     /* ==========================================================================
        17. Period Filter Select Dropdowns
@@ -1033,9 +970,6 @@
        19. Initialization Routine
        ========================================================================== */
     function init() {
-        // Apply persisted theme
-        applyTheme(state.theme);
-
         // Render Static Content
         renderOverviewMetrics();
         renderGeographicDistribution();
@@ -1045,16 +979,15 @@
         // Render Charts
         renderAllCharts();
 
-        // Event Handlers
-        if (elements.btnThemeToggle) {
-            elements.btnThemeToggle.addEventListener("click", toggleTheme);
-        }
+        // Listen for global admin theme changes to re-render charts
+        window.addEventListener("aegis:themechange", (e) => {
+            state.theme = e.detail?.theme || (document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light");
+            renderAllCharts();
+        });
 
         initGlobalSearch();
         initDateRangePicker();
         initExportModal();
-        initDropdowns();
-        initMobileSidebar();
         initPeriodFilters();
 
         // Window resize debounce for responsive SVG recalculation if needed

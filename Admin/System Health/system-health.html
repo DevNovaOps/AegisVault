@@ -12,6 +12,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
+    <!-- Admin Common Stylesheet -->
+    <link rel="stylesheet" href="../common/css/admin-common.css">
     <!-- Main Stylesheet -->
     <link rel="stylesheet" href="css/system-health.css">
 </head>
@@ -49,25 +51,6 @@
                 </a>
             </div>
 
-            <!-- Center: Search Bar -->
-            <div class="header-center">
-                <div class="search-container">
-                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                    <input type="text" 
-                           id="global-header-search" 
-                           class="search-input" 
-                           placeholder="Search users, trustees, vaults, logs, or settings..." 
-                           autocomplete="off"
-                           aria-label="Global search">
-                    <span class="search-shortcut-pill">/</span>
-
-                    <!-- Search Results Dropdown -->
-                    <div class="search-dropdown" id="search-results-dropdown"></div>
-                </div>
-            </div>
 
             <!-- Right: Theme Switcher Pill, Notifications, Admin Profile -->
             <div class="header-right">
@@ -143,19 +126,17 @@
                             <span class="profile-name">Admin</span>
                             <span class="profile-role">System Administrator</span>
                         </div>
-                    </button>
-
-                    <!-- Profile Dropdown -->
+                    </button>                    <!-- Profile Dropdown -->
                     <div class="profile-dropdown" id="profile-dropdown">
-                        <button class="profile-menu-item" onclick="window.AegisSystemHealth.showToast('Infrastructure Security Settings Panel', 'info');">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                        <button class="profile-menu-item" id="btn-profile-settings" type="button">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                             <span>Security Settings</span>
                         </button>
-                        <button class="profile-menu-item" onclick="window.location.href='../Audit Logs/audit-logs.html'">
+                        <a href="../Audit Logs/audit-logs.html" class="profile-menu-item" id="btn-profile-audit">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
                             <span>Audit Logs</span>
-                        </button>
-                        <button class="profile-menu-item" onclick="window.AegisSystemHealth.showToast('Logged out of Admin Session (Mock)', 'warning');">
+                        </a>
+                        <button class="profile-menu-item" id="btn-profile-signout" type="button">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                             <span>Sign Out</span>
                         </button>
@@ -174,7 +155,6 @@
             <!-- Admin Sidebar Navigation (Exact same markup as Dashboard, Audit Logs, User Mgmt) -->
             <aside class="app-sidebar" id="app-sidebar" role="navigation" aria-label="Admin Navigation">
                 <div class="sidebar-top-group">
-                    <div class="sidebar-section-label">ADMIN</div>
                     <ul class="sidebar-nav-list">
                         <!-- 1. Dashboard -->
                         <li>
@@ -242,7 +222,7 @@
                         </li>
                         <!-- 8. System Health (Active) -->
                         <li>
-                            <a href="index.html" class="nav-link-item active" data-target="system-health">
+                            <a href="system-health.html" class="nav-link-item active" data-target="system-health">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                                 </svg>
@@ -293,12 +273,6 @@
                  ================================================================== -->
             <main class="main-workspace app-workspace-content" id="main-workspace">
 
-                <!-- Breadcrumb Navigation -->
-                <nav class="breadcrumb-row" aria-label="Breadcrumb">
-                    <a href="../Dashboard/admin.html" class="breadcrumb-link">Admin</a>
-                    <span class="breadcrumb-separator">/</span>
-                    <span class="breadcrumb-current">System Health</span>
-                </nav>
 
                 <!-- Hero Section Card matching screenshots -->
                 <section class="hero-card" aria-label="System Health Overview">
@@ -549,7 +523,7 @@
                             <div class="card-header-left">
                                 <h2 class="card-main-title">Recent System Events</h2>
                             </div>
-                            <a class="card-view-all-link" id="link-view-all-events" href="javascript:void(0);">
+                            <a class="card-view-all-link" id="link-view-all-events" href="../Audit Logs/audit-logs.html">
                                 <span>View All</span>
                                 <span>&rarr;</span>
                             </a>
@@ -610,20 +584,19 @@
              ================================================================== -->
         <footer class="app-footer" role="contentinfo">
             <div class="footer-left">
-                <svg class="footer-logo-svg" viewBox="0 0 36 36" fill="none">
+                <svg class="brand-logo-svg" style="width:20px; height:24px;" viewBox="0 0 36 36" fill="none">
                     <path d="M18 2L5 7.5V17C5 25.5 10.5 32.5 18 34.5C25.5 32.5 31 25.5 31 17V7.5L18 2Z" fill="#F45A1F"/>
                     <path d="M18 5L7.5 9.4V17C7.5 24 12 29.8 18 31.6C24 29.8 28.5 24 28.5 17V9.4L18 5Z" fill="#FF7A2F"/>
                     <rect x="13" y="15" width="10" height="9" rx="2" fill="#FFFFFF"/>
                 </svg>
-                <div class="footer-brand-text">
-                    <span class="footer-brand-title">AegisVault</span>
-                    <span class="footer-brand-tagline">What matters, lives on.</span>
+                <div class="brand-text-col">
+                    <span class="brand-name" style="font-size: 0.95rem;">AegisVault</span>
+                    <span class="brand-tagline">What matters, lives on.</span>
                 </div>
             </div>
 
             <div class="footer-center">
-                <span class="footer-motto-text">“Because what matters today, should matter tomorrow too.”</span>
-                <div class="footer-motto-accent-bar"></div>
+                “Because what matters today, should matter tomorrow too.”
             </div>
 
             <div class="footer-right">
@@ -798,8 +771,9 @@
     </div>
 
     <!-- ======================================================================
-         9. SCRIPTS (MOCK DATA + SYSTEM HEALTH CONTROLLER)
+         9. SCRIPTS (ADMIN COMMON + MOCK DATA + SYSTEM HEALTH CONTROLLER)
          ====================================================================== -->
+    <script src="../common/js/admin-common.js"></script>
     <script src="js/mockData.js"></script>
     <script src="js/system-health.js"></script>
 </body>

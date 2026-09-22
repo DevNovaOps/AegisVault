@@ -1,0 +1,5 @@
+/* ==========================================================================
+   AegisVault — Admin Common Stylesheet Entry Point
+   Imports the core centralized admin stylesheet.
+   ========================================================================== */
+@import url('./admin-common.css');

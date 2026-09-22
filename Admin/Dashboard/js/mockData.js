@@ -418,33 +418,6 @@ const AegisMockData = {
             unread: true,
             icon: "key",
             type: "success"
-        },
-        {
-            id: "notif-02",
-            title: "Suspicious Login Spike",
-            message: "Edge firewall blocked 8 failed password attempts on Frankfurt node.",
-            time: "42 mins ago",
-            unread: true,
-            icon: "alert-triangle",
-            type: "warning"
-        },
-        {
-            id: "notif-03",
-            title: "Heartbeat Check-In Completed",
-            message: "Daily Celery heartbeat sweep verified 892 active custodians.",
-            time: "2 hours ago",
-            unread: true,
-            icon: "check-circle",
-            type: "info"
-        },
-        {
-            id: "notif-04",
-            title: "Database Backup Snapshot",
-            message: "Automated AES-256 encrypted database snapshot archived to cold storage.",
-            time: "6 hours ago",
-            unread: false,
-            icon: "database",
-            type: "info"
         }
     ],
 
