@@ -53,6 +53,7 @@
                     <li class="nav-item"><a href="#security" class="nav-link" data-nav="security">Security</a></li>
                     <li class="nav-item"><a href="#pricing" class="nav-link" data-nav="pricing">Pricing</a></li>
                     <li class="nav-item"><a href="#about" class="nav-link" data-nav="about">About</a></li>
+                    <li class="nav-item"><a href="auth.html" class="nav-link" style="color: var(--brand-orange); font-weight: 700;">Role Portal</a></li>
                 </ul>
             </nav>
 
@@ -118,6 +119,7 @@
                     <li><a href="#security" class="mobile-nav-link" data-nav="security">Security</a></li>
                     <li><a href="#pricing" class="mobile-nav-link" data-nav="pricing">Pricing</a></li>
                     <li><a href="#about" class="mobile-nav-link" data-nav="about">About</a></li>
+                    <li><a href="auth.html" class="mobile-nav-link" style="color: var(--brand-orange); font-weight: 700;">Role Portal (Owner/Trustee/Admin)</a></li>
                 </ul>
                 <div class="mobile-drawer-actions">
                     <button class="btn btn-ghost w-100" id="btn-mobile-sign-in" type="button">Sign In</button>
@@ -1124,20 +1126,41 @@
         <div class="modal-card">
             <button class="modal-close-btn" id="btn-close-signin" aria-label="Close dialog">&times;</button>
             <div class="modal-header">
-                <div class="modal-badge-icon">
+                <div class="modal-badge-icon" id="signin-badge-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                         <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                     </svg>
                 </div>
                 <h3 class="modal-title" id="signin-modal-title">Sign In to AegisVault</h3>
-                <p class="modal-subtitle">Enter your credentials to unlock your client-side encrypted vault.</p>
+                <p class="modal-subtitle" id="signin-modal-subtitle">Choose your role to open the corresponding custody panel.</p>
             </div>
+
+            <!-- Role Selector Tabs inside Modal -->
+            <div class="modal-role-selector-section">
+                <div class="modal-role-label-row">
+                    <span>Select Panel Role</span>
+                    <span class="modal-role-target-badge" id="signin-modal-role-target">Opens: Owner Dashboard</span>
+                </div>
+                <div class="modal-role-pills" id="signin-role-pills">
+                    <button type="button" class="modal-role-pill active" data-modal-role="owner">🛡️ Owner</button>
+                    <button type="button" class="modal-role-pill role-trustee" data-modal-role="trustee">🤝 Trustee</button>
+                    <button type="button" class="modal-role-pill role-admin" data-modal-role="admin">⚡ Admin</button>
+                </div>
+            </div>
+
             <form class="modal-form" id="form-sign-in" novalidate>
                 <div class="form-group">
-                    <label for="signin-email" class="form-label">Email Address</label>
+                    <label for="signin-email" class="form-label" id="modal-signin-email-label">Email Address</label>
                     <input type="email" id="signin-email" class="form-input" placeholder="name@domain.com" required autocomplete="email">
                 </div>
+
+                <!-- Trustee / Admin Optional Dynamic Hint or Input -->
+                <div class="form-group" id="modal-signin-extra-group" style="display: none;">
+                    <label for="signin-extra-field" class="form-label" id="modal-signin-extra-label">Trustee Token / Admin Clearance</label>
+                    <input type="text" id="signin-extra-field" class="form-input" placeholder="e.g. TRST-INV-2026 or ROOT-CLEARANCE">
+                </div>
+
                 <div class="form-group">
                     <div class="form-label-row">
                         <label for="signin-password" class="form-label">Master Password</label>
@@ -1152,8 +1175,8 @@
                         <span class="checkbox-label">Remember device for 30 days</span>
                     </label>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">
-                    <span>Unlock Vault</span>
+                <button type="submit" class="btn btn-primary w-100" id="btn-modal-signin-submit">
+                    <span id="signin-submit-text">Unlock Owner Vault</span>
                     <span class="btn-arrow" aria-hidden="true">→</span>
                 </button>
                 <div class="modal-divider"><span>OR</span></div>
@@ -1165,9 +1188,12 @@
                     <span>Sign in with Passkey / WebAuthn</span>
                 </button>
             </form>
+
+            <a href="auth.html" class="modal-auth-portal-link">✨ Open Dedicated Fullscreen Role Auth Portal →</a>
+
             <div class="modal-footer">
-                <span>Don't have a vault yet?</span>
-                <button type="button" class="link-switch-modal" id="switch-to-signup">Create a Vault</button>
+                <span>Don't have an account yet?</span>
+                <button type="button" class="link-switch-modal" id="switch-to-signup">Create Account</button>
             </div>
         </div>
     </div>
@@ -1177,25 +1203,46 @@
         <div class="modal-card">
             <button class="modal-close-btn" id="btn-close-signup" aria-label="Close dialog">&times;</button>
             <div class="modal-header">
-                <div class="modal-badge-icon icon-amber-grad">
+                <div class="modal-badge-icon icon-amber-grad" id="signup-badge-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                         <path d="M12 8v8"/>
                         <path d="M8 12h8"/>
                     </svg>
                 </div>
-                <h3 class="modal-title" id="signup-modal-title">Initialize Your Vault</h3>
-                <p class="modal-subtitle">Create your master key. Zero knowledge. Only you hold the decryption seed.</p>
+                <h3 class="modal-title" id="signup-modal-title">Initialize Your Account</h3>
+                <p class="modal-subtitle" id="signup-modal-subtitle">Choose your role to generate your encrypted custody access.</p>
             </div>
+
+            <!-- Role Selector Tabs inside Signup Modal -->
+            <div class="modal-role-selector-section">
+                <div class="modal-role-label-row">
+                    <span>Register Role</span>
+                    <span class="modal-role-target-badge" id="signup-modal-role-target">Opens: Owner Dashboard</span>
+                </div>
+                <div class="modal-role-pills" id="signup-role-pills">
+                    <button type="button" class="modal-role-pill active" data-modal-role="owner">🛡️ Owner</button>
+                    <button type="button" class="modal-role-pill role-trustee" data-modal-role="trustee">🤝 Trustee</button>
+                    <button type="button" class="modal-role-pill role-admin" data-modal-role="admin">⚡ Admin</button>
+                </div>
+            </div>
+
             <form class="modal-form" id="form-get-started" novalidate>
                 <div class="form-group">
-                    <label for="signup-name" class="form-label">Full Legal Name</label>
+                    <label for="signup-name" class="form-label" id="modal-signup-name-label">Full Legal Name</label>
                     <input type="text" id="signup-name" class="form-input" placeholder="e.g. Eleanor Vance" required autocomplete="name">
                 </div>
                 <div class="form-group">
-                    <label for="signup-email" class="form-label">Email Address</label>
+                    <label for="signup-email" class="form-label" id="modal-signup-email-label">Email Address</label>
                     <input type="email" id="signup-email" class="form-input" placeholder="name@domain.com" required autocomplete="email">
                 </div>
+
+                <!-- Role Extra Field -->
+                <div class="form-group" id="modal-signup-extra-group" style="display: none;">
+                    <label for="signup-extra-field" class="form-label" id="modal-signup-extra-label">Trustee Token / Admin Clearance</label>
+                    <input type="text" id="signup-extra-field" class="form-input" placeholder="e.g. TRST-INV-2026 or ROOT-SEC-8821">
+                </div>
+
                 <div class="form-group">
                     <label for="signup-password" class="form-label">Create Master Password</label>
                     <input type="password" id="signup-password" class="form-input" placeholder="Minimum 12 characters" required autocomplete="new-password">
@@ -1203,18 +1250,21 @@
                 </div>
                 <div class="form-checkbox-row">
                     <label class="custom-checkbox-wrap">
-                        <input type="checkbox" id="signup-agree" required>
+                        <input type="checkbox" id="signup-agree" required checked>
                         <span class="checkbox-indicator"></span>
-                        <span class="checkbox-label">I understand AegisVault cannot recover my lost master password</span>
+                        <span class="checkbox-label">I acknowledge zero-knowledge protocol & cannot recover lost master seeds</span>
                     </label>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">
-                    <span>Generate Encrypted Vault</span>
+                <button type="submit" class="btn btn-primary w-100" id="btn-modal-signup-submit">
+                    <span id="signup-submit-text">Generate Encrypted Vault</span>
                     <span class="btn-arrow" aria-hidden="true">→</span>
                 </button>
             </form>
+
+            <a href="auth.html?mode=signup" class="modal-auth-portal-link">✨ Open Dedicated Fullscreen Role Auth Portal →</a>
+
             <div class="modal-footer">
-                <span>Already have a vault?</span>
+                <span>Already have an account?</span>
                 <button type="button" class="link-switch-modal" id="switch-to-signin">Sign In</button>
             </div>
         </div>

@@ -212,7 +212,99 @@
             }
         });
 
-        // Sign In Form Submission
+        // Role-Based Configuration for Modals
+        let modalActiveRole = 'owner';
+        const modalRoleConfig = {
+            owner: {
+                title: 'Vault Owner',
+                targetPanel: '../AegisVault Dashboard Module/dashboard.html',
+                targetLabel: 'Opens: Owner Dashboard',
+                signinSubmitText: 'Unlock Owner Vault',
+                signupSubmitText: 'Generate Owner Vault',
+                signinSubtitle: 'Enter your credentials to unlock your client-side encrypted vault.',
+                signupSubtitle: 'Create your master key. Zero knowledge. Only you hold the decryption seed.',
+                demoUser: { name: 'Aryan Patel', email: 'aryan.patel@estate.io', role: 'owner' }
+            },
+            trustee: {
+                title: 'Designated Trustee',
+                targetPanel: '../Trustee/dashboard/dashboard.html',
+                targetLabel: 'Opens: Trustee Dashboard Panel',
+                signinSubmitText: 'Access Trustee Panel',
+                signupSubmitText: 'Register as Verified Trustee',
+                signinSubtitle: 'Enter trustee credentials to inspect assigned vaults & participate in quorum.',
+                signupSubtitle: 'Register your trustee identity to accept shard assignments and participate in recovery.',
+                demoUser: { name: 'Rakesh Patel', email: 'rakesh.patel@trustee-network.org', role: 'trustee' }
+            },
+            admin: {
+                title: 'SecOps Administrator',
+                targetPanel: '../Admin/Dashboard/admin.html',
+                targetLabel: 'Opens: Admin Command Center',
+                signinSubmitText: 'Launch Admin Command Center',
+                signupSubmitText: 'Enroll SecOps Root Officer',
+                signinSubtitle: 'Platform administration, threat telemetry & zero-knowledge auditing.',
+                signupSubtitle: 'Enroll administrative security officer with cryptographic hardware attestation.',
+                demoUser: { name: 'Alice Vance', email: 'alice.vance@aegisvault-secops.io', role: 'admin' }
+            }
+        };
+
+        function setModalRole(role) {
+            if (!modalRoleConfig[role]) return;
+            modalActiveRole = role;
+            const cfg = modalRoleConfig[role];
+
+            // Update pills in both modals
+            document.querySelectorAll('#signin-role-pills .modal-role-pill, #signup-role-pills .modal-role-pill').forEach(pill => {
+                pill.classList.toggle('active', pill.getAttribute('data-modal-role') === role);
+            });
+
+            // Update target badges
+            const signinTarget = document.getElementById('signin-modal-role-target');
+            const signupTarget = document.getElementById('signup-modal-role-target');
+            if (signinTarget) {
+                signinTarget.textContent = cfg.targetLabel;
+                signinTarget.style.color = role === 'admin' ? '#8B5CF6' : (role === 'trustee' ? '#0284C7' : '#F45A1F');
+            }
+            if (signupTarget) {
+                signupTarget.textContent = cfg.targetLabel;
+                signupTarget.style.color = role === 'admin' ? '#8B5CF6' : (role === 'trustee' ? '#0284C7' : '#F45A1F');
+            }
+
+            // Update subtitles
+            const signinSub = document.getElementById('signin-modal-subtitle');
+            const signupSub = document.getElementById('signup-modal-subtitle');
+            if (signinSub) signinSub.textContent = cfg.signinSubtitle;
+            if (signupSub) signupSub.textContent = cfg.signupSubtitle;
+
+            // Update submit button texts
+            const signinBtnText = document.getElementById('signin-submit-text');
+            const signupBtnText = document.getElementById('signup-submit-text');
+            if (signinBtnText) signinBtnText.textContent = cfg.signinSubmitText;
+            if (signupBtnText) signupBtnText.textContent = cfg.signupSubmitText;
+
+            // Dynamic field visibility
+            const signinExtra = document.getElementById('modal-signin-extra-group');
+            const signupExtra = document.getElementById('modal-signup-extra-group');
+            if (signinExtra) {
+                signinExtra.style.display = role !== 'owner' ? 'flex' : 'none';
+                const label = document.getElementById('modal-signin-extra-label');
+                if (label) label.textContent = role === 'trustee' ? 'Assigned Vault ID / Invite Token' : 'SecOps Root Clearance Token';
+            }
+            if (signupExtra) {
+                signupExtra.style.display = role !== 'owner' ? 'flex' : 'none';
+                const label = document.getElementById('modal-signup-extra-label');
+                if (label) label.textContent = role === 'trustee' ? 'Designated Vault Invitation Code' : 'Admin Master Enrollment Key';
+            }
+        }
+
+        // Attach listeners to role pills
+        document.querySelectorAll('#signin-role-pills .modal-role-pill, #signup-role-pills .modal-role-pill').forEach(pill => {
+            pill.addEventListener('click', () => {
+                const role = pill.getAttribute('data-modal-role');
+                setModalRole(role);
+            });
+        });
+
+        // Sign In Form Submission with Panel Routing
         if (formSignIn) {
             formSignIn.addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -224,17 +316,37 @@
                     return;
                 }
 
-                showToast('Decrypting client vault... Authentication successful!', 'success');
+                const cfg = modalRoleConfig[modalActiveRole];
+                localStorage.setItem('aegis_auth_role', modalActiveRole);
+                localStorage.setItem('aegis_user', JSON.stringify({
+                    name: emailInput.value.split('@')[0].toUpperCase(),
+                    email: emailInput.value,
+                    role: modalActiveRole
+                }));
+
+                showToast(`Authenticated as ${cfg.title}! Opening ${cfg.title} Panel...`, 'success');
                 closeModal(modalSignIn);
                 formSignIn.reset();
+
+                setTimeout(() => {
+                    window.location.href = cfg.targetPanel;
+                }, 750);
             });
         }
 
-        // Passkey Biometric Login
+        // Passkey Biometric Login with Panel Routing
         if (btnPasskeyLogin) {
             btnPasskeyLogin.addEventListener('click', () => {
-                showToast('WebAuthn / FIDO2 Passkey verified. Vault unlocked.', 'success');
+                const cfg = modalRoleConfig[modalActiveRole];
+                localStorage.setItem('aegis_auth_role', modalActiveRole);
+                localStorage.setItem('aegis_user', JSON.stringify(cfg.demoUser));
+
+                showToast(`WebAuthn / Passkey verified for ${cfg.title}. Opening ${cfg.title} Panel...`, 'success');
                 closeModal(modalSignIn);
+
+                setTimeout(() => {
+                    window.location.href = cfg.targetPanel;
+                }, 750);
             });
         }
 
@@ -245,7 +357,7 @@
             });
         }
 
-        // Get Started Form Submission
+        // Get Started Form Submission with Panel Routing
         if (formGetStarted) {
             formGetStarted.addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -264,10 +376,22 @@
                     return;
                 }
 
-                showToast('Master encryption seed generated! Welcome to AegisVault.', 'success');
+                const cfg = modalRoleConfig[modalActiveRole];
+                localStorage.setItem('aegis_auth_role', modalActiveRole);
+                localStorage.setItem('aegis_user', JSON.stringify({
+                    name: nameInput.value,
+                    email: emailInput.value,
+                    role: modalActiveRole
+                }));
+
+                showToast(`Account generated as ${cfg.title}! Initializing ${cfg.title} Panel...`, 'success');
                 closeModal(modalGetStarted);
                 formGetStarted.reset();
                 if (strengthFill) strengthFill.style.width = '0%';
+
+                setTimeout(() => {
+                    window.location.href = cfg.targetPanel;
+                }, 750);
             });
         }
 

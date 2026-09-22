@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AegisVault — Role-Based Authentication Gateway</title>
+    <meta name="description" content="Sign in or initialize your role-based AegisVault account. Select Owner, Trustee, or Admin to access your designated custody console.">
+    <meta name="theme-color" content="#050B14">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="AegisVault Home/css/style.css">
+    <link rel="stylesheet" href="AegisVault Home/css/auth.css">
+</head>
+<body class="auth-body dark-theme">
+    
+    <!-- Background Atmospheric Glow -->
+    <div class="auth-bg-glow"></div>
+
+    <!-- Top Navigation Header -->
+    <header class="auth-nav">
+        <a href="AegisVault Home/index.html" class="auth-back-link">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>Back to AegisVault Home</span>
+        </a>
+
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <a href="AegisVault Home/index.html" class="brand-wrapper-auth">
+                <div class="brand-shield-icon" style="width: 32px; height: 32px;">
+                    <svg viewBox="0 0 36 36" fill="none">
+                        <path d="M18 2L5 7.5V17C5 25.5 10.5 32.5 18 34.5C25.5 32.5 31 25.5 31 17V7.5L18 2Z" fill="#F45A1F"/>
+                        <path d="M18 5L7.5 9.4V17C7.5 24 12 29.8 18 31.6C24 29.8 28.5 24 28.5 17V9.4L18 5Z" fill="#FF7A2F"/>
+                        <rect x="13" y="15" width="10" height="9" rx="2" fill="#FFFFFF"/>
+                        <circle cx="18" cy="18.5" r="1.3" fill="#F45A1F"/>
+                    </svg>
+                </div>
+                <span class="brand-title-auth">AegisVault</span>
+            </a>
+
+            <!-- Theme Toggle Button -->
+            <button class="theme-toggle-btn" id="btn-theme-toggle" aria-label="Toggle theme" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; cursor: pointer; color: #CBD5E1;">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Auth Shell -->
+    <main class="auth-wrapper">
+        <div class="auth-card">
+            
+            <!-- Auth Mode Switcher (Sign In vs Sign Up) -->
+            <div class="auth-mode-switch" role="tablist">
+                <button class="auth-mode-btn active" id="tab-sign-in" role="tab" aria-selected="true">Sign In</button>
+                <button class="auth-mode-btn" id="tab-sign-up" role="tab" aria-selected="false">Create Account / Sign Up</button>
+            </div>
+
+            <!-- Role Selector Area -->
+            <div>
+                <div class="role-section-label">
+                    <span>1. Select Account Role</span>
+                    <span id="role-target-indicator" style="color: #F45A1F; text-transform: none; font-weight: 700;">Opens: Owner Dashboard</span>
+                </div>
+
+                <div class="role-selector-grid" role="radiogroup" aria-label="Select Account Role">
+                    <!-- Owner Role Card -->
+                    <div class="role-card-option active" id="role-card-owner" data-role="owner" role="radio" aria-checked="true" tabindex="0">
+                        <div class="role-icon-box" style="background: rgba(244, 90, 31, 0.15); color: #F45A1F;">
+                            🛡️
+                        </div>
+                        <span class="role-card-title">Vault Owner</span>
+                        <span class="role-card-desc">Estate creator, heartbeat check-ins & encrypted vaults</span>
+                        <span class="role-target-badge">Owner Panel</span>
+                    </div>
+
+                    <!-- Trustee Role Card -->
+                    <div class="role-card-option role-trustee" id="role-card-trustee" data-role="trustee" role="radio" aria-checked="false" tabindex="0">
+                        <div class="role-icon-box" style="background: rgba(2, 132, 199, 0.15); color: #38BDF8;">
+                            🤝
+                        </div>
+                        <span class="role-card-title">Designated Trustee</span>
+                        <span class="role-card-desc">Shard custodian, identity KYC & quorum verification</span>
+                        <span class="role-target-badge">Trustee Panel</span>
+                    </div>
+
+                    <!-- Admin Role Card -->
+                    <div class="role-card-option role-admin" id="role-card-admin" data-role="admin" role="radio" aria-checked="false" tabindex="0">
+                        <div class="role-icon-box" style="background: rgba(139, 92, 246, 0.15); color: #C084FC;">
+                            ⚡
+                        </div>
+                        <span class="role-card-title">SecOps Admin</span>
+                        <span class="role-card-desc">Platform administration, threat sentinels & audit logs</span>
+                        <span class="role-target-badge">Admin Panel</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Role Notice Banner -->
+            <div class="active-role-notice" id="active-role-notice">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                <div id="active-role-notice-text">
+                    Authenticating as <strong>Vault Owner</strong>. Logging in will unlock your digital legacy in the <strong>Owner Dashboard Module</strong>.
+                </div>
+            </div>
+
+            <!-- Dynamic Form Section -->
+            <div id="form-container">
+                
+                <!-- ================= SIGN IN FORM ================= -->
+                <form class="auth-form" id="auth-form-signin">
+                    <div class="form-group">
+                        <label for="signin-email" class="form-label" id="label-signin-email">Account Email</label>
+                        <input type="email" id="signin-email" class="form-input" placeholder="e.g. aryan.patel@estate.io" required autocomplete="email">
+                    </div>
+
+                    <!-- Trustee Specific Extra Input -->
+                    <div class="form-group" id="group-trustee-invite" style="display: none;">
+                        <label for="signin-trustee-vault" class="form-label">Assigned Vault ID / Trustee Invitation (Optional)</label>
+                        <input type="text" id="signin-trustee-vault" class="form-input form-input-trustee" placeholder="e.g. VLT-001 or INV-7821">
+                    </div>
+
+                    <!-- Admin Specific Extra Input -->
+                    <div class="form-group" id="group-admin-clearance" style="display: none;">
+                        <label for="signin-admin-clearance" class="form-label">SecOps Root Clearance Token</label>
+                        <input type="password" id="signin-admin-clearance" class="form-input form-input-admin" placeholder="AEGIS-ROOT-••••••••" value="AEGIS-ROOT-9092">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signin-password" class="form-label" id="label-signin-password">Master Encryption Password</label>
+                        <input type="password" id="signin-password" class="form-input" placeholder="••••••••••••••••" required autocomplete="current-password">
+                    </div>
+
+                    <button type="submit" class="btn-auth-submit" id="btn-submit-signin">
+                        <span id="btn-submit-signin-text">Unlock Owner Vault</span>
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </button>
+
+                    <button type="button" class="btn-demo-quick" id="btn-passkey-quick" style="flex-direction: row; justify-content: center; height: 40px; margin-top: 2px;">
+                        <span>🔑 Sign In with Passkey / WebAuthn Biometrics</span>
+                    </button>
+                </form>
+
+                <!-- ================= SIGN UP FORM ================= -->
+                <form class="auth-form" id="auth-form-signup" style="display: none;">
+                    <div class="form-group">
+                        <label for="signup-name" class="form-label" id="label-signup-name">Full Legal Name</label>
+                        <input type="text" id="signup-name" class="form-input" placeholder="e.g. Aryan Patel" required autocomplete="name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signup-email" class="form-label" id="label-signup-email">Official Email Address</label>
+                        <input type="email" id="signup-email" class="form-input" placeholder="e.g. aryan.patel@estate.io" required autocomplete="email">
+                    </div>
+
+                    <!-- Role-Specific Signup Fields -->
+                    <div class="form-group" id="group-signup-owner-extra">
+                        <label for="signup-vault-name" class="form-label">Primary Estate Vault Name</label>
+                        <input type="text" id="signup-vault-name" class="form-input" placeholder="e.g. Patel Family Primary Trust">
+                    </div>
+
+                    <div class="form-group" id="group-signup-trustee-extra" style="display: none;">
+                        <label for="signup-trustee-invite" class="form-label">Designated Vault Invitation Code</label>
+                        <input type="text" id="signup-trustee-invite" class="form-input form-input-trustee" placeholder="e.g. TRST-INV-2026-99" value="TRST-INV-2026-99">
+                    </div>
+
+                    <div class="form-group" id="group-signup-admin-extra" style="display: none;">
+                        <label for="signup-admin-token" class="form-label">Admin Master Enrollment Key</label>
+                        <input type="password" id="signup-admin-token" class="form-input form-input-admin" placeholder="ROOT-KEY-••••••••" value="ROOT-SEC-8821">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signup-password" class="form-label">Create Master Password</label>
+                        <input type="password" id="signup-password" class="form-input" placeholder="Minimum 12 secure characters" required autocomplete="new-password">
+                    </div>
+
+                    <div style="font-size: 12px; color: var(--auth-text-muted); display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="signup-agree-check" checked required>
+                        <label for="signup-agree-check">I acknowledge zero-knowledge protocol & agree to custody terms</label>
+                    </div>
+
+                    <button type="submit" class="btn-auth-submit" id="btn-submit-signup">
+                        <span id="btn-submit-signup-text">Initialize Owner Account & Vault</span>
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </button>
+                </form>
+
+            </div>
+
+            <!-- Instant One-Click Demo Access Section -->
+            <div class="quick-demo-section">
+                <div class="quick-demo-label">Instant One-Click Demo Access</div>
+                <div class="quick-demo-buttons">
+                    <button class="btn-demo-quick" id="btn-quick-owner" type="button">
+                        <span style="font-size: 16px;">🛡️</span>
+                        <span class="role-title">Owner Demo</span>
+                        <span style="font-size: 10px; color: var(--auth-text-muted);">Aryan Patel</span>
+                    </button>
+                    <button class="btn-demo-quick" id="btn-quick-trustee" type="button">
+                        <span style="font-size: 16px;">🤝</span>
+                        <span class="role-title">Trustee Demo</span>
+                        <span style="font-size: 10px; color: var(--auth-text-muted);">Rakesh Patel</span>
+                    </button>
+                    <button class="btn-demo-quick" id="btn-quick-admin" type="button">
+                        <span style="font-size: 16px;">⚡</span>
+                        <span class="role-title">Admin SecOps</span>
+                        <span style="font-size: 10px; color: var(--auth-text-muted);">Alice Vance</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Global Toast Container -->
+    <div class="auth-toast-container" id="auth-toast-container" role="region" aria-live="polite"></div>
+
+    <!-- Auth Script Logic -->
+    <script>
+        (function() {
+            let activeRole = 'owner';
+            let activeMode = 'signin';
+
+            // Relative paths from workspace root
+            const roleConfig = {
+                owner: {
+                    title: 'Vault Owner',
+                    targetPanel: 'AegisVault Dashboard Module/dashboard.html',
+                    targetLabel: 'Opens: Owner Dashboard',
+                    notice: 'Authenticating as <strong>Vault Owner</strong>. Logging in will unlock your digital legacy in the <strong>Owner Dashboard Module</strong>.',
+                    submitSignInText: 'Unlock Owner Vault',
+                    submitSignUpText: 'Initialize Owner Account & Vault',
+                    btnClass: '',
+                    demoUser: { name: 'Aryan Patel', email: 'aryan.patel@estate.io', role: 'owner' }
+                },
+                trustee: {
+                    title: 'Designated Trustee',
+                    targetPanel: 'Trustee/dashboard/dashboard.html',
+                    targetLabel: 'Opens: Trustee Dashboard Panel',
+                    notice: 'Authenticating as <strong>Designated Trustee</strong>. Logging in will grant access to your assigned estate vaults in the <strong>Trustee Panel</strong>.',
+                    submitSignInText: 'Access Trustee Panel',
+                    submitSignUpText: 'Register as Verified Trustee',
+                    btnClass: 'trustee-btn',
+                    demoUser: { name: 'Rakesh Patel', email: 'rakesh.patel@trustee-network.org', role: 'trustee' }
+                },
+                admin: {
+                    title: 'SecOps Administrator',
+                    targetPanel: 'Admin/Dashboard/admin.html',
+                    targetLabel: 'Opens: Admin Command Center',
+                    notice: 'Authenticating as <strong>SecOps Administrator</strong>. Logging in will launch platform governance in the <strong>Admin Dashboard Panel</strong>.',
+                    submitSignInText: 'Launch Admin Command Center',
+                    submitSignUpText: 'Enroll SecOps Root Officer',
+                    btnClass: 'admin-btn',
+                    demoUser: { name: 'Alice Vance', email: 'alice.vance@aegisvault-secops.io', role: 'admin' }
+                }
+            };
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const initialRole = urlParams.get('role');
+            const initialMode = urlParams.get('mode');
+
+            if (initialRole && roleConfig[initialRole]) activeRole = initialRole;
+            if (initialMode === 'signup') activeMode = 'signup';
+
+            const tabSignIn = document.getElementById('tab-sign-in');
+            const tabSignUp = document.getElementById('tab-sign-up');
+            const formSignIn = document.getElementById('auth-form-signin');
+            const formSignUp = document.getElementById('auth-form-signup');
+            const roleIndicator = document.getElementById('role-target-indicator');
+            const roleNoticeText = document.getElementById('active-role-notice-text');
+            const btnSubmitSignIn = document.getElementById('btn-submit-signin');
+            const btnSubmitSignUp = document.getElementById('btn-submit-signup');
+            const btnSubmitSignInText = document.getElementById('btn-submit-signin-text');
+            const btnSubmitSignUpText = document.getElementById('btn-submit-signup-text');
+
+            const groupTrusteeInvite = document.getElementById('group-trustee-invite');
+            const groupAdminClearance = document.getElementById('group-admin-clearance');
+            const groupSignupOwnerExtra = document.getElementById('group-signup-owner-extra');
+            const groupSignupTrusteeExtra = document.getElementById('group-signup-trustee-extra');
+            const groupSignupAdminExtra = document.getElementById('group-signup-admin-extra');
+
+            const btnThemeToggle = document.getElementById('btn-theme-toggle');
+            let isDark = true;
+            btnThemeToggle?.addEventListener('click', () => {
+                isDark = !isDark;
+                document.body.classList.toggle('light-theme', !isDark);
+                document.body.classList.toggle('dark-theme', isDark);
+            });
+
+            function setRole(role) {
+                if (!roleConfig[role]) return;
+                activeRole = role;
+
+                document.querySelectorAll('.role-card-option').forEach(card => {
+                    const isSelected = card.getAttribute('data-role') === role;
+                    card.classList.toggle('active', isSelected);
+                    card.setAttribute('aria-checked', isSelected ? 'true' : 'false');
+                });
+
+                const cfg = roleConfig[role];
+                roleIndicator.textContent = cfg.targetLabel;
+                roleIndicator.style.color = role === 'admin' ? '#A855F7' : (role === 'trustee' ? '#38BDF8' : '#F45A1F');
+                roleNoticeText.innerHTML = cfg.notice;
+                btnSubmitSignInText.textContent = cfg.submitSignInText;
+                btnSubmitSignUpText.textContent = cfg.submitSignUpText;
+
+                btnSubmitSignIn.className = `btn-auth-submit ${cfg.btnClass}`;
+                btnSubmitSignUp.className = `btn-auth-submit ${cfg.btnClass}`;
+
+                if (groupTrusteeInvite) groupTrusteeInvite.style.display = role === 'trustee' ? 'flex' : 'none';
+                if (groupAdminClearance) groupAdminClearance.style.display = role === 'admin' ? 'flex' : 'none';
+                if (groupSignupOwnerExtra) groupSignupOwnerExtra.style.display = role === 'owner' ? 'flex' : 'none';
+                if (groupSignupTrusteeExtra) groupSignupTrusteeExtra.style.display = role === 'trustee' ? 'flex' : 'none';
+                if (groupSignupAdminExtra) groupSignupAdminExtra.style.display = role === 'admin' ? 'flex' : 'none';
+            }
+
+            function setMode(mode) {
+                activeMode = mode;
+                if (mode === 'signin') {
+                    tabSignIn.classList.add('active');
+                    tabSignIn.setAttribute('aria-selected', 'true');
+                    tabSignUp.classList.remove('active');
+                    tabSignUp.setAttribute('aria-selected', 'false');
+                    formSignIn.style.display = 'flex';
+                    formSignUp.style.display = 'none';
+                } else {
+                    tabSignUp.classList.add('active');
+                    tabSignUp.setAttribute('aria-selected', 'true');
+                    tabSignIn.classList.remove('active');
+                    tabSignIn.setAttribute('aria-selected', 'false');
+                    formSignUp.style.display = 'flex';
+                    formSignIn.style.display = 'none';
+                }
+            }
+
+            function showToast(msg, type = 'info') {
+                const container = document.getElementById('auth-toast-container');
+                if (!container) return;
+                const toast = document.createElement('div');
+                toast.className = `auth-toast ${type}`;
+                let icon = 'ℹ️';
+                if (type === 'success') icon = '🛡️';
+                if (type === 'warning') icon = '⚠️';
+                if (type === 'error') icon = '🚨';
+
+                toast.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+                container.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transition = 'opacity 0.3s ease';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3500);
+            }
+
+            function completeAuthentication(user) {
+                const cfg = roleConfig[activeRole];
+                localStorage.setItem('aegis_auth_role', activeRole);
+                localStorage.setItem('aegis_user', JSON.stringify(user));
+
+                showToast(`Authenticated as ${cfg.title}! Opening ${cfg.title} Panel...`, 'success');
+
+                setTimeout(() => {
+                    window.location.href = cfg.targetPanel;
+                }, 750);
+            }
+
+            tabSignIn.addEventListener('click', () => setMode('signin'));
+            tabSignUp.addEventListener('click', () => setMode('signup'));
+
+            document.querySelectorAll('.role-card-option').forEach(card => {
+                card.addEventListener('click', () => {
+                    const role = card.getAttribute('data-role');
+                    setRole(role);
+                });
+            });
+
+            formSignIn.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('signin-email').value.trim();
+                const pwd = document.getElementById('signin-password').value;
+
+                if (!email || !pwd) {
+                    showToast('Please fill in both email and master password.', 'error');
+                    return;
+                }
+
+                const user = {
+                    name: email.split('@')[0].replace('.', ' ').toUpperCase(),
+                    email: email,
+                    role: activeRole
+                };
+
+                completeAuthentication(user);
+            });
+
+            formSignUp.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('signup-name').value.trim();
+                const email = document.getElementById('signup-email').value.trim();
+                const pwd = document.getElementById('signup-password').value;
+
+                if (!name || !email || !pwd) {
+                    showToast('Please complete all registration fields.', 'error');
+                    return;
+                }
+
+                const user = {
+                    name: name,
+                    email: email,
+                    role: activeRole
+                };
+
+                completeAuthentication(user);
+            });
+
+            document.getElementById('btn-passkey-quick')?.addEventListener('click', () => {
+                const cfg = roleConfig[activeRole];
+                showToast(`WebAuthn / Passkey verified for ${cfg.title}. Zero-knowledge signature confirmed.`, 'success');
+                setTimeout(() => completeAuthentication(cfg.demoUser), 500);
+            });
+
+            document.getElementById('btn-quick-owner')?.addEventListener('click', () => {
+                setRole('owner');
+                completeAuthentication(roleConfig.owner.demoUser);
+            });
+
+            document.getElementById('btn-quick-trustee')?.addEventListener('click', () => {
+                setRole('trustee');
+                completeAuthentication(roleConfig.trustee.demoUser);
+            });
+
+            document.getElementById('btn-quick-admin')?.addEventListener('click', () => {
+                setRole('admin');
+                completeAuthentication(roleConfig.admin.demoUser);
+            });
+
+            setRole(activeRole);
+            setMode(activeMode);
+        })();
+    </script>
+</body>
+</html>

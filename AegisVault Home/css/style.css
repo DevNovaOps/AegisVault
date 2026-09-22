@@ -2405,3 +2405,97 @@ body.dark-theme .icon-blue {
 .toast-icon {
     font-size: 14px;
 }
+
+/* ==========================================================================
+   17. ROLE-BASED AUTH & MODAL PILLS
+   ========================================================================== */
+.modal-role-selector-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.modal-role-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.modal-role-target-badge {
+    color: var(--brand-orange);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: none;
+}
+
+.modal-role-pills {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    background: var(--bg-card-alt);
+    padding: 4px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+}
+
+.modal-role-pill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 10px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-base);
+}
+
+.modal-role-pill:hover {
+    color: var(--text-primary);
+    background: var(--bg-hover);
+}
+
+.modal-role-pill.active {
+    background: var(--brand-orange);
+    color: #FFFFFF;
+    box-shadow: 0 2px 8px rgba(244, 90, 31, 0.35);
+}
+
+.modal-role-pill.role-trustee.active {
+    background: #0284C7;
+    box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
+}
+
+.modal-role-pill.role-admin.active {
+    background: #8B5CF6;
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.35);
+}
+
+.modal-auth-portal-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: var(--brand-orange);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 6px 0;
+    transition: var(--transition-base);
+}
+
+.modal-auth-portal-link:hover {
+    color: var(--brand-orange-hover);
+    text-decoration: underline;
+}

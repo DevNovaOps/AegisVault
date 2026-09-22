@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
@@ -272,7 +272,11 @@
                 <span>Help & FAQs</span>
               </a>
               <div class="dropdown-divider"></div>
-              <a href="javascript:void(0)" class="dropdown-item" onclick="showToast('Signed out of trustee session (mock).')">
+              <a href="../../AegisVault Home/auth.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+                <span>Switch Role / Portal</span>
+              </a>
+              <a href="javascript:void(0)" class="dropdown-item" style="color:var(--coral, #EF4444);" onclick="showToast('Signing out of trustee session...'); setTimeout(() => window.location.href='../../AegisVault Home/auth.html', 700);">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                 <span>Sign Out</span>
               </a>
