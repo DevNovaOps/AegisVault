@@ -1,0 +1,684 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AegisVault &mdash; Share Submission</title>
+  <script src="../common/theme.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../common/themes.css?v=4.0">
+  <link rel="stylesheet" href="../common/common.css?v=4.0">
+  <link rel="stylesheet" href="./share-submission.css?v=4.0">
+</head>
+<body>
+  <div class="trustee-app">
+    <!-- Sidebar Navigation -->
+    <aside class="trustee-sidebar" aria-label="Trustee Navigation">
+
+        <!-- Brand Logo Header -->
+      <div class="sidebar-brand">
+        <div class="brand-shield-icon">
+          <svg viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 2L3 8V20C3 31.2 10.3 41.5 20 44C29.7 41.5 37 31.2 37 20V8L20 2Z" stroke="#F97316" stroke-width="2.5" stroke-linejoin="round" fill="rgba(249, 115, 22, 0.08)"/>
+            <path d="M20 8L8 13V21C8 28.5 13.1 35.5 20 37.5C26.9 35.5 32 28.5 32 21V13L20 8Z" fill="#F97316"/>
+            <path d="M20 13L13 16.5V22C13 26.5 16 30.5 20 32C24 30.5 27 26.5 27 22V16.5L20 13Z" fill="#FFA24C"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Aegis<span class="vault-accent">Vault</span></span>
+          <span class="brand-tagline">What matters, lives on.</span>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="../dashboard/dashboard.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1V9.5z"/></svg></span>
+          <span class="nav-label">My Dashboard</span>
+        </a>
+        <a href="../assigned-vaults/assigned-vaults.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></span>
+          <span class="nav-label">Assigned Vaults</span>
+        </a>
+        <a href="../invitations/invitations.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></svg></span>
+          <span class="nav-label">Invitations</span>
+          <span class="nav-badge">2</span>
+        </a>
+        <a href="../trustee-verification/trustee-verification.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <span class="nav-label">Trustee Verification</span>
+        </a>
+        <a href="../share-submission/share-submission.html" class="nav-item active">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m21 3-9.5 9.5M15.5 8.5l3 3M18 6l2 2"/></svg></span>
+          <span class="nav-label">Share Submission</span>
+        </a>
+        <a href="../release-status/release-status.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/><path d="M4 12a8 8 0 0 1 1.5-4.5"/></svg></span>
+          <span class="nav-label">Release Status</span>
+        </a>
+        <a href="../notifications/notifications.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+          <span class="nav-label">Notifications</span>
+          <span class="nav-badge">3</span>
+        </a>
+        <a href="../activity-history/activity-history.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
+          <span class="nav-label">Activity & History</span>
+        </a>
+        <a href="../profile-security/profile-security.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+          <span class="nav-label">Profile & Security</span>
+        </a>
+        <a href="../help-support/help-support.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+          <span class="nav-label">Help & Support</span>
+        </a>
+      </nav>
+      <!-- Sidebar Scenic Quote (Natural footer on full scenic background) -->
+      <div class="sidebar-quote-block">
+        <p class="sidebar-scenic-quote">Stronger<br>Security.<br>Brighter<br>Tomorrows.</p>
+        <div class="sidebar-scenic-dash"></div>
+      </div>
+    </aside>
+
+    <!-- Main Container -->
+    <div class="trustee-main">
+      <!-- Top Bar -->
+      <header class="trustee-topbar">
+        <div class="topbar-left">
+          <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="topbar-search">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="globalSearchInput" placeholder="Search vaults, invitations, notifications...">
+          </div>
+        </div>
+        <div class="topbar-right">
+                    <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Dark / Light Theme" title="Toggle Theme" role="switch">
+            <span class="theme-switch-track">
+              <span class="switch-icon switch-icon-sun" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="4"/>
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                </svg>
+              </span>
+              <span class="switch-icon switch-icon-moon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+              </span>
+              <span class="theme-switch-thumb">
+                <span class="thumb-icon thumb-sun">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                  </svg>
+                </span>
+                <span class="thumb-icon thumb-moon">
+                  <svg viewBox="0 0 24 24" fill="#ffffff" stroke="none">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                  </svg>
+                </span>
+              </span>
+            </span>
+          </button>
+          <div class="notification-btn-wrapper">
+            <button class="notification-btn" id="notificationBtn" aria-label="Notifications">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span class="notification-badge-dot"></span>
+            </button>
+            <div class="dropdown-panel" id="notificationDropdown">
+              <div class="dropdown-header">Recent Alerts</div>
+              <a href="../invitations/invitations.html" class="dropdown-item">New vault invitation from Priya Shah</a>
+              <a href="../trustee-verification/trustee-verification.html" class="dropdown-item">Verification pending review</a>
+            </div>
+          </div>
+          <div class="profile-menu-wrapper">
+            <button class="profile-chip" id="profileBtn">
+              <div class="profile-avatar-circle">RP</div>
+              <span class="profile-name">Rakesh Patel</span>
+              <svg class="profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="dropdown-panel" id="profileDropdown">
+              <div class="dropdown-header">Trustee Account</div>
+              <a href="../profile-security/profile-security.html" class="dropdown-item">Profile & Security</a>
+              <a href="../dashboard/dashboard.html" class="dropdown-item">Dashboard</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content Area -->
+      <main class="trustee-content">
+        <!-- Hero Panoramic Banner -->
+        <section class="share-hero hero-card" aria-label="Share Submission Banner">
+          <div class="share-hero-left">
+            <div class="share-hero-eyebrow">05. SHARE SUBMISSION</div>
+            <h1 class="share-hero-heading">
+              Your Share.
+              <span class="hero-accent safer-accent">A Safer Tomorrow.</span>
+            </h1>
+            <p class="share-hero-subtext">
+              Submit your cryptographic share to authorize the release of assigned vaults. Your share is encrypted client-side and combined securely.
+            </p>
+            <div class="share-features-row">
+              <div class="share-feature-item">
+                <div class="feature-icon-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                </div>
+                <div class="feature-text-group">
+                  <span class="feature-line-primary">Encrypted Submission</span>
+                  <span class="feature-line-secondary">Client-Side Only</span>
+                </div>
+              </div>
+              <div class="share-feature-item">
+                <div class="feature-icon-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+                <div class="feature-text-group">
+                  <span class="feature-line-primary">Secure & Private</span>
+                  <span class="feature-line-secondary">By Design</span>
+                </div>
+              </div>
+              <div class="share-feature-item">
+                <div class="feature-icon-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <div class="feature-text-group">
+                  <span class="feature-line-primary">Verified Trustees</span>
+                  <span class="feature-line-secondary">Only</span>
+                </div>
+              </div>
+              <div class="share-feature-item">
+                <div class="feature-icon-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                </div>
+                <div class="feature-text-group">
+                  <span class="feature-line-primary">A Stronger</span>
+                  <span class="feature-line-secondary">Tomorrow</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="share-hero-quote-card">
+            <p class="share-hero-quote-text">&ldquo;Small actions today, stronger protection tomorrow.&rdquo;</p>
+            <div class="share-hero-quote-dash"></div>
+          </div>
+        </section>
+
+        <!-- Two-Column Layout Grid -->
+        <div class="share-layout-grid">
+          <!-- Left Column: Form & Recent Submissions -->
+          <div class="share-main-col">
+            <!-- Submit Your Share Form Card -->
+            <section class="share-form-card" aria-labelledby="formHeading">
+              <div class="form-header-row">
+                <svg class="form-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="7.5" cy="15.5" r="4.5"/>
+                  <path d="m21 3-9.5 9.5M15.5 8.5l3 3M18 6l2 2"/>
+                </svg>
+                <div class="form-header-text">
+                  <h2 class="form-heading-title" id="formHeading">Submit Your Share</h2>
+                  <p class="form-heading-desc">Select a vault and upload or paste your secret share fragment to authorize release.</p>
+                </div>
+              </div>
+
+              <!-- Form Fields Grid -->
+              <form id="shareSubmissionForm" onsubmit="return false;">
+                <div class="share-form-fields-grid">
+                  <!-- Select Vault Field -->
+                  <div class="form-field-group">
+                    <label class="field-label" for="vaultSelect">
+                      Select Assigned Vault <span class="required-star">*</span>
+                    </label>
+                    <div class="select-vault-wrap">
+                      <svg class="select-lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                      </svg>
+                      <select class="select-vault-input" id="vaultSelect" required>
+                        <option value="family-vault" data-owner="Priya Shah" data-status="active" selected>
+                          Family Vault &mdash; Priya Shah (Release Active - Action Required)
+                        </option>
+                        <option value="personal-vault" data-owner="Aryan Patel" data-status="submitted">
+                          Personal Vault &mdash; Aryan Patel (Share Already Submitted)
+                        </option>
+                        <option value="business-assets" data-owner="Rohan Mehta" data-status="pending">
+                          Business Assets &mdash; Rohan Mehta (Verification Pending)
+                        </option>
+                      </select>
+                      <svg class="select-chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="6 9 12 15 18 9"/>
+                      </svg>
+                    </div>
+                  </div>
+
+                  <!-- Notes Field -->
+                  <div class="form-field-group">
+                    <label class="field-label" for="submissionNotes">
+                      Submission Notes (Optional)
+                    </label>
+                    <div class="notes-textarea-wrap">
+                      <textarea class="notes-textarea" id="submissionNotes" maxlength="500" placeholder="Add confidential verification notes or instructions for the vault release process..."></textarea>
+                      <span class="notes-char-counter" id="charCounter">0 / 500 characters</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Drag & Drop Zone -->
+                <div class="form-field-group" style="margin-top: 1.25rem;">
+                  <label class="field-label">
+                    Cryptographic Share File <span class="required-star">*</span>
+                  </label>
+                  
+                  <div class="share-file-dropzone" id="shareDropzone">
+                    <div class="dropzone-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                      </svg>
+                    </div>
+                    <span class="dropzone-text-primary">Drag & drop your share file here, or browse</span>
+                    <span class="dropzone-text-sub">Supports .share, .txt, .json, .key files (Max 10MB)</span>
+                    <input type="file" id="shareFileInput" class="file-hidden-input" accept=".share,.txt,.json,.key">
+                  </div>
+
+                  <!-- Selected File Chip Display -->
+                  <div class="selected-file-chip" id="selectedFileChip">
+                    <div class="selected-file-left">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--brand-orange)" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                      </svg>
+                      <div style="display: flex; flex-direction: column;">
+                        <span class="selected-file-name" id="selectedFileName">filename.share</span>
+                        <span class="selected-file-size" id="selectedFileSize">0 KB</span>
+                      </div>
+                    </div>
+                    <button type="button" class="btn-remove-file" id="btnRemoveFile" title="Remove file">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Form Action Bar -->
+                <div class="form-action-bar">
+                  <div class="encryption-notice-pill">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    <span><strong>Client-side encrypted:</strong> Your share is encrypted using AES-GCM 256 before transmission.</span>
+                  </div>
+
+                  <button type="submit" class="btn-submit-share" id="btnSubmitShare">
+                    <span>Submit Share</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                </div>
+              </form>
+            </section>
+
+            <!-- Recent Submissions Table Card -->
+            <section class="recent-submissions-card" aria-labelledby="recentSubmissionsHeading">
+              <div class="table-header-row">
+                <div class="table-title-group">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  <h2 id="recentSubmissionsHeading" style="font-size: 1.05rem; font-weight: 700; margin: 0;">Recent Submissions</h2>
+                </div>
+                <a href="../activity-history/activity-history.html" class="table-view-all-link">
+                  <span>View All History</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+              </div>
+
+              <div class="submissions-table-wrap">
+                <table class="submissions-table" id="submissionsTable">
+                  <thead>
+                    <tr>
+                      <th>Date & Time</th>
+                      <th>Vault Name</th>
+                      <th>File Name</th>
+                      <th>Size</th>
+                      <th>Status</th>
+                      <th style="text-align: right;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="submissionsTableBody">
+                    <tr data-sub-id="SUB-9821">
+                      <td>12 Aug 2025, 02:45 PM</td>
+                      <td>
+                        <div class="table-vault-cell">
+                          <span class="table-lock-icon blue">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                          </span>
+                          <span>Personal Vault</span>
+                        </div>
+                      </td>
+                      <td><span class="table-file-name">personal_share_part1.share</span></td>
+                      <td>1.4 KB</td>
+                      <td>
+                        <span class="status-pill submitted">
+                          <span class="status-pill-dot"></span>
+                          <span>Submitted</span>
+                        </span>
+                      </td>
+                      <td style="text-align: right;">
+                        <button class="table-action-dots-btn" title="View details" onclick="viewSubmissionDetails('SUB-9821', 'Personal Vault', 'personal_share_part1.share', '12 Aug 2025, 02:45 PM', 'Submitted', '0x8f2a...c391')">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr data-sub-id="SUB-9540">
+                      <td>18 Jul 2025, 11:20 AM</td>
+                      <td>
+                        <div class="table-vault-cell">
+                          <span class="table-lock-icon purple">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                          </span>
+                          <span>Heritage Trust Vault</span>
+                        </div>
+                      </td>
+                      <td><span class="table-file-name">heritage_key_fragment.txt</span></td>
+                      <td>840 B</td>
+                      <td>
+                        <span class="status-pill submitted">
+                          <span class="status-pill-dot"></span>
+                          <span>Submitted</span>
+                        </span>
+                      </td>
+                      <td style="text-align: right;">
+                        <button class="table-action-dots-btn" title="View details" onclick="viewSubmissionDetails('SUB-9540', 'Heritage Trust Vault', 'heritage_key_fragment.txt', '18 Jul 2025, 11:20 AM', 'Submitted', '0x4d1b...e892')">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                        </button>
+                      </td>
+                    </tr>
+                    <tr data-sub-id="SUB-9102">
+                      <td>05 Jun 2025, 09:15 AM</td>
+                      <td>
+                        <div class="table-vault-cell">
+                          <span class="table-lock-icon amber">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                          </span>
+                          <span>Crypto Portfolio</span>
+                        </div>
+                      </td>
+                      <td><span class="table-file-name">vault_shard_02.json</span></td>
+                      <td>2.1 KB</td>
+                      <td>
+                        <span class="status-pill failed">
+                          <span class="status-pill-dot"></span>
+                          <span>Failed (Checksum Error)</span>
+                        </span>
+                      </td>
+                      <td style="text-align: right;">
+                        <button class="table-action-dots-btn" title="View details" onclick="viewSubmissionDetails('SUB-9102', 'Crypto Portfolio', 'vault_shard_02.json', '05 Jun 2025, 09:15 AM', 'Failed (Checksum Error)', 'N/A')">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          <!-- Right Column: Guidelines & FAQs -->
+          <div class="share-side-col">
+            <!-- Submission Guidelines Card -->
+            <section class="guidelines-card" aria-labelledby="guidelinesHeading">
+              <div class="guidelines-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <path d="m9 12 2 2 4-4"/>
+                </svg>
+                <h2 id="guidelinesHeading" style="font-size: 1.05rem; font-weight: 700; margin: 0;">Submission Guidelines</h2>
+              </div>
+              <div class="guidelines-list">
+                <div class="guideline-item">
+                  <div class="guideline-icon-box amber">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  </div>
+                  <div>
+                    <strong style="color: var(--text-primary); display: block; margin-bottom: 0.15rem;">Keep Your Share Secure</strong>
+                    Never share your original key fragment or recovery passphrase via email, chat, or unencrypted channels.
+                  </div>
+                </div>
+
+                <div class="guideline-item">
+                  <div class="guideline-icon-box cyan">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  </div>
+                  <div>
+                    <strong style="color: var(--text-primary); display: block; margin-bottom: 0.15rem;">Verify Vault Identity</strong>
+                    Ensure the vault name and owner name match your designated appointment before authorizing submission.
+                  </div>
+                </div>
+
+                <div class="guideline-item">
+                  <div class="guideline-icon-box blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                  </div>
+                  <div>
+                    <strong style="color: var(--text-primary); display: block; margin-bottom: 0.15rem;">Client-Side Cryptography</strong>
+                    Your browser computes local cryptographic hashes and encrypts your share with ephemeral keys.
+                  </div>
+                </div>
+
+                <div class="guideline-item">
+                  <div class="guideline-icon-box emerald">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  </div>
+                  <div>
+                    <strong style="color: var(--text-primary); display: block; margin-bottom: 0.15rem;">Quorum Threshold Required</strong>
+                    Release requires 2 of 3 trustee shares to reconstruct the master vault key. No single trustee can unlock a vault.
+                  </div>
+                </div>
+
+                <div class="guideline-item">
+                  <div class="guideline-icon-box amber">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  </div>
+                  <div>
+                    <strong style="color: var(--text-primary); display: block; margin-bottom: 0.15rem;">Grace Period Notice</strong>
+                    The vault owner is notified immediately upon initial share submission with a 14-day cancellation window.
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Need Help? FAQ Accordion Card -->
+            <section class="share-help-card" aria-labelledby="helpHeading">
+              <div class="share-help-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                  <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                <h2 id="helpHeading" style="font-size: 1.05rem; font-weight: 700; margin: 0;">Need Help?</h2>
+              </div>
+              <div class="help-faqs-list">
+                <div class="help-faq-item open">
+                  <button type="button" class="help-faq-trigger">
+                    <span>What is a cryptographic share?</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                  <div class="help-faq-content">
+                    A cryptographic share is an encrypted piece of the master vault key created using Shamir's Secret Sharing scheme (M-of-N threshold). It contains zero readable user data by itself.
+                  </div>
+                </div>
+
+                <div class="help-faq-item">
+                  <button type="button" class="help-faq-trigger">
+                    <span>Where do I find my share file?</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                  <div class="help-faq-content">
+                    Your share was provided during trustee appointment, either downloaded as a <code>.share</code> or <code>.key</code> file, or stored in your designated hardware security module.
+                  </div>
+                </div>
+
+                <div class="help-faq-item">
+                  <button type="button" class="help-faq-trigger">
+                    <span>Can I revoke a submitted share?</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                  <div class="help-faq-content">
+                    Once submitted during an active release window, a share enters cryptographic consensus. During the grace period, the vault owner can cancel the release process.
+                  </div>
+                </div>
+
+                <div class="help-faq-item">
+                  <button type="button" class="help-faq-trigger">
+                    <span>What is Shamir's Secret Sharing?</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                  <div class="help-faq-content">
+                    It is a mathematical algorithm that divides a secret into unique parts. A predetermined minimum number of shares (e.g. 2 of 3) must be combined to reconstruct the secret.
+                  </div>
+                </div>
+              </div>
+              <a href="../help-support/help-support.html" class="btn-help-center">
+                <span>Visit Help Center</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+              </a>
+            </section>
+          </div>
+        </div>
+      </main>
+
+      <!-- Global Footer -->
+      <footer class="trustee-footer">
+        <div class="footer-brand">
+          <div class="brand-shield-icon">
+            <svg viewBox="0 0 40 46" fill="none"><path d="M20 2L3 8V20C3 31.2 10.3 41.5 20 44C29.7 41.5 37 31.2 37 20V8L20 2Z" fill="#F97316"/></svg>
+          </div>
+          <span class="brand-title">Aegis<span class="vault-accent">Vault</span></span>
+        </div>
+        <div class="footer-center-motto">&ldquo;Because what matters today, should matter tomorrow too.&rdquo;</div>
+        <div class="footer-links">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="../help-support/help-support.html">Help</a>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Modal: Submission Success / Cryptographic Receipt -->
+  <div class="trustee-modal-backdrop" id="shareSuccessModal" role="dialog" aria-modal="true" aria-labelledby="receiptModalTitle">
+    <div class="trustee-modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="receiptModalTitle">Cryptographic Proof Receipt</h3>
+        <button class="modal-close-btn" data-modal-close aria-label="Close modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="receipt-card">
+          <div class="receipt-success-banner">
+            <div class="receipt-icon-circle">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <h4 class="receipt-title">Share Submitted Successfully!</h4>
+            <p class="receipt-sub">Your share fragment has been cryptographically validated, encrypted client-side, and recorded to the consensus threshold buffer.</p>
+          </div>
+
+          <div class="receipt-table-box">
+            <div class="receipt-row">
+              <span class="receipt-label">Target Vault:</span>
+              <span class="receipt-value" id="receiptVaultName">Family Vault (Priya Shah)</span>
+            </div>
+            <div class="receipt-row">
+              <span class="receipt-label">Transaction ID:</span>
+              <span class="receipt-value" id="receiptTxId">0x9f4a...e12d</span>
+            </div>
+            <div class="receipt-row">
+              <span class="receipt-label">Timestamp:</span>
+              <span class="receipt-value" id="receiptTimestamp">Just now</span>
+            </div>
+            <div class="receipt-row">
+              <span class="receipt-label">Quorum Status:</span>
+              <span class="receipt-value" style="color: var(--accent-emerald);">2 of 3 Shares Received (Quorum Met)</span>
+            </div>
+            <div style="margin-top: 0.25rem;">
+              <span class="receipt-label" style="display: block; margin-bottom: 0.35rem;">Client SHA-256 Checksum:</span>
+              <div class="receipt-hash-wrap" id="receiptHash">e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</div>
+            </div>
+          </div>
+
+          <div class="modal-actions-row">
+            <button class="btn-help-center" style="margin-top:0;" onclick="downloadReceipt()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span>Download Receipt</span>
+            </button>
+            <button class="btn-submit-share" style="padding: 0.65rem 1.25rem;" data-modal-close>
+              <span>Done</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: View Past Submission Details -->
+  <div class="trustee-modal-backdrop" id="submissionDetailModal" role="dialog" aria-modal="true" aria-labelledby="subDetailModalTitle">
+    <div class="trustee-modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="subDetailModalTitle">Submission Audit Record</h3>
+        <button class="modal-close-btn" data-modal-close aria-label="Close modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="receipt-table-box" style="margin-bottom: 1rem;">
+          <div class="receipt-row">
+            <span class="receipt-label">Submission ID:</span>
+            <span class="receipt-value" id="detailSubId">SUB-9821</span>
+          </div>
+          <div class="receipt-row">
+            <span class="receipt-label">Vault Name:</span>
+            <span class="receipt-value" id="detailVaultName">Personal Vault</span>
+          </div>
+          <div class="receipt-row">
+            <span class="receipt-label">File Name:</span>
+            <span class="receipt-value" id="detailFileName">personal_share_part1.share</span>
+          </div>
+          <div class="receipt-row">
+            <span class="receipt-label">Timestamp:</span>
+            <span class="receipt-value" id="detailTimestamp">12 Aug 2025, 02:45 PM</span>
+          </div>
+          <div class="receipt-row">
+            <span class="receipt-label">Submission Status:</span>
+            <span class="receipt-value" id="detailStatus" style="color: var(--accent-emerald);">Submitted</span>
+          </div>
+          <div class="receipt-row">
+            <span class="receipt-label">Consensus TX:</span>
+            <span class="receipt-value" id="detailTx">0x8f2a...c391</span>
+          </div>
+        </div>
+        <div class="modal-actions-row">
+          <button class="btn-help-center" style="margin-top:0;" onclick="showToast('Audit proof copied to clipboard')">
+            <span>Copy Record ID</span>
+          </button>
+          <button class="btn-submit-share" style="padding: 0.65rem 1.25rem;" data-modal-close>
+            <span>Close</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shared Scripts -->
+  <script src="../common/common.js"></script>
+  <script src="./share-submission.js"></script>
+</body>
+</html>
+
+

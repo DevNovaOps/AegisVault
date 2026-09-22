@@ -1,0 +1,198 @@
+/* ==========================================================================
+   AegisVault Trustee Panel - Theme Tokens & Variables
+   ========================================================================== */
+
+:root {
+  /* Fonts */
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Cinzel', 'Playfair Display', Georgia, serif;
+
+  /* Global radii & transitions */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-full: 9999px;
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+  --transition-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  --sidebar-width: 260px;
+  --topbar-height: 60px;
+  --header-height: 60px;
+}
+
+/* --------------------------------------------------------------------------
+   Dark Theme (Default)
+   -------------------------------------------------------------------------- */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Base backgrounds */
+  --bg-base: #060b11;
+  --bg-surface: #0a111a;
+  --bg-surface-elevated: #0f1825;
+  --bg-surface-hover: #142031;
+  --bg-surface-active: #18273d;
+
+  /* Borders */
+  --border-subtle: #141f2e;
+  --border-medium: #1b2a3f;
+  --border-strong: #273b56;
+
+  /* Typography */
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-inverse: #0f172a;
+
+  /* Brand Accents */
+  --brand-orange: #f97316;
+  --brand-orange-hover: #ea580c;
+  --brand-orange-glow: rgba(249, 115, 22, 0.25);
+  --brand-orange-tint: rgba(249, 115, 22, 0.12);
+  --brand-orange-border: rgba(249, 115, 22, 0.3);
+
+  /* Status / Pill Accents */
+  --accent-cyan: #06b6d4;
+  --accent-cyan-tint: rgba(6, 182, 212, 0.14);
+  --accent-cyan-border: rgba(6, 182, 212, 0.3);
+
+  --accent-emerald: #10b981;
+  --accent-emerald-tint: rgba(16, 185, 129, 0.14);
+  --accent-emerald-border: rgba(16, 185, 129, 0.3);
+
+  --accent-purple: #a855f7;
+  --accent-purple-tint: rgba(168, 85, 247, 0.14);
+  --accent-purple-border: rgba(168, 85, 247, 0.3);
+
+  --accent-amber: #f59e0b;
+  --accent-amber-tint: rgba(245, 158, 11, 0.14);
+  --accent-amber-border: rgba(245, 158, 11, 0.3);
+
+  --accent-red: #ef4444;
+  --accent-red-tint: rgba(239, 68, 68, 0.15);
+  --accent-red-border: rgba(239, 68, 68, 0.35);
+
+  --accent-blue: #3b82f6;
+  --accent-blue-tint: rgba(59, 130, 246, 0.14);
+  --accent-blue-border: rgba(59, 130, 246, 0.3);
+
+  /* Navigation & Chrome */
+  --sidebar-bg: #070d14;
+  --sidebar-border: #141f2e;
+  --sidebar-nav-hover: rgba(255, 255, 255, 0.04);
+  --sidebar-nav-active-bg: rgba(249, 115, 22, 0.14);
+  --sidebar-nav-active-text: #fb923c;
+  --sidebar-nav-active-border: #f97316;
+
+  --topbar-bg: #070d14;
+  --topbar-border: #141f2e;
+  --search-bg: #0b121b;
+  --search-border: #172436;
+
+  /* Glassmorphism & Overlays */
+  --glass-bg: rgba(11, 18, 28, 0.78);
+  --glass-border: rgba(255, 255, 255, 0.09);
+  --glass-backdrop: blur(14px);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
+
+  /* Theme assets */
+  --scenic-sidebar: url('../assets/images/sidebar-bg-dark.png');
+  --sidebar-bg-image: url('../assets/images/sidebar-bg-dark.png');
+  --scenic-card: url('../assets/images/card-scenic-dark.png');
+  --scenic-hero: url('../assets/images/dark-background.png');
+  --hero-bg-image: url('../assets/images/dark-background.png');
+}
+
+/* --------------------------------------------------------------------------
+   Light Theme
+   -------------------------------------------------------------------------- */
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* Base backgrounds */
+  --bg-base: #f4f6f9;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #ffffff;
+  --bg-surface-hover: #f8fafc;
+  --bg-surface-active: #f1f5f9;
+
+  /* Borders */
+  --border-subtle: #e2e8f0;
+  --border-medium: #cbd5e1;
+  --border-strong: #94a3b8;
+
+  /* Typography */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --text-inverse: #ffffff;
+
+  /* Brand Accents */
+  --brand-orange: #ea580c;
+  --brand-orange-hover: #c2410c;
+  --brand-orange-glow: rgba(234, 88, 12, 0.2);
+  --brand-orange-tint: rgba(234, 88, 12, 0.08);
+  --brand-orange-border: rgba(234, 88, 12, 0.25);
+
+  /* Status / Pill Accents */
+  --accent-cyan: #0284c7;
+  --accent-cyan-tint: rgba(2, 132, 199, 0.1);
+  --accent-cyan-border: rgba(2, 132, 199, 0.25);
+
+  --accent-emerald: #16a34a;
+  --accent-emerald-tint: rgba(22, 163, 74, 0.1);
+  --accent-emerald-border: rgba(22, 163, 74, 0.25);
+
+  --accent-purple: #7c3aed;
+  --accent-purple-tint: rgba(124, 58, 237, 0.1);
+  --accent-purple-border: rgba(124, 58, 237, 0.25);
+
+  --accent-amber: #d97706;
+  --accent-amber-tint: rgba(217, 119, 6, 0.1);
+  --accent-amber-border: rgba(217, 119, 6, 0.25);
+
+  --accent-red: #dc2626;
+  --accent-red-tint: rgba(220, 38, 38, 0.1);
+  --accent-red-border: rgba(220, 38, 38, 0.25);
+
+  --accent-blue: #2563eb;
+  --accent-blue-tint: rgba(37, 99, 235, 0.1);
+  --accent-blue-border: rgba(37, 99, 235, 0.25);
+
+  /* Navigation & Chrome */
+  --sidebar-bg: #ffffff;
+  --sidebar-border: #e2e8f0;
+  --sidebar-nav-hover: #f8fafc;
+  --sidebar-nav-active-bg: #fff7ed;
+  --sidebar-nav-active-text: #ea580c;
+  --sidebar-nav-active-border: #ea580c;
+
+  --topbar-bg: #ffffff;
+  --topbar-border: #e2e8f0;
+  --search-bg: #f8fafc;
+  --search-border: #e2e8f0;
+
+  /* Glassmorphism & Overlays */
+  --glass-bg: rgba(255, 255, 255, 0.88);
+  --glass-border: rgba(226, 232, 240, 0.8);
+  --glass-backdrop: blur(12px);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 14px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12);
+
+  /* Theme assets */
+  --scenic-sidebar: url('../assets/images/sidebar-bg-light.png');
+  --sidebar-bg-image: url('../assets/images/sidebar-bg-light.png');
+  --scenic-card: url('../assets/images/card-scenic-light.png');
+  --scenic-hero: url('../assets/images/light-background.png');
+  --hero-bg-image: url('../assets/images/light-background.png');
+}

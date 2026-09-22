@@ -1,0 +1,959 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AegisVault &mdash; Activity & History</title>
+  <script src="../common/theme.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../common/themes.css?v=4.0">
+  <link rel="stylesheet" href="../common/common.css?v=4.0">
+  <link rel="stylesheet" href="./activity-history.css?v=4.0">
+</head>
+<body>
+  <div class="trustee-app">
+    <!-- Sidebar Navigation -->
+    <aside class="trustee-sidebar" aria-label="Trustee Navigation">
+
+        <!-- Brand Logo Header -->
+      <div class="sidebar-brand">
+        <div class="brand-shield-icon">
+          <svg viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 2L3 8V20C3 31.2 10.3 41.5 20 44C29.7 41.5 37 31.2 37 20V8L20 2Z" stroke="#F97316" stroke-width="2.5" stroke-linejoin="round" fill="rgba(249, 115, 22, 0.08)"/>
+            <path d="M20 8L8 13V21C8 28.5 13.1 35.5 20 37.5C26.9 35.5 32 28.5 32 21V13L20 8Z" fill="#F97316"/>
+            <path d="M20 13L13 16.5V22C13 26.5 16 30.5 20 32C24 30.5 27 26.5 27 22V16.5L20 13Z" fill="#FFA24C"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Aegis<span class="vault-accent">Vault</span></span>
+          <span class="brand-tagline">What matters, lives on.</span>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="../dashboard/dashboard.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1V9.5z"/></svg></span>
+          <span class="nav-label">My Dashboard</span>
+        </a>
+        <a href="../assigned-vaults/assigned-vaults.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></span>
+          <span class="nav-label">Assigned Vaults</span>
+        </a>
+        <a href="../invitations/invitations.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></svg></span>
+          <span class="nav-label">Invitations</span>
+          <span class="nav-badge">2</span>
+        </a>
+        <a href="../trustee-verification/trustee-verification.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <span class="nav-label">Trustee Verification</span>
+        </a>
+        <a href="../share-submission/share-submission.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m21 3-9.5 9.5M15.5 8.5l3 3M18 6l2 2"/></svg></span>
+          <span class="nav-label">Share Submission</span>
+        </a>
+        <a href="../release-status/release-status.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/><path d="M4 12a8 8 0 0 1 1.5-4.5"/></svg></span>
+          <span class="nav-label">Release Status</span>
+        </a>
+        <a href="../notifications/notifications.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+          <span class="nav-label">Notifications</span>
+          <span class="nav-badge">3</span>
+        </a>
+        <a href="../activity-history/activity-history.html" class="nav-item active">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
+          <span class="nav-label">Activity & History</span>
+        </a>
+        <a href="../profile-security/profile-security.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+          <span class="nav-label">Profile & Security</span>
+        </a>
+        <a href="../help-support/help-support.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+          <span class="nav-label">Help & Support</span>
+        </a>
+      </nav>
+      <!-- Sidebar Scenic Quote (Natural footer on full scenic background) -->
+      <div class="sidebar-quote-block">
+        <p class="sidebar-scenic-quote">Stronger<br>Security.<br>Brighter<br>Tomorrows.</p>
+        <div class="sidebar-scenic-dash"></div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="trustee-main">
+      <!-- Top Bar -->
+      <header class="trustee-topbar">
+        <div class="topbar-left">
+          <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="topbar-search">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="globalSearchInput" placeholder="Search vaults, trustees, submissions, or settings...">
+          </div>
+        </div>
+        <div class="topbar-right">
+                    <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Dark / Light Theme" title="Toggle Theme" role="switch">
+            <span class="theme-switch-track">
+              <span class="switch-icon switch-icon-sun" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="4"/>
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                </svg>
+              </span>
+              <span class="switch-icon switch-icon-moon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+              </span>
+              <span class="theme-switch-thumb">
+                <span class="thumb-icon thumb-sun">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                  </svg>
+                </span>
+                <span class="thumb-icon thumb-moon">
+                  <svg viewBox="0 0 24 24" fill="#ffffff" stroke="none">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                  </svg>
+                </span>
+              </span>
+            </span>
+          </button>
+          <div class="notification-btn-wrapper">
+            <button class="notification-btn" id="notificationBtn" aria-label="Notifications">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span class="notification-badge-dot"></span>
+            </button>
+            <div class="dropdown-panel" id="notificationDropdown">
+              <div class="dropdown-header">Recent Alerts</div>
+              <a href="../share-submission/share-submission.html" class="dropdown-item">Action required for Family Vault</a>
+              <a href="../invitations/invitations.html" class="dropdown-item">New vault invitation from Priya Shah</a>
+            </div>
+          </div>
+          <div class="profile-menu-wrapper">
+            <button class="profile-chip" id="profileBtn">
+              <div class="profile-avatar-circle">RP</div>
+              <span class="profile-name">Rakesh Patel</span>
+              <svg class="profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="dropdown-panel" id="profileDropdown">
+              <div class="dropdown-header">Trustee Account</div>
+              <a href="../profile-security/profile-security.html" class="dropdown-item">Profile & Security</a>
+              <a href="../dashboard/dashboard.html" class="dropdown-item">Dashboard</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content Area -->
+      <main class="trustee-content">
+        <!-- Hero Panoramic Banner -->
+        <section class="activity-hero hero-card" aria-label="Activity History Banner">
+          <div class="activity-hero-content hero-left">
+            <div class="activity-hero-eyebrow hero-eyebrow">08. ACTIVITY & HISTORY</div>
+            <h1 class="activity-hero-heading hero-heading">
+              Transparency Today.
+              <span class="hero-accent history-accent">A Safer Tomorrow.</span>
+            </h1>
+            <p class="activity-hero-subtext hero-subtext">A complete record of actions across your vaults, submissions, and releases.</p>
+
+            <!-- 4 Feature Badges -->
+            <div class="activity-features-row hero-features-row">
+              <div class="activity-feature-item hero-feature-item">
+                <div class="feature-icon-bubble hero-feature-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                </div>
+                <div class="feature-text-group hero-feature-text">
+                  <span class="feature-line-primary hero-feature-primary">Full Audit Log</span>
+                  <span class="feature-line-secondary hero-feature-secondary">Immutable</span>
+                </div>
+              </div>
+
+              <div class="activity-feature-item hero-feature-item">
+                <div class="feature-icon-bubble hero-feature-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+                <div class="feature-text-group hero-feature-text">
+                  <span class="feature-line-primary hero-feature-primary">Secure & Private</span>
+                  <span class="feature-line-secondary hero-feature-secondary">By Design</span>
+                </div>
+              </div>
+
+              <div class="activity-feature-item hero-feature-item">
+                <div class="feature-icon-bubble hero-feature-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                </div>
+                <div class="feature-text-group hero-feature-text">
+                  <span class="feature-line-primary hero-feature-primary">Verified Actions</span>
+                  <span class="feature-line-secondary hero-feature-secondary">Certified</span>
+                </div>
+              </div>
+
+              <div class="activity-feature-item hero-feature-item">
+                <div class="feature-icon-bubble hero-feature-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.178 8c5.096 0 5.096 8 0 8-2.605 0-4.492-2.14-6.178-4-1.686-1.86-3.573-4-6.178-4-5.096 0-5.096 8 0 8 2.605 0 4.492-2.14 6.178-4 1.686-1.86 3.573-4 6.178-4z"/></svg>
+                </div>
+                <div class="feature-text-group hero-feature-text">
+                  <span class="feature-line-primary hero-feature-primary">A Safer</span>
+                  <span class="feature-line-secondary hero-feature-secondary">Tomorrow</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero Quote Callout -->
+          <div class="activity-hero-quote hero-quote-card">
+            <p class="activity-hero-quote-text hero-quote-text">&ldquo;Transparency today builds a safer tomorrow.&rdquo;</p>
+            <div class="activity-hero-quote-dash hero-quote-dash"></div>
+          </div>
+        </section>
+
+        <!-- 5 Metric Summary Cards below Hero -->
+        <div class="activity-metrics-grid">
+          <!-- Metric 1 -->
+          <div class="activity-metric-card" onclick="filterByActionCategory('all')" title="View All Activities">
+            <div class="activity-metric-icon blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <div class="activity-metric-info">
+              <span class="activity-metric-number" id="metricTotal">186</span>
+              <span class="activity-metric-title">Total Activities</span>
+              <span class="activity-metric-desc">All time</span>
+            </div>
+          </div>
+
+          <!-- Metric 2 -->
+          <div class="activity-metric-card" onclick="filterByActionCategory('vault')" title="Filter by Vault Activities">
+            <div class="activity-metric-icon green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="activity-metric-info">
+              <span class="activity-metric-number">24</span>
+              <span class="activity-metric-title">Vault Activities</span>
+              <span class="activity-metric-desc">Vaults created, updated</span>
+            </div>
+          </div>
+
+          <!-- Metric 3 -->
+          <div class="activity-metric-card" onclick="filterByActionCategory('share')" title="Filter by Share Activities">
+            <div class="activity-metric-icon purple">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            </div>
+            <div class="activity-metric-info">
+              <span class="activity-metric-number">52</span>
+              <span class="activity-metric-title">Share Activities</span>
+              <span class="activity-metric-desc">Submissions & updates</span>
+            </div>
+          </div>
+
+          <!-- Metric 4 -->
+          <div class="activity-metric-card" onclick="filterByActionCategory('verification')" title="Filter by Verification Activities">
+            <div class="activity-metric-icon amber">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            </div>
+            <div class="activity-metric-info">
+              <span class="activity-metric-number">38</span>
+              <span class="activity-metric-title">Verification</span>
+              <span class="activity-metric-desc">Trustee verification</span>
+            </div>
+          </div>
+
+          <!-- Metric 5 -->
+          <div class="activity-metric-card" onclick="filterByActionCategory('release')" title="Filter by Release Activities">
+            <div class="activity-metric-icon coral">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </div>
+            <div class="activity-metric-info">
+              <span class="activity-metric-number">72</span>
+              <span class="activity-metric-title">Release Activities</span>
+              <span class="activity-metric-desc">Approval & release</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Two-Column Layout Grid -->
+        <div class="activity-layout-grid">
+          <!-- Left Column: Activity Table & Info Card -->
+          <div class="activity-main-col">
+            <!-- Activity Log Card -->
+            <section class="activity-table-card" aria-labelledby="logCardHeading">
+              <div class="activity-table-header-row">
+                <div class="activity-card-title-group">
+                  <svg class="activity-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  <h2 class="activity-card-title" id="logCardHeading">Activity Log</h2>
+                </div>
+
+                <div class="activity-header-controls">
+                  <!-- Activity Filter Dropdown -->
+                  <div class="activity-filter-select-wrap">
+                    <select class="activity-filter-select" id="tableActionSelect" aria-label="Filter activity type">
+                      <option value="all" selected>All Activities</option>
+                      <option value="Share Submitted">Share Submitted</option>
+                      <option value="Trustee Verified">Trustee Verified</option>
+                      <option value="Vault Updated">Vault Updated</option>
+                      <option value="Share Viewed">Share Viewed</option>
+                      <option value="Notification Sent">Notification Sent</option>
+                      <option value="Release Approved">Release Approved</option>
+                      <option value="Login">Login</option>
+                      <option value="Settings Updated">Settings Updated</option>
+                      <option value="Share Expired">Share Expired</option>
+                      <option value="Trustee Invited">Trustee Invited</option>
+                    </select>
+                    <svg class="activity-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                  </div>
+
+                  <!-- Date Range Badge -->
+                  <div class="activity-date-badge" onclick="showToast('Date range: 1 Aug 2025 &mdash;“ 12 Sep 2025 (Active)')" title="Filter by date range">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <span>1 Aug 2025 &mdash;“ 12 Sep 2025</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Table Wrap -->
+              <div class="activity-table-wrap">
+                <table class="activity-table" id="activityTable">
+                  <thead>
+                    <tr>
+                      <th>Date & Time</th>
+                      <th>User</th>
+                      <th>Action</th>
+                      <th>Details</th>
+                      <th>Vault</th>
+                      <th>IP Address</th>
+                      <th>Device</th>
+                      <th>Status</th>
+                      <th style="text-align: right;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="activityTableBody">
+                    <!-- Row 1: Share Submitted -->
+                    <tr data-action="Share Submitted" data-vault="Personal Vault" data-user="Rakesh Patel" data-status="Success">
+                      <td>12 Sep 2025, 10:24 AM</td>
+                      <td>
+                        <div class="user-cell">
+                          <span class="user-avatar-dot rakesh">RP</span>
+                          <span>Rakesh Patel</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="action-cell purple">
+                          <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m21 3-9.5 9.5M15.5 8.5l3 3M18 6l2 2"/></svg>
+                          <span>Share Submitted</span>
+                        </div>
+                      </td>
+                      <td><code>share_aryan_01.share</code> submitted</td>
+                      <td><strong>Personal Vault</strong></td>
+                      <td><span class="table-ip-code">203.0.113.24</span></td>
+                      <td>
+                        <div class="device-icon-box" title="Desktop Monitor">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                        </div>
+                      </td>
+                      <td><span class="status-pill success"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Success</span></td>
+                      <td style="text-align: right;">
+                        <button type="button" class="table-dots-btn" title="View details" onclick="openAuditRecord('EVT-9021', 'Share Submitted', 'Rakesh Patel', '12 Sep 2025, 10:24 AM', 'Personal Vault', '203.0.113.24', 'Windows / Chrome 128', 'share_aryan_01.share (1.4 KB) sha256: 8f2ac391e4...')">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- Row 2: Trustee Verified -->
+                    <tr data-action="Trustee Verified" data-vault="Family Vault" data-user="Sneha Mehta" data-status="Success">
+                      <td>11 Sep 2025, 04:18 PM</td>
+                      <td>
+                        <div class="user-cell">
+                          <span class="user-avatar-dot sneha">SM</span>
+                          <span>Sneha Mehta</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="action-cell amber">
+                          <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                          <span>Trustee Verified</span>
+                        </div>
+                      </td>
+                      <td>Verified as trustee for Family Vault</td>
+                      <td><strong>Family Vault</strong></td>
+                      <td><span class="table-ip-code">198.51.100.7</span></td>
+                      <td>
+                        <div class="device-icon-box" title="Mobile Phone">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                        </div>
+                      </td>
+                      <td><span class="status-pill success"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Success</span></td>
+                      <td style="text-align: right;">
+                        <button type="button" class="table-dots-btn" title="View details" onclick="openAuditRecord('EVT-8941', 'Trustee Verified', 'Sneha Mehta', '11 Sep 2025, 04:18 PM', 'Family Vault', '198.51.100.7', 'iOS / Safari Mobile', 'Identity verification & KYC cleared successfully.')">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- Row 3: Vault Updated -->
+                    <tr data-action="Vault Updated" data-vault="Business Vault" data-user="Rakesh Patel" data-status="Success">
+                      <td>10 Sep 2025, 09:12 AM</td>
+                      <td>
+                        <div class="user-cell">
+                          <span class="user-avatar-dot rakesh">RP</span>
+                          <span>Rakesh Patel</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="action-cell blue">
+                          <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                          <span>Vault Updated</span>
+                        </div>
+                      </td>
+                      <td>Updated vault details</td>
+                      <td><strong>Business Vault</strong></td>
+                      <td><span class="table-ip-code">203.0.113.24</span></td>
+                      <td>
+                        <div class="device-icon-box" title="Desktop Monitor">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                        </div>
+                      </td>
+                      <td><span class="status-pill success"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Success</span></td>
+                      <td style="text-align: right;">
+                        <button type="button" class="table-dots-btn" title="View details" onclick="openAuditRecord('EVT-8820', 'Vault Updated', 'Rakesh Patel', '10 Sep 2025, 09:12 AM', 'Business Vault', '203.0.113.24', 'Windows / Chrome 128', 'Vault metadata parameters and description updated.')">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- Row 4: Share Viewed -->
+                    <tr data-action="Share Viewed" data-vault="Personal Vault" data-user="Amit Kumar" data-status="Info">
+                      <td>08 Sep 2025, 02:36 PM</td>
+                      <td>
+                        <div class="user-cell">
+                          <span class="user-avatar-dot amit">AK</span>
+                          <span>Amit Kumar</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="action-cell blue">
+                          <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                          <span>Share Viewed</span>
+                        </div>
+                      </td>
+                      <td>Viewed share file</td>
+                      <td><strong>Personal Vault</strong></td>
+                      <td><span class="table-ip-code">192.0.2.16</span></td>
+                      <td>
+                        <div class="device-icon-box" title="Desktop Monitor">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                        </div>
+                      </td>
+                      <td><span class="status-pill info"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>Info</span></td>
+                      <td style="text-align: right;">
+                        <button type="button" class="table-dots-btn" title="View details" onclick="openAuditRecord('EVT-8714', 'Share Viewed', 'Amit Kumar', '08 Sep 2025, 02:36 PM', 'Personal Vault', '192.0.2.16', 'macOS / Safari 17', 'Trustee inspected encrypted share fragment verification status.')">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- Row 5: Notification Sent -->
+                    <tr data-action="Notification Sent" data-vault="Legacy Vault" data-user="System" data-status="Success">
+                      <td>05 Sep 2025, 11:09 AM</td>
+                      <td>
+                        <div class="user-cell">
+                          <span class="user-avatar-dot system">TR</span>
+                          <span>System</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="action-cell amber">
+                          <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                          <span>Notification Sent</span>
+                        </div>
+                      </td>
+                      <td>Release reminder sent to trustee</td>
+                      <td><strong>Legacy Vault</strong></td>
+                      <td><span class="table-ip-code">192.0.2.1</span></td>
+                      <td>
+                        <div class="device-icon-box" title="Automated Server">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        </div>
+                      </td>
+                      <td><span class="status-pill success"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Success</span></td>
+                      <td style="text-align: right;">
+                        <button type="button" class="table-dots-btn" title="View details" onclick="openAuditRecord('EVT-8602', 'Notification Sent', 'System Dispatcher', '05 Sep 2025, 11:09 AM', 'Legacy Vault', '192.0.2.1', 'AegisVault Daemon', 'Cryptographic release alert delivered via TLS SMTP.')">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- Row 6: Release Approved -->
+                    <tr data-action="Release Approved" data-vault="Business Vault" data-user="Rakesh Patel" data-status="Success">
+                      <td>02 Sep 2025, 08:21 PM</td>
+                      <td>
+                        <div class="user-cell">
+                          <span class="user-avatar-dot rakesh">RP</span>
+                          <span>Rakesh Patel</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="action-cell green">
+                          <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                          <span>Release Approved</span>
+                        </div>
+                      </td>
+                      <td>Approved release request</td>
+                      <td><strong>Business Vault</strong></td>
+                      <td><span class="table-ip-code">203.0.113.24</span></td>
+                      <td>
+                        <div class="device-icon-box" title="Desktop Monitor">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                        </div>
+                      </td>
+                      <td><span class="status-pill success"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Success</span></td>
+                      <td style="text-align: right;">
+                        <button type="button" class="table-dots-btn" title="View details" onclick="openAuditRecord('EVT-8419', 'Release Approved', 'Rakesh Patel', '02 Sep 2025, 08:21 PM', 'Business Vault', '203.0.113.24', 'Windows / Chrome 128', 'Trustee quorum authorization confirmed.')">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- Row 7: Login -->
+                    <tr data-action="Login" data-vault="&mdash; data-user="Vikram Shah" data-status="Info">
+                      <td>28 Aug 2025, 01:14 PM</td>
+                      <td>
+                        <div class="user-cell">
+                          <span class="user-avatar-dot vikram">VM</span>
+                          <span>Vikram Shah</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="action-cell blue">
+                          <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                          <span>Login</span>
+                        </div>
+                      </td>
+                      <td>User logged in</td>
+                      <td>&mdash;</td>
+                      <td><span class="table-ip-code">198.51.100.32</span></td>
+                      <td>
+                        <div class="device-icon-box" title="Laptop">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="1" y1="20" x2="23" y2="20"/></svg>
+                        </div>
+                      </td>
+                      <td><span class="status-pill info"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>Info</span></td>
+                      <td style="text-align: right;">
+                        <button type="button" class="table-dots-btn" title="View details" onclick="openAuditRecord('EVT-8302', 'Login', 'Vikram Shah', '28 Aug 2025, 01:14 PM', 'System', '198.51.100.32', 'macOS / Chrome 127', 'FIDO2 WebAuthn authentication handshake.')">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- Row 8: Settings Updated -->
+                    <tr data-action="Settings Updated" data-vault="&mdash; data-user="Rakesh Patel" data-status="Success">
+                      <td>25 Aug 2025, 10:07 AM</td>
+                      <td>
+                        <div class="user-cell">
+                          <span class="user-avatar-dot rakesh">RP</span>
+                          <span>Rakesh Patel</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="action-cell gray">
+                          <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                          <span>Settings Updated</span>
+                        </div>
+                      </td>
+                      <td>Updated notification preferences</td>
+                      <td>&mdash;</td>
+                      <td><span class="table-ip-code">203.0.113.24</span></td>
+                      <td>
+                        <div class="device-icon-box" title="Desktop Monitor">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                        </div>
+                      </td>
+                      <td><span class="status-pill success"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Success</span></td>
+                      <td style="text-align: right;">
+                        <button type="button" class="table-dots-btn" title="View details" onclick="openAuditRecord('EVT-8199', 'Settings Updated', 'Rakesh Patel', '25 Aug 2025, 10:07 AM', 'Preferences', '203.0.113.24', 'Windows / Chrome 128', 'Alert preferences & notification routing modified.')">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- Row 9: Share Expired -->
+                    <tr data-action="Share Expired" data-vault="Travel Vault" data-user="Neha Kapoor" data-status="Failed">
+                      <td>22 Aug 2025, 03:56 PM</td>
+                      <td>
+                        <div class="user-cell">
+                          <span class="user-avatar-dot neha">NK</span>
+                          <span>Neha Kapoor</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="action-cell red">
+                          <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                          <span>Share Expired</span>
+                        </div>
+                      </td>
+                      <td>Share link expired</td>
+                      <td><strong>Travel Vault</strong></td>
+                      <td><span class="table-ip-code">198.51.100.89</span></td>
+                      <td>
+                        <div class="device-icon-box" title="Desktop Monitor">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                        </div>
+                      </td>
+                      <td><span class="status-pill failed"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Failed</span></td>
+                      <td style="text-align: right;">
+                        <button type="button" class="table-dots-btn" title="View details" onclick="openAuditRecord('EVT-8045', 'Share Expired', 'Neha Kapoor', '22 Aug 2025, 03:56 PM', 'Travel Vault', '198.51.100.89', 'Windows / Edge 126', 'Time-to-live threshold exceeded for submission payload.')">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- Row 10: Trustee Invited -->
+                    <tr data-action="Trustee Invited" data-vault="Health Vault" data-user="Rakesh Patel" data-status="Success">
+                      <td>18 Aug 2025, 09:30 AM</td>
+                      <td>
+                        <div class="user-cell">
+                          <span class="user-avatar-dot rakesh">RP</span>
+                          <span>Rakesh Patel</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="action-cell purple">
+                          <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+                          <span>Trustee Invited</span>
+                        </div>
+                      </td>
+                      <td>Invitation sent to amit.kumar@email.com</td>
+                      <td><strong>Health Vault</strong></td>
+                      <td><span class="table-ip-code">203.0.113.24</span></td>
+                      <td>
+                        <div class="device-icon-box" title="Desktop Monitor">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                        </div>
+                      </td>
+                      <td><span class="status-pill success"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Success</span></td>
+                      <td style="text-align: right;">
+                        <button type="button" class="table-dots-btn" title="View details" onclick="openAuditRecord('EVT-7981', 'Trustee Invited', 'Rakesh Patel', '18 Aug 2025, 09:30 AM', 'Health Vault', '203.0.113.24', 'Windows / Chrome 128', 'Trustee invitation dispatched to amit.kumar@email.com.')">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <!-- Bottom Information Callout -->
+            <section class="activity-info-card" aria-labelledby="activityInfoHeading">
+              <div class="info-left-group">
+                <div class="info-icon-badge">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="16" x2="12" y2="12"/>
+                    <line x1="12" y1="8" x2="12.01" y2="8"/>
+                  </svg>
+                </div>
+                <div class="activity-info-text" id="activityInfoHeading">
+                  All activities are securely logged and monitored to ensure transparency, security, and accountability.
+                </div>
+              </div>
+              <button type="button" class="activity-info-link" style="background:none;border:none;padding:0;" onclick="window.openModal('activityTrackingModal')">
+                <span>Learn more about activity tracking</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </button>
+            </section>
+          </div>
+
+          <!-- Right Column: Filters, Insights & Export -->
+          <div class="activity-side-col">
+            <!-- Card 1: Filters -->
+            <section class="filters-card" aria-labelledby="filtersHeading">
+              <div class="filters-header-row">
+                <div class="filters-title-group">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                  </svg>
+                  <h2 id="filtersHeading" style="font-size: 1.05rem; font-weight: 700; margin: 0;">Filters</h2>
+                </div>
+                <button type="button" class="filters-clear-btn" id="btnFilterClearAll">Clear All</button>
+              </div>
+
+              <!-- Activity Type -->
+              <div class="filter-group">
+                <label class="filter-label" for="filterActivityType">Activity Type</label>
+                <div class="filter-select-wrap">
+                  <select class="filter-select" id="filterActivityType">
+                    <option value="all" selected>All Activities</option>
+                    <option value="Share Submitted">Share Submitted</option>
+                    <option value="Trustee Verified">Trustee Verified</option>
+                    <option value="Vault Updated">Vault Updated</option>
+                    <option value="Share Viewed">Share Viewed</option>
+                    <option value="Notification Sent">Notification Sent</option>
+                    <option value="Release Approved">Release Approved</option>
+                    <option value="Login">Login</option>
+                    <option value="Settings Updated">Settings Updated</option>
+                    <option value="Share Expired">Share Expired</option>
+                    <option value="Trustee Invited">Trustee Invited</option>
+                  </select>
+                  <svg class="filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+              </div>
+
+              <!-- Vault -->
+              <div class="filter-group">
+                <label class="filter-label" for="filterVault">Vault</label>
+                <div class="filter-select-wrap">
+                  <select class="filter-select" id="filterVault">
+                    <option value="all" selected>All Vaults</option>
+                    <option value="Personal Vault">Personal Vault</option>
+                    <option value="Family Vault">Family Vault</option>
+                    <option value="Business Vault">Business Vault</option>
+                    <option value="Legacy Vault">Legacy Vault</option>
+                    <option value="Health Vault">Health Vault</option>
+                    <option value="Travel Vault">Travel Vault</option>
+                  </select>
+                  <svg class="filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+              </div>
+
+              <!-- User -->
+              <div class="filter-group">
+                <label class="filter-label" for="filterUser">User</label>
+                <div class="filter-select-wrap">
+                  <select class="filter-select" id="filterUser">
+                    <option value="all" selected>All Users</option>
+                    <option value="Rakesh Patel">Rakesh Patel</option>
+                    <option value="Sneha Mehta">Sneha Mehta</option>
+                    <option value="Amit Kumar">Amit Kumar</option>
+                    <option value="Vikram Shah">Vikram Shah</option>
+                    <option value="Neha Kapoor">Neha Kapoor</option>
+                    <option value="System">System</option>
+                  </select>
+                  <svg class="filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </div>
+              </div>
+
+              <!-- Date Range -->
+              <div class="filter-group">
+                <label class="filter-label">Date Range</label>
+                <div class="filter-date-box" onclick="showToast('Date Range picker active (1 Aug 2025 - 12 Sep 2025)')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <span>1 Aug 2025 &mdash;“ 12 Sep 2025</span>
+                </div>
+              </div>
+
+              <div class="filter-actions-row">
+                <button type="button" class="btn-apply-filter" id="btnApplyFilter">
+                  Apply Filters
+                </button>
+                <button type="button" class="btn-reset-filter" id="btnResetFilter">
+                  Reset
+                </button>
+              </div>
+            </section>
+
+            <!-- Card 2: Activity Insights -->
+            <section class="insights-card" aria-labelledby="insightsHeading">
+              <div class="insights-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M18 20V10M12 20V4M6 20v-6"/>
+                </svg>
+                <h2 id="insightsHeading" style="font-size: 1.05rem; font-weight: 700; margin: 0;">Activity Insights</h2>
+              </div>
+
+              <div class="insights-list">
+                <div class="insight-item">
+                  <div class="insight-left">
+                    <div class="insight-icon-box">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <div class="insight-label-group">
+                      <span class="insight-label-sub">Most Active Vault</span>
+                      <span class="insight-label-main">Personal Vault</span>
+                    </div>
+                  </div>
+                  <span class="insight-val-badge">48</span>
+                </div>
+
+                <div class="insight-item">
+                  <div class="insight-left">
+                    <div class="insight-icon-box">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                    </div>
+                    <div class="insight-label-group">
+                      <span class="insight-label-sub">Most Frequent Action</span>
+                      <span class="insight-label-main">Share Submitted</span>
+                    </div>
+                  </div>
+                  <span class="insight-val-badge">52</span>
+                </div>
+
+                <div class="insight-item">
+                  <div class="insight-left">
+                    <div class="insight-icon-box">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <div class="insight-label-group">
+                      <span class="insight-label-sub">Active Users</span>
+                      <span class="insight-label-main">Trustees & Owners</span>
+                    </div>
+                  </div>
+                  <span class="insight-val-badge">8</span>
+                </div>
+
+                <div class="insight-item">
+                  <div class="insight-left">
+                    <div class="insight-icon-box">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
+                    <div class="insight-label-group">
+                      <span class="insight-label-sub">Peak Activity Time</span>
+                      <span class="insight-label-main">10 AM &mdash;“ 12 PM</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Card 3: Export History -->
+            <section class="export-card" aria-labelledby="exportHeading">
+              <div class="export-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                <h2 id="exportHeading" style="font-size: 1.05rem; font-weight: 700; margin: 0;">Export History</h2>
+              </div>
+              <p class="export-desc">
+                Download your activity history for record keeping.
+              </p>
+              <button type="button" class="btn-export-csv" onclick="exportActivityToCSV()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>Export as CSV</span>
+              </button>
+            </section>
+          </div>
+        </div>
+      </main>
+
+      <!-- Global Footer -->
+      <footer class="trustee-footer">
+        <div class="footer-brand">
+          <div class="brand-shield-icon">
+            <svg viewBox="0 0 40 46" fill="none"><path d="M20 2L3 8V20C3 31.2 10.3 41.5 20 44C29.7 41.5 37 31.2 37 20V8L20 2Z" fill="#F97316"/></svg>
+          </div>
+          <span class="brand-title">Aegis<span class="vault-accent">Vault</span></span>
+        </div>
+        <div class="footer-center-motto">&ldquo;Because what matters today, should matter tomorrow too.&rdquo;</div>
+        <div class="footer-links">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="../help-support/help-support.html">Help</a>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Modal: Activity Audit Record -->
+  <div class="trustee-modal-backdrop" id="activityAuditModal" role="dialog" aria-modal="true" aria-labelledby="auditModalTitle">
+    <div class="trustee-modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="auditModalTitle">Activity Audit Event Record</h3>
+        <button class="modal-close-btn" data-modal-close aria-label="Close modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="background-color: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1.15rem; display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.84rem;">
+            <span style="color: var(--text-muted);">Event ID:</span>
+            <span style="font-weight: 700; color: var(--text-primary);" id="auditEventId">EVT-9021</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.84rem;">
+            <span style="color: var(--text-muted);">Action:</span>
+            <span style="font-weight: 700; color: var(--brand-orange);" id="auditAction">Share Submitted</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.84rem;">
+            <span style="color: var(--text-muted);">Actor / User:</span>
+            <span style="font-weight: 600; color: var(--text-primary);" id="auditUser">Rakesh Patel</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.84rem;">
+            <span style="color: var(--text-muted);">Timestamp:</span>
+            <span style="font-weight: 600; color: var(--text-primary);" id="auditTimestamp">12 Sep 2025, 10:24 AM</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.84rem;">
+            <span style="color: var(--text-muted);">Associated Vault:</span>
+            <span style="font-weight: 600; color: var(--text-primary);" id="auditVault">Personal Vault</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.84rem;">
+            <span style="color: var(--text-muted);">Origin IP Address:</span>
+            <span style="font-family: monospace; color: var(--accent-blue);" id="auditIp">203.0.113.24</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.84rem;">
+            <span style="color: var(--text-muted);">Client Environment:</span>
+            <span style="font-size: 0.8rem; color: var(--text-secondary);" id="auditDevice">Windows / Chrome 128</span>
+          </div>
+          <div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--border-subtle);">
+            <span style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem;">Cryptographic Payload & Details:</span>
+            <div style="background-color: var(--bg-base); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 0.6rem 0.8rem; font-family: monospace; font-size: 0.78rem; color: var(--accent-cyan); word-break: break-all;" id="auditDetails">
+              share_aryan_01.share (1.4 KB) sha256: 8f2ac391e4...
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: flex-end; gap: 0.75rem;">
+          <button type="button" class="btn-reset-filter" onclick="showToast('Event cryptographic proof copied to clipboard')">
+            Copy Verification Hash
+          </button>
+          <button type="button" class="btn-apply-filter" style="padding: 0.6rem 1.25rem;" data-modal-close>
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Activity Tracking Overview -->
+  <div class="trustee-modal-backdrop" id="activityTrackingModal" role="dialog" aria-modal="true" aria-labelledby="trackingModalTitle">
+    <div class="trustee-modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="trackingModalTitle">Immutable Activity Ledger</h3>
+        <button class="modal-close-btn" data-modal-close aria-label="Close modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.86rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1rem;">
+          Every interaction within AegisVault &mdash; including key share submissions, vault reviews, trustee verifications, and logins &mdash; is recorded in an immutable, append-only cryptographic audit ledger.
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 1.25rem;">
+          <div style="padding: 0.75rem; border-radius: var(--radius-md); background: var(--bg-surface); border: 1px solid var(--border-subtle); font-size: 0.82rem;">
+            <strong>Cryptographic Timestamping:</strong> Each record contains a microsecond NTP timestamp validated against decentralized consensus time servers.
+          </div>
+          <div style="padding: 0.75rem; border-radius: var(--radius-md); background: var(--bg-surface); border: 1px solid var(--border-subtle); font-size: 0.82rem;">
+            <strong>Device & IP Attribution:</strong> Strict originating network signatures prevent fraudulent spoofing and preserve non-repudiation for legal executors.
+          </div>
+        </div>
+        <div style="text-align: right;">
+          <button type="button" class="btn-apply-filter" style="display: inline-flex;" data-modal-close>
+            Got It
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shared Scripts -->
+  <script src="../common/common.js"></script>
+  <script src="./activity-history.js"></script>
+</body>
+</html>
+
+

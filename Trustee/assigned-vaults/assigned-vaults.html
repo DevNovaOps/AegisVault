@@ -1,0 +1,718 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AegisVault &mdash; Assigned Vaults</title>
+  <meta name="description" content="View and manage digital legacy vaults assigned to you as a trusted person in AegisVault.">
+
+  <!-- Immediate Theme Initializer to eliminate flash -->
+  <script src="../common/theme.js"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../common/themes.css?v=4.0">
+  <link rel="stylesheet" href="../common/common.css?v=4.0">
+  <link rel="stylesheet" href="./assigned-vaults.css?v=4.0">
+</head>
+<body>
+  <div class="trustee-app">
+
+    <!-- ====================================================================
+         Sidebar Navigation
+         ==================================================================== -->
+    <aside class="trustee-sidebar" aria-label="Trustee Navigation">
+
+      <!-- Brand Logo Header -->
+        <div class="sidebar-brand">
+          <div class="brand-shield-icon">
+            <svg viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 2L3 8V20C3 31.2 10.3 41.5 20 44C29.7 41.5 37 31.2 37 20V8L20 2Z" stroke="#F97316" stroke-width="2.5" stroke-linejoin="round" fill="rgba(249, 115, 22, 0.08)"/>
+              <path d="M20 8L8 13V21C8 28.5 13.1 35.5 20 37.5C26.9 35.5 32 28.5 32 21V13L20 8Z" fill="#F97316"/>
+              <path d="M20 13L13 16.5V22C13 26.5 16 30.5 20 32C24 30.5 27 26.5 27 22V16.5L20 13Z" fill="#FFA24C"/>
+            </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Aegis<span class="vault-accent">Vault</span></span>
+          <span class="brand-tagline">What matters, lives on.</span>
+        </div>
+      </div>
+
+      <!-- Navigation Links (10 modules) -->
+      <nav class="sidebar-nav">
+        <!-- 1. Dashboard -->
+        <a href="../dashboard/dashboard.html" class="nav-item" id="navDashboard">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1V9.5z"/>
+            </svg>
+          </span>
+          <span class="nav-label">My Dashboard</span>
+        </a>
+
+        <!-- 2. Assigned Vaults (Active) -->
+        <a href="./assigned-vaults.html" class="nav-item active" id="navAssignedVaults" aria-current="page">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </span>
+          <span class="nav-label">Assigned Vaults</span>
+        </a>
+
+        <!-- 3. Invitations -->
+        <a href="../invitations/invitations.html" class="nav-item" id="navInvitations">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <rect x="3" y="4" width="18" height="16" rx="2"/>
+              <path d="m22 7-10 7L2 7"/>
+            </svg>
+          </span>
+          <span class="nav-label">Invitations</span>
+          <span class="nav-badge">2</span>
+        </a>
+
+        <!-- 4. Trustee Verification -->
+        <a href="../trustee-verification/trustee-verification.html" class="nav-item" id="navVerification">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+          </span>
+          <span class="nav-label">Trustee Verification</span>
+        </a>
+
+        <!-- 5. Share Submission -->
+        <a href="../share-submission/share-submission.html" class="nav-item" id="navShareSubmission">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="7.5" cy="15.5" r="4.5"/>
+              <path d="m21 3-9.5 9.5M15.5 8.5l3 3M18 6l2 2"/>
+            </svg>
+          </span>
+          <span class="nav-label">Share Submission</span>
+        </a>
+
+        <!-- 6. Release Status -->
+        <a href="../release-status/release-status.html" class="nav-item" id="navReleaseStatus">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+              <path d="M4 12a8 8 0 0 1 1.5-4.5"/>
+            </svg>
+          </span>
+          <span class="nav-label">Release Status</span>
+        </a>
+
+        <!-- 7. Notifications -->
+        <a href="../notifications/notifications.html" class="nav-item" id="navNotifications">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+          </span>
+          <span class="nav-label">Notifications</span>
+          <span class="nav-badge">3</span>
+        </a>
+
+        <!-- 8. Activity & History -->
+        <a href="../activity-history/activity-history.html" class="nav-item" id="navActivityHistory">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </span>
+          <span class="nav-label">Activity & History</span>
+        </a>
+
+        <!-- 9. Profile & Security -->
+        <a href="../profile-security/profile-security.html" class="nav-item" id="navProfileSecurity">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </span>
+          <span class="nav-label">Profile & Security</span>
+        </a>
+
+        <!-- 10. Help & Support -->
+        <a href="../help-support/help-support.html" class="nav-item" id="navHelpSupport">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </span>
+          <span class="nav-label">Help & Support</span>
+        </a>
+      </nav>
+      <!-- Sidebar Scenic Quote (Natural footer on full scenic background) -->
+      <div class="sidebar-quote-block">
+        <p class="sidebar-scenic-quote">Stronger<br>Security.<br>Brighter<br>Tomorrows.</p>
+        <div class="sidebar-scenic-dash"></div>
+      </div>
+    </aside>
+
+    <!-- ====================================================================
+         Main Content Area
+         ==================================================================== -->
+    <div class="trustee-main">
+
+      <!-- Top Navigation Bar -->
+      <header class="trustee-topbar">
+        <div class="topbar-left">
+          <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+          <!-- Search Bar -->
+          <div class="topbar-search">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" id="globalSearchInput" placeholder="Search vaults, owners, or keywords..." aria-label="Global Search">
+          </div>
+        </div>
+
+        <!-- Topbar Right Controls -->
+        <div class="topbar-right">
+          <!-- Theme Toggle -->
+                    <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Dark / Light Theme" title="Toggle Theme" role="switch">
+            <span class="theme-switch-track">
+              <span class="switch-icon switch-icon-sun" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="4"/>
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                </svg>
+              </span>
+              <span class="switch-icon switch-icon-moon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+              </span>
+              <span class="theme-switch-thumb">
+                <span class="thumb-icon thumb-sun">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                  </svg>
+                </span>
+                <span class="thumb-icon thumb-moon">
+                  <svg viewBox="0 0 24 24" fill="#ffffff" stroke="none">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                  </svg>
+                </span>
+              </span>
+            </span>
+          </button>
+
+          <!-- Notifications Dropdown Trigger -->
+          <div class="notification-btn-wrapper">
+            <button class="notification-btn" id="notificationBtn" aria-label="Notifications" title="Notifications">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              </svg>
+              <span class="notification-badge-dot"></span>
+            </button>
+            <div class="dropdown-panel" id="notificationDropdown">
+              <div class="dropdown-header">Recent Alerts (3)</div>
+              <a href="../invitations/invitations.html" class="dropdown-item">New vault invitation from Priya Shah</a>
+              <a href="../trustee-verification/trustee-verification.html" class="dropdown-item">Identity verification pending review</a>
+              <a href="../release-status/release-status.html" class="dropdown-item">Release process initiated for Family Vault</a>
+              <div class="dropdown-divider"></div>
+              <a href="../notifications/notifications.html" class="dropdown-item" style="color:var(--brand-orange); font-weight:600;">View all notifications &rarr;</a>
+            </div>
+          </div>
+
+          <!-- Profile Chip Menu -->
+          <div class="profile-menu-wrapper">
+            <button class="profile-chip" id="profileBtn" aria-label="User Profile Menu">
+              <div class="profile-avatar-circle">RP</div>
+              <span class="profile-name">Rakesh Patel</span>
+              <svg class="profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+            <div class="dropdown-panel" id="profileDropdown">
+              <div class="dropdown-header">Trustee Account</div>
+              <a href="../profile-security/profile-security.html" class="dropdown-item">Profile & Security</a>
+              <a href="../trustee-verification/trustee-verification.html" class="dropdown-item">Verification Status (Verified)</a>
+              <a href="../help-support/help-support.html" class="dropdown-item">Help & Support</a>
+              <div class="dropdown-divider"></div>
+              <a href="javascript:void(0)" class="dropdown-item" onclick="showToast('Signed out of trustee session (mock).')">Sign Out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Assigned Vaults Content -->
+      <main class="trustee-content">
+
+        <!-- ====================================================================
+             Hero Panoramic Banner
+             ==================================================================== -->
+        <section class="vaults-hero hero-card" aria-label="Assigned Vaults Banner">
+          <div class="vaults-hero-left">
+            <div class="vaults-hero-eyebrow hero-eyebrow">02. ASSIGNED VAULTS</div>
+            <h1 class="vaults-hero-heading">
+              Your Assigned Vaults.
+              <span class="hero-accent choice-accent">Trusted by Choice.</span>
+            </h1>
+            <p class="vaults-hero-subtext">View the vaults you've been entrusted with. Stay informed, stay prepared.</p>
+
+            <!-- 4 Feature Badges -->
+            <div class="vaults-features-row">
+              <div class="vaults-feature-item">
+                <div class="feature-icon-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </svg>
+                </div>
+                <div class="feature-text-group">
+                  <span class="feature-line-primary">Trusted People</span>
+                  <span class="feature-line-secondary">Stronger Tomorrows</span>
+                </div>
+              </div>
+
+              <div class="vaults-feature-item">
+                <div class="feature-icon-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                </div>
+                <div class="feature-text-group">
+                  <span class="feature-line-primary">Secure & Private</span>
+                  <span class="feature-line-secondary">By Design</span>
+                </div>
+              </div>
+
+              <div class="vaults-feature-item">
+                <div class="feature-icon-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18.178 8c5.096 0 5.096 8 0 8-2.605 0-4.492-2.14-6.178-4-1.686-1.86-3.573-4-6.178-4-5.096 0-5.096 8 0 8 2.605 0 4.492-2.14 6.178-4 1.686-1.86 3.573-4 6.178-4z"/>
+                  </svg>
+                </div>
+                <div class="feature-text-group">
+                  <span class="feature-line-primary">Legacy</span>
+                  <span class="feature-line-secondary">Protection</span>
+                </div>
+              </div>
+
+              <div class="vaults-feature-item">
+                <div class="feature-icon-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  </svg>
+                </div>
+                <div class="feature-text-group">
+                  <span class="feature-line-primary">A Safer</span>
+                  <span class="feature-line-secondary">Tomorrow</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero Right Quote -->
+          <div class="vaults-hero-quote-card">
+            <p class="vaults-hero-quote-text">&ldquo;People don't just leave information. They leave trust.&rdquo;</p>
+            <div class="vaults-hero-quote-dash"></div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             Main Content Grid (Left: Vault Cards | Right: Sidebar Summary)
+             ==================================================================== -->
+        <div class="vaults-content-grid">
+
+          <!-- Left Column: Toolbar & Vaults -->
+          <div class="vaults-main-col">
+
+            <!-- Filter Tabs & Search Bar -->
+            <div class="vaults-toolbar-row">
+              <div class="vaults-tabs-group" role="tablist">
+                <button class="vault-tab-btn active" data-filter="all" role="tab" aria-selected="true">All Vaults (2)</button>
+                <button class="vault-tab-btn" data-filter="active" role="tab" aria-selected="false">Active (1)</button>
+                <button class="vault-tab-btn" data-filter="pending_verification" role="tab" aria-selected="false">Pending Verification (1)</button>
+                <button class="vault-tab-btn" data-filter="release_in_progress" role="tab" aria-selected="false">Release In Progress (1)</button>
+                <button class="vault-tab-btn" data-filter="completed" role="tab" aria-selected="false">Completed (0)</button>
+              </div>
+
+              <!-- Search Bar -->
+              <div class="vaults-search-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="vaultSearchInput" placeholder="Search assigned vaults..." aria-label="Filter assigned vaults">
+              </div>
+            </div>
+
+            <!-- Vault Cards Container -->
+            <div class="vault-cards-list" id="vaultsListContainer">
+
+              <!-- Vault Card 1: Personal Vault -->
+              <div class="assigned-vault-card" data-vault-id="vault-personal" role="button" tabindex="0">
+                <div class="vault-col-primary">
+                  <div class="vault-big-lock blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                  </div>
+                  <div class="vault-meta-info">
+                    <span class="vault-card-title">Personal Vault</span>
+                    <span class="vault-card-owner">Owner: Aryan Patel</span>
+                    <span class="vault-card-email">aryan.patel@gmail.com</span>
+                    <div class="vault-card-tags">
+                      <span class="tag-badge family">Family</span>
+                      <span class="tag-badge primary">Primary</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Assigned On -->
+                <div class="vault-col-data">
+                  <span class="vault-data-label">Assigned On</span>
+                  <span class="vault-date-value">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    10 Aug 2025
+                  </span>
+                </div>
+
+                <!-- Verification Status -->
+                <div class="vault-col-data">
+                  <span class="vault-data-label">Verification Status</span>
+                  <span class="status-badge verified"><span class="badge-dot"></span>Verified</span>
+                </div>
+
+                <!-- Share Status -->
+                <div class="vault-col-data">
+                  <span class="vault-data-label">Share Status</span>
+                  <span class="status-badge submitted"><span class="badge-dot"></span>Submitted</span>
+                  <span class="vault-status-subtext">on 12 Aug 2025</span>
+                </div>
+
+                <!-- Release Status -->
+                <div class="vault-col-data">
+                  <span class="vault-data-label">Release Status</span>
+                  <span class="status-badge no-release"><span class="badge-dot"></span>No Release</span>
+                  <span class="vault-status-subtext">Not initiated</span>
+                </div>
+
+                <!-- Chevron -->
+                <svg class="vault-chevron-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
+              </div>
+
+              <!-- Vault Card 2: Family Vault -->
+              <div class="assigned-vault-card" data-vault-id="vault-family" role="button" tabindex="0">
+                <div class="vault-col-primary">
+                  <div class="vault-big-lock amber">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                  </div>
+                  <div class="vault-meta-info">
+                    <span class="vault-card-title">Family Vault</span>
+                    <span class="vault-card-owner">Owner: Priya Shah</span>
+                    <span class="vault-card-email">priya.shah@email.com</span>
+                    <div class="vault-card-tags">
+                      <span class="tag-badge family">Family</span>
+                      <span class="tag-badge secondary">Secondary</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Assigned On -->
+                <div class="vault-col-data">
+                  <span class="vault-data-label">Assigned On</span>
+                  <span class="vault-date-value">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    18 Aug 2025
+                  </span>
+                </div>
+
+                <!-- Verification Status -->
+                <div class="vault-col-data">
+                  <span class="vault-data-label">Verification Status</span>
+                  <span class="status-badge pending"><span class="badge-dot"></span>Pending</span>
+                  <a href="../trustee-verification/trustee-verification.html" class="vault-status-subtext clickable">Complete verification</a>
+                </div>
+
+                <!-- Share Status -->
+                <div class="vault-col-data">
+                  <span class="vault-data-label">Share Status</span>
+                  <span class="status-badge not-submitted"><span class="badge-dot"></span>Not Submitted</span>
+                  <span class="vault-status-subtext">Awaiting release</span>
+                </div>
+
+                <!-- Release Status -->
+                <div class="vault-col-data">
+                  <span class="vault-data-label">Release Status</span>
+                  <span class="status-badge in-progress"><span class="badge-dot"></span>In Progress</span>
+                  <span class="vault-status-subtext">Grace period (12 days left)</span>
+                </div>
+
+                <!-- Chevron -->
+                <svg class="vault-chevron-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
+              </div>
+
+            </div>
+
+            <!-- Empty State / Footer Reminder Box -->
+            <div class="vaults-empty-box" id="vaultsEmptyBox">
+              <div class="empty-box-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                  <line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/>
+                </svg>
+              </div>
+              <h3 class="empty-box-title" id="emptyBoxTitle">No more vaults assigned (for now)</h3>
+              <p class="empty-box-subtext" id="emptyBoxSub">When a vault owner assigns you to a new vault, it will appear here.</p>
+              <a href="../invitations/invitations.html" class="empty-box-btn">
+                <span>View Invitations</span>
+                <span>&rarr;</span>
+              </a>
+            </div>
+
+          </div>
+
+          <!-- Right Column: Sidebar Summary -->
+          <div class="vaults-side-col">
+
+            <!-- Card 1: Trustee Summary -->
+            <div class="trustee-card summary-card">
+              <div class="summary-card-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+                </svg>
+                <span>Trustee Summary</span>
+              </div>
+
+              <div class="summary-list">
+                <div class="summary-item-row">
+                  <div class="summary-item-left">
+                    <span class="summary-icon-bullet muted">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
+                    </span>
+                    <span>Total Assigned Vaults</span>
+                  </div>
+                  <span class="summary-item-count">2</span>
+                </div>
+
+                <div class="summary-item-row">
+                  <div class="summary-item-left">
+                    <span class="summary-icon-bullet green">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    </span>
+                    <span>Verified Vaults</span>
+                  </div>
+                  <span class="summary-item-count">1</span>
+                </div>
+
+                <div class="summary-item-row">
+                  <div class="summary-item-left">
+                    <span class="summary-icon-bullet amber">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    </span>
+                    <span>Pending Verification</span>
+                  </div>
+                  <span class="summary-item-count">1</span>
+                </div>
+
+                <div class="summary-item-row">
+                  <div class="summary-item-left">
+                    <span class="summary-icon-bullet blue">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m21 3-9.5 9.5M15.5 8.5l3 3"/></svg>
+                    </span>
+                    <span>Shares Submitted</span>
+                  </div>
+                  <span class="summary-item-count">1</span>
+                </div>
+
+                <div class="summary-item-row">
+                  <div class="summary-item-left">
+                    <span class="summary-icon-bullet purple">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </span>
+                    <span>Active Released</span>
+                  </div>
+                  <span class="summary-item-count">1</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: Need to Take Action? -->
+            <div class="action-alert-card">
+              <div class="action-alert-header">
+                <svg class="action-alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                  <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                <span class="action-alert-title">Need to Take Action?</span>
+              </div>
+              <p class="action-alert-desc">1 vault requires your attention.</p>
+              <button class="btn-action-primary" id="btnViewPendingActions">
+                <span>View Pending Actions</span>
+                <span>&rarr;</span>
+              </button>
+            </div>
+
+            <!-- Card 3: Your Responsibilities -->
+            <div class="trustee-card responsibilities-card">
+              <div class="responsibilities-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                <span>Your Responsibilities</span>
+              </div>
+
+              <div class="responsibilities-list">
+                <div class="responsibility-item">
+                  <span class="resp-check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                  <span>Complete verification when required</span>
+                </div>
+                <div class="responsibility-item">
+                  <span class="resp-check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                  <span>Submit your share when authorized</span>
+                </div>
+                <div class="responsibility-item">
+                  <span class="resp-check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                  <span>Stay informed about release status</span>
+                </div>
+                <div class="responsibility-item">
+                  <span class="resp-check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                  <span>Keep your contact information updated</span>
+                </div>
+                <div class="responsibility-item">
+                  <span class="resp-check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                  <span>Protect the privacy of all vault owners</span>
+                </div>
+              </div>
+
+              <div class="responsibility-quote-box">
+                <p class="resp-quote-text">&ldquo;A responsibility today.<br>A brighter tomorrow.&rdquo;</p>
+                <div class="resp-quote-dash"></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </main>
+
+      <!-- Global Footer -->
+      <footer class="trustee-footer">
+        <div class="footer-brand">
+          <div class="brand-shield-icon">
+            <svg viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 2L3 8V20C3 31.2 10.3 41.5 20 44C29.7 41.5 37 31.2 37 20V8L20 2Z" stroke="#F97316" stroke-width="2.5" fill="rgba(249, 115, 22, 0.08)"/>
+              <path d="M20 8L8 13V21C8 28.5 13.1 35.5 20 37.5C26.9 35.5 32 28.5 32 21V13L20 8Z" fill="#F97316"/>
+            </svg>
+          </div>
+          <span class="brand-title">Aegis<span class="vault-accent">Vault</span></span>
+        </div>
+
+        <div class="footer-center-motto">
+          &ldquo;Because what matters today, should matter tomorrow too.&rdquo;
+        </div>
+
+        <div class="footer-links">
+          <a href="javascript:void(0)" onclick="showToast('Privacy Policy (mock).')">Privacy</a>
+          <a href="javascript:void(0)" onclick="showToast('Terms of Service (mock).')">Terms</a>
+          <a href="../help-support/help-support.html">Help</a>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       Vault Detail Modal
+       ==================================================================== -->
+  <div class="trustee-modal-backdrop" id="vaultDetailModal">
+    <div class="trustee-modal" style="max-width: 600px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div style="width: 36px; height: 36px; border-radius: var(--radius-md); background: var(--brand-orange-tint); color: var(--brand-orange); display: flex; align-items: center; justify-content: center;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div>
+            <h3 class="modal-title" id="modalVaultTitle">Vault Details</h3>
+            <span style="font-size: 0.78rem; color: var(--text-muted);" id="modalVaultOwner">Owner Info</span>
+          </div>
+        </div>
+        <button class="modal-close-btn" data-modal-close aria-label="Close modal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.25rem;">
+          <div style="background-color: var(--bg-surface); padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+            <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.25rem;">Verification</div>
+            <div id="modalVaultVerifBadge"></div>
+          </div>
+          <div style="background-color: var(--bg-surface); padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+            <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.25rem;">Key Share</div>
+            <div id="modalVaultShareBadge"></div>
+          </div>
+          <div style="background-color: var(--bg-surface); padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+            <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.25rem;">Release</div>
+            <div id="modalVaultReleaseBadge"></div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.86rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.4rem;">
+            <span>Assigned Date:</span>
+            <strong style="color: var(--text-primary);" id="modalVaultAssigned">10 Aug 2025</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.4rem;">
+            <span>Security Scheme:</span>
+            <strong style="color: var(--text-primary);" id="modalVaultScheme">Shamir Secret Sharing (2-of-3)</strong>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 0.2rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.4rem;">
+            <span>Description:</span>
+            <span style="color: var(--text-primary); font-size: 0.82rem;" id="modalVaultDescription">Vault description</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 0.2rem;">
+            <span>Share Cryptographic Fingerprint:</span>
+            <code style="font-size: 0.74rem; background: var(--bg-surface); padding: 0.4rem 0.6rem; border-radius: var(--radius-xs); border: 1px solid var(--border-subtle); word-break: break-all; color: var(--brand-orange);" id="modalVaultHash">sha256:...</code>
+          </div>
+        </div>
+
+        <div style="background-color: var(--bg-surface); padding: 0.85rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); font-size: 0.8rem; color: var(--text-secondary); line-height: 1.45;">
+          <strong style="color: var(--text-primary); display: block; margin-bottom: 0.2rem;">Trustee Responsibility Reminder</strong>
+          You are legally and ethically entrusted to keep your share token secure. Do not share credentials or export files to public devices.
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="modal-close-btn" data-modal-close style="padding: 0.55rem 1.15rem; width: auto; font-size: 0.86rem;">Close</button>
+        <button id="modalBtnVerify" style="background-color: var(--accent-amber); color: #000; padding: 0.55rem 1.25rem; border-radius: var(--radius-md); font-weight: 700; font-size: 0.86rem; display: none;">Complete Verification</button>
+        <button id="modalBtnSubmitShare" style="background-color: var(--brand-orange); color: #fff; padding: 0.55rem 1.25rem; border-radius: var(--radius-md); font-weight: 700; font-size: 0.86rem; display: none;">Submit Share Now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shared & Page JavaScript -->
+  <script src="../common/common.js"></script>
+  <script src="./assigned-vaults.js"></script>
+</body>
+</html>
+
+

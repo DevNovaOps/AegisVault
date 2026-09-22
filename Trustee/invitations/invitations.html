@@ -1,0 +1,596 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AegisVault &mdash; Trustee Invitations</title>
+  <meta name="description" content="Review and manage received vault trustee invitations on AegisVault.">
+
+  <!-- Immediate Theme Initializer to eliminate flash -->
+  <script src="../common/theme.js"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../common/themes.css?v=4.0">
+  <link rel="stylesheet" href="../common/common.css?v=4.0">
+  <link rel="stylesheet" href="./invitations.css?v=4.0">
+</head>
+<body>
+  <div class="trustee-app">
+
+    <!-- ====================================================================
+         Sidebar Navigation
+         ==================================================================== -->
+    <aside class="trustee-sidebar" aria-label="Trustee Navigation">
+      <!-- Brand Logo Header -->
+      <div class="sidebar-brand">
+        <div class="brand-shield-icon">
+          <svg viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 2L3 8V20C3 31.2 10.3 41.5 20 44C29.7 41.5 37 31.2 37 20V8L20 2Z" stroke="#F97316" stroke-width="2.5" stroke-linejoin="round" fill="rgba(249, 115, 22, 0.08)"/>
+            <path d="M20 8L8 13V21C8 28.5 13.1 35.5 20 37.5C26.9 35.5 32 28.5 32 21V13L20 8Z" fill="#F97316"/>
+            <path d="M20 13L13 16.5V22C13 26.5 16 30.5 20 32C24 30.5 27 26.5 27 22V16.5L20 13Z" fill="#FFA24C"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Aegis<span class="vault-accent">Vault</span></span>
+          <span class="brand-tagline">What matters, lives on.</span>
+        </div>
+      </div>
+
+      <!-- Navigation Links (10 modules) -->
+      <nav class="sidebar-nav">
+        <!-- 1. Dashboard -->
+        <a href="../dashboard/dashboard.html" class="nav-item" id="navDashboard">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1V9.5z"/>
+            </svg>
+          </span>
+          <span class="nav-label">My Dashboard</span>
+        </a>
+
+        <!-- 2. Assigned Vaults -->
+        <a href="../assigned-vaults/assigned-vaults.html" class="nav-item" id="navAssignedVaults">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </span>
+          <span class="nav-label">Assigned Vaults</span>
+        </a>
+
+        <!-- 3. Invitations (Active) -->
+        <a href="./invitations.html" class="nav-item active" id="navInvitations" aria-current="page">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <rect x="3" y="4" width="18" height="16" rx="2"/>
+              <path d="m22 7-10 7L2 7"/>
+            </svg>
+          </span>
+          <span class="nav-label">Invitations</span>
+          <span class="nav-badge">2</span>
+        </a>
+
+        <!-- 4. Trustee Verification -->
+        <a href="../trustee-verification/trustee-verification.html" class="nav-item" id="navVerification">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+          </span>
+          <span class="nav-label">Trustee Verification</span>
+        </a>
+
+        <!-- 5. Share Submission -->
+        <a href="../share-submission/share-submission.html" class="nav-item" id="navShareSubmission">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="7.5" cy="15.5" r="4.5"/>
+              <path d="m21 3-9.5 9.5M15.5 8.5l3 3M18 6l2 2"/>
+            </svg>
+          </span>
+          <span class="nav-label">Share Submission</span>
+        </a>
+
+        <!-- 6. Release Status -->
+        <a href="../release-status/release-status.html" class="nav-item" id="navReleaseStatus">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+              <path d="M4 12a8 8 0 0 1 1.5-4.5"/>
+            </svg>
+          </span>
+          <span class="nav-label">Release Status</span>
+        </a>
+
+        <!-- 7. Notifications -->
+        <a href="../notifications/notifications.html" class="nav-item" id="navNotifications">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+          </span>
+          <span class="nav-label">Notifications</span>
+          <span class="nav-badge">3</span>
+        </a>
+
+        <!-- 8. Activity & History -->
+        <a href="../activity-history/activity-history.html" class="nav-item" id="navActivityHistory">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </span>
+          <span class="nav-label">Activity & History</span>
+        </a>
+
+        <!-- 9. Profile & Security -->
+        <a href="../profile-security/profile-security.html" class="nav-item" id="navProfileSecurity">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </span>
+          <span class="nav-label">Profile & Security</span>
+        </a>
+
+        <!-- 10. Help & Support -->
+        <a href="../help-support/help-support.html" class="nav-item" id="navHelpSupport">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </span>
+          <span class="nav-label">Help & Support</span>
+        </a>
+      </nav>
+      <!-- Sidebar Scenic Quote (Natural footer on full scenic background) -->
+      <div class="sidebar-quote-block">
+        <p class="sidebar-scenic-quote">Stronger<br>Security.<br>Brighter<br>Tomorrows.</p>
+        <div class="sidebar-scenic-dash"></div>
+      </div>
+    </aside>
+
+    <!-- ====================================================================
+         Main Content Area
+         ==================================================================== -->
+    <div class="trustee-main">
+
+      <!-- Top Navigation Bar -->
+      <header class="trustee-topbar">
+        <div class="topbar-left">
+          <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+          <!-- Search Bar -->
+          <div class="topbar-search">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" id="globalSearchInput" placeholder="Search invitations, vaults, owners..." aria-label="Global Search">
+          </div>
+        </div>
+
+        <!-- Topbar Right Controls -->
+        <div class="topbar-right">
+          <!-- Theme Toggle -->
+                    <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Dark / Light Theme" title="Toggle Theme" role="switch">
+            <span class="theme-switch-track">
+              <span class="switch-icon switch-icon-sun" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="4"/>
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                </svg>
+              </span>
+              <span class="switch-icon switch-icon-moon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+              </span>
+              <span class="theme-switch-thumb">
+                <span class="thumb-icon thumb-sun">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                  </svg>
+                </span>
+                <span class="thumb-icon thumb-moon">
+                  <svg viewBox="0 0 24 24" fill="#ffffff" stroke="none">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                  </svg>
+                </span>
+              </span>
+            </span>
+          </button>
+
+          <!-- Notifications Dropdown Trigger -->
+          <div class="notification-btn-wrapper">
+            <button class="notification-btn" id="notificationBtn" aria-label="Notifications" title="Notifications">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              </svg>
+              <span class="notification-badge-dot"></span>
+            </button>
+            <div class="dropdown-panel" id="notificationDropdown">
+              <div class="dropdown-header">Recent Alerts (3)</div>
+              <a href="./invitations.html" class="dropdown-item">New vault invitation from Priya Shah</a>
+              <a href="../trustee-verification/trustee-verification.html" class="dropdown-item">Identity verification pending review</a>
+              <a href="../release-status/release-status.html" class="dropdown-item">Release process initiated for Family Vault</a>
+              <div class="dropdown-divider"></div>
+              <a href="../notifications/notifications.html" class="dropdown-item" style="color:var(--brand-orange); font-weight:600;">View all notifications &rarr;</a>
+            </div>
+          </div>
+
+          <!-- Profile Chip Menu -->
+          <div class="profile-menu-wrapper">
+            <button class="profile-chip" id="profileBtn" aria-label="User Profile Menu">
+              <div class="profile-avatar-circle">RP</div>
+              <span class="profile-name">Rakesh Patel</span>
+              <svg class="profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+            <div class="dropdown-panel" id="profileDropdown">
+              <div class="dropdown-header">Trustee Account</div>
+              <a href="../profile-security/profile-security.html" class="dropdown-item">Profile & Security</a>
+              <a href="../trustee-verification/trustee-verification.html" class="dropdown-item">Verification Status (Verified)</a>
+              <a href="../help-support/help-support.html" class="dropdown-item">Help & Support</a>
+              <div class="dropdown-divider"></div>
+              <a href="javascript:void(0)" class="dropdown-item" onclick="showToast('Signed out of trustee session (mock).')">Sign Out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Invitations Content -->
+      <main class="trustee-content">
+
+        <!-- ====================================================================
+             Hero Panoramic Banner
+             ==================================================================== -->
+        <section class="invitations-hero hero-card" aria-label="Trustee Invitations Banner">
+          <div class="invitations-hero-left">
+            <div class="invitations-hero-eyebrow hero-eyebrow">03. TRUSTEE INVITATIONS</div>
+            <h1 class="invitations-hero-heading">
+              Trusted by Someone.
+              <span class="hero-accent safer-accent">A Safer Tomorrow.</span>
+            </h1>
+            <p class="invitations-hero-subtext">Review and respond to vault invitations. When people trust you with their legacy, you help keep their digital world safe &mdash; always.</p>
+
+            <!-- 4 Feature Badges -->
+            <div class="invitations-features-row">
+              <div class="invitations-feature-item">
+                <div class="feature-icon-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </svg>
+                </div>
+                <div class="feature-text-group">
+                  <span class="feature-line-primary">Trusted People</span>
+                  <span class="feature-line-secondary">Stronger Tomorrows</span>
+                </div>
+              </div>
+
+              <div class="invitations-feature-item">
+                <div class="feature-icon-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                </div>
+                <div class="feature-text-group">
+                  <span class="feature-line-primary">Secure & Private</span>
+                  <span class="feature-line-secondary">By Design</span>
+                </div>
+              </div>
+
+              <div class="invitations-feature-item">
+                <div class="feature-icon-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+                  </svg>
+                </div>
+                <div class="feature-text-group">
+                  <span class="feature-line-primary">Transparent</span>
+                  <span class="feature-line-secondary">Process</span>
+                </div>
+              </div>
+
+              <div class="invitations-feature-item">
+                <div class="feature-icon-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18.178 8c5.096 0 5.096 8 0 8-2.605 0-4.492-2.14-6.178-4-1.686-1.86-3.573-4-6.178-4-5.096 0-5.096 8 0 8 2.605 0 4.492-2.14 6.178-4 1.686-1.86 3.573-4 6.178-4z"/>
+                  </svg>
+                </div>
+                <div class="feature-text-group">
+                  <span class="feature-line-primary">Meaningful</span>
+                  <span class="feature-line-secondary">Impact</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero Right Quote -->
+          <div class="invitations-hero-quote-card">
+            <p class="invitations-hero-quote-text">&ldquo;Trust is a choice today. A safer tomorrow is built together.&rdquo;</p>
+            <div class="invitations-hero-quote-dash"></div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             Three-Column Layout Grid
+             ==================================================================== -->
+        <div class="invitations-layout-grid">
+
+          <!-- ------------------------------------------------------------------
+               Left Column: Toolbar & Cards List
+               ------------------------------------------------------------------ -->
+          <div class="invitations-list-col">
+
+            <!-- Toolbar (Tabs + Sort + Search) -->
+            <div class="invitations-toolbar">
+              <div class="invitations-tabs" role="tablist">
+                <button class="inv-tab-btn active" data-filter="pending" role="tab">Pending (2)</button>
+                <button class="inv-tab-btn" data-filter="accepted" role="tab">Accepted (3)</button>
+                <button class="inv-tab-btn" data-filter="declined" role="tab">Declined (1)</button>
+                <button class="inv-tab-btn" data-filter="expired" role="tab">Expired (0)</button>
+                <button class="inv-tab-btn" data-filter="all" role="tab">All (6)</button>
+              </div>
+
+              <div class="invitations-controls-right">
+                <select class="inv-sort-select" id="invSortSelect" aria-label="Sort invitations">
+                  <option value="newest">Sort by: Newest</option>
+                  <option value="oldest">Sort by: Oldest</option>
+                  <option value="expiring">Sort by: Expiring Soon</option>
+                </select>
+
+                <div class="inv-search-input-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  </svg>
+                  <input type="text" id="invSearchInput" placeholder="Search invitations..." aria-label="Filter invitations">
+                </div>
+              </div>
+            </div>
+
+            <!-- Invitations List Stack (Dynamically populated) -->
+            <div class="invitation-cards-stack" id="invitationsStack">
+              <!-- Rendered by invitations.js -->
+            </div>
+
+          </div>
+
+          <!-- ------------------------------------------------------------------
+               Center Column: Inspection Details Panel
+               ------------------------------------------------------------------ -->
+          <div class="invitation-details-panel" id="invitationDetailsPanel">
+            <div class="panel-header-row">
+              <div class="panel-title-group">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                </svg>
+                <span>Invitation Details</span>
+              </div>
+              <span class="status-badge pending" id="panelStatusBadge">Pending</span>
+            </div>
+
+            <h2 class="panel-vault-heading" id="panelVaultTitle">Family Vault</h2>
+
+            <!-- Inviter Profile Chip -->
+            <div class="panel-inviter-chip">
+              <div class="panel-inviter-avatar" id="panelInviterInitials">PS</div>
+              <div class="panel-inviter-info">
+                <span class="panel-inviter-name" id="panelInviterName">Invited by Priya Shah (Owner)</span>
+                <span class="panel-inviter-email" id="panelInviterEmail">priya.shah@example.com</span>
+              </div>
+            </div>
+
+            <!-- Details List -->
+            <div class="panel-details-list">
+              <div class="panel-detail-row">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span>Invited On: <strong id="panelInvitedOn">12 Sep 2025, 10:24 AM</strong></span>
+              </div>
+
+              <div class="panel-detail-row">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span>Expires In: <strong id="panelExpiresIn">13 days (25 Sep 2025)</strong></span>
+              </div>
+
+              <div class="panel-detail-row">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span>Relationship: <strong id="panelRelationship">Family</strong></span>
+              </div>
+            </div>
+
+            <!-- Message from Owner -->
+            <div class="panel-message-box">
+              <span class="panel-message-label">Message from Owner</span>
+              <p class="panel-message-content" id="panelOwnerMessage">&ldquo;I'm inviting you as a trustee to help protect my digital legacy. Your support means a lot.&rdquo;</p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="panel-actions-group">
+              <button class="btn-panel-accept" id="panelBtnAccept">Accept Invitation</button>
+              <button class="btn-panel-decline" id="panelBtnDecline">Decline Invitation</button>
+              <a class="panel-full-details-link" id="panelLinkDetails">View Full Details &rarr;</a>
+            </div>
+          </div>
+
+          <!-- ------------------------------------------------------------------
+               Right Column: Status & Guidance Cards
+               ------------------------------------------------------------------ -->
+          <div class="invitations-sidebar-col">
+
+            <!-- Card 1: Your Trustee Status -->
+            <div class="trustee-card status-card">
+              <div class="status-card-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                <span>Your Trustee Status</span>
+              </div>
+
+              <div class="status-steps-list">
+                <div class="status-step-item">
+                  <div class="status-step-left">
+                    <span class="step-icon-bullet green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                    <span>Account Created</span>
+                  </div>
+                </div>
+
+                <div class="status-step-item">
+                  <div class="status-step-left">
+                    <span class="step-icon-bullet green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                    <span>Email Verified</span>
+                  </div>
+                </div>
+
+                <div class="status-step-item">
+                  <div class="status-step-left">
+                    <span class="step-icon-bullet amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+                    <span>Identity Verification</span>
+                  </div>
+                  <span class="status-badge pending" style="font-size: 0.7rem; padding: 0.15rem 0.45rem;">Pending</span>
+                </div>
+
+                <div class="status-step-item">
+                  <div class="status-step-left">
+                    <span class="step-icon-bullet muted"></span>
+                    <span>Ready for Assignments</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: What Happens Next? -->
+            <div class="trustee-card guidance-card">
+              <div class="guidance-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                <span>What Happens Next?</span>
+              </div>
+
+              <div class="numbered-steps-list">
+                <div class="numbered-step-item">
+                  <span class="step-number-circle">1</span>
+                  <span>Review the invitation details and personal message.</span>
+                </div>
+                <div class="numbered-step-item">
+                  <span class="step-number-circle">2</span>
+                  <span>Accept or decline the invitation at your discretion.</span>
+                </div>
+                <div class="numbered-step-item">
+                  <span class="step-number-circle">3</span>
+                  <span>If accepted, it will appear in your <strong>Assigned Vaults</strong>.</span>
+                </div>
+                <div class="numbered-step-item">
+                  <span class="step-number-circle">4</span>
+                  <span>Complete any required verification and key share steps.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 3: You're in control -->
+            <div class="control-callout-card">
+              <svg class="control-callout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+              </svg>
+              <div class="control-callout-text">
+                <span class="control-callout-title">You're in control.</span>
+                <span class="control-callout-desc">Only accept invitations from people you know and trust. You can withdraw anytime before key release.</span>
+              </div>
+            </div>
+
+            <!-- Card 4: Scenic Card -->
+            <div class="invitation-scenic-card">
+              <p class="invitation-scenic-text">A stronger tomorrow<br>is a shared responsibility.</p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </main>
+
+      <!-- Global Footer -->
+      <footer class="trustee-footer">
+        <div class="footer-brand">
+          <div class="brand-shield-icon">
+            <svg viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 2L3 8V20C3 31.2 10.3 41.5 20 44C29.7 41.5 37 31.2 37 20V8L20 2Z" stroke="#F97316" stroke-width="2.5" fill="rgba(249, 115, 22, 0.08)"/>
+              <path d="M20 8L8 13V21C8 28.5 13.1 35.5 20 37.5C26.9 35.5 32 28.5 32 21V13L20 8Z" fill="#F97316"/>
+            </svg>
+          </div>
+          <span class="brand-title">Aegis<span class="vault-accent">Vault</span></span>
+        </div>
+
+        <div class="footer-center-motto">
+          &ldquo;Because what matters today, should matter tomorrow too.&rdquo;
+        </div>
+
+        <div class="footer-links">
+          <a href="javascript:void(0)" onclick="showToast('Privacy Policy (mock).')">Privacy</a>
+          <a href="javascript:void(0)" onclick="showToast('Terms of Service (mock).')">Terms</a>
+          <a href="../help-support/help-support.html">Help</a>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       Full Details Modal
+       ==================================================================== -->
+  <div class="trustee-modal-backdrop" id="fullDetailsModal">
+    <div class="trustee-modal" style="max-width: 580px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalFullTitle">Vault Invitation Details</h3>
+        <button class="modal-close-btn" data-modal-close aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: 1rem;">
+          <p style="margin-bottom: 0.35rem;"><strong>Vault Owner:</strong> <span id="modalFullOwner">Priya Shah</span></p>
+          <p style="margin-bottom: 0.35rem;"><strong>Relationship:</strong> <span id="modalFullRelation">Family</span></p>
+          <p style="margin-bottom: 0.35rem;"><strong>Invitation Date:</strong> <span id="modalFullInvited">12 Sep 2025</span></p>
+        </div>
+
+        <div style="background-color: var(--bg-surface); padding: 0.85rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); margin-bottom: 1.25rem;">
+          <span style="font-size: 0.76rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Personal Note from Owner:</span>
+          <p style="font-style: italic; color: var(--text-primary); margin-top: 0.25rem;" id="modalFullMessage">Personal note</p>
+        </div>
+
+        <div style="background-color: var(--bg-surface-elevated); padding: 0.85rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); font-size: 0.82rem; color: var(--text-secondary); line-height: 1.45;">
+          <strong style="color: var(--text-primary); display: block; margin-bottom: 0.25rem;">Trustee Commitment & Safeguards</strong>
+          Accepting this invitation authorizes the vault owner to assign an encrypted key share to your custody. You will never have direct access to view vault assets until verified release criteria are met.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-close-btn" data-modal-close style="padding: 0.55rem 1.15rem; width: auto; font-size: 0.86rem;">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shared & Page JavaScript -->
+  <script src="../common/common.js"></script>
+  <script src="./invitations.js"></script>
+</body>
+</html>
+
+

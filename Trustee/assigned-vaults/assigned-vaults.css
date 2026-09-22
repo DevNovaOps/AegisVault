@@ -1,0 +1,794 @@
+/* ==========================================================================
+   AegisVault Trustee Panel - Assigned Vaults Module Styles
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Hero Panoramic Banner
+   -------------------------------------------------------------------------- */
+.vaults-hero {
+  position: relative;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  background-image: var(--hero-bg-image);
+  background-size: cover;
+  background-position: center right;
+  height: 230px;
+  min-height: 230px;
+  max-height: 230px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 2rem;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-md);
+}
+
+[data-theme="light"] .vaults-hero {
+  background-image: var(--hero-bg-image);
+}
+
+.vaults-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(6, 11, 17, 0.94) 0%,
+    rgba(6, 11, 17, 0.82) 36%,
+    rgba(6, 11, 17, 0.35) 68%,
+    rgba(6, 11, 17, 0.15) 100%
+  );
+  pointer-events: none;
+}
+
+[data-theme="light"] .vaults-hero::before {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.96) 0%,
+    rgba(255, 255, 255, 0.86) 38%,
+    rgba(255, 255, 255, 0.3) 72%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+}
+
+.vaults-hero-left {
+  position: relative;
+  z-index: 2;
+  max-width: 620px;
+}
+
+.vaults-hero-eyebrow {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brand-orange);
+  margin-bottom: 0.4rem;
+}
+
+.vaults-hero-heading {
+  font-family: var(--font-serif);
+  font-size: 2.35rem;
+  line-height: 1.12;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.vaults-hero-heading .choice-accent {
+  color: var(--brand-orange);
+  display: block;
+}
+
+.vaults-hero-subtext {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.35rem;
+  line-height: 1.45;
+}
+
+/* Feature Badges */
+.vaults-features-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.vaults-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.feature-icon-bubble {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background-color: var(--brand-orange-tint);
+  color: var(--brand-orange);
+  border: 1px solid var(--brand-orange-border);
+}
+
+.feature-icon-bubble svg {
+  width: 17px;
+  height: 17px;
+}
+
+.feature-text-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.feature-line-primary {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.feature-line-secondary {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.2;
+}
+
+/* Hero Right Quote Card */
+.vaults-hero-quote-card {
+  position: relative;
+  z-index: 2;
+  max-width: 250px;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.vaults-hero-quote-text {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-style: italic;
+  line-height: 1.4;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="light"] .vaults-hero-quote-text {
+  text-shadow: none;
+}
+
+.vaults-hero-quote-dash {
+  width: 32px;
+  height: 2.5px;
+  background-color: var(--brand-orange);
+  border-radius: var(--radius-full);
+}
+
+/* --------------------------------------------------------------------------
+   Two-Column Layout Grid
+   -------------------------------------------------------------------------- */
+.vaults-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* --------------------------------------------------------------------------
+   Left Column: Tabs & Vault Cards
+   -------------------------------------------------------------------------- */
+.vaults-main-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+/* Tabs & Search Row */
+.vaults-toolbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 0.5rem;
+}
+
+.vaults-tabs-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.vault-tab-btn {
+  background: none;
+  border: none;
+  padding: 0.55rem 0.95rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  cursor: pointer;
+  position: relative;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.vault-tab-btn:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-surface-hover);
+}
+
+.vault-tab-btn.active {
+  color: var(--brand-orange);
+  font-weight: 700;
+}
+
+.vault-tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  right: 0;
+  height: 2.5px;
+  background-color: var(--brand-orange);
+  border-radius: var(--radius-full);
+}
+
+/* Search Box in Toolbar */
+.vaults-search-box {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background-color: var(--search-bg);
+  border: 1px solid var(--search-border);
+  border-radius: var(--radius-md);
+  padding: 0.45rem 0.85rem;
+  min-width: 250px;
+  transition: all var(--transition-fast);
+}
+
+.vaults-search-box:focus-within {
+  border-color: var(--brand-orange);
+  box-shadow: 0 0 0 3px var(--brand-orange-glow);
+}
+
+.vaults-search-box svg {
+  width: 15px;
+  height: 15px;
+  color: var(--text-muted);
+}
+
+.vaults-search-box input {
+  border: none;
+  background: none;
+  outline: none;
+  font-size: 0.84rem;
+  color: var(--text-primary);
+  width: 100%;
+}
+
+.vaults-search-box input::placeholder {
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Assigned Vault Card Design
+   -------------------------------------------------------------------------- */
+.assigned-vault-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.35rem 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+}
+
+.assigned-vault-card:hover {
+  border-color: var(--border-medium);
+  background-color: var(--bg-surface-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.assigned-vault-card.highlight-pulse {
+  animation: cardPulse 1.2s ease infinite alternate;
+}
+
+@keyframes cardPulse {
+  from { border-color: var(--border-subtle); }
+  to { border-color: var(--brand-orange); box-shadow: 0 0 16px var(--brand-orange-glow); }
+}
+
+.vault-col-primary {
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+  min-width: 230px;
+}
+
+.vault-big-lock {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.vault-big-lock.blue {
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.2), rgba(37, 99, 235, 0.3));
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.vault-big-lock.amber {
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.2), rgba(245, 158, 11, 0.3));
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.vault-big-lock svg {
+  width: 24px;
+  height: 24px;
+}
+
+.vault-meta-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.vault-card-title {
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.15rem;
+}
+
+.vault-card-owner {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.vault-card-email {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+
+.vault-card-tags {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.tag-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+}
+
+.tag-badge.family {
+  background-color: var(--accent-blue-tint);
+  color: var(--accent-blue);
+  border: 1px solid var(--accent-blue-border);
+}
+
+.tag-badge.primary {
+  background-color: var(--brand-orange-tint);
+  color: var(--brand-orange);
+  border: 1px solid var(--brand-orange-border);
+}
+
+.tag-badge.secondary {
+  background-color: var(--accent-purple-tint);
+  color: var(--accent-purple);
+  border: 1px solid var(--accent-purple-border);
+}
+
+/* Middle Status Columns */
+.vault-col-data {
+  display: flex;
+  flex-direction: column;
+  min-width: 110px;
+}
+
+.vault-data-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-bottom: 0.35rem;
+  font-weight: 500;
+}
+
+.vault-date-value {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.vault-date-value svg {
+  width: 14px;
+  height: 14px;
+  color: var(--text-muted);
+}
+
+.vault-status-subtext {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.vault-status-subtext.clickable {
+  color: var(--brand-orange);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.vault-chevron-btn {
+  color: var(--text-muted);
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  transition: transform var(--transition-fast), color var(--transition-fast);
+}
+
+.assigned-vault-card:hover .vault-chevron-btn {
+  color: var(--brand-orange);
+  transform: translateX(3px);
+}
+
+/* Empty State / More Vaults Box */
+.vaults-empty-box {
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-xl);
+  padding: 3rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: var(--bg-surface);
+  margin-top: 0.5rem;
+}
+
+.empty-box-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-full);
+  background-color: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.empty-box-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.empty-box-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.35rem;
+}
+
+.empty-box-subtext {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  max-width: 420px;
+  line-height: 1.45;
+}
+
+.empty-box-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--brand-orange);
+  border: 1px solid var(--brand-orange-border);
+  padding: 0.55rem 1.35rem;
+  border-radius: var(--radius-md);
+  background-color: var(--brand-orange-tint);
+  transition: all var(--transition-fast);
+}
+
+.empty-box-btn:hover {
+  background-color: var(--brand-orange);
+  color: #ffffff;
+  border-color: var(--brand-orange);
+  transform: translateY(-2px);
+}
+
+/* --------------------------------------------------------------------------
+   Right Column: Summary & Responsibility Cards
+   -------------------------------------------------------------------------- */
+.vaults-side-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Card 1: Trustee Summary */
+.summary-card {
+  padding: 1.35rem;
+}
+
+.summary-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1.15rem;
+}
+
+.summary-card-header svg {
+  width: 18px;
+  height: 18px;
+  color: var(--brand-orange);
+}
+
+.summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.summary-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.86rem;
+}
+
+.summary-item-left {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--text-secondary);
+}
+
+.summary-icon-bullet {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.summary-icon-bullet svg {
+  width: 16px;
+  height: 16px;
+}
+
+.summary-icon-bullet.green { color: var(--accent-emerald); }
+.summary-icon-bullet.amber { color: var(--accent-amber); }
+.summary-icon-bullet.blue { color: var(--accent-cyan); }
+.summary-icon-bullet.purple { color: var(--accent-purple); }
+.summary-icon-bullet.muted { color: var(--text-muted); }
+
+.summary-item-count {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Card 2: Need to Take Action? */
+.action-alert-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.action-alert-header {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.action-alert-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--brand-orange);
+  flex-shrink: 0;
+}
+
+.action-alert-title {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.action-alert-desc {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+}
+
+.btn-action-primary {
+  background: linear-gradient(135deg, var(--brand-orange), var(--brand-orange-hover));
+  color: #ffffff;
+  font-size: 0.86rem;
+  font-weight: 700;
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  box-shadow: 0 2px 8px var(--brand-orange-glow);
+  transition: all var(--transition-fast);
+  margin-top: 0.35rem;
+}
+
+.btn-action-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px var(--brand-orange-glow);
+}
+
+/* Card 3: Your Responsibilities */
+.responsibilities-card {
+  padding: 1.35rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.responsibilities-header {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1.15rem;
+}
+
+.responsibilities-header svg {
+  width: 18px;
+  height: 18px;
+  color: var(--accent-blue);
+}
+
+.responsibilities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.responsibility-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
+.resp-check-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-full);
+  background-color: var(--accent-emerald-tint);
+  color: var(--accent-emerald);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.resp-check-icon svg {
+  width: 11px;
+  height: 11px;
+}
+
+/* Responsibility bottom quote */
+.responsibility-quote-box {
+  background-color: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 0.95rem 1rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.resp-quote-text {
+  font-style: italic;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-bottom: 0.45rem;
+}
+
+.resp-quote-dash {
+  width: 26px;
+  height: 2px;
+  background-color: var(--brand-orange);
+  border-radius: var(--radius-full);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Layout
+   -------------------------------------------------------------------------- */
+@media (max-width: 1180px) {
+  .vaults-content-grid {
+    grid-template-columns: 1fr;
+  }
+  .assigned-vault-card {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 860px) {
+  .vaults-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  .vaults-hero-quote-card {
+    align-items: flex-start;
+    text-align: left;
+  }
+  .vault-col-primary {
+    width: 100%;
+  }
+  .assigned-vault-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .vault-chevron-btn {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .assigned-vault-card {
+    grid-template-columns: 1fr;
+  }
+  .vaults-toolbar-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .vaults-search-box {
+    width: 100%;
+  }
+}
+

@@ -1,0 +1,601 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AegisVault &mdash; Profile & Security</title>
+  <script src="../common/theme.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../common/themes.css?v=4.0">
+  <link rel="stylesheet" href="../common/common.css?v=4.0">
+  <link rel="stylesheet" href="./profile-security.css?v=4.0">
+</head>
+<body>
+  <div class="trustee-app">
+    <!-- Sidebar Navigation -->
+    <aside class="trustee-sidebar" aria-label="Trustee Navigation">
+
+        <!-- Brand Logo Header -->
+      <div class="sidebar-brand">
+        <div class="brand-shield-icon">
+          <svg viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 2L3 8V20C3 31.2 10.3 41.5 20 44C29.7 41.5 37 31.2 37 20V8L20 2Z" stroke="#F97316" stroke-width="2.5" stroke-linejoin="round" fill="rgba(249, 115, 22, 0.08)"/>
+            <path d="M20 8L8 13V21C8 28.5 13.1 35.5 20 37.5C26.9 35.5 32 28.5 32 21V13L20 8Z" fill="#F97316"/>
+            <path d="M20 13L13 16.5V22C13 26.5 16 30.5 20 32C24 30.5 27 26.5 27 22V16.5L20 13Z" fill="#FFA24C"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Aegis<span class="vault-accent">Vault</span></span>
+          <span class="brand-tagline">What matters, lives on.</span>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="../dashboard/dashboard.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1V9.5z"/></svg></span>
+          <span class="nav-label">My Dashboard</span>
+        </a>
+        <a href="../assigned-vaults/assigned-vaults.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></span>
+          <span class="nav-label">Assigned Vaults</span>
+        </a>
+        <a href="../invitations/invitations.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></svg></span>
+          <span class="nav-label">Invitations</span>
+          <span class="nav-badge">2</span>
+        </a>
+        <a href="../trustee-verification/trustee-verification.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <span class="nav-label">Trustee Verification</span>
+        </a>
+        <a href="../share-submission/share-submission.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m21 3-9.5 9.5M15.5 8.5l3 3M18 6l2 2"/></svg></span>
+          <span class="nav-label">Share Submission</span>
+        </a>
+        <a href="../release-status/release-status.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/><path d="M4 12a8 8 0 0 1 1.5-4.5"/></svg></span>
+          <span class="nav-label">Release Status</span>
+        </a>
+        <a href="../notifications/notifications.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+          <span class="nav-label">Notifications</span>
+          <span class="nav-badge">3</span>
+        </a>
+        <a href="../activity-history/activity-history.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
+          <span class="nav-label">Activity & History</span>
+        </a>
+        <a href="../profile-security/profile-security.html" class="nav-item active">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+          <span class="nav-label">Profile & Security</span>
+        </a>
+        <a href="../help-support/help-support.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+          <span class="nav-label">Help & Support</span>
+        </a>
+      </nav>
+      <!-- Sidebar Scenic Quote (Natural footer on full scenic background) -->
+      <div class="sidebar-quote-block">
+        <p class="sidebar-scenic-quote">Stronger<br>Security.<br>Brighter<br>Tomorrows.</p>
+        <div class="sidebar-scenic-dash"></div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="trustee-main">
+      <!-- Top Bar -->
+      <header class="trustee-topbar">
+        <div class="topbar-left">
+          <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="topbar-search">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="globalSearchInput" placeholder="Search vaults, trustees, submissions, or settings...">
+          </div>
+        </div>
+        <div class="topbar-right">
+                    <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Dark / Light Theme" title="Toggle Theme" role="switch">
+            <span class="theme-switch-track">
+              <span class="switch-icon switch-icon-sun" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="4"/>
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                </svg>
+              </span>
+              <span class="switch-icon switch-icon-moon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+              </span>
+              <span class="theme-switch-thumb">
+                <span class="thumb-icon thumb-sun">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                  </svg>
+                </span>
+                <span class="thumb-icon thumb-moon">
+                  <svg viewBox="0 0 24 24" fill="#ffffff" stroke="none">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                  </svg>
+                </span>
+              </span>
+            </span>
+          </button>
+          <div class="notification-btn-wrapper">
+            <button class="notification-btn" id="notificationBtn" aria-label="Notifications">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span class="notification-badge-dot"></span>
+            </button>
+            <div class="dropdown-panel" id="notificationDropdown">
+              <div class="dropdown-header">Recent Alerts</div>
+              <a href="../share-submission/share-submission.html" class="dropdown-item">Action required for Family Vault</a>
+              <a href="../invitations/invitations.html" class="dropdown-item">New vault invitation from Priya Shah</a>
+            </div>
+          </div>
+          <div class="profile-menu-wrapper">
+            <button class="profile-chip" id="profileBtn">
+              <div class="profile-avatar-circle">RP</div>
+              <span class="profile-name">Rakesh Patel</span>
+              <svg class="profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="dropdown-panel" id="profileDropdown">
+              <div class="dropdown-header">Trustee Account</div>
+              <a href="../profile-security/profile-security.html" class="dropdown-item">Profile & Security</a>
+              <a href="../dashboard/dashboard.html" class="dropdown-item">Dashboard</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content Area -->
+      <main class="trustee-content">
+        <!-- Hero Panoramic Banner -->
+        <section class="profile-hero hero-card" aria-label="Profile and Security Banner">
+          <div class="profile-hero-content hero-left">
+            <div class="profile-hero-eyebrow hero-eyebrow">09. PROFILE & SECURITY</div>
+            <h1 class="profile-hero-heading hero-heading">
+              Your Identity.
+              <span class="hero-accent shield-accent">Guaranteed Protection.</span>
+            </h1>
+            <p class="profile-hero-subtext hero-subtext">Manage your personal trustee profile, cryptographic keys, and security settings.</p>
+
+            <!-- 4 Feature Badges -->
+            <div class="profile-features-row hero-features-row">
+              <div class="profile-feature-item hero-feature-item">
+                <div class="feature-icon-bubble hero-feature-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div class="feature-text-group hero-feature-text">
+                  <span class="feature-line-primary hero-feature-primary">ID Verified</span>
+                  <span class="feature-line-secondary hero-feature-secondary">High Trust</span>
+                </div>
+              </div>
+
+              <div class="profile-feature-item hero-feature-item">
+                <div class="feature-icon-bubble hero-feature-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+                <div class="feature-text-group hero-feature-text">
+                  <span class="feature-line-primary hero-feature-primary">Hardware FIDO2</span>
+                  <span class="feature-line-secondary hero-feature-secondary">Active</span>
+                </div>
+              </div>
+
+              <div class="profile-feature-item hero-feature-item">
+                <div class="feature-icon-bubble hero-feature-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <div class="feature-text-group hero-feature-text">
+                  <span class="feature-line-primary hero-feature-primary">Security Score</span>
+                  <span class="feature-line-secondary hero-feature-secondary">98% Rating</span>
+                </div>
+              </div>
+
+              <div class="profile-feature-item hero-feature-item">
+                <div class="feature-icon-bubble hero-feature-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.178 8c5.096 0 5.096 8 0 8-2.605 0-4.492-2.14-6.178-4-1.686-1.86-3.573-4-6.178-4-5.096 0-5.096 8 0 8 2.605 0 4.492-2.14 6.178-4 1.686-1.86 3.573-4 6.178-4z"/></svg>
+                </div>
+                <div class="feature-text-group hero-feature-text">
+                  <span class="feature-line-primary hero-feature-primary">A Safer</span>
+                  <span class="feature-line-secondary hero-feature-secondary">Tomorrow</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero Quote Callout -->
+          <div class="profile-hero-quote-card hero-quote-card">
+            <p class="profile-hero-quote-text hero-quote-text">&ldquo;A secure trustee ensures a protected legacy.&rdquo;</p>
+            <div class="profile-hero-quote-dash hero-quote-dash"></div>
+          </div>
+        </section>
+
+        <!-- Two-Column Layout Grid -->
+        <div class="profile-layout-grid">
+          <!-- Left Column: Profile Info, Keys & Sessions -->
+          <div class="profile-main-col">
+            <!-- Card 1: Personal Profile Information -->
+            <section class="profile-card" aria-labelledby="profileInfoHeading">
+              <div class="profile-card-header">
+                <div class="profile-card-title-group">
+                  <svg class="profile-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  <h2 class="profile-card-title" id="profileInfoHeading">Trustee Profile Information</h2>
+                </div>
+              </div>
+
+              <!-- Avatar Header Row -->
+              <div class="profile-avatar-row">
+                <div class="profile-avatar-large">RP</div>
+                <div class="profile-avatar-info">
+                  <span class="profile-user-fullname">Rakesh Patel</span>
+                  <div class="profile-badges-wrap">
+                    <span class="trustee-role-badge">Primary Custodian</span>
+                    <span class="verified-trustee-badge">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                      Verified Institutional Trustee
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Profile Form Grid -->
+              <form id="profileForm" onsubmit="return false;">
+                <div class="profile-form-grid">
+                  <div class="profile-input-group">
+                    <label class="profile-label" for="profLegalName">Legal Full Name</label>
+                    <input type="text" class="profile-input" id="profLegalName" value="Rakesh Patel" required>
+                  </div>
+
+                  <div class="profile-input-group">
+                    <label class="profile-label" for="profEmail">Trustee Email Address</label>
+                    <input type="email" class="profile-input" id="profEmail" value="rakesh.patel@example.com" required>
+                  </div>
+
+                  <div class="profile-input-group">
+                    <label class="profile-label" for="profPhone">Registered Phone Number</label>
+                    <input type="tel" class="profile-input" id="profPhone" value="+91 98765 43210" required>
+                  </div>
+
+                  <div class="profile-input-group">
+                    <label class="profile-label" for="profJurisdiction">Legal Jurisdiction</label>
+                    <input type="text" class="profile-input" id="profJurisdiction" value="India (Maharashtra)" required>
+                  </div>
+
+                  <div class="profile-input-group">
+                    <label class="profile-label" for="profTrusteeId">Cryptographic Trustee ID</label>
+                    <div class="profile-copy-wrap">
+                      <input type="text" class="profile-input" id="profTrusteeId" value="TR-92841-IND" readonly>
+                      <button type="button" class="profile-copy-btn" onclick="copyTrusteeId()">Copy ID</button>
+                    </div>
+                  </div>
+
+                  <div class="profile-input-group">
+                    <label class="profile-label" for="profMemberSince">Member Since</label>
+                    <input type="text" class="profile-input" id="profMemberSince" value="10 Aug 2025" readonly>
+                  </div>
+                </div>
+
+                <div class="profile-actions-bar">
+                  <button type="submit" class="btn-primary-save" id="btnSaveProfile">
+                    <span>Save Profile Changes</span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                </div>
+              </form>
+            </section>
+
+            <!-- Card 2: Cryptographic Credentials & FIDO2 Security Keys -->
+            <section class="profile-card" aria-labelledby="keysHeading">
+              <div class="profile-card-header">
+                <div class="profile-card-title-group">
+                  <svg class="profile-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="7.5" cy="15.5" r="4.5"/>
+                    <path d="m21 3-9.5 9.5M15.5 8.5l3 3M18 6l2 2"/>
+                  </svg>
+                  <h2 class="profile-card-title" id="keysHeading">Hardware Security Keys & 2FA</h2>
+                </div>
+                <button type="button" class="profile-copy-btn" onclick="window.openModal('registerKeyModal')">+ Register New Key</button>
+              </div>
+
+              <div class="keys-list">
+                <!-- Key 1 -->
+                <div class="key-item">
+                  <div class="key-item-left">
+                    <div class="key-icon-bubble">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                    </div>
+                    <div class="key-details">
+                      <span class="key-name">YubiKey 5C NFC (Primary Hardware Key)</span>
+                      <span class="key-meta">FIDO2 / WebAuthn &bull; Registered 10 Aug 2025</span>
+                    </div>
+                  </div>
+                  <div class="key-badges">
+                    <span class="verified-trustee-badge">Active</span>
+                  </div>
+                </div>
+
+                <!-- Key 2 -->
+                <div class="key-item">
+                  <div class="key-item-left">
+                    <div class="key-icon-bubble blue">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <div class="key-details">
+                      <span class="key-name">Windows Hello / Biometric Enclave</span>
+                      <span class="key-meta">Platform Authenticator &bull; Registered 12 Aug 2025</span>
+                    </div>
+                  </div>
+                  <div class="key-badges">
+                    <span class="verified-trustee-badge">Active</span>
+                  </div>
+                </div>
+
+                <!-- Key 3 -->
+                <div class="key-item">
+                  <div class="key-item-left">
+                    <div class="key-icon-bubble">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+                    </div>
+                    <div class="key-details">
+                      <span class="key-name">Authenticator App (TOTP Backup)</span>
+                      <span class="key-meta">RFC 6238 Time-based 6-digit passcode</span>
+                    </div>
+                  </div>
+                  <div class="key-badges">
+                    <span class="trustee-role-badge">Backup</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display: flex; justify-content: flex-end; margin-top: 0.5rem;">
+                <button type="button" class="btn-save-channels" style="font-size: 0.82rem; padding: 0.5rem 1rem;" onclick="window.openModal('recoveryCodesModal')">
+                  Download Emergency Recovery Codes
+                </button>
+              </div>
+            </section>
+
+            <!-- Card 3: Active Sessions & Devices -->
+            <section class="profile-card" aria-labelledby="sessionsHeading">
+              <div class="profile-card-header">
+                <div class="profile-card-title-group">
+                  <svg class="profile-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="3" width="20" height="14" rx="2"/>
+                    <line x1="8" y1="21" x2="16" y2="21"/>
+                    <line x1="12" y1="17" x2="12" y2="21"/>
+                  </svg>
+                  <h2 class="profile-card-title" id="sessionsHeading">Authorized Devices & Sessions</h2>
+                </div>
+                <button type="button" class="profile-copy-btn" onclick="revokeOtherSessions()">Revoke Others</button>
+              </div>
+
+              <div class="sessions-list">
+                <!-- Session 1 -->
+                <div class="session-item current">
+                  <div class="session-left">
+                    <div class="session-icon-box">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    </div>
+                    <div class="session-info">
+                      <span class="session-title">Windows 11 PC &mdash; Chrome 128 (Current Session)</span>
+                      <span class="session-sub">IP: 203.0.113.24 &bull; Mumbai, India</span>
+                    </div>
+                  </div>
+                  <span class="verified-trustee-badge">&bull; Online Now</span>
+                </div>
+
+                <!-- Session 2 -->
+                <div class="session-item">
+                  <div class="session-left">
+                    <div class="session-icon-box">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                    </div>
+                    <div class="session-info">
+                      <span class="session-title">iPhone 15 Pro &mdash; Mobile Safari</span>
+                      <span class="session-sub">IP: 198.51.100.7 &bull; Pune, India &bull; Last active 2 hours ago</span>
+                    </div>
+                  </div>
+                  <span class="trustee-role-badge">Authorized</span>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- Right Column: Security Health & Danger Zone -->
+          <div class="profile-side-col">
+            <!-- Security Health Score Card -->
+            <section class="health-score-card" aria-labelledby="healthHeading">
+              <h2 id="healthHeading" style="font-size: 1.05rem; font-weight: 700; margin: 0; color: var(--text-primary);">
+                Security Health
+              </h2>
+              <div class="health-gauge-row">
+                <div class="health-gauge-circle">98%</div>
+                <div class="health-gauge-text">
+                  <span class="health-gauge-label">Excellent Level</span>
+                  <span class="health-gauge-sub">Top-tier cryptographic protection</span>
+                </div>
+              </div>
+              <div class="health-checklist">
+                <div class="health-check-item done">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Hardware FIDO2 Security Active</span>
+                </div>
+                <div class="health-check-item done">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Trustee Identity Verified</span>
+                </div>
+                <div class="health-check-item done">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Client AES-256 Key Pair Generated</span>
+                </div>
+                <div class="health-check-item">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>
+                  <span>Recovery phrase backup verified (30 days)</span>
+                </div>
+              </div>
+            </section>
+
+            <!-- Change Master Password Card -->
+            <section class="password-card" aria-labelledby="pwHeading">
+              <h2 id="pwHeading" style="font-size: 1.05rem; font-weight: 700; margin: 0; color: var(--text-primary);">
+                Update Master Password
+              </h2>
+              <form id="passwordForm" onsubmit="return false;" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div class="profile-input-group">
+                  <label class="profile-label" for="currPw">Current Password</label>
+                  <input type="password" class="profile-input" id="currPw" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required>
+                </div>
+                <div class="profile-input-group">
+                  <label class="profile-label" for="newPw">New Secure Password</label>
+                  <input type="password" class="profile-input" id="newPw" placeholder="Min. 12 characters" required>
+                </div>
+                <div class="profile-input-group">
+                  <label class="profile-label" for="confirmPw">Confirm New Password</label>
+                  <input type="password" class="profile-input" id="confirmPw" placeholder="Re-enter password" required>
+                </div>
+                <button type="submit" class="btn-save-channels" id="btnUpdatePassword" style="margin-top: 0.35rem;">
+                  Update Master Password
+                </button>
+              </form>
+            </section>
+
+            <!-- Danger Zone: Emergency Account Freeze -->
+            <section class="danger-card" aria-labelledby="dangerHeading">
+              <div class="danger-header">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                  <line x1="12" y1="9" x2="12" y2="13"/>
+                  <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                <h2 id="dangerHeading" style="font-size: 0.98rem; font-weight: 700; margin: 0;">Danger Zone</h2>
+              </div>
+              <p class="danger-desc">
+                In case of physical duress, stolen hardware keys, or suspected credential compromise, immediately suspend all trustee signing capabilities.
+              </p>
+              <button type="button" class="btn-danger-freeze" onclick="window.openModal('freezeAccountModal')">
+                Emergency Account Freeze
+              </button>
+            </section>
+          </div>
+        </div>
+      </main>
+
+      <!-- Global Footer -->
+      <footer class="trustee-footer">
+        <div class="footer-brand">
+          <div class="brand-shield-icon">
+            <svg viewBox="0 0 40 46" fill="none"><path d="M20 2L3 8V20C3 31.2 10.3 41.5 20 44C29.7 41.5 37 31.2 37 20V8L20 2Z" fill="#F97316"/></svg>
+          </div>
+          <span class="brand-title">Aegis<span class="vault-accent">Vault</span></span>
+        </div>
+        <div class="footer-center-motto">&ldquo;Because what matters today, should matter tomorrow too.&rdquo;</div>
+        <div class="footer-links">
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="../help-support/help-support.html">Help</a>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Modal: Register Security Key -->
+  <div class="trustee-modal-backdrop" id="registerKeyModal" role="dialog" aria-modal="true" aria-labelledby="regKeyTitle">
+    <div class="trustee-modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="regKeyTitle">Register Security Key (FIDO2)</h3>
+        <button class="modal-close-btn" data-modal-close aria-label="Close modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body" style="text-align: center; padding: 2rem 1.5rem;">
+        <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--brand-orange-tint); border: 1px solid var(--brand-orange-border); color: var(--brand-orange); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        </div>
+        <h4 style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem;">Insert Your Security Key</h4>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.5rem;">
+          Insert your YubiKey or security key into your USB port, or bring your NFC card close to your device reader.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 0.75rem;">
+          <button type="button" class="btn-primary-save" onclick="simulateKeyRegistration()">
+            Simulate Touch Registration
+          </button>
+          <button type="button" class="btn-save-channels" data-modal-close>
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Emergency Recovery Codes -->
+  <div class="trustee-modal-backdrop" id="recoveryCodesModal" role="dialog" aria-modal="true" aria-labelledby="codesModalTitle">
+    <div class="trustee-modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="codesModalTitle">One-Time Recovery Codes</h3>
+        <button class="modal-close-btn" data-modal-close aria-label="Close modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.84rem; color: var(--text-secondary); margin-bottom: 1rem;">
+          Keep these emergency recovery codes in a safe place. Each code can be used once to authenticate if your hardware security key is lost or damaged.
+        </p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; background: var(--bg-surface); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); font-family: monospace; font-size: 0.88rem; color: var(--accent-cyan); text-align: center; margin-bottom: 1.25rem;">
+          <div>9A4F-28B1</div>
+          <div>C871-92D4</div>
+          <div>10F5-82E7</div>
+          <div>44BC-71A3</div>
+          <div>55E9-012F</div>
+          <div>88D1-44B9</div>
+          <div>33A0-99E2</div>
+          <div>77FF-12C8</div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+          <button type="button" class="btn-save-channels" onclick="showToast('Recovery codes copied to clipboard!')">
+            Copy Codes
+          </button>
+          <button type="button" class="btn-primary-save" style="padding: 0.55rem 1.25rem;" data-modal-close>
+            Done
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Emergency Freeze Confirmation -->
+  <div class="trustee-modal-backdrop" id="freezeAccountModal" role="dialog" aria-modal="true" aria-labelledby="freezeModalTitle">
+    <div class="trustee-modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="freezeModalTitle" style="color: #ef4444;">Confirm Emergency Account Freeze</h3>
+        <button class="modal-close-btn" data-modal-close aria-label="Close modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.86rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem;">
+          <strong>Warning:</strong> Initiating an Emergency Freeze will immediately invalidate your active trustee session, revoke all cryptographic release shares in flight, and notify the security response compliance team.
+        </p>
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+          <button type="button" class="btn-save-channels" data-modal-close>
+            Cancel
+          </button>
+          <button type="button" class="btn-danger-freeze" style="padding: 0.6rem 1.2rem;" onclick="confirmEmergencyFreeze()">
+            Yes, Freeze Trustee Account
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shared Scripts -->
+  <script src="../common/common.js"></script>
+  <script src="./profile-security.js"></script>
+</body>
+</html>
+
+

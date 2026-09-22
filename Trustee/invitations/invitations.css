@@ -1,0 +1,939 @@
+/* ==========================================================================
+   AegisVault Trustee Panel - Invitations Module Styles
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Hero Panoramic Banner
+   -------------------------------------------------------------------------- */
+.invitations-hero {
+  position: relative;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  background-image: var(--hero-bg-image);
+  background-size: cover;
+  background-position: center right;
+  height: 230px;
+  min-height: 230px;
+  max-height: 230px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 2rem;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-md);
+}
+
+[data-theme="light"] .invitations-hero {
+  background-image: var(--hero-bg-image);
+}
+
+.invitations-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(6, 11, 17, 0.94) 0%,
+    rgba(6, 11, 17, 0.82) 36%,
+    rgba(6, 11, 17, 0.35) 68%,
+    rgba(6, 11, 17, 0.15) 100%
+  );
+  pointer-events: none;
+}
+
+[data-theme="light"] .invitations-hero::before {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.96) 0%,
+    rgba(255, 255, 255, 0.86) 38%,
+    rgba(255, 255, 255, 0.3) 72%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+}
+
+.invitations-hero-left {
+  position: relative;
+  z-index: 2;
+  max-width: 620px;
+}
+
+.invitations-hero-eyebrow {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brand-orange);
+  margin-bottom: 0.4rem;
+}
+
+.invitations-hero-heading {
+  font-family: var(--font-serif);
+  font-size: 2.35rem;
+  line-height: 1.12;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.invitations-hero-heading .safer-accent {
+  color: var(--brand-orange);
+  display: block;
+}
+
+.invitations-hero-subtext {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.35rem;
+  line-height: 1.45;
+}
+
+/* Feature Badges */
+.invitations-features-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.invitations-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.feature-icon-bubble {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background-color: var(--brand-orange-tint);
+  color: var(--brand-orange);
+  border: 1px solid var(--brand-orange-border);
+}
+
+.feature-icon-bubble svg {
+  width: 17px;
+  height: 17px;
+}
+
+.feature-text-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.feature-line-primary {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.feature-line-secondary {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.2;
+}
+
+/* Hero Right Quote */
+.invitations-hero-quote-card {
+  position: relative;
+  z-index: 2;
+  max-width: 250px;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.invitations-hero-quote-text {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-style: italic;
+  line-height: 1.4;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="light"] .invitations-hero-quote-text {
+  text-shadow: none;
+}
+
+.invitations-hero-quote-dash {
+  width: 32px;
+  height: 2.5px;
+  background-color: var(--brand-orange);
+  border-radius: var(--radius-full);
+}
+
+/* --------------------------------------------------------------------------
+   Three-Column Layout Grid
+   -------------------------------------------------------------------------- */
+.invitations-layout-grid {
+  display: grid;
+  grid-template-columns: 1.55fr 1.15fr 320px;
+  gap: 1.35rem;
+  margin-bottom: 2rem;
+}
+
+/* --------------------------------------------------------------------------
+   Left Column: List of Invitations
+   -------------------------------------------------------------------------- */
+.invitations-list-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+/* Filter Toolbar */
+.invitations-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 0.5rem;
+}
+
+.invitations-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  overflow-x: auto;
+}
+
+.inv-tab-btn {
+  background: none;
+  border: none;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  cursor: pointer;
+  position: relative;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.inv-tab-btn:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-surface-hover);
+}
+
+.inv-tab-btn.active {
+  color: var(--brand-orange);
+  font-weight: 700;
+}
+
+.inv-tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  right: 0;
+  height: 2.5px;
+  background-color: var(--brand-orange);
+  border-radius: var(--radius-full);
+}
+
+.invitations-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.inv-sort-select {
+  background-color: var(--search-bg);
+  border: 1px solid var(--search-border);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  padding: 0.45rem 0.75rem;
+  outline: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.inv-sort-select:focus {
+  border-color: var(--brand-orange);
+}
+
+.inv-search-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--search-bg);
+  border: 1px solid var(--search-border);
+  border-radius: var(--radius-md);
+  padding: 0.45rem 0.75rem;
+  transition: all var(--transition-fast);
+}
+
+.inv-search-input-wrap:focus-within {
+  border-color: var(--brand-orange);
+  box-shadow: 0 0 0 3px var(--brand-orange-glow);
+}
+
+.inv-search-input-wrap svg {
+  width: 14px;
+  height: 14px;
+  color: var(--text-muted);
+}
+
+.inv-search-input-wrap input {
+  border: none;
+  background: none;
+  outline: none;
+  font-size: 0.82rem;
+  color: var(--text-primary);
+  width: 130px;
+}
+
+/* Invitation Cards List */
+.invitation-cards-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.invitation-card-item {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+
+.invitation-card-item:hover {
+  border-color: var(--border-medium);
+  background-color: var(--bg-surface-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.invitation-card-item.selected {
+  border-color: var(--brand-orange);
+  box-shadow: 0 0 0 1px var(--brand-orange), var(--shadow-md);
+}
+
+.inv-card-top-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.inv-avatar-box {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.inv-avatar-box.amber {
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.2), rgba(245, 158, 11, 0.3));
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+.inv-avatar-box.blue {
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.2), rgba(37, 99, 235, 0.3));
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+.inv-avatar-box.green {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.3));
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.3);
+}
+.inv-avatar-box.red {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.3));
+  color: #f87171;
+  border: 1px solid rgba(248, 113, 113, 0.3);
+}
+
+.inv-avatar-box svg {
+  width: 22px;
+  height: 22px;
+}
+
+.inv-header-meta {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.inv-vault-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.inv-inviter-line {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.4rem;
+}
+
+.inv-owner-message {
+  font-style: italic;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+  background-color: var(--bg-surface-elevated);
+  padding: 0.45rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border-left: 2.5px solid var(--brand-orange);
+}
+
+/* Middle info columns inside card */
+.inv-card-columns-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
+}
+
+.inv-col-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.inv-col-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.inv-col-val {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.inv-col-val svg {
+  width: 13px;
+  height: 13px;
+  color: var(--text-muted);
+}
+
+/* Card Action Buttons */
+.inv-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: auto;
+}
+
+.btn-accept-sm {
+  background: var(--brand-orange);
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-accept-sm:hover {
+  background: var(--brand-orange-hover);
+  transform: translateY(-1px);
+}
+
+.btn-decline-sm {
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-strong);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-decline-sm:hover {
+  background-color: var(--bg-surface-hover);
+  color: var(--accent-red);
+  border-color: var(--accent-red-border);
+}
+
+.btn-details-link {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--brand-orange);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: gap var(--transition-fast);
+}
+
+.btn-details-link:hover {
+  gap: 0.45rem;
+}
+
+/* --------------------------------------------------------------------------
+   Center Column: Inspection Details Panel
+   -------------------------------------------------------------------------- */
+.invitation-details-panel {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: calc(var(--topbar-height) + 1.5rem);
+}
+
+.panel-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panel-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.panel-title-group svg {
+  width: 18px;
+  height: 18px;
+  color: var(--brand-orange);
+}
+
+.panel-vault-heading {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-top: -0.25rem;
+}
+
+/* Inviter profile chip */
+.panel-inviter-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+}
+
+.panel-inviter-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, #0284c7, #2563eb);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.86rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.panel-inviter-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-inviter-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.panel-inviter-email {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Panel rows */
+.panel-details-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.panel-detail-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+}
+
+.panel-detail-row svg {
+  width: 16px;
+  height: 16px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.panel-detail-row strong {
+  color: var(--text-primary);
+  margin-left: 0.3rem;
+}
+
+/* Panel quote box */
+.panel-message-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.panel-message-label {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.panel-message-content {
+  font-style: italic;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  background-color: var(--bg-surface-elevated);
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+}
+
+/* Panel Big Actions */
+.panel-actions-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 0.5rem;
+}
+
+.btn-panel-accept {
+  background: linear-gradient(135deg, var(--brand-orange), var(--brand-orange-hover));
+  color: #ffffff;
+  font-size: 0.92rem;
+  font-weight: 700;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 8px var(--brand-orange-glow);
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.btn-panel-accept:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px var(--brand-orange-glow);
+}
+
+.btn-panel-decline {
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.86rem;
+  font-weight: 600;
+  padding: 0.65rem 1.25rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-strong);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.btn-panel-decline:hover {
+  background-color: var(--bg-surface-hover);
+  color: var(--accent-red);
+  border-color: var(--accent-red-border);
+}
+
+.panel-full-details-link {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--brand-orange);
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  margin-top: 0.25rem;
+  cursor: pointer;
+}
+
+.panel-full-details-link:hover {
+  gap: 0.5rem;
+}
+
+/* --------------------------------------------------------------------------
+   Right Column: Status & Guidance Cards
+   -------------------------------------------------------------------------- */
+.invitations-sidebar-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+/* Card 1: Your Trustee Status */
+.status-card {
+  padding: 1.35rem;
+}
+
+.status-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.status-card-header svg {
+  width: 18px;
+  height: 18px;
+  color: var(--brand-orange);
+}
+
+.status-steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.status-step-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.84rem;
+}
+
+.status-step-left {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--text-secondary);
+}
+
+.step-icon-bullet {
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.step-icon-bullet.green {
+  background-color: var(--accent-emerald-tint);
+  color: var(--accent-emerald);
+}
+.step-icon-bullet.amber {
+  background-color: var(--accent-amber-tint);
+  color: var(--accent-amber);
+}
+.step-icon-bullet.muted {
+  border: 1.5px solid var(--text-muted);
+  color: var(--text-muted);
+}
+
+.step-icon-bullet svg {
+  width: 11px;
+  height: 11px;
+}
+
+/* Card 2: What Happens Next? */
+.guidance-card {
+  padding: 1.35rem;
+}
+
+.guidance-header {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.guidance-header svg {
+  width: 18px;
+  height: 18px;
+  color: var(--brand-orange);
+}
+
+.numbered-steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.numbered-step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
+.step-number-circle {
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-full);
+  background-color: var(--bg-surface-elevated);
+  border: 1px solid var(--border-strong);
+  color: var(--text-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* Card 3: You're in control */
+.control-callout-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--accent-cyan-border);
+  border-radius: var(--radius-lg);
+  padding: 1.15rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.control-callout-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--accent-cyan);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.control-callout-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.control-callout-title {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.15rem;
+}
+
+.control-callout-desc {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
+/* Card 4: Scenic Card */
+.invitation-scenic-card {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  background-image: var(--hero-bg-image);
+  background-size: cover;
+  background-position: center;
+  min-height: 110px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.15rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.invitation-scenic-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.25) 80%, transparent 100%);
+  pointer-events: none;
+}
+
+.invitation-scenic-text {
+  position: relative;
+  z-index: 2;
+  font-size: 0.84rem;
+  font-style: italic;
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  line-height: 1.35;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Rules
+   -------------------------------------------------------------------------- */
+@media (max-width: 1400px) {
+  .invitations-layout-grid {
+    grid-template-columns: 1.5fr 1fr;
+  }
+  .invitations-sidebar-col {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1080px) {
+  .invitations-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  .invitations-hero-quote-card {
+    text-align: left;
+    align-items: flex-start;
+  }
+  .invitations-layout-grid {
+    grid-template-columns: 1fr;
+  }
+  .invitations-sidebar-col {
+    grid-column: span 1;
+    grid-template-columns: 1fr;
+  }
+  .invitation-details-panel {
+    position: static;
+  }
+}
+

@@ -1,0 +1,626 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AegisVault &mdash; Help & Support</title>
+  <script src="../common/theme.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../common/themes.css?v=4.0">
+  <link rel="stylesheet" href="../common/common.css?v=4.0">
+  <link rel="stylesheet" href="./help-support.css?v=4.0">
+</head>
+<body>
+  <div class="trustee-app">
+    <!-- Sidebar Navigation -->
+    <aside class="trustee-sidebar" aria-label="Trustee Navigation">
+
+        <!-- Brand Logo Header -->
+      <div class="sidebar-brand">
+        <div class="brand-shield-icon">
+          <svg viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 2L3 8V20C3 31.2 10.3 41.5 20 44C29.7 41.5 37 31.2 37 20V8L20 2Z" stroke="#F97316" stroke-width="2.5" stroke-linejoin="round" fill="rgba(249, 115, 22, 0.08)"/>
+            <path d="M20 8L8 13V21C8 28.5 13.1 35.5 20 37.5C26.9 35.5 32 28.5 32 21V13L20 8Z" fill="#F97316"/>
+            <path d="M20 13L13 16.5V22C13 26.5 16 30.5 20 32C24 30.5 27 26.5 27 22V16.5L20 13Z" fill="#FFA24C"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Aegis<span class="vault-accent">Vault</span></span>
+          <span class="brand-tagline">What matters, lives on.</span>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="../dashboard/dashboard.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1V9.5z"/></svg></span>
+          <span class="nav-label">My Dashboard</span>
+        </a>
+        <a href="../assigned-vaults/assigned-vaults.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></span>
+          <span class="nav-label">Assigned Vaults</span>
+        </a>
+        <a href="../invitations/invitations.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></svg></span>
+          <span class="nav-label">Invitations</span>
+          <span class="nav-badge">2</span>
+        </a>
+        <a href="../trustee-verification/trustee-verification.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <span class="nav-label">Trustee Verification</span>
+        </a>
+        <a href="../share-submission/share-submission.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m21 3-9.5 9.5M15.5 8.5l3 3M18 6l2 2"/></svg></span>
+          <span class="nav-label">Share Submission</span>
+        </a>
+        <a href="../release-status/release-status.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/><path d="M4 12a8 8 0 0 1 1.5-4.5"/></svg></span>
+          <span class="nav-label">Release Status</span>
+        </a>
+        <a href="../activity-history/activity-history.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
+          <span class="nav-label">Activity & History</span>
+        </a>
+        <a href="../notifications/notifications.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+          <span class="nav-label">Notifications</span>
+          <span class="nav-badge">3</span>
+        </a>
+        <a href="../profile-security/profile-security.html" class="nav-item">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+          <span class="nav-label">Profile & Security</span>
+        </a>
+        <a href="../help-support/help-support.html" class="nav-item active">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+          <span class="nav-label">Help & Support</span>
+        </a>
+      </nav>
+      <!-- Sidebar Scenic Quote (Natural footer on full scenic background) -->
+      <div class="sidebar-quote-block">
+        <p class="sidebar-scenic-quote">Stronger<br>Security.<br>Brighter<br>Tomorrows.</p>
+        <div class="sidebar-scenic-dash"></div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="trustee-main">
+      <!-- Top Bar -->
+      <header class="trustee-topbar">
+        <div class="topbar-left">
+          <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="topbar-search">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="globalSearchInput" placeholder="Search vaults, trustees, submissions, or settings...">
+          </div>
+        </div>
+        <div class="topbar-right">
+                    <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Dark / Light Theme" title="Toggle Theme" role="switch">
+            <span class="theme-switch-track">
+              <span class="switch-icon switch-icon-sun" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="4"/>
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                </svg>
+              </span>
+              <span class="switch-icon switch-icon-moon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+              </span>
+              <span class="theme-switch-thumb">
+                <span class="thumb-icon thumb-sun">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                  </svg>
+                </span>
+                <span class="thumb-icon thumb-moon">
+                  <svg viewBox="0 0 24 24" fill="#ffffff" stroke="none">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                  </svg>
+                </span>
+              </span>
+            </span>
+          </button>
+          <div class="notification-btn-wrapper">
+            <button class="notification-btn" id="notificationBtn" aria-label="Notifications (3 unread)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span class="notification-badge-dot"></span>
+            </button>
+            <div class="dropdown-panel" id="notificationDropdown">
+              <div class="dropdown-header">Recent Alerts (3)</div>
+              <a href="../share-submission/share-submission.html" class="dropdown-item">Action required for Family Vault</a>
+              <a href="../invitations/invitations.html" class="dropdown-item">New vault invitation from Priya Shah</a>
+              <a href="../trustee-verification/trustee-verification.html" class="dropdown-item">Document verification pending review</a>
+              <div class="dropdown-divider"></div>
+              <a href="../notifications/notifications.html" class="dropdown-item" style="color:var(--brand-orange); font-weight:600;">View all notifications &rarr;</a>
+            </div>
+          </div>
+          <div class="profile-menu-wrapper">
+            <button class="profile-chip" id="profileBtn" aria-label="User Profile Menu">
+              <div class="profile-avatar-circle">RP</div>
+              <span class="profile-name">Rakesh Patel</span>
+              <svg class="profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="dropdown-panel" id="profileDropdown">
+              <div class="dropdown-header">Trustee Account</div>
+              <a href="../profile-security/profile-security.html" class="dropdown-item">Profile & Security</a>
+              <a href="../dashboard/dashboard.html" class="dropdown-item">Dashboard</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content Container -->
+      <main class="trustee-content">
+        <!-- Hero Banner -->
+        <!-- Hero Banner -->
+        <section class="help-hero hero-card" aria-label="Help & Support Overview">
+          <div class="help-hero-content hero-left">
+            <span class="help-hero-eyebrow hero-eyebrow">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+              10. HELP &amp; SUPPORT
+            </span>
+            <h1 class="help-hero-title hero-heading">
+              Here to Help.
+              <span class="hero-accent title-accent">Always Protected.</span>
+            </h1>
+            <p class="help-hero-subtitle hero-subtext">Find answers, get guidance, or reach out to our dedicated support team.</p>
+
+            <!-- 4 Feature Badges -->
+            <div class="help-features-row hero-features-row">
+              <div class="help-feature-item hero-feature-item">
+                <div class="feature-icon-bubble hero-feature-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                </div>
+                <div class="feature-text-group hero-feature-text">
+                  <span class="feature-line-primary hero-feature-primary">Instant Guides</span>
+                  <span class="feature-line-secondary hero-feature-secondary">24/7 Access</span>
+                </div>
+              </div>
+
+              <div class="help-feature-item hero-feature-item">
+                <div class="feature-icon-bubble hero-feature-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+                <div class="feature-text-group hero-feature-text">
+                  <span class="feature-line-primary hero-feature-primary">Secure & Private</span>
+                  <span class="feature-line-secondary hero-feature-secondary">By Design</span>
+                </div>
+              </div>
+
+              <div class="help-feature-item hero-feature-item">
+                <div class="feature-icon-bubble hero-feature-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                </div>
+                <div class="feature-text-group hero-feature-text">
+                  <span class="feature-line-primary hero-feature-primary">Expert Support</span>
+                  <span class="feature-line-secondary hero-feature-secondary">Dedicated Team</span>
+                </div>
+              </div>
+
+              <div class="help-feature-item hero-feature-item">
+                <div class="feature-icon-bubble hero-feature-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.178 8c5.096 0 5.096 8 0 8-2.605 0-4.492-2.14-6.178-4-1.686-1.86-3.573-4-6.178-4-5.096 0-5.096 8 0 8 2.605 0 4.492-2.14 6.178-4 1.686-1.86 3.573-4 6.178-4z"/></svg>
+                </div>
+                <div class="feature-text-group hero-feature-text">
+                  <span class="feature-line-primary hero-feature-primary">A Safer</span>
+                  <span class="feature-line-secondary hero-feature-secondary">Tomorrow</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Hero Right Quote -->
+          <div class="help-hero-quote hero-quote-card">
+            <p class="hero-quote-text">&ldquo;Support today builds a more secure tomorrow.&rdquo;</p>
+            <div class="quote-dash hero-quote-dash"></div>
+          </div>
+        </section>
+
+        <!-- 2-Column Help Center Layout -->
+        <div class="help-grid-layout">
+          <!-- Left Column (Search, Topic Categories, Featured Articles) -->
+          <div class="help-main-col">
+            <!-- Search Container -->
+            <section class="help-search-card" aria-label="Search Help Center">
+              <div class="help-search-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="helpSearchInput" class="help-search-input" placeholder="Search for help articles, guides, or topics...">
+                <button type="button" id="helpSearchBtn" class="help-search-btn">Search</button>
+              </div>
+              <div class="help-search-tags">
+                <span>Try searching for</span>
+                <a href="#search" class="help-search-tag" data-query="release process">&ldquo;release process&rdquo;</a>,
+                <a href="#search" class="help-search-tag" data-query="trustee verification">&ldquo;trustee verification&rdquo;</a>, or
+                <a href="#search" class="help-search-tag" data-query="share submission">&ldquo;share submission&rdquo;</a>
+              </div>
+            </section>
+
+            <!-- Browse Help Topics (6 Cards) -->
+            <section class="help-topics-section" aria-label="Browse Help Topics">
+              <div class="section-header-bar">
+                <div class="section-title-group">
+                  <div class="section-title-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                  </div>
+                  <h2 class="section-title-text">Browse Help Topics</h2>
+                </div>
+              </div>
+
+              <div class="topics-grid">
+                <!-- 1. Getting Started -->
+                <div class="topic-card" data-topic="getting-started" role="button" tabindex="0">
+                  <div class="topic-icon-wrapper topic-icon-purple">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                  </div>
+                  <div class="topic-info">
+                    <h3 class="topic-title">Getting Started</h3>
+                    <p class="topic-desc">Learn the basics and set up your account</p>
+                  </div>
+                  <svg class="topic-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+
+                <!-- 2. Vault Management -->
+                <div class="topic-card" data-topic="vault-management" role="button" tabindex="0">
+                  <div class="topic-icon-wrapper topic-icon-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                  </div>
+                  <div class="topic-info">
+                    <h3 class="topic-title">Vault Management</h3>
+                    <p class="topic-desc">Create, edit, and manage your vaults</p>
+                  </div>
+                  <svg class="topic-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+
+                <!-- 3. Trustees & Invites -->
+                <div class="topic-card" data-topic="trustees-invites" role="button" tabindex="0">
+                  <div class="topic-icon-wrapper topic-icon-amber">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  </div>
+                  <div class="topic-info">
+                    <h3 class="topic-title">Trustees &amp; Invites</h3>
+                    <p class="topic-desc">Add trustees, send invitations, and verify</p>
+                  </div>
+                  <svg class="topic-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+
+                <!-- 4. Share & Release -->
+                <div class="topic-card" data-topic="share-release" role="button" tabindex="0">
+                  <div class="topic-icon-wrapper topic-icon-emerald">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                  </div>
+                  <div class="topic-info">
+                    <h3 class="topic-title">Share &amp; Release</h3>
+                    <p class="topic-desc">Submit and track share requests</p>
+                  </div>
+                  <svg class="topic-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+
+                <!-- 5. Security & Privacy -->
+                <div class="topic-card" data-topic="security-privacy" role="button" tabindex="0">
+                  <div class="topic-icon-wrapper topic-icon-crimson">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                  </div>
+                  <div class="topic-info">
+                    <h3 class="topic-title">Security &amp; Privacy</h3>
+                    <p class="topic-desc">Keep your data safe and secure</p>
+                  </div>
+                  <svg class="topic-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+
+                <!-- 6. Account Settings -->
+                <div class="topic-card" data-topic="account-settings" role="button" tabindex="0">
+                  <div class="topic-icon-wrapper topic-icon-violet">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                  </div>
+                  <div class="topic-info">
+                    <h3 class="topic-title">Account Settings</h3>
+                    <p class="topic-desc">Manage your profile, preferences, and more</p>
+                  </div>
+                  <svg class="topic-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+              </div>
+            </section>
+
+            <!-- Featured Help Articles (3 Cards) -->
+            <section class="featured-articles-section" aria-label="Featured Help Articles">
+              <div class="section-header-bar">
+                <div class="section-title-group">
+                  <div class="section-title-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                  </div>
+                  <h2 class="section-title-text">Featured Help Articles</h2>
+                </div>
+                <a href="#all-articles" id="viewAllArticlesBtn" class="section-header-link">
+                  View All Articles
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+              </div>
+
+              <div class="articles-grid">
+                <!-- Article 1 -->
+                <article class="article-card" data-article="first-vault">
+                  <div class="article-badge-row">
+                    <svg class="article-badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <span>5 min read</span>
+                  </div>
+                  <h3 class="article-title">Setting Up Your First Vault</h3>
+                  <p class="article-summary">A step-by-step guide to creating your vault and adding trustees.</p>
+                  <span class="article-footer-link">
+                    Read Article
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                  </span>
+                </article>
+
+                <!-- Article 2 -->
+                <article class="article-card" data-article="release-process">
+                  <div class="article-badge-row">
+                    <svg class="article-badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span>3 min read</span>
+                  </div>
+                  <h3 class="article-title">Understanding the Release Process</h3>
+                  <p class="article-summary">Learn how share submissions are verified and released.</p>
+                  <span class="article-footer-link">
+                    Read Article
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                  </span>
+                </article>
+
+                <!-- Article 3 -->
+                <article class="article-card" data-article="trustee-permissions">
+                  <div class="article-badge-row">
+                    <svg class="article-badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    <span>4 min read</span>
+                  </div>
+                  <h3 class="article-title">Managing Trustee Permissions</h3>
+                  <p class="article-summary">Find out what trustees can do and how to update their access.</p>
+                  <span class="article-footer-link">
+                    Read Article
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                  </span>
+                </article>
+              </div>
+            </section>
+          </div>
+
+          <!-- Right Column (Popular Questions, Contact Support) -->
+          <div class="help-side-col">
+            <!-- Popular Questions FAQ Accordion Card -->
+            <section class="popular-questions-card" aria-label="Popular Questions">
+              <div class="section-header-bar">
+                <div class="section-title-group">
+                  <div class="faq-icon-badge">?</div>
+                  <h2 class="section-title-text">Popular Questions</h2>
+                </div>
+                <a href="#view-all-faq" id="viewAllFaqBtn" class="section-header-link">
+                  View All
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </a>
+              </div>
+
+              <div class="faq-list">
+                <!-- Question 1 -->
+                <div class="faq-item">
+                  <button class="faq-question-btn" type="button">
+                    <span>How do I add a trustee to my vault?</span>
+                    <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                  </button>
+                  <div class="faq-answer-content">
+                    <div class="faq-answer-body">
+                      To appoint a trustee, go to <strong>Assigned Vaults</strong>, open the vault configuration, and select <em>&ldquo;Appoint Trustee&rdquo;</em>. Provide their legal name and verified email. They will receive an appointment invitation with an encrypted onboarding link to verify their identity.
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="faq-item">
+                  <button class="faq-question-btn" type="button">
+                    <span>How long does the release process take?</span>
+                    <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                  </button>
+                  <div class="faq-answer-content">
+                    <div class="faq-answer-body">
+                      Once a vault release is initiated, appointed trustees have a grace period window (default 48 to 72 hours) to submit cryptographic fragments. As soon as the designated Shamir quorum threshold (e.g., 2 of 3) is submitted, institutional validation completes within 15 minutes.
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="faq-item">
+                  <button class="faq-question-btn" type="button">
+                    <span>Can I update a submitted share request?</span>
+                    <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                  </button>
+                  <div class="faq-answer-content">
+                    <div class="faq-answer-body">
+                      Submitted shares are cryptographically committed to the consensus queue. If you made an error or suspect security compromise, you must initiate an emergency freeze in <strong>Profile &amp; Security</strong> or alert support immediately to nullify the pending ticket.
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="faq-item">
+                  <button class="faq-question-btn" type="button">
+                    <span>What happens if a trustee declines?</span>
+                    <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                  </button>
+                  <div class="faq-answer-content">
+                    <div class="faq-answer-body">
+                      If an appointed trustee declines an invitation or release petition, the vault owner is immediately notified. If a secondary or alternate trustee is configured in the vault policy, the prompt automatically falls back to them to maintain quorum continuity.
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Question 5 -->
+                <div class="faq-item">
+                  <button class="faq-question-btn" type="button">
+                    <span>How do I reset my password?</span>
+                    <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                  </button>
+                  <div class="faq-answer-content">
+                    <div class="faq-answer-body">
+                      Navigate to <strong>Profile &amp; Security</strong>. In the <em>&ldquo;Change Master Passphrase&rdquo;</em> panel, verify your current passphrase and registered FIDO2 hardware security key before establishing a new master secret.
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Question 6 -->
+                <div class="faq-item">
+                  <button class="faq-question-btn" type="button">
+                    <span>Is my data encrypted and secure?</span>
+                    <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                  </button>
+                  <div class="faq-answer-content">
+                    <div class="faq-answer-body">
+                      Yes. AegisVault operates on a zero-knowledge architecture. All vault assets are split into cryptographic shares using Shamir's Secret Sharing (SSSS) and encrypted client-side using AES-256-GCM. No single party&mdash;including AegisVault engineers&mdash;can decrypt payloads unilaterally.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Contact Support Card -->
+            <section class="contact-support-card" aria-label="Contact Support Form">
+              <div class="section-title-group" style="margin-bottom: 6px;">
+                <div class="contact-icon-badge">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </div>
+                <h2 class="contact-card-title">Contact Support</h2>
+              </div>
+              <p class="contact-card-sub">Still need help? Our team is here for you.</p>
+
+              <form id="contactSupportForm" class="contact-form" novalidate>
+                <div class="contact-field">
+                  <label for="supportSubject" class="contact-label">Subject</label>
+                  <select id="supportSubject" class="contact-select" required>
+                    <option value="" disabled selected>Select a subject</option>
+                    <option value="general">General Trustee Question</option>
+                    <option value="verification">Identity Verification Support</option>
+                    <option value="share">Cryptographic Share Submission Help</option>
+                    <option value="release">Vault Release &amp; Quorum Inquiries</option>
+                    <option value="security">Security Key &amp; 2FA Issues</option>
+                    <option value="bug">Report a Technical Bug</option>
+                  </select>
+                </div>
+
+                <div class="contact-field">
+                  <label for="supportMessage" class="contact-label">Message</label>
+                  <textarea id="supportMessage" class="contact-textarea" placeholder="Describe your issue or question..." required></textarea>
+                </div>
+
+                <button type="submit" id="submitSupportBtn" class="contact-submit-btn">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                  <span>Send Message</span>
+                </button>
+
+                <p class="contact-sla-note">Typical response time: within 24 hours</p>
+              </form>
+            </section>
+          </div>
+        </div>
+      </main>
+
+      <!-- App Footer -->
+      <footer class="trustee-footer">
+        <div class="footer-brand">
+          <div class="brand-shield-icon" style="width: 28px; height: 32px;">
+            <svg viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 2L3 8V20C3 31.2 10.3 41.5 20 44C29.7 41.5 37 31.2 37 20V8L20 2Z" stroke="#F97316" stroke-width="2.5" stroke-linejoin="round" fill="rgba(249, 115, 22, 0.08)"/>
+              <path d="M20 8L8 13V21C8 28.5 13.1 35.5 20 37.5C26.9 35.5 32 28.5 32 21V13L20 8Z" fill="#F97316"/>
+            </svg>
+          </div>
+          <span class="footer-brand-title">Aegis<span class="vault-accent">Vault</span></span>
+          <span class="footer-brand-tagline">What matters, lives on.</span>
+        </div>
+        <div class="footer-center">
+          <span class="footer-quote">&ldquo;Because what matters today, should matter tomorrow.&rdquo;</span>
+          <div class="footer-dash"></div>
+        </div>
+        <div class="footer-links">
+          <a href="#" class="footer-link">Privacy</a>
+          <a href="#" class="footer-link">Terms</a>
+          <a href="#" class="footer-link">Help</a>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Modal 1: Article Reader Modal -->
+  <div class="modal" id="articleReaderModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-overlay" data-close-modal></div>
+    <div class="modal-content" style="max-width: 680px;">
+      <div class="modal-header">
+        <div>
+          <span class="modal-badge" id="modalArticleBadge" style="display:inline-block; font-size:0.75rem; color:var(--primary-500); font-weight:700; margin-bottom:4px;">GUIDE</span>
+          <h2 class="modal-title" id="modalArticleTitle">Setting Up Your First Vault</h2>
+        </div>
+        <button class="modal-close" data-close-modal aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body article-reader-body" id="modalArticleContent">
+        <!-- Injected via JavaScript -->
+      </div>
+      <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:0.8rem; color:var(--text-muted);">Was this article helpful?</span>
+        <div style="display:flex; gap:8px;">
+          <button type="button" class="btn btn-secondary btn-sm" id="btnHelpfulYes">ðŸ‘ Yes</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="btnHelpfulNo">ðŸ‘Ž No</button>
+          <button type="button" class="btn btn-primary btn-sm" data-close-modal>Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Ticket Confirmation Modal -->
+  <div class="modal" id="ticketConfirmModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-overlay" data-close-modal></div>
+    <div class="modal-content" style="max-width: 520px; text-align: center;">
+      <div class="modal-header" style="justify-content: center; position: relative;">
+        <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(16, 185, 129, 0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px auto;">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <button class="modal-close" data-close-modal aria-label="Close modal" style="position: absolute; right: 16px; top: 16px;">&times;</button>
+      </div>
+      <h2 class="modal-title" style="margin-bottom: 8px;">Support Ticket Dispatched!</h2>
+      <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 16px;">
+        We received your request. An AegisVault compliance specialist has been assigned to your case.
+      </p>
+      <div style="background: var(--surface-bg); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 20px;">
+        <div style="font-size: 0.76rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Ticket Reference Number</div>
+        <div class="ticket-id-badge" id="modalTicketId">#TKT-82914</div>
+        <div style="font-size: 0.8rem; color: var(--text-secondary);">Confirmation sent to: <strong>rakesh.patel@example.com</strong></div>
+      </div>
+      <div class="modal-actions" style="justify-content: center; gap: 12px;">
+        <button type="button" class="btn btn-secondary" id="btnCopyTicket">Copy Ticket ID</button>
+        <button type="button" class="btn btn-primary" data-close-modal>Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: All FAQ Modal -->
+  <div class="modal" id="allQuestionsModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-overlay" data-close-modal></div>
+    <div class="modal-content" style="max-width: 660px;">
+      <div class="modal-header">
+        <h2 class="modal-title">All Frequently Asked Questions</h2>
+        <button class="modal-close" data-close-modal aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body" style="max-height: 480px; overflow-y: auto;">
+        <div class="faq-list" id="extendedFaqList">
+          <!-- Populated via JavaScript -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close-modal>Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../common/common.js"></script>
+  <script src="./help-support.js"></script>
+</body>
+</html>
+
+

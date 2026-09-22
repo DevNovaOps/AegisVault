@@ -1,0 +1,685 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AegisVault &mdash; Trustee Verification</title>
+  <meta name="description" content="Complete and monitor identity verification required for AegisVault trustee access and key share custody.">
+
+  <!-- Immediate Theme Initializer to eliminate flash -->
+  <script src="../common/theme.js"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../common/themes.css?v=4.0">
+  <link rel="stylesheet" href="../common/common.css?v=4.0">
+  <link rel="stylesheet" href="./trustee-verification.css?v=4.0">
+</head>
+<body>
+  <div class="trustee-app">
+
+    <!-- ====================================================================
+         Sidebar Navigation
+         ==================================================================== -->
+    <aside class="trustee-sidebar" aria-label="Trustee Navigation">
+
+      <!-- Brand Logo Header -->
+        <div class="sidebar-brand">
+          <div class="brand-shield-icon">
+            <svg viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 2L3 8V20C3 31.2 10.3 41.5 20 44C29.7 41.5 37 31.2 37 20V8L20 2Z" stroke="#F97316" stroke-width="2.5" stroke-linejoin="round" fill="rgba(249, 115, 22, 0.08)"/>
+              <path d="M20 8L8 13V21C8 28.5 13.1 35.5 20 37.5C26.9 35.5 32 28.5 32 21V13L20 8Z" fill="#F97316"/>
+              <path d="M20 13L13 16.5V22C13 26.5 16 30.5 20 32C24 30.5 27 26.5 27 22V16.5L20 13Z" fill="#FFA24C"/>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <span class="brand-title">Aegis<span class="vault-accent">Vault</span></span>
+            <span class="brand-tagline">What matters, lives on.</span>
+          </div>
+        </div>
+
+      <!-- Navigation Links (10 modules) -->
+      <nav class="sidebar-nav">
+        <!-- 1. Dashboard -->
+        <a href="../dashboard/dashboard.html" class="nav-item" id="navDashboard">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1V9.5z"/>
+            </svg>
+          </span>
+          <span class="nav-label">My Dashboard</span>
+        </a>
+
+        <!-- 2. Assigned Vaults -->
+        <a href="../assigned-vaults/assigned-vaults.html" class="nav-item" id="navAssignedVaults">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </span>
+          <span class="nav-label">Assigned Vaults</span>
+        </a>
+
+        <!-- 3. Invitations -->
+        <a href="../invitations/invitations.html" class="nav-item" id="navInvitations">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <rect x="3" y="4" width="18" height="16" rx="2"/>
+              <path d="m22 7-10 7L2 7"/>
+            </svg>
+          </span>
+          <span class="nav-label">Invitations</span>
+          <span class="nav-badge">2</span>
+        </a>
+
+        <!-- 4. Trustee Verification (Active) -->
+        <a href="./trustee-verification.html" class="nav-item active" id="navVerification" aria-current="page">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+          </span>
+          <span class="nav-label">Trustee Verification</span>
+        </a>
+
+        <!-- 5. Share Submission -->
+        <a href="../share-submission/share-submission.html" class="nav-item" id="navShareSubmission">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="7.5" cy="15.5" r="4.5"/>
+              <path d="m21 3-9.5 9.5M15.5 8.5l3 3M18 6l2 2"/>
+            </svg>
+          </span>
+          <span class="nav-label">Share Submission</span>
+        </a>
+
+        <!-- 6. Release Status -->
+        <a href="../release-status/release-status.html" class="nav-item" id="navReleaseStatus">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+              <path d="M4 12a8 8 0 0 1 1.5-4.5"/>
+            </svg>
+          </span>
+          <span class="nav-label">Release Status</span>
+        </a>
+
+        <!-- 7. Notifications -->
+        <a href="../notifications/notifications.html" class="nav-item" id="navNotifications">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+          </span>
+          <span class="nav-label">Notifications</span>
+          <span class="nav-badge">3</span>
+        </a>
+
+        <!-- 8. Activity & History -->
+        <a href="../activity-history/activity-history.html" class="nav-item" id="navActivityHistory">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </span>
+          <span class="nav-label">Activity & History</span>
+        </a>
+
+        <!-- 9. Profile & Security -->
+        <a href="../profile-security/profile-security.html" class="nav-item" id="navProfileSecurity">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </span>
+          <span class="nav-label">Profile & Security</span>
+        </a>
+
+        <!-- 10. Help & Support -->
+        <a href="../help-support/help-support.html" class="nav-item" id="navHelpSupport">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </span>
+          <span class="nav-label">Help & Support</span>
+        </a>
+      </nav>
+      <!-- Sidebar Scenic Quote (Natural footer on full scenic background) -->
+      <div class="sidebar-quote-block">
+        <p class="sidebar-scenic-quote">Stronger<br>Security.<br>Brighter<br>Tomorrows.</p>
+        <div class="sidebar-scenic-dash"></div>
+      </div>
+    </aside>
+
+    <!-- ====================================================================
+         Main Content Area
+         ==================================================================== -->
+    <div class="trustee-main">
+
+      <!-- Top Navigation Bar -->
+      <header class="trustee-topbar">
+        <div class="topbar-left">
+          <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+          <!-- Search Bar -->
+          <div class="topbar-search">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" id="globalSearchInput" placeholder="Search vaults, invitations, logs, or settings..." aria-label="Global Search">
+          </div>
+        </div>
+
+        <!-- Topbar Right Controls -->
+        <div class="topbar-right">
+          <!-- Theme Toggle -->
+                    <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Dark / Light Theme" title="Toggle Theme" role="switch">
+            <span class="theme-switch-track">
+              <span class="switch-icon switch-icon-sun" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="4"/>
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                </svg>
+              </span>
+              <span class="switch-icon switch-icon-moon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+              </span>
+              <span class="theme-switch-thumb">
+                <span class="thumb-icon thumb-sun">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                  </svg>
+                </span>
+                <span class="thumb-icon thumb-moon">
+                  <svg viewBox="0 0 24 24" fill="#ffffff" stroke="none">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                  </svg>
+                </span>
+              </span>
+            </span>
+          </button>
+
+          <!-- Notifications Dropdown Trigger -->
+          <div class="notification-btn-wrapper">
+            <button class="notification-btn" id="notificationBtn" aria-label="Notifications" title="Notifications">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              </svg>
+              <span class="notification-badge-dot"></span>
+            </button>
+            <div class="dropdown-panel" id="notificationDropdown">
+              <div class="dropdown-header">Recent Alerts (3)</div>
+              <a href="../invitations/invitations.html" class="dropdown-item">New vault invitation from Priya Shah</a>
+              <a href="./trustee-verification.html" class="dropdown-item">Identity verification pending review</a>
+              <a href="../release-status/release-status.html" class="dropdown-item">Release process initiated for Family Vault</a>
+              <div class="dropdown-divider"></div>
+              <a href="../notifications/notifications.html" class="dropdown-item" style="color:var(--brand-orange); font-weight:600;">View all notifications &rarr;</a>
+            </div>
+          </div>
+
+          <!-- Profile Chip Menu -->
+          <div class="profile-menu-wrapper">
+            <button class="profile-chip" id="profileBtn" aria-label="User Profile Menu">
+              <div class="profile-avatar-circle">RP</div>
+              <span class="profile-name">Rakesh Patel</span>
+              <svg class="profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+            <div class="dropdown-panel" id="profileDropdown">
+              <div class="dropdown-header">Trustee Account</div>
+              <a href="../profile-security/profile-security.html" class="dropdown-item">Profile & Security</a>
+              <a href="./trustee-verification.html" class="dropdown-item">Verification Status (In Review)</a>
+              <a href="../help-support/help-support.html" class="dropdown-item">Help & Support</a>
+              <div class="dropdown-divider"></div>
+              <a href="javascript:void(0)" class="dropdown-item" onclick="showToast('Signed out of trustee session (mock).')">Sign Out</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Verification Content -->
+      <main class="trustee-content">
+
+        <!-- ====================================================================
+             Hero Panoramic Banner
+             ==================================================================== -->
+        <section class="verification-hero hero-card" aria-label="Trustee Verification Banner">
+          <div class="verif-hero-left">
+            <div class="verif-hero-eyebrow">04. TRUSTEE VERIFICATION</div>
+            <h1 class="verif-hero-heading">
+              Verify Today.
+              <span class="hero-accent tomorrow-accent">A Safer Tomorrow.</span>
+            </h1>
+            <p class="verif-hero-subtext">Complete your verification to fulfill your trustee responsibilities and help protect what matters.</p>
+
+            <!-- 4 Feature Badges -->
+            <div class="verif-features-row">
+              <div class="verif-feature-item">
+                <div class="feature-icon-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </svg>
+                </div>
+                <div class="feature-text-group">
+                  <span class="feature-line-primary">Trusted People</span>
+                  <span class="feature-line-secondary">Stronger Tomorrows</span>
+                </div>
+              </div>
+
+              <div class="verif-feature-item">
+                <div class="feature-icon-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                </div>
+                <div class="feature-text-group">
+                  <span class="feature-line-primary">Secure & Private</span>
+                  <span class="feature-line-secondary">By Design</span>
+                </div>
+              </div>
+
+              <div class="verif-feature-item">
+                <div class="feature-icon-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/>
+                  </svg>
+                </div>
+                <div class="feature-text-group">
+                  <span class="feature-line-primary">Verify Once</span>
+                  <span class="feature-line-secondary">Greater Access</span>
+                </div>
+              </div>
+
+              <div class="verif-feature-item">
+                <div class="feature-icon-bubble">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18.178 8c5.096 0 5.096 8 0 8-2.605 0-4.492-2.14-6.178-4-1.686-1.86-3.573-4-6.178-4-5.096 0-5.096 8 0 8 2.605 0 4.492-2.14 6.178-4 1.686-1.86 3.573-4 6.178-4z"/>
+                  </svg>
+                </div>
+                <div class="feature-text-group">
+                  <span class="feature-line-primary">A Safer</span>
+                  <span class="feature-line-secondary">Tomorrow</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero Right Quote -->
+          <div class="verif-hero-quote-card">
+            <p class="verif-hero-quote-text">&ldquo;Verification builds trust. Trust protects legacies.&rdquo;</p>
+            <div class="verif-hero-quote-dash"></div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             Two-Column Layout Grid
+             ==================================================================== -->
+        <div class="verification-layout-grid">
+
+          <!-- Left Column: Progress & Steps -->
+          <div class="verif-main-col">
+
+            <!-- Card 1: Your Verification Progress -->
+            <div class="verification-progress-card">
+              <div class="progress-header-row">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                <span>Your Verification Progress</span>
+              </div>
+
+              <div class="progress-content-split">
+                <div class="progress-gauge-and-text">
+                  <!-- Circular Donut Gauge -->
+                  <div class="progress-gauge-wrapper">
+                    <svg class="progress-gauge-svg" viewBox="0 0 100 100">
+                      <circle class="gauge-bg-circle" cx="50" cy="50" r="45"/>
+                      <circle class="gauge-fill-circle" cx="50" cy="50" r="45"/>
+                    </svg>
+                    <div class="gauge-center-text">
+                      <span class="gauge-number">75%</span>
+                      <span class="gauge-label">Complete</span>
+                    </div>
+                  </div>
+
+                  <!-- Text and 4-segment step bar -->
+                  <div class="progress-meta-text">
+                    <h3 class="progress-title-highlight">Almost there, Rakesh!</h3>
+                    <p class="progress-desc-text">You've completed 3 of 4 required steps. Finish the remaining step to become a fully verified trustee.</p>
+
+                    <div class="segmented-steps-bar">
+                      <div class="step-segment active"></div>
+                      <div class="step-segment active"></div>
+                      <div class="step-segment active"></div>
+                      <div class="step-segment"></div>
+                    </div>
+                    <span class="step-segment-caption">3 of 4 steps completed</span>
+                  </div>
+                </div>
+
+                <!-- Status & Date Box -->
+                <div class="progress-status-box">
+                  <div class="progress-status-badge-row">
+                    <span class="status-box-label">Status</span>
+                    <span class="status-badge in-progress"><span class="badge-dot"></span>In Progress</span>
+                  </div>
+
+                  <div class="progress-timestamp-row">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <span>Started on <strong>10 Sep 2025</strong></span>
+                  </div>
+
+                  <div class="progress-timestamp-row">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span>Last updated <strong>12 Sep 2025, 10:24 AM</strong></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: Verification Steps Workflow -->
+            <div class="verification-steps-card">
+              <div class="steps-card-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                  <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                </svg>
+                <span>Verification Steps</span>
+              </div>
+
+              <div class="steps-vertical-flow">
+                <!-- Step 1 -->
+                <div class="step-flow-row" data-step-id="step-1" role="button" tabindex="0">
+                  <div class="step-marker-circle completed">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <div class="step-main-info">
+                    <div class="step-icon-tile">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+                    <div class="step-text-block">
+                      <span class="step-title-text">Personal Information</span>
+                      <span class="step-desc-text">Provide your basic details (name, date of birth, etc.).</span>
+                    </div>
+                  </div>
+                  <div class="step-status-side">
+                    <span class="step-status-pill completed">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Completed
+                    </span>
+                    <span class="step-timestamp">10 Sep 2025, 09:12 AM</span>
+                  </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="step-flow-row" data-step-id="step-2" role="button" tabindex="0">
+                  <div class="step-marker-circle completed">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <div class="step-main-info">
+                    <div class="step-icon-tile">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    </div>
+                    <div class="step-text-block">
+                      <span class="step-title-text">Identity Document</span>
+                      <span class="step-desc-text">Upload a government-issued ID (e.g., passport, driver's license).</span>
+                    </div>
+                  </div>
+                  <div class="step-status-side">
+                    <span class="step-status-pill completed">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Completed
+                    </span>
+                    <span class="step-timestamp">11 Sep 2025, 04:30 PM</span>
+                  </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="step-flow-row" data-step-id="step-3" role="button" tabindex="0">
+                  <div class="step-marker-circle completed">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <div class="step-main-info">
+                    <div class="step-icon-tile">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                    </div>
+                    <div class="step-text-block">
+                      <span class="step-title-text">Identity Verification</span>
+                      <span class="step-desc-text">Complete identity verification (liveness check or verification partner).</span>
+                    </div>
+                  </div>
+                  <div class="step-status-side">
+                    <span class="step-status-pill completed">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Completed
+                    </span>
+                    <span class="step-timestamp">12 Sep 2025, 09:15 AM</span>
+                  </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="step-flow-row" data-step-id="step-4" role="button" tabindex="0">
+                  <div class="step-marker-circle in-review">4</div>
+                  <div class="step-main-info">
+                    <div class="step-icon-tile">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><polyline points="9 11 12 14 15 11"/></svg>
+                    </div>
+                    <div class="step-text-block">
+                      <span class="step-title-text">Final Review</span>
+                      <span class="step-desc-text">Our team will review your information and confirm your verification.</span>
+                    </div>
+                  </div>
+                  <div class="step-status-side">
+                    <span class="step-status-pill in-review">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> In Review
+                    </span>
+                    <span class="step-timestamp">Estimated: 1&mdash;“2 days</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom Information Callout -->
+            <div class="verif-info-callout">
+              <svg class="verif-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+              </svg>
+              <div class="verif-info-body">
+                <h4 class="verif-info-title">What happens next?</h4>
+                <p class="verif-info-text">Once your verification is complete, you'll be able to participate in share submissions and release processes for your assigned vaults.</p>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right Column: Why Verification & FAQs -->
+          <div class="verif-side-col">
+
+            <!-- Card 1: Why Verification? -->
+            <div class="why-verif-card">
+              <div class="why-verif-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                <span>Why Verification?</span>
+              </div>
+              <p class="why-verif-intro">Verification helps ensure that trustees are real, trusted people, reducing the risk of unauthorized access and protecting your loved ones' digital legacy.</p>
+
+              <div class="why-checklist">
+                <div class="why-check-item">
+                  <span class="why-check-bullet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                  <span>Increases security for all vaults</span>
+                </div>
+                <div class="why-check-item">
+                  <span class="why-check-bullet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                  <span>Prevents unauthorized access</span>
+                </div>
+                <div class="why-check-item">
+                  <span class="why-check-bullet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                  <span>Builds trust with vault owners</span>
+                </div>
+                <div class="why-check-item">
+                  <span class="why-check-bullet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                  <span>Helps fulfill legal and compliance requirements</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: Need Help? Accordion -->
+            <div class="need-help-card">
+              <div class="need-help-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                <span>Need Help?</span>
+              </div>
+
+              <div class="help-faqs-list">
+                <!-- FAQ 1 -->
+                <div class="help-faq-item">
+                  <button class="help-faq-trigger">
+                    <span>What information is required?</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                  <div class="help-faq-content">
+                    Basic personal info, a government-issued photo ID (passport, national ID, or driver's license), and a quick 3D selfie liveness check.
+                  </div>
+                </div>
+
+                <!-- FAQ 2 -->
+                <div class="help-faq-item">
+                  <button class="help-faq-trigger">
+                    <span>How is my data protected?</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                  <div class="help-faq-content">
+                    All identification documents are processed using end-to-end encryption with zero-knowledge attestation. Documents are purged after validation.
+                  </div>
+                </div>
+
+                <!-- FAQ 3 -->
+                <div class="help-faq-item">
+                  <button class="help-faq-trigger">
+                    <span>How long does verification take?</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                  <div class="help-faq-content">
+                    Automated biometric checks complete in seconds. Final compliance review typically finishes within 24 to 48 hours.
+                  </div>
+                </div>
+
+                <!-- FAQ 4 -->
+                <div class="help-faq-item">
+                  <button class="help-faq-trigger">
+                    <span>What if my verification is rejected?</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                  <div class="help-faq-content">
+                    You will receive an alert with specific guidance to re-upload clear photos or rescan your document.
+                  </div>
+                </div>
+
+                <!-- FAQ 5 -->
+                <div class="help-faq-item">
+                  <button class="help-faq-trigger" onclick="window.location.href='../help-support/help-support.html'">
+                    <span>Contact Support</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                </div>
+              </div>
+
+              <a href="../help-support/help-support.html" class="btn-help-center">
+                <span>Visit Help Center</span>
+                <span>&rarr;</span>
+              </a>
+            </div>
+
+          </div>
+
+        </div>
+
+      </main>
+
+      <!-- Global Footer -->
+      <footer class="trustee-footer">
+        <div class="footer-brand">
+          <div class="brand-shield-icon">
+            <svg viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 2L3 8V20C3 31.2 10.3 41.5 20 44C29.7 41.5 37 31.2 37 20V8L20 2Z" stroke="#F97316" stroke-width="2.5" fill="rgba(249, 115, 22, 0.08)"/>
+              <path d="M20 8L8 13V21C8 28.5 13.1 35.5 20 37.5C26.9 35.5 32 28.5 32 21V13L20 8Z" fill="#F97316"/>
+            </svg>
+          </div>
+          <span class="brand-title">Aegis<span class="vault-accent">Vault</span></span>
+        </div>
+
+        <div class="footer-center-motto">
+          &ldquo;Because what matters today, should matter tomorrow too.&rdquo;
+        </div>
+
+        <div class="footer-links">
+          <a href="javascript:void(0)" onclick="showToast('Privacy Policy (mock).')">Privacy</a>
+          <a href="javascript:void(0)" onclick="showToast('Terms of Service (mock).')">Terms</a>
+          <a href="../help-support/help-support.html">Help</a>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       Step Detail Modal
+       ==================================================================== -->
+  <div class="trustee-modal-backdrop" id="stepDetailModal">
+    <div class="trustee-modal" style="max-width: 540px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalStepTitle">Step Details</h3>
+        <button class="modal-close-btn" data-modal-close aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+          <span id="modalStepStatus" class="status-badge completed">Completed</span>
+          <span id="modalStepTime" style="font-size: 0.8rem; color: var(--text-muted);">10 Sep 2025</span>
+        </div>
+
+        <div id="modalStepFields" style="display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1.25rem;">
+          <!-- Populated by JS -->
+        </div>
+
+        <div style="background-color: var(--bg-surface); padding: 0.85rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); font-size: 0.82rem; color: var(--text-secondary); line-height: 1.45;">
+          <strong style="color: var(--text-primary); display: block; margin-bottom: 0.25rem;">Compliance Note:</strong>
+          <span id="modalStepNote">Step note content</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-close-btn" data-modal-close style="padding: 0.55rem 1.15rem; width: auto; font-size: 0.86rem;">Close</button>
+        <button id="modalBtnSimulateApprove" style="background: linear-gradient(135deg, var(--brand-orange), var(--brand-orange-hover)); color: #fff; border: none; padding: 0.55rem 1.25rem; border-radius: var(--radius-md); font-weight: 700; font-size: 0.86rem; display: none; cursor: pointer;">Simulate Approval</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shared & Page JavaScript -->
+  <script src="../common/common.js"></script>
+  <script src="./trustee-verification.js"></script>
+</body>
+</html>
+
+
