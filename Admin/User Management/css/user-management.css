@@ -5,112 +5,12 @@
    (Shared design tokens, reset, header, sidebar, modals, and toasts
     are centrally provided by ../../common/css/admin-common.css)
    ========================================================================== */
-/* Breadcrumb */
-.breadcrumb-row {
-    font-size: 0.76rem;
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin-bottom: -0.5rem;
-}
-
-.breadcrumb-link {
-    color: var(--text-secondary);
-    transition: color 0.15s ease;
-}
-
-.breadcrumb-link:hover {
-    color: var(--brand-orange);
-}
-
-.breadcrumb-separator {
-    color: var(--text-muted);
-}
-
-.breadcrumb-current {
-    color: var(--brand-orange);
-    font-weight: 600;
-}
-
-/* Hero Section (Sharp Integrated Mountain Artwork) */
-.hero-card {
-    position: relative;
-    overflow: hidden;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow-card);
-    min-height: 190px;
-    padding: 1.5rem 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
-    background-image: var(--hero-bg-image);
-    background-size: cover;
-    background-position: center right;
-    background-repeat: no-repeat;
-    transition: background-image 0.25s ease, border-color var(--transition);
-}
-
-.hero-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.55) 25%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0) 70%);
-    z-index: 1;
-    pointer-events: none;
-    transition: background 0.25s ease;
-}
-
-body.dark-theme .hero-card::before {
-    background: linear-gradient(90deg, rgba(2, 11, 17, 0.88) 0%, rgba(2, 11, 17, 0.55) 25%, rgba(2, 11, 17, 0.15) 50%, rgba(2, 11, 17, 0) 70%);
-}
-
-.hero-left-col {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    flex-shrink: 0;
-    position: relative;
-    z-index: 2;
-}
-
-.hero-title {
-    font-family: var(--font-serif);
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--text-heading);
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
-}
-
-body.dark-theme .hero-title {
-    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
-}
-
-.hero-subtitle {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    font-weight: 500;
-    max-width: 500px;
-    line-height: 1.4;
-}
-
-/* Center Mountain Cutout Card - Hidden so whole hero is one composition */
-.hero-center-col,
-.hero-panorama-img,
-.hero-panorama-fade-left,
-.hero-panorama-fade-right,
-.hero-quote-text {
-    display: none !important;
-}
-
+/* Hero Section adjustments (Inherited from admin-common.css) */
 .hero-right-col {
     display: flex;
-    align-items: center;
-    gap: 1rem;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.85rem;
     flex-shrink: 0;
     position: relative;
     z-index: 2;

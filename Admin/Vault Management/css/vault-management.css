@@ -40,57 +40,11 @@
 
     --trend-up-color: #10B981;
     --trend-down-color: #EF4444;
-
-    /* Shadows */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
-    --shadow-card: 0 2px 10px rgba(15, 23, 42, 0.03), 0 1px 3px rgba(15, 23, 42, 0.02);
-    --shadow-dropdown: 0 10px 30px -4px rgba(15, 23, 42, 0.12), 0 4px 10px -2px rgba(15, 23, 42, 0.06);
-    --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-
-    --hero-bg-image: url('../../assets/light-background.png');
-    --hero-center-bg: url('../../assets/light-background.png');
-    --sidebar-bg-image: url('../../assets/sidebar-bg-light.png');
-    --quote-box-text: #78350F;
 }
 
-/* Dark Theme Overrides strictly matching Dashboard & User Management */
+/* Dark Theme Overrides for Module Badges & KPI Accents */
 body.dark-theme,
 [data-theme="dark"] {
-    --bg-base: #020B11;
-    --bg-page: #020B11;
-    --bg-surface: #041018;
-    --bg-surface-elevated: #06151E;
-    --bg-card: #06151E;
-    --bg-card-subtle: #081B24;
-    --bg-input: #081B24;
-    --bg-hover: rgba(255, 255, 255, 0.04);
-    --bg-active: rgba(245, 168, 75, 0.12);
-
-    --border-color: rgba(255, 255, 255, 0.08);
-    --border-subtle: rgba(255, 255, 255, 0.05);
-    --border-focus: rgba(245, 168, 75, 0.5);
-
-    --text-heading: #FFFFFF;
-    --text-primary: #D5E1E8;
-    --text-body: #D5E1E8;
-    --text-secondary: #8EA2AE;
-    --text-muted: #586F7C;
-    --text-inverse: #020B11;
-
-    --brand-primary-btn: #FF8A00;
-    --brand-primary-btn-hover: #FFA333;
-    --brand-primary-btn-text: #020B11;
-    --brand-orange: #F5A84B;
-    --brand-orange-light: rgba(245, 168, 75, 0.12);
-    --brand-orange-border: rgba(245, 168, 75, 0.25);
-
-    --sidebar-active-bg: rgba(245, 168, 75, 0.12);
-    --sidebar-active-text: #F5A84B;
-    --hero-bg-image: url('../../assets/dark-background.png');
-    --hero-center-bg: url('../../assets/dark-background.png');
-    --sidebar-bg-image: url('../../assets/sidebar-bg-dark.png');
-    --quote-box-text: #FFD18A;
-
     --badge-active-bg: rgba(16, 185, 129, 0.22);
     --badge-active-text: #34D399;
     --badge-active-border: rgba(16, 185, 129, 0.35);
@@ -127,10 +81,6 @@ body.dark-theme,
     --kpi-orange-icon: #FBBF24;
     --kpi-red-bg: rgba(239, 68, 68, 0.2);
     --kpi-red-icon: #F87171;
-
-    --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.35);
-    --shadow-dropdown: 0 12px 30px rgba(0, 0, 0, 0.6);
-    --shadow-modal: 0 25px 60px rgba(0, 0, 0, 0.75);
 }
 
 /* ==========================================================================
@@ -146,108 +96,7 @@ body.dark-theme,
     background-color: var(--bg-page);
 }
 
-/* Breadcrumb */
-.breadcrumb-row,
-.breadcrumb-trail {
-    font-size: 0.76rem;
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin-bottom: -0.25rem;
-}
-
-.breadcrumb-link {
-    color: var(--text-secondary);
-    transition: color 0.15s ease;
-}
-
-.breadcrumb-link:hover {
-    color: var(--brand-orange);
-}
-
-.breadcrumb-separator,
-.breadcrumb-sep {
-    color: var(--text-muted);
-}
-
-.breadcrumb-current {
-    color: var(--brand-orange);
-    font-weight: 600;
-}
-
-/* Hero Section (Sharp Integrated Mountain Artwork) */
-.hero-banner-row {
-    position: relative;
-    overflow: hidden;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow-sm);
-    min-height: 190px;
-    padding: 1.5rem 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
-    background-image: var(--hero-bg-image);
-    background-size: cover;
-    background-position: center right;
-    background-repeat: no-repeat;
-    transition: background-image 0.25s ease, border-color var(--transition);
-}
-
-.hero-banner-row::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.55) 25%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0) 70%);
-    z-index: 1;
-    pointer-events: none;
-    transition: background 0.25s ease;
-}
-
-body.dark-theme .hero-banner-row::before {
-    background: linear-gradient(90deg, rgba(2, 11, 17, 0.88) 0%, rgba(2, 11, 17, 0.55) 25%, rgba(2, 11, 17, 0.15) 50%, rgba(2, 11, 17, 0) 70%);
-}
-
-.hero-text-col {
-    flex-shrink: 0;
-    position: relative;
-    z-index: 2;
-}
-
-.hero-main-title {
-    font-family: var(--font-serif);
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--text-heading);
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
-}
-
-body.dark-theme .hero-main-title {
-    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
-}
-
-.hero-subtitle {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    font-weight: 500;
-    max-width: 500px;
-    line-height: 1.4;
-    margin-top: 0.25rem;
-}
-
-/* Center Mountain Panorama Cutout - Hidden so hero is one unified surface */
-.hero-center-col,
-.hero-panorama-box,
-.hero-panorama-img,
-.hero-panorama-fade-left,
-.hero-panorama-fade-right,
-.hero-quote-text {
-    display: none !important;
-}
+/* Hero Section inherited from admin-common.css */
 
 /* Primary Action Button */
 .btn-primary-action {

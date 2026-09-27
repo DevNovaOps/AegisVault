@@ -194,10 +194,11 @@
            4. Header Dropdowns & Mobile Navigation Drawer
            ===================================================================== */
         initHeaderDropdowns() {
-            const notifBtn = document.getElementById('btn-notifications');
-            const notifDropdown = document.getElementById('notifications-dropdown');
-            const profileBtn = document.getElementById('user-profile-btn');
-            const profileDropdown = document.getElementById('profile-dropdown');
+            // Support both old ID and new Trustee-style ID
+            const notifBtn = document.getElementById('btn-notifications') || document.getElementById('notificationBtn');
+            const notifDropdown = document.getElementById('notifications-dropdown') || document.getElementById('notificationDropdown');
+            const profileBtn = document.getElementById('user-profile-btn') || document.getElementById('profileBtn');
+            const profileDropdown = document.getElementById('profile-dropdown') || document.getElementById('profileDropdown');
 
             if (notifBtn && notifDropdown && !notifBtn.dataset.bound) {
                 notifBtn.dataset.bound = 'true';
@@ -214,10 +215,11 @@
                     e.stopPropagation();
                     if (notifDropdown) notifDropdown.classList.remove('active');
                     profileDropdown.classList.toggle('active');
+                    profileBtn.classList.toggle('active');
                 });
             }
 
-            // Click outside to close dropdowns
+            // Click outside to close all dropdowns
             document.addEventListener('click', (e) => {
                 if (notifDropdown && notifDropdown.classList.contains('active')) {
                     if (!notifDropdown.contains(e.target) && (!notifBtn || !notifBtn.contains(e.target))) {
@@ -227,6 +229,7 @@
                 if (profileDropdown && (profileDropdown.classList.contains('active') || profileDropdown.classList.contains('show'))) {
                     if (!profileDropdown.contains(e.target) && (!profileBtn || !profileBtn.contains(e.target))) {
                         profileDropdown.classList.remove('active', 'show');
+                        if (profileBtn) profileBtn.classList.remove('active');
                     }
                 }
             });
@@ -238,11 +241,8 @@
                 markReadBtn.addEventListener('click', () => {
                     const unreadItems = document.querySelectorAll('.notification-item.unread');
                     unreadItems.forEach(item => item.classList.remove('unread'));
-                    const badges = document.querySelectorAll('.notif-badge-pill, .notif-badge-indicator');
+                    const badges = document.querySelectorAll('.notif-badge-pill, .notif-badge-indicator, .btn-badge, .notification-badge-dot');
                     badges.forEach(b => b.style.display = 'none');
-                    if (window.AegisMockData && Array.isArray(AegisMockData.notifications)) {
-                        AegisMockData.notifications.forEach(n => { n.unread = false; });
-                    }
                     this.showToast('All notifications marked as read', 'info');
                 });
             }
@@ -602,9 +602,9 @@
         },
 
         initMobileDrawer() {
-            const hamburgerBtn = document.getElementById('btn-hamburger') || document.getElementById('btn-mobile-menu');
-            const sidebar = document.getElementById('app-sidebar');
-            const backdrop = document.getElementById('sidebar-backdrop');
+            const hamburgerBtn = document.getElementById('sidebarToggleBtn') || document.getElementById('btn-hamburger') || document.getElementById('btn-mobile-menu') || document.querySelector('.sidebar-toggle-btn');
+            const sidebar = document.getElementById('app-sidebar') || document.querySelector('.app-sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop') || document.querySelector('.sidebar-backdrop');
 
             if (hamburgerBtn && sidebar && backdrop && !hamburgerBtn.dataset.bound) {
                 hamburgerBtn.dataset.bound = 'true';

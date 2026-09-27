@@ -4,40 +4,6 @@
    Admin/common/css/admin-common.css
    ========================================================================== */
 
-/* Breadcrumbs matching User Management & Vault Management */
-.breadcrumb-row,
-.breadcrumb-trail,
-.breadcrumb-nav {
-    font-size: 0.76rem;
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin-bottom: -0.35rem;
-    line-height: 1.4;
-}
-
-.breadcrumb-link {
-    color: var(--text-secondary);
-    text-decoration: none;
-    transition: color 0.15s ease;
-}
-
-.breadcrumb-link:hover {
-    color: var(--brand-orange);
-}
-
-.breadcrumb-separator,
-.breadcrumb-sep {
-    color: var(--text-muted);
-    user-select: none;
-}
-
-.breadcrumb-current {
-    color: var(--brand-orange) !important;
-    font-weight: 600;
-}
-
 /* Hero Right: Floating All Systems Operational Card */
 .hero-status-banner {
     display: flex;

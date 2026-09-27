@@ -4,56 +4,6 @@
    Admin/common/css/admin-common.css
    ========================================================================== */
 
-/* Hero Right: Date Range Picker Button with background */
-.date-range-picker-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 7px 14px;
-    border-radius: var(--radius-sm);
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    color: var(--text-heading);
-    font-size: 0.82rem;
-    font-weight: 600;
-    box-shadow: var(--shadow-card);
-    transition: var(--transition);
-    cursor: pointer;
-    user-select: none;
-    white-space: nowrap;
-    outline: none;
-}
-
-.date-range-picker-btn:hover {
-    background: var(--bg-hover);
-    border-color: var(--border-focus);
-}
-
-.date-range-picker-btn span {
-    color: var(--text-heading);
-    font-size: 0.82rem;
-    font-weight: 600;
-}
-
-.date-range-picker-btn svg {
-    width: 16px !important;
-    height: 16px !important;
-    max-width: 16px !important;
-    max-height: 16px !important;
-    color: var(--text-muted);
-    flex-shrink: 0;
-}
-
-.date-range-picker-btn svg.chevron-icon {
-    width: 14px !important;
-    height: 14px !important;
-    max-width: 14px !important;
-    max-height: 14px !important;
-    color: var(--text-muted);
-    margin-left: 2px;
-    transition: transform 0.22s ease;
-}
-
 /* ==========================================================================
    7. Top Row: 5 Overview Summary KPI Cards
    ========================================================================== */

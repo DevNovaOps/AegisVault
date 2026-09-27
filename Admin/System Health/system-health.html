@@ -7,10 +7,10 @@
     <meta name="description" content="AegisVault System Health — Real-time infrastructure telemetry, microservice uptime monitoring, and cryptographic protocol diagnostics.">
     <meta name="theme-color" content="#F4F6FA">
 
-    <!-- Google Fonts Typography (Plus Jakarta Sans, Playfair Display, JetBrains Mono) -->
+    <!-- Google Fonts Typography (Plus Jakarta Sans, Cinzel, Playfair Display, JetBrains Mono) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Cinzel:wght@600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
     <!-- Admin Common Stylesheet -->
     <link rel="stylesheet" href="../common/css/admin-common.css">
@@ -18,285 +18,294 @@
     <link rel="stylesheet" href="css/system-health.css">
 </head>
 <body class="light-theme">
+  <div class="admin-app">
 
-    <div class="app-layout">
+    <!-- ====================================================================
+         Sidebar Navigation (Trustee / Owner Architecture)
+         ==================================================================== -->
+    <aside class="app-sidebar" id="app-sidebar" aria-label="Admin Navigation">
+      <!-- Brand Logo Header -->
+      <div class="sidebar-brand">
+        <div class="brand-shield-icon">
+          <svg viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 2L3 8V20C3 31.2 10.3 41.5 20 44C29.7 41.5 37 31.2 37 20V8L20 2Z" stroke="#F97316" stroke-width="2.5" stroke-linejoin="round" fill="rgba(249, 115, 22, 0.08)"/>
+            <path d="M20 8L8 13V21C8 28.5 13.1 35.5 20 37.5C26.9 35.5 32 28.5 32 21V13L20 8Z" fill="#F97316"/>
+            <path d="M20 13L13 16.5V22C13 26.5 16 30.5 20 32C24 30.5 27 26.5 27 22V16.5L20 13Z" fill="#FFA24C"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Aegis<span class="vault-accent">Vault</span></span>
+          <span class="brand-tagline">What matters, lives on.</span>
+        </div>
+      </div>
 
-        <!-- ==================================================================
-             1. APPLICATION HEADER (Identical to Dashboard, Audit Logs, User Mgmt)
-             ================================================================== -->
-        <header class="app-header" role="banner">
-            <!-- Left: Brand Logo & Title -->
-            <div class="header-left">
-                <button class="hamburger-btn" id="btn-hamburger" aria-label="Toggle Sidebar Menu">
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="3" y1="12" x2="21" y2="12"></line>
-                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                        <line x1="3" y1="18" x2="21" y2="18"></line>
-                    </svg>
-                </button>
+      <!-- Navigation Links (9 Modules) -->
+      <nav class="sidebar-nav">
+        <!-- Dashboard -->
+        <a href="../Dashboard/admin.html" class="nav-item" id="nav-dashboard">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1V9.5z"/></svg>
+          </span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+        <!-- User Management -->
+        <a href="../User Management/user-management.html" class="nav-item" id="nav-user-mgmt">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </span>
+          <span class="nav-label">User Management</span>
+        </a>
+        <!-- Trustee Management -->
+        <a href="../Trustee Management/trustee-management.html" class="nav-item" id="nav-trustee-mgmt">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </span>
+          <span class="nav-label">Trustee Management</span>
+        </a>
+        <!-- Vault Management -->
+        <a href="../Vault Management/vault-management.html" class="nav-item" id="nav-vault-mgmt">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </span>
+          <span class="nav-label">Vault Management</span>
+        </a>
+        <!-- Security Operations -->
+        <a href="../Security Operations/security-operations.html" class="nav-item" id="nav-security-ops">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          </span>
+          <span class="nav-label">Security Operations</span>
+        </a>
+        <!-- Audit Logs -->
+        <a href="../Audit Logs/audit-logs.html" class="nav-item" id="nav-audit-logs">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </span>
+          <span class="nav-label">Audit Logs</span>
+        </a>
+        <!-- System Health -->
+        <a href="../System Health/system-health.html" class="nav-item active" id="nav-system-health" aria-current="page">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </span>
+          <span class="nav-label">System Health</span>
+        </a>
+        <!-- Analytics -->
+        <a href="../Analytics/analytics.html" class="nav-item" id="nav-analytics">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </span>
+          <span class="nav-label">Analytics</span>
+        </a>
+        <!-- Reports -->
+        <a href="../Reports/reports.html" class="nav-item" id="nav-reports">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </span>
+          <span class="nav-label">Reports</span>
+        </a>
+        <!-- Profile Management -->
+        <a href="../Profile Management/profile-management.html" class="nav-item" id="nav-profile-mgmt">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a8.38 8.38 0 0 1 13 0"/></svg>
+          </span>
+          <span class="nav-label">Profile Management</span>
+        </a>
+      </nav>
 
-                <a href="../Dashboard/admin.html" class="brand-link" aria-label="AegisVault Admin Console">
-                    <svg class="brand-logo-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M18 2L5 7.5V17C5 25.5 10.5 32.5 18 34.5C25.5 32.5 31 25.5 31 17V7.5L18 2Z" fill="#F45A1F"/>
-                        <path d="M18 5L7.5 9.4V17C7.5 24 12 29.8 18 31.6C24 29.8 28.5 24 28.5 17V9.4L18 5Z" fill="#FF7A2F"/>
-                        <rect x="13" y="15" width="10" height="9" rx="2" fill="#FFFFFF"/>
-                        <path d="M15 15V12.8C15 11.25 16.34 10 18 10C19.66 10 21 11.25 21 12.8V15" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/>
-                        <circle cx="18" cy="18.5" r="1.3" fill="#F45A1F"/>
-                        <path d="M18 19.8V21.5" stroke="#F45A1F" stroke-width="1.3" stroke-linecap="round"/>
-                    </svg>
-                    <div class="brand-text-col">
-                        <span class="brand-name">AegisVault</span>
-                        <span class="brand-tagline">What matters, lives on.</span>
-                    </div>
-                </a>
+      <!-- Sidebar Scenic Quote (Natural footer on full scenic background) -->
+      <div class="sidebar-quote-block">
+        <p class="sidebar-scenic-quote">Stronger<br>Security.<br>Brighter<br>Tomorrows.</p>
+        <div class="sidebar-scenic-dash"></div>
+      </div>
+    </aside>
+
+    <!-- Mobile Sidebar Backdrop -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+    <!-- ====================================================================
+         Main Content Area (Direct child of .admin-app)
+         ==================================================================== -->
+    <div class="admin-main">
+
+      <!-- Top Navigation Bar (Header inside admin-main, zero white space) -->
+      <header class="app-header" role="banner">
+        <div class="topbar-left">
+          <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle Sidebar Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Topbar Right Controls -->
+        <div class="topbar-right">
+          <!-- Theme Toggle Sliding Pill Switch -->
+          <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Dark / Light Theme" title="Toggle Theme" role="switch">
+            <span class="theme-switch-track">
+              <span class="switch-icon switch-icon-sun" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="4"/>
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                </svg>
+              </span>
+              <span class="switch-icon switch-icon-moon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+              </span>
+              <span class="theme-switch-thumb">
+                <span class="thumb-icon thumb-sun">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                  </svg>
+                </span>
+                <span class="thumb-icon thumb-moon">
+                  <svg viewBox="0 0 24 24" fill="#ffffff" stroke="none">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                  </svg>
+                </span>
+              </span>
+            </span>
+          </button>
+
+          <!-- Notifications Dropdown Trigger -->
+          <div class="notification-btn-wrapper">
+            <button class="notification-btn" id="notificationBtn" aria-label="Notifications" title="Notifications">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              </svg>
+              <span class="notification-badge-dot" id="notif-badge-indicator"></span>
+            </button>
+            <!-- Dropdown Menu -->
+            <div class="dropdown-panel" id="notificationDropdown">
+              <div class="dropdown-header">Recent Alerts (3)</div>
+              <a href="../Audit Logs/audit-logs.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span>High-privilege admin session active</span>
+              </a>
+              <a href="../System Health/system-health.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                <span>Telemetry health report compiled: 99.99%</span>
+              </a>
+              <a href="../Vault Management/vault-management.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <span>Zero-knowledge shard integrity verified</span>
+              </a>
+              <div class="dropdown-divider"></div>
+              <a href="../Audit Logs/audit-logs.html" class="dropdown-item" style="color:var(--brand-orange); font-weight:600;">View all notifications &rarr;</a>
             </div>
+          </div>
 
-
-            <!-- Right: Theme Switcher Pill, Notifications, Admin Profile -->
-            <div class="header-right">
-                <!-- Theme Switcher Pill Toggle (Exact same as Dashboard, Audit Logs, User Mgmt) -->
-                <button class="theme-toggle-btn" id="btn-theme-toggle" aria-label="Toggle light and dark theme" title="Toggle theme">
-                    <div class="theme-toggle-track">
-                        <span class="theme-track-icon theme-track-sun" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="4"></circle>
-                                <line x1="12" y1="2" x2="12" y2="4"></line>
-                                <line x1="12" y1="20" x2="12" y2="22"></line>
-                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                                <line x1="2" y1="12" x2="4" y2="12"></line>
-                                <line x1="20" y1="12" x2="22" y2="12"></line>
-                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                            </svg>
-                        </span>
-                        <span class="theme-track-icon theme-track-moon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                            </svg>
-                        </span>
-                        <div class="theme-toggle-thumb">
-                            <svg class="thumb-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                                <circle cx="12" cy="12" r="4"></circle>
-                                <line x1="12" y1="2" x2="12" y2="4"></line>
-                                <line x1="12" y1="20" x2="12" y2="22"></line>
-                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                                <line x1="2" y1="12" x2="4" y2="12"></line>
-                                <line x1="20" y1="12" x2="22" y2="12"></line>
-                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                            </svg>
-                            <svg class="thumb-icon-moon" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </button>
-
-                <!-- Notifications Bell with Red Badge -->
-                <div class="notif-wrapper">
-                    <button class="header-icon-btn" id="btn-notifications" aria-label="Notifications" title="Notifications">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                        </svg>
-                        <span class="notif-badge-pill" id="notif-badge-indicator">1</span>
-                    </button>
-
-                    <!-- Notifications Dropdown -->
-                    <div class="notifications-dropdown" id="notifications-dropdown">
-                        <div style="padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-weight: 700; font-size: 0.82rem; color: var(--text-heading);">Notifications</span>
-                            <span style="font-size: 0.7rem; color: var(--brand-orange); cursor: pointer;" onclick="window.AegisSystemHealth.showToast('All notifications marked as read', 'info');">Mark read</span>
-                        </div>
-                        <div style="padding: 0.75rem 1rem; font-size: 0.78rem;">
-                            <div style="font-weight: 600; color: var(--text-heading);">Database Replica Catch-up Complete</div>
-                            <div style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 2px;">Replica lag decreased to 0.4ms across all nodes.</div>
-                            <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 4px;">4 minutes ago</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Admin Profile Menu -->
-                <div class="profile-wrapper">
-                    <button class="profile-btn" id="user-profile-btn" aria-label="Admin Profile Menu">
-                        <div class="avatar-initials-circle">AP</div>
-                        <div class="profile-info-col">
-                            <span class="profile-name">Admin</span>
-                            <span class="profile-role">System Administrator</span>
-                        </div>
-                    </button>                    <!-- Profile Dropdown -->
-                    <div class="profile-dropdown" id="profile-dropdown">
-                        <button class="profile-menu-item" id="btn-profile-settings" type="button">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                            <span>Security Settings</span>
-                        </button>
-                        <a href="../Audit Logs/audit-logs.html" class="profile-menu-item" id="btn-profile-audit">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-                            <span>Audit Logs</span>
-                        </a>
-                        <button class="profile-menu-item" id="btn-profile-signout" type="button">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                            <span>Sign Out</span>
-                        </button>
-                    </div>
-                </div>
+          <!-- Profile Chip Menu -->
+          <div class="profile-menu-wrapper">
+            <button class="profile-chip" id="profileBtn" aria-label="Admin Profile Menu">
+              <div class="profile-avatar-circle">AD</div>
+              <span class="profile-name">Admin</span>
+              <svg class="profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+            <!-- Dropdown Menu -->
+            <div class="dropdown-panel" id="profileDropdown">
+              <div class="dropdown-header">Admin Console</div>
+              <a href="../Profile Management/profile-management.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a8.38 8.38 0 0 1 13 0"/></svg>
+                <span>Profile Management</span>
+              </a>
+              <a href="../Security Operations/security-operations.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>Security Operations</span>
+              </a>
+              <a href="../Audit Logs/audit-logs.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span>Audit Logs</span>
+              </a>
+              <div class="dropdown-divider"></div>
+              <a href="../../AegisVault Home/auth.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+                <span>Switch Portal</span>
+              </a>
+              <a href="javascript:void(0)" class="dropdown-item" style="color:var(--coral, #EF4444);" onclick="typeof showToast === 'function' ? showToast('Signing out of admin session...') : null; setTimeout(() => window.location.href='../../AegisVault Home/auth.html', 700);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>Sign Out</span>
+              </a>
             </div>
-        </header>
+          </div>
+        </div>
+      </header>
 
-        <!-- ==================================================================
-             2. APP BODY: SIDEBAR + MAIN WORKSPACE (Exact same structure as other modules)
-             ================================================================== -->
-        <div class="app-body-container">
-            <!-- Mobile Sidebar Backdrop -->
-            <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
 
-            <!-- Admin Sidebar Navigation (Exact same markup as Dashboard, Audit Logs, User Mgmt) -->
-            <aside class="app-sidebar" id="app-sidebar" role="navigation" aria-label="Admin Navigation">
-                <div class="sidebar-top-group">
-                    <ul class="sidebar-nav-list">
-                        <!-- 1. Dashboard -->
-                        <li>
-                            <a href="../Dashboard/admin.html" class="nav-link-item" data-target="dashboard">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                                </svg>
-                                <span class="nav-label">Dashboard</span>
-                            </a>
-                        </li>
-                        <!-- 2. User Management -->
-                        <li>
-                            <a href="../User Management/user-management.html" class="nav-link-item" data-target="user-management">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="12" cy="7" r="4"></circle>
-                                </svg>
-                                <span class="nav-label">User Management</span>
-                            </a>
-                        </li>
-                        <!-- 3. Trustee Management -->
-                        <li>
-                            <a href="../Trustee Management/trustee-management.html" class="nav-link-item" data-target="trustee-management">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="9" cy="7" r="4"></circle>
-                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                                </svg>
-                                <span class="nav-label">Trustee Management</span>
-                            </a>
-                        </li>
-                        <!-- 4. Vault Management -->
-                        <li>
-                            <a href="../Vault Management/vault-management.html" class="nav-link-item" data-target="vault-management">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                                </svg>
-                                <span class="nav-label">Vault Management</span>
-                            </a>
-                        </li>
-                        <!-- 5. Security Operations -->
-                        <li>
-                            <a href="../Security Operations/security-operations.html" class="nav-link-item">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                                    <polyline points="9 12 11 14 15 10"></polyline>
-                                </svg>
-                                <span class="nav-label">Security Operations</span>
-                            </a>
-                        </li>
-                        <!-- 6. Audit Logs -->
-                        <li>
-                            <a href="../Audit Logs/audit-logs.html" class="nav-link-item" data-target="audit-logs">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                    <polyline points="14 2 14 8 20 8"></polyline>
-                                    <line x1="16" y1="13" x2="8" y2="13"></line>
-                                    <line x1="16" y1="17" x2="8" y2="17"></line>
-                                </svg>
-                                <span class="nav-label">Audit Logs</span>
-                            </a>
-                        </li>
-                        <!-- 8. System Health (Active) -->
-                        <li>
-                            <a href="system-health.html" class="nav-link-item active" data-target="system-health">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                                </svg>
-                                <span class="nav-label">System Health</span>
-                            </a>
-                        </li>
-                        <!-- 9. Analytics -->
-                        <li>
-                            <a href="../Analytics/analytics.html" class="nav-link-item" data-target="analytics">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="18" y1="20" x2="18" y2="10"></line>
-                                    <line x1="12" y1="20" x2="12" y2="4"></line>
-                                    <line x1="6" y1="20" x2="6" y2="14"></line>
-                                </svg>
-                                <span class="nav-label">Analytics</span>
-                            </a>
-                        </li>
-                        <!-- 9. Reports -->
-                        <li>
-                            <a href="../Reports/reports.html" class="nav-link-item" data-target="reports">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                    <polyline points="14 2 14 8 20 8"></polyline>
-                                    <line x1="16" y1="13" x2="8" y2="13"></line>
-                                    <line x1="16" y1="17" x2="8" y2="17"></line>
-                                    <polyline points="10 9 9 9 8 9"></polyline>
-                                </svg>
-                                <span class="nav-label">Reports</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Lower Sidebar Mountain Landscape Card (Shared Assets) -->
-                <div class="sidebar-bottom-landscape-card" aria-hidden="true">
-                    <img class="sidebar-landscape-img sidebar-img-light" src="../assets/sidebar-bg-light.png" alt="Alpine Mountain Landscape">
-                    <img class="sidebar-landscape-img sidebar-img-dark" src="../assets/sidebar-bg-dark.png" alt="Alpine Mountain Night Landscape">
-                    <div class="sidebar-landscape-overlay"></div>
-                    <div class="sidebar-landscape-text">
-                        Stronger Security.<br>
-                        Brighter Tomorrows.
-                    </div>
-                </div>
-            </aside>
-
-            <!-- ==================================================================
-                 3. MAIN WORKSPACE
-                 ================================================================== -->
-            <main class="main-workspace app-workspace-content" id="main-workspace">
+      <main class="main-workspace app-workspace-content" id="main-workspace">
 
 
                 <!-- Hero Section Card matching screenshots -->
                 <section class="hero-card" aria-label="System Health Overview">
                     <!-- Hero Left: Title & Subtitle -->
                     <div class="hero-left-col">
-                        <h1 class="hero-title hero-main-title">System Health</h1>
+                        <div class="hero-eyebrow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                            07. INFRASTRUCTURE TELEMETRY &amp; HEALTH
+                        </div>
+                        <h1 class="hero-title hero-main-title">System Health. <span class="hero-accent">Service Telemetry.</span></h1>
                         <p class="hero-subtitle hero-sub-title">Monitor system performance, services, and infrastructure in real-time.</p>
+
+                        <!-- Feature Badges Row -->
+                        <div class="hero-features-row">
+                            <div class="hero-feature-item">
+                                <div class="hero-feature-bubble">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                                </div>
+                                <div class="hero-feature-text">
+                                    <span class="hero-feature-primary">99.99% Uptime</span>
+                                    <span class="hero-feature-secondary">Global SLA</span>
+                                </div>
+                            </div>
+                            <div class="hero-feature-item">
+                                <div class="hero-feature-bubble">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                </div>
+                                <div class="hero-feature-text">
+                                    <span class="hero-feature-primary">Latency 24ms</span>
+                                    <span class="hero-feature-secondary">Low Jitter</span>
+                                </div>
+                            </div>
+                            <div class="hero-feature-item">
+                                <div class="hero-feature-bubble">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                </div>
+                                <div class="hero-feature-text">
+                                    <span class="hero-feature-primary">DB Clusters</span>
+                                    <span class="hero-feature-secondary">Active Replica</span>
+                                </div>
+                            </div>
+                            <div class="hero-feature-item">
+                                <div class="hero-feature-bubble">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.178 8c5.096 0 5.096 8 0 8-2.605 0-4.492-2.14-6.178-4-1.686-1.86-3.573-4-6.178-4-5.096 0-5.096 8 0 8 2.605 0 4.492-2.14 6.178-4 1.686-1.86 3.573-4 6.178-4z"/></svg>
+                                </div>
+                                <div class="hero-feature-text">
+                                    <span class="hero-feature-primary">A Safer</span>
+                                    <span class="hero-feature-secondary">Tomorrow</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Hero Center: Wide Mountain Landscape Cutout with Inspiring Quote -->
-                    <div class="hero-center-col" aria-hidden="true">
-                        <img class="hero-panorama-img hero-img-light" src="../assets/light-background.png" alt="Alpine Mountain Panorama">
-                        <img class="hero-panorama-img hero-img-dark" src="../assets/dark-background.png" alt="Alpine Mountain Sunset">
-                        <div class="hero-fade-overlay hero-fade-left"></div>
-                        <div class="hero-fade-overlay hero-fade-right"></div>
-                        <span class="hero-quote-text">“A stable system<br>guards a brighter tomorrow.”</span>
-                    </div>
+                    <!-- Hero Right: Quote + Floating All Systems Operational Status Card -->
+                    <div class="hero-right-col">
+                        <div class="hero-quote-card">
+                            <p class="hero-quote-text">&ldquo;A stable system<br>guards a brighter tomorrow.&rdquo;</p>
+                            <div class="hero-quote-dash"></div>
+                        </div>
 
-                    <!-- Hero Right: Floating All Systems Operational Status Card -->
-                    <div class="hero-status-banner" id="hero-status-banner" title="Click to trigger system health check sweep">
-                        <div class="pulse-status-dot"></div>
-                        <div class="hero-status-text-col">
-                            <span class="hero-status-title">All Systems Operational</span>
-                            <span class="hero-status-updated" id="hero-status-updated-text">Last updated: 12 Sep 2025, <span id="hero-live-clock">10:24 AM</span></span>
+                        <div class="hero-status-banner" id="hero-status-banner" title="Click to trigger system health check sweep">
+                            <div class="pulse-status-dot"></div>
+                            <div class="hero-status-text-col">
+                                <span class="hero-status-title">All Systems Operational</span>
+                                <span class="hero-status-updated" id="hero-status-updated-text">Last updated: 12 Sep 2025, <span id="hero-live-clock">10:24 AM</span></span>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -577,36 +586,32 @@
                 </div>
 
             </main>
+
+      <!-- Global Footer (Exact Trustee Structure & Style) -->
+      <footer class="app-footer">
+        <div class="footer-brand">
+          <div class="brand-shield-icon">
+            <svg viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 2L3 8V20C3 31.2 10.3 41.5 20 44C29.7 41.5 37 31.2 37 20V8L20 2Z" stroke="#F97316" stroke-width="2.5" stroke-linejoin="round" fill="rgba(249, 115, 22, 0.08)"/>
+              <path d="M20 8L8 13V21C8 28.5 13.1 35.5 20 37.5C26.9 35.5 32 28.5 32 21V13L20 8Z" fill="#F97316"/>
+              <path d="M20 13L13 16.5V22C13 26.5 16 30.5 20 32C24 30.5 27 26.5 27 22V16.5L20 13Z" fill="#FFA24C"/>
+            </svg>
+          </div>
+          <span class="brand-title">Aegis<span class="vault-accent">Vault</span></span>
         </div>
 
-        <!-- ==================================================================
-             7. APPLICATION FOOTER
-             ================================================================== -->
-        <footer class="app-footer" role="contentinfo">
-            <div class="footer-left">
-                <svg class="brand-logo-svg" style="width:20px; height:24px;" viewBox="0 0 36 36" fill="none">
-                    <path d="M18 2L5 7.5V17C5 25.5 10.5 32.5 18 34.5C25.5 32.5 31 25.5 31 17V7.5L18 2Z" fill="#F45A1F"/>
-                    <path d="M18 5L7.5 9.4V17C7.5 24 12 29.8 18 31.6C24 29.8 28.5 24 28.5 17V9.4L18 5Z" fill="#FF7A2F"/>
-                    <rect x="13" y="15" width="10" height="9" rx="2" fill="#FFFFFF"/>
-                </svg>
-                <div class="brand-text-col">
-                    <span class="brand-name" style="font-size: 0.95rem;">AegisVault</span>
-                    <span class="brand-tagline">What matters, lives on.</span>
-                </div>
-            </div>
+        <div class="footer-center-motto">
+          &ldquo;Because what matters today, should matter tomorrow too.&rdquo;
+        </div>
 
-            <div class="footer-center">
-                “Because what matters today, should matter tomorrow too.”
-            </div>
-
-            <div class="footer-right">
-                <a href="#privacy" class="footer-link" onclick="window.AegisSystemHealth.showToast('Security & Data Privacy Policy', 'info');">Privacy</a>
-                <a href="#terms" class="footer-link" onclick="window.AegisSystemHealth.showToast('Terms of Custody Service', 'info');">Terms</a>
-                <a href="#help" class="footer-link" onclick="window.AegisSystemHealth.showToast('Enterprise Support Hotline', 'info');">Help</a>
-            </div>
-        </footer>
-
+        <div class="footer-links">
+          <a href="javascript:void(0)" onclick="typeof showToast === 'function' ? showToast('Privacy Policy (mock).') : null;">Privacy</a>
+          <a href="javascript:void(0)" onclick="typeof showToast === 'function' ? showToast('Terms of Service (mock).') : null;">Terms</a>
+          <a href="../Audit Logs/audit-logs.html">Audit</a>
+        </div>
+      </footer>
     </div>
+  </div>
 
     <!-- ======================================================================
          8. MODALS (SERVICE TELEMETRY, EVENT DETAILS, SERVER SPECS)
@@ -778,3 +783,5 @@
     <script src="js/system-health.js"></script>
 </body>
 </html>
+
+

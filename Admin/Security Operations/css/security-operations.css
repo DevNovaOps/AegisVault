@@ -1,110 +1,9 @@
 /* ==============================================================
    AEGISVAULT — SECURITY OPERATIONS STYLESHEET
    Matches exact visual design of Dark & Light Theme Screenshots
+   (Tokens, reset, header, sidebar, hero card, breadcrumbs, modals,
+    and toasts are centrally provided by ../common/css/admin-common.css)
    ============================================================== */
-
-:root {
-    /* Brand & Accent */
-    --brand-orange: #E86326;
-    --brand-orange-light: #FFF7ED;
-    --brand-orange-border: #FFEDD5;
-    --brand-orange-glow: rgba(232, 99, 38, 0.22);
-    --brand-orange-subtle: #FFF7ED;
-
-    /* Status Badge & Accent Tokens (Light Theme) */
-    --status-danger-bg: #FEF2F2;
-    --status-danger-text: #DC2626;
-    --status-danger-border: #FECACA;
-
-    --status-warning-bg: #FFFBEB;
-    --status-warning-text: #D97706;
-    --status-warning-border: #FEF3C7;
-
-    --status-success-bg: #ECFDF5;
-    --status-success-text: #059669;
-    --status-success-border: #A7F3D0;
-
-    --status-info-bg: #EFF6FF;
-    --status-info-text: #2563EB;
-    --status-info-border: #DBEAFE;
-
-    --status-purple-bg: #F5F3FF;
-    --status-purple-text: #7C3AED;
-    --status-purple-border: #EDE9FE;
-
-    /* Fonts */
-    --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    --font-display: 'Playfair Display', Georgia, serif;
-    --font-mono: 'JetBrains Mono', monospace;
-
-    /* Transition defaults */
-    --trans-fast: 0.15s ease;
-    --trans-normal: 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-    --trans-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-body.dark-theme,
-[data-theme="dark"] {
-    --brand-orange-light: rgba(245, 168, 75, 0.12);
-    --brand-orange-subtle: rgba(245, 168, 75, 0.12);
-
-    --status-danger-bg: rgba(239, 68, 68, 0.22);
-    --status-danger-text: #F87171;
-    --status-danger-border: rgba(239, 68, 68, 0.35);
-
-    --status-warning-bg: rgba(245, 158, 11, 0.22);
-    --status-warning-text: #FBBF24;
-    --status-warning-border: rgba(245, 158, 11, 0.35);
-
-    --status-success-bg: rgba(16, 185, 129, 0.22);
-    --status-success-text: #34D399;
-    --status-success-border: rgba(16, 185, 129, 0.35);
-
-    --status-info-bg: rgba(56, 189, 248, 0.18);
-    --status-info-text: #38BDF8;
-    --status-info-border: rgba(56, 189, 248, 0.3);
-
-    --status-purple-bg: rgba(167, 139, 250, 0.18);
-    --status-purple-text: #C084FC;
-    --status-purple-border: rgba(167, 139, 250, 0.3);
-}
-
-/* Module-specific styles: Security Operations widgets, charts, threat intel, and posture metrics.
-   (Shared design tokens, reset, header, sidebar, modals, and toasts are provided by ../common/css/admin-common.css) */
-
-/* Breadcrumb navigation matching system style */
-.breadcrumb-row,
-.breadcrumb-trail,
-.breadcrumb-nav {
-    font-size: 0.76rem;
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin-bottom: -0.35rem;
-    line-height: 1.4;
-}
-
-.breadcrumb-link {
-    color: var(--text-secondary);
-    text-decoration: none;
-    transition: color 0.15s ease;
-}
-
-.breadcrumb-link:hover {
-    color: var(--brand-orange);
-}
-
-.breadcrumb-separator,
-.breadcrumb-sep {
-    color: var(--text-muted);
-    user-select: none;
-}
-
-.breadcrumb-current {
-    color: var(--brand-orange) !important;
-    font-weight: 600;
-}
 
 /* Metric Purple Icon Bubble for Blocked Attempts */
 .metric-purple .metric-icon-circle {
@@ -124,38 +23,6 @@ body.dark-theme,
 .hero-right-col {
     position: relative;
     z-index: 60;
-}
-
-/* Time range selector dropdown button in Hero */
-.time-range-select-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 7px 12px;
-    border-radius: var(--radius-sm);
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    color: var(--text-heading);
-    font-size: 0.82rem;
-    font-weight: 600;
-    box-shadow: var(--shadow-card);
-    transition: var(--transition);
-    cursor: pointer;
-    user-select: none;
-}
-
-.time-range-select-btn:hover,
-.time-range-select-btn.active {
-    background: var(--bg-hover);
-    border-color: var(--border-focus);
-}
-
-.time-range-select-btn svg {
-    color: var(--text-muted);
-}
-
-.time-range-select-btn .chevron-icon {
-    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .time-range-select-btn.active .chevron-icon {

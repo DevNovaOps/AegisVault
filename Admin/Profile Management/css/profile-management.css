@@ -1,0 +1,800 @@
+/* ==========================================================================
+   AegisVault — Admin Profile Management Stylesheet
+   Module-specific styles for Administrator Profile, Hardware Security Keys,
+   Master Credentials, Multisig Clearances, and Session Surveillance.
+   (Base shell, header, sidebar, hero card, footer & tokens from admin-common.css)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. KPI Metric Cards Row
+   -------------------------------------------------------------------------- */
+.metrics-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.metric-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md, 10px);
+    padding: 1.1rem 1.25rem;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform var(--trans-normal), border-color var(--trans-normal), box-shadow var(--trans-normal);
+}
+
+.metric-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--brand-orange);
+    box-shadow: var(--shadow-md);
+}
+
+.metric-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md, 10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.metric-icon-box svg {
+    width: 22px;
+    height: 22px;
+}
+
+.metric-icon-box.orange {
+    background-color: var(--brand-orange-light, rgba(249, 115, 22, 0.12));
+    color: var(--brand-orange);
+}
+
+.metric-icon-box.emerald {
+    background-color: var(--emerald-bg, rgba(16, 185, 129, 0.12));
+    color: var(--emerald, #10b981);
+}
+
+.metric-icon-box.blue {
+    background-color: var(--blue-bg, rgba(59, 130, 246, 0.12));
+    color: var(--blue, #3b82f6);
+}
+
+.metric-icon-box.purple {
+    background-color: var(--purple-bg, rgba(168, 85, 247, 0.12));
+    color: var(--purple, #a855f7);
+}
+
+.metric-icon-box.amber {
+    background-color: var(--amber-bg, rgba(245, 158, 11, 0.12));
+    color: var(--amber, #f59e0b);
+}
+
+.metric-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.metric-label {
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.15rem;
+}
+
+.metric-value {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.15;
+}
+
+.metric-sub {
+    font-size: 0.72rem;
+    color: var(--emerald, #10b981);
+    font-weight: 600;
+    margin-top: 0.15rem;
+}
+
+/* --------------------------------------------------------------------------
+   3. Two-Column Dashboard Content Layout
+   -------------------------------------------------------------------------- */
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 1.25rem;
+    align-items: start;
+}
+
+.profile-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* Profile Card Container */
+.profile-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md, 10px);
+    padding: 1.35rem 1.5rem;
+    box-shadow: var(--shadow-card);
+    transition: border-color var(--transition);
+}
+
+.profile-card:hover {
+    border-color: rgba(249, 115, 22, 0.3);
+}
+
+.profile-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 1.25rem;
+}
+
+.profile-card-title-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.profile-card-icon {
+    width: 22px;
+    height: 22px;
+    color: var(--brand-orange);
+    flex-shrink: 0;
+}
+
+.profile-card-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+}
+
+.profile-card-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   4. Avatar Section & Identity Header
+   -------------------------------------------------------------------------- */
+.profile-avatar-row {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 1.25rem;
+}
+
+.profile-avatar-large {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(249, 115, 22, 0.35);
+    flex-shrink: 0;
+    border: 3px solid var(--bg-surface);
+}
+
+.profile-avatar-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.profile-admin-name {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.profile-badges-strip {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.15rem;
+}
+
+.status-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15rem 0.6rem;
+    border-radius: var(--radius-full);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.status-badge.orange {
+    background-color: var(--brand-orange-light, rgba(249, 115, 22, 0.12));
+    color: var(--brand-orange);
+    border: 1px solid var(--brand-orange-border, rgba(249, 115, 22, 0.25));
+}
+
+.status-badge.emerald {
+    background-color: var(--emerald-bg, rgba(16, 185, 129, 0.12));
+    color: var(--emerald, #10b981);
+    border: 1px solid var(--emerald-border, rgba(16, 185, 129, 0.25));
+}
+
+.status-badge.blue {
+    background-color: var(--blue-bg, rgba(59, 130, 246, 0.12));
+    color: var(--blue, #3b82f6);
+    border: 1px solid var(--blue-border, rgba(59, 130, 246, 0.25));
+}
+
+.avatar-action-btn {
+    padding: 0.4rem 0.85rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    border-radius: var(--radius-sm, 6px);
+    background: var(--bg-card-subtle, var(--bg-surface-elevated));
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+    align-self: flex-start;
+    margin-top: 0.25rem;
+}
+
+.avatar-action-btn:hover {
+    color: var(--brand-orange);
+    border-color: var(--brand-orange);
+}
+
+/* --------------------------------------------------------------------------
+   5. Form Inputs & Groups
+   -------------------------------------------------------------------------- */
+.profile-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.profile-form-grid.full-width {
+    grid-template-columns: 1fr;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.form-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.6rem 0.85rem;
+    border-radius: var(--radius-sm, 6px);
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-input, var(--bg-page));
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    font-family: inherit;
+    transition: all var(--trans-fast, 0.15s ease);
+    box-sizing: border-box;
+}
+
+.form-input:focus {
+    border-color: var(--brand-orange);
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+    background-color: var(--bg-surface);
+    outline: none;
+}
+
+.form-input[readonly] {
+    background-color: var(--bg-card-subtle, rgba(255, 255, 255, 0.02));
+    color: var(--text-muted);
+    cursor: not-allowed;
+}
+
+.input-copy-wrap {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.input-copy-wrap .form-input {
+    padding-right: 4.5rem;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.8rem;
+}
+
+.copy-pill-btn {
+    position: absolute;
+    right: 6px;
+    padding: 0.25rem 0.6rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--brand-orange);
+    background: rgba(249, 115, 22, 0.1);
+    border: 1px solid rgba(249, 115, 22, 0.25);
+    border-radius: var(--radius-sm, 6px);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.copy-pill-btn:hover {
+    background: var(--brand-orange);
+    color: #ffffff;
+}
+
+.profile-card-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.85rem;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-subtle);
+}
+
+.btn-primary-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: var(--radius-sm, 6px);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.35);
+    transition: transform var(--trans-fast, 0.15s ease), box-shadow var(--trans-fast, 0.15s ease);
+}
+
+.btn-primary-action:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.45);
+}
+
+.btn-secondary-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.1rem;
+    background: var(--bg-card-subtle, var(--bg-surface-elevated));
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: var(--radius-sm, 6px);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-secondary-action:hover {
+    color: var(--text-primary);
+    border-color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   6. Hardware Keys List
+   -------------------------------------------------------------------------- */
+.keys-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.key-card-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 1.1rem;
+    border-radius: var(--radius-md, 10px);
+    background-color: var(--bg-card-subtle, rgba(255, 255, 255, 0.02));
+    border: 1px solid var(--border-color);
+    transition: border-color var(--transition), transform var(--transition);
+}
+
+.key-card-item:hover {
+    border-color: rgba(249, 115, 22, 0.35);
+    transform: translateY(-1px);
+}
+
+.key-item-left {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.key-icon-bubble {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-md, 10px);
+    background-color: rgba(249, 115, 22, 0.12);
+    color: var(--brand-orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.key-icon-bubble.blue {
+    background-color: rgba(59, 130, 246, 0.12);
+    color: var(--blue, #3b82f6);
+}
+
+.key-icon-bubble.purple {
+    background-color: rgba(168, 85, 247, 0.12);
+    color: var(--purple, #a855f7);
+}
+
+.key-icon-bubble svg {
+    width: 18px;
+    height: 18px;
+}
+
+.key-info-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.key-title {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.key-meta {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0.15rem;
+}
+
+.key-item-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.btn-remove-key {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.3rem;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s ease;
+}
+
+.btn-remove-key:hover {
+    color: var(--coral, #ef4444);
+}
+
+.btn-remove-key svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* --------------------------------------------------------------------------
+   7. Password Strength Meter
+   -------------------------------------------------------------------------- */
+.password-meter-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-top: 0.35rem;
+}
+
+.strength-bar-track {
+    width: 100%;
+    height: 5px;
+    border-radius: var(--radius-full);
+    background-color: var(--border-color);
+    overflow: hidden;
+}
+
+.strength-bar-fill {
+    height: 100%;
+    width: 85%;
+    border-radius: var(--radius-full);
+    background: linear-gradient(90deg, #f59e0b, #10b981);
+    transition: width 0.3s ease, background 0.3s ease;
+}
+
+.strength-label-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.strength-text {
+    font-weight: 700;
+    color: var(--emerald, #10b981);
+}
+
+/* --------------------------------------------------------------------------
+   8. Multisig Clearance & Shard Guardianship (Right Column)
+   -------------------------------------------------------------------------- */
+.clearance-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.clearance-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 0.85rem;
+    border-radius: var(--radius-sm, 6px);
+    background-color: var(--bg-card-subtle, rgba(255, 255, 255, 0.02));
+    border: 1px solid var(--border-subtle);
+}
+
+.clearance-left {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.clearance-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--brand-orange);
+    flex-shrink: 0;
+}
+
+.clearance-name {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.clearance-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-full);
+    background-color: rgba(16, 185, 129, 0.12);
+    color: var(--emerald, #10b981);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+/* --------------------------------------------------------------------------
+   9. Active Sessions List
+   -------------------------------------------------------------------------- */
+.sessions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.session-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.75rem 0.85rem;
+    border-radius: var(--radius-sm, 6px);
+    background-color: var(--bg-card-subtle, rgba(255, 255, 255, 0.02));
+    border: 1px solid var(--border-subtle);
+}
+
+.session-item.current {
+    border-color: rgba(16, 185, 129, 0.35);
+    background-color: rgba(16, 185, 129, 0.04);
+}
+
+.session-left {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.session-device-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+}
+
+.session-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.session-device-name {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.session-device-meta {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.session-pill {
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-full);
+}
+
+.session-pill.active {
+    background-color: rgba(16, 185, 129, 0.12);
+    color: var(--emerald, #10b981);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.session-pill.inactive {
+    background-color: rgba(100, 116, 139, 0.12);
+    color: var(--text-muted);
+    border: 1px solid var(--border-subtle);
+}
+
+/* --------------------------------------------------------------------------
+   10. Danger Zone / Emergency Protocol Card
+   -------------------------------------------------------------------------- */
+.danger-card {
+    border-color: rgba(239, 68, 68, 0.25);
+    background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(239, 68, 68, 0.03) 100%);
+}
+
+.danger-card .profile-card-icon {
+    color: var(--coral, #ef4444);
+}
+
+.danger-action-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.danger-action-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.danger-text-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.danger-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.danger-desc {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0.15rem;
+}
+
+.btn-danger {
+    padding: 0.45rem 0.95rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    border-radius: var(--radius-sm, 6px);
+    background-color: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    color: var(--coral, #ef4444);
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+}
+
+.btn-danger:hover {
+    background-color: var(--coral, #ef4444);
+    color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   11. Modal Specifics & Registration Graphic
+   -------------------------------------------------------------------------- */
+
+/* Key Registration Graphic */
+.key-setup-box {
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-md, 10px);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.75rem;
+    background-color: var(--bg-card-subtle, rgba(255, 255, 255, 0.01));
+}
+
+.key-setup-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: rgba(249, 115, 22, 0.12);
+    color: var(--brand-orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: keyPulse 2s infinite ease-in-out;
+}
+
+@keyframes keyPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4); }
+    50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(249, 115, 22, 0); }
+}
+
+.key-setup-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* --------------------------------------------------------------------------
+   12. Responsive Design
+   -------------------------------------------------------------------------- */
+@media (max-width: 1200px) {
+    .metrics-row {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-hero {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1.25rem;
+        gap: 1rem;
+        min-height: auto;
+    }
+    .profile-hero-quote {
+        display: none;
+    }
+    .metrics-row {
+        grid-template-columns: 1fr 1fr;
+    }
+    .profile-form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .metrics-row {
+        grid-template-columns: 1fr;
+    }
+}

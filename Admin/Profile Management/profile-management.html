@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AegisVault — Admin Profile & Security</title>
+    <meta name="description" content="AegisVault Enterprise Admin Profile Management — Root credentials, hardware security keys (FIDO2/WebAuthn), cryptographic public keys, active sessions, and multisig protocol authority.">
+
+    <!-- Google Fonts Typography (Plus Jakarta Sans, Cinzel, Playfair Display, JetBrains Mono) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Cinzel:wght@600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Admin Common Stylesheet -->
+    <link rel="stylesheet" href="../common/css/admin-common.css">
+    <!-- Profile Management Stylesheet -->
+    <link rel="stylesheet" href="css/profile-management.css">
+</head>
+<body class="light-theme">
+  <div class="admin-app">
+
+    <!-- ====================================================================
+         Sidebar Navigation (Trustee / Owner Architecture)
+         ==================================================================== -->
+    <aside class="app-sidebar" id="app-sidebar" aria-label="Admin Navigation">
+      <!-- Brand Logo Header -->
+      <div class="sidebar-brand">
+        <div class="brand-shield-icon">
+          <svg viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 2L3 8V20C3 31.2 10.3 41.5 20 44C29.7 41.5 37 31.2 37 20V8L20 2Z" stroke="#F97316" stroke-width="2.5" stroke-linejoin="round" fill="rgba(249, 115, 22, 0.08)"/>
+            <path d="M20 8L8 13V21C8 28.5 13.1 35.5 20 37.5C26.9 35.5 32 28.5 32 21V13L20 8Z" fill="#F97316"/>
+            <path d="M20 13L13 16.5V22C13 26.5 16 30.5 20 32C24 30.5 27 26.5 27 22V16.5L20 13Z" fill="#FFA24C"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Aegis<span class="vault-accent">Vault</span></span>
+          <span class="brand-tagline">What matters, lives on.</span>
+        </div>
+      </div>
+
+      <!-- Navigation Links (10 Modules) -->
+      <nav class="sidebar-nav">
+        <!-- Dashboard -->
+        <a href="../Dashboard/admin.html" class="nav-item" id="nav-dashboard">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1V9.5z"/></svg>
+          </span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+        <!-- User Management -->
+        <a href="../User Management/user-management.html" class="nav-item" id="nav-user-mgmt">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </span>
+          <span class="nav-label">User Management</span>
+        </a>
+        <!-- Trustee Management -->
+        <a href="../Trustee Management/trustee-management.html" class="nav-item" id="nav-trustee-mgmt">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </span>
+          <span class="nav-label">Trustee Management</span>
+        </a>
+        <!-- Vault Management -->
+        <a href="../Vault Management/vault-management.html" class="nav-item" id="nav-vault-mgmt">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </span>
+          <span class="nav-label">Vault Management</span>
+        </a>
+        <!-- Security Operations -->
+        <a href="../Security Operations/security-operations.html" class="nav-item" id="nav-security-ops">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          </span>
+          <span class="nav-label">Security Operations</span>
+        </a>
+        <!-- Audit Logs -->
+        <a href="../Audit Logs/audit-logs.html" class="nav-item" id="nav-audit-logs">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </span>
+          <span class="nav-label">Audit Logs</span>
+        </a>
+        <!-- System Health -->
+        <a href="../System Health/system-health.html" class="nav-item" id="nav-system-health">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </span>
+          <span class="nav-label">System Health</span>
+        </a>
+        <!-- Analytics -->
+        <a href="../Analytics/analytics.html" class="nav-item" id="nav-analytics">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </span>
+          <span class="nav-label">Analytics</span>
+        </a>
+        <!-- Reports -->
+        <a href="../Reports/reports.html" class="nav-item" id="nav-reports">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </span>
+          <span class="nav-label">Reports</span>
+        </a>
+        <!-- Profile Management (Active) -->
+        <a href="../Profile Management/profile-management.html" class="nav-item active" id="nav-profile-mgmt" aria-current="page">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a8.38 8.38 0 0 1 13 0"/></svg>
+          </span>
+          <span class="nav-label">Profile Management</span>
+        </a>
+      </nav>
+
+      <!-- Sidebar Scenic Quote (Natural footer on full scenic background) -->
+      <div class="sidebar-quote-block">
+        <p class="sidebar-scenic-quote">Stronger<br>Security.<br>Brighter<br>Tomorrows.</p>
+        <div class="sidebar-scenic-dash"></div>
+      </div>
+    </aside>
+
+    <!-- Mobile Sidebar Backdrop -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+    <!-- ====================================================================
+         Main Content Area
+         ==================================================================== -->
+    <div class="admin-main">
+
+      <!-- Top Navigation Bar -->
+      <header class="app-header" role="banner">
+        <div class="topbar-left">
+          <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle Sidebar Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Topbar Right Controls -->
+        <div class="topbar-right">
+          <!-- Theme Toggle Sliding Pill Switch -->
+          <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Dark / Light Theme" title="Toggle Theme" role="switch">
+            <span class="theme-switch-track">
+              <span class="switch-icon switch-icon-sun" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="4"/>
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                </svg>
+              </span>
+              <span class="switch-icon switch-icon-moon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+              </span>
+              <span class="theme-switch-thumb">
+                <span class="thumb-icon thumb-sun">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                  </svg>
+                </span>
+                <span class="thumb-icon thumb-moon">
+                  <svg viewBox="0 0 24 24" fill="#ffffff" stroke="none">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                  </svg>
+                </span>
+              </span>
+            </span>
+          </button>
+
+          <!-- Notifications Dropdown Trigger -->
+          <div class="notification-btn-wrapper">
+            <button class="notification-btn" id="notificationBtn" aria-label="Notifications" title="Notifications">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              </svg>
+              <span class="notification-badge-dot" id="notif-badge-indicator"></span>
+            </button>
+            <!-- Dropdown Menu -->
+            <div class="dropdown-panel" id="notificationDropdown">
+              <div class="dropdown-header">Recent Alerts (3)</div>
+              <a href="../Audit Logs/audit-logs.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span>High-privilege admin session active</span>
+              </a>
+              <a href="../System Health/system-health.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                <span>Telemetry health report compiled: 99.99%</span>
+              </a>
+              <a href="../Vault Management/vault-management.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <span>Zero-knowledge shard integrity verified</span>
+              </a>
+              <div class="dropdown-divider"></div>
+              <a href="../Audit Logs/audit-logs.html" class="dropdown-item" style="color:var(--brand-orange); font-weight:600;">View all notifications &rarr;</a>
+            </div>
+          </div>
+
+          <!-- Profile Chip Menu -->
+          <div class="profile-menu-wrapper">
+            <button class="profile-chip" id="profileBtn" aria-label="Admin Profile Menu">
+              <div class="profile-avatar-circle">AD</div>
+              <span class="profile-name">Admin</span>
+              <svg class="profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+            <!-- Dropdown Menu -->
+            <div class="dropdown-panel" id="profileDropdown">
+              <div class="dropdown-header">Admin Console</div>
+              <a href="../Profile Management/profile-management.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a8.38 8.38 0 0 1 13 0"/></svg>
+                <span>Profile Management</span>
+              </a>
+              <a href="../Security Operations/security-operations.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span>Security Operations</span>
+              </a>
+              <a href="../Audit Logs/audit-logs.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span>Audit Logs</span>
+              </a>
+              <div class="dropdown-divider"></div>
+              <a href="../../AegisVault Home/auth.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+                <span>Switch Portal</span>
+              </a>
+              <a href="javascript:void(0)" class="dropdown-item" style="color:var(--coral, #EF4444);" onclick="typeof showToast === 'function' ? showToast('Signing out of admin session...') : null; setTimeout(() => window.location.href='../../AegisVault Home/auth.html', 700);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>Sign Out</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- ====================================================================
+           Main Profile Management Content
+           ==================================================================== -->
+      <main class="main-workspace" id="profile-management" role="main">
+
+        <!-- 1. Hero Panoramic Banner -->
+        <section class="profile-hero hero-card" aria-label="Admin Profile Banner">
+          <div class="profile-hero-content">
+            <div class="profile-hero-eyebrow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              10. ADMINISTRATOR PROFILE &amp; CREDENTIALS
+            </div>
+            <h1 class="profile-hero-heading">
+              Admin Profile. <span class="hero-accent">Root Authority.</span>
+            </h1>
+            <p class="profile-hero-subtext">Manage root cryptographic identity credentials, FIDO2/WebAuthn hardware security keys, master access phrases, and protocol quorum guardianship.</p>
+
+            <!-- 4 Badges Row -->
+            <div class="profile-badges-row">
+              <div class="profile-badge-pill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span>Root Quorum: <strong>Verified</strong></span>
+              </div>
+              <div class="profile-badge-pill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m21 3-9.5 9.5M15.5 8.5l3 3M18 6l2 2"/></svg>
+                <span>Hardware FIDO2: <strong>2 Keys Active</strong></span>
+              </div>
+              <div class="profile-badge-pill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>Security Grade: <strong>Level 5 (Max)</strong></span>
+              </div>
+              <div class="profile-badge-pill">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.178 8c5.096 0 5.096 8 0 8-2.605 0-4.492-2.14-6.178-4-1.686-1.86-3.573-4-6.178-4-5.096 0-5.096 8 0 8 2.605 0 4.492-2.14 6.178-4 1.686-1.86 3.573-4 6.178-4z"/></svg>
+                <span>Shard Guardian: <strong>3-of-5 Quorum</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero Quote Callout -->
+          <div class="profile-hero-quote">
+            <p class="profile-hero-quote-text">&ldquo;Root authority demands uncompromising vigilance.&rdquo;</p>
+            <div class="profile-hero-quote-dash"></div>
+          </div>
+        </section>
+
+        <!-- 2. KPI Metrics Summary Cards -->
+        <section class="metrics-row" aria-label="Administrator Metrics">
+          <div class="metric-card">
+            <div class="metric-icon-box orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div class="metric-info">
+              <span class="metric-label">Security Tier</span>
+              <span class="metric-value">Level 5</span>
+              <span class="metric-sub">Root Administrator</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon-box emerald">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="metric-info">
+              <span class="metric-label">Active Sessions</span>
+              <span class="metric-value" id="kpiActiveSessions">1 Active</span>
+              <span class="metric-sub">TLS 1.3 Strict E2EE</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon-box blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m21 3-9.5 9.5M15.5 8.5l3 3M18 6l2 2"/></svg>
+            </div>
+            <div class="metric-info">
+              <span class="metric-label">Hardware Keys</span>
+              <span class="metric-value" id="kpiKeyCount">2</span>
+              <span class="metric-sub">YubiKey &bull; WebAuthn</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon-box purple">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <div class="metric-info">
+              <span class="metric-label">Two-Factor Auth</span>
+              <span class="metric-value">Enforced</span>
+              <span class="metric-sub">Biometric / FIDO2</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon-box amber">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="metric-info">
+              <span class="metric-label">Protocol Quorum</span>
+              <span class="metric-value">3 of 5</span>
+              <span class="metric-sub">Guardian Threshold</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. Profile Content Grid (Two Columns) -->
+        <div class="profile-grid">
+
+          <!-- Left Column (Core Profile, Hardware Keys, Password Rotation) -->
+          <div class="profile-col">
+
+            <!-- Card 1: Admin Identity & Information -->
+            <section class="profile-card" aria-labelledby="card-identity-title">
+              <div class="profile-card-header">
+                <div class="profile-card-title-group">
+                  <svg class="profile-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                  </svg>
+                  <div>
+                    <h2 class="profile-card-title" id="card-identity-title">Administrator Identity &amp; Profile</h2>
+                    <p class="profile-card-subtitle">Root administrative account details and cryptographic signatures.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Avatar & Quick Info Row -->
+              <div class="profile-avatar-row">
+                <div class="profile-avatar-large" id="adminAvatarLarge">AD</div>
+                <div class="profile-avatar-meta">
+                  <div class="profile-admin-name" id="displayAdminName">Master Administrator</div>
+                  <div class="profile-badges-strip">
+                    <span class="status-badge orange">Root Authority</span>
+                    <span class="status-badge emerald">System Verified</span>
+                    <span class="status-badge blue">Custody Guardian</span>
+                  </div>
+                  <button type="button" class="avatar-action-btn" onclick="handleChangeAvatar()">Change Avatar Initials</button>
+                </div>
+              </div>
+
+              <!-- Profile Details Form -->
+              <form id="adminProfileForm">
+                <div class="profile-form-grid">
+                  <div class="form-group">
+                    <label class="form-label" for="profFullName">Full Legal Name</label>
+                    <input type="text" class="form-input" id="profFullName" value="Master Administrator" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="profEmail">Official Admin Email</label>
+                    <input type="email" class="form-input" id="profEmail" value="admin@aegisvault.internal" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="profPhone">Encrypted Hotline / Phone</label>
+                    <input type="tel" class="form-input" id="profPhone" value="+1 (555) 902-8371">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="profTimezone">Operational Timezone</label>
+                    <select class="form-input" id="profTimezone">
+                      <option value="America/New_York" selected>UTC -05:00 (Eastern Time)</option>
+                      <option value="America/Chicago">UTC -06:00 (Central Time)</option>
+                      <option value="America/Los_Angeles">UTC -08:00 (Pacific Time)</option>
+                      <option value="Europe/London">UTC +00:00 (London / GMT)</option>
+                      <option value="Asia/Kolkata">UTC +05:30 (India / IST)</option>
+                      <option value="Asia/Singapore">UTC +08:00 (Singapore / SGT)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="profile-form-grid full-width" style="margin-top: 1rem;">
+                  <div class="form-group">
+                    <label class="form-label" for="profAdminId">
+                      <span>Assigned Master Admin ID</span>
+                      <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: normal;">Immutable System Identifier</span>
+                    </label>
+                    <div class="input-copy-wrap">
+                      <input type="text" class="form-input" id="profAdminId" value="ADM-ROOT-9082-ALPHA" readonly>
+                      <button type="button" class="copy-pill-btn" onclick="copyAdminId()">Copy ID</button>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">
+                      <span>Cryptographic Public Key Fingerprint</span>
+                      <span style="font-size: 0.7rem; color: var(--emerald, #10b981); font-weight: 600;">Secured with Ed25519</span>
+                    </label>
+                    <div class="input-copy-wrap">
+                      <input type="text" class="form-input" value="SHA256:4f8a:91ce:3b02:e7d4:89aa:01ff:9281" readonly>
+                      <button type="button" class="copy-pill-btn" onclick="copyFingerprint()">Copy Fingerprint</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="profile-card-actions">
+                  <button type="reset" class="btn-secondary-action">Reset</button>
+                  <button type="submit" class="btn-primary-action">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    Save Profile Changes
+                  </button>
+                </div>
+              </form>
+            </section>
+
+            <!-- Card 2: Hardware Security Keys (FIDO2 / WebAuthn) -->
+            <section class="profile-card" aria-labelledby="card-keys-title">
+              <div class="profile-card-header">
+                <div class="profile-card-title-group">
+                  <svg class="profile-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="7.5" cy="15.5" r="4.5"/><path d="m21 3-9.5 9.5M15.5 8.5l3 3M18 6l2 2"/>
+                  </svg>
+                  <div>
+                    <h2 class="profile-card-title" id="card-keys-title">Hardware Security Keys (WebAuthn / FIDO2)</h2>
+                    <p class="profile-card-subtitle">Cryptographic physical keys protecting root level system authorizations.</p>
+                  </div>
+                </div>
+                <button type="button" class="btn-primary-action" onclick="openModal('registerKeyModal')" style="padding: 0.45rem 0.95rem; font-size: 0.8rem;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  Register Key
+                </button>
+              </div>
+
+              <!-- Keys List -->
+              <div class="keys-list">
+                <!-- Key 1 -->
+                <div class="key-card-item">
+                  <div class="key-item-left">
+                    <div class="key-icon-bubble">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="7.5" cy="15.5" r="4.5"/><path d="m21 3-9.5 9.5M15.5 8.5l3 3M18 6l2 2"/>
+                      </svg>
+                    </div>
+                    <div class="key-info-col">
+                      <span class="key-title">YubiKey 5C NFC (Primary Hardware Key)</span>
+                      <span class="key-meta">FIDO2 WebAuthn &bull; Registered 14 days ago &bull; Last used 18 mins ago</span>
+                    </div>
+                  </div>
+                  <div class="key-item-right">
+                    <span class="status-badge emerald">Active</span>
+                    <button type="button" class="btn-remove-key" title="Remove Key" onclick="removeKey(this)">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Key 2 -->
+                <div class="key-card-item">
+                  <div class="key-item-left">
+                    <div class="key-icon-bubble blue">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                      </svg>
+                    </div>
+                    <div class="key-info-col">
+                      <span class="key-title">Aegis Guardian USB Shard Key (Cold Storage)</span>
+                      <span class="key-meta">Hardware Security Module &bull; Registered 30 days ago &bull; Offline Backup</span>
+                    </div>
+                  </div>
+                  <div class="key-item-right">
+                    <span class="status-badge emerald">Active</span>
+                    <button type="button" class="btn-remove-key" title="Remove Key" onclick="removeKey(this)">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Card 3: Master Password Rotation -->
+            <section class="profile-card" aria-labelledby="card-password-title">
+              <div class="profile-card-header">
+                <div class="profile-card-title-group">
+                  <svg class="profile-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                  <div>
+                    <h2 class="profile-card-title" id="card-password-title">Master Password &amp; Encryption Rotation</h2>
+                    <p class="profile-card-subtitle">Rotate the administrative access passphrase with PBKDF2 hash hashing.</p>
+                  </div>
+                </div>
+              </div>
+
+              <form id="adminPasswordForm">
+                <div class="profile-form-grid full-width">
+                  <div class="form-group">
+                    <label class="form-label" for="currentMasterPass">Current Master Password</label>
+                    <input type="password" class="form-input" id="currentMasterPass" placeholder="Enter current admin password" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="newMasterPass">
+                      <span>New Master Password</span>
+                      <span style="font-size: 0.72rem; color: var(--text-muted);">Minimum 10 characters</span>
+                    </label>
+                    <input type="password" class="form-input" id="newMasterPass" placeholder="Enter new strong password" required>
+                    <!-- Password Strength Meter -->
+                    <div class="password-meter-wrap">
+                      <div class="strength-bar-track">
+                        <div class="strength-bar-fill" id="passwordStrengthBar" style="width: 0%;"></div>
+                      </div>
+                      <div class="strength-label-row">
+                        <span>Entropy Grade:</span>
+                        <span class="strength-text" id="passwordStrengthText">None</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="confirmMasterPass">Confirm New Master Password</label>
+                    <input type="password" class="form-input" id="confirmMasterPass" placeholder="Re-enter new password" required>
+                  </div>
+                </div>
+
+                <div class="profile-card-actions">
+                  <button type="submit" class="btn-primary-action">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    Update Master Password
+                  </button>
+                </div>
+              </form>
+            </section>
+
+          </div>
+
+          <!-- Right Column (Protocol Clearances, Active Sessions, Danger Zone) -->
+          <div class="profile-col">
+
+            <!-- Card 4: Protocol Multisig Clearances -->
+            <section class="profile-card" aria-labelledby="card-clearances-title">
+              <div class="profile-card-header">
+                <div class="profile-card-title-group">
+                  <svg class="profile-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  </svg>
+                  <div>
+                    <h2 class="profile-card-title" id="card-clearances-title">Protocol Clearances &amp; Quorum</h2>
+                    <p class="profile-card-subtitle">Zero-knowledge custody and multisig authorizations.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="clearance-items">
+                <div class="clearance-item">
+                  <div class="clearance-left">
+                    <svg class="clearance-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span class="clearance-name">Emergency Shard Override</span>
+                  </div>
+                  <span class="clearance-badge">Level 5 Max</span>
+                </div>
+
+                <div class="clearance-item">
+                  <div class="clearance-left">
+                    <svg class="clearance-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span class="clearance-name">Master Shard Decryption</span>
+                  </div>
+                  <span class="clearance-badge">Signer #1 of 5</span>
+                </div>
+
+                <div class="clearance-item">
+                  <div class="clearance-left">
+                    <svg class="clearance-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span class="clearance-name">Smart Contract Timelock Upgrade</span>
+                  </div>
+                  <span class="clearance-badge">Executor Quorum</span>
+                </div>
+
+                <div class="clearance-item">
+                  <div class="clearance-left">
+                    <svg class="clearance-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span class="clearance-name">Zero-Knowledge Re-encryption</span>
+                  </div>
+                  <span class="clearance-badge">Root Clear</span>
+                </div>
+
+                <div class="clearance-item">
+                  <div class="clearance-left">
+                    <svg class="clearance-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span class="clearance-name">Autonomous Dead-Man Switch</span>
+                  </div>
+                  <span class="clearance-badge">Full Privilege</span>
+                </div>
+              </div>
+            </section>
+
+            <!-- Card 5: Active Administrative Sessions -->
+            <section class="profile-card" aria-labelledby="card-sessions-title">
+              <div class="profile-card-header">
+                <div class="profile-card-title-group">
+                  <svg class="profile-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+                  </svg>
+                  <div>
+                    <h2 class="profile-card-title" id="card-sessions-title">Active Admin Sessions</h2>
+                    <p class="profile-card-subtitle">Devices authorized for high-privilege access.</p>
+                  </div>
+                </div>
+                <button type="button" class="btn-secondary-action" onclick="openModal('revokeSessionsModal')" style="padding: 0.4rem 0.8rem; font-size: 0.76rem;">
+                  Revoke Others
+                </button>
+              </div>
+
+              <div class="sessions-list">
+                <!-- Session 1 (Current) -->
+                <div class="session-item current">
+                  <div class="session-left">
+                    <svg class="session-device-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+                    </svg>
+                    <div class="session-info">
+                      <span class="session-device-name">macOS Sonoma &bull; Chrome 124 (Current)</span>
+                      <span class="session-device-meta">IP: 192.168.1.104 &bull; Headquarters Primary Gateway</span>
+                    </div>
+                  </div>
+                  <span class="session-pill active">Active Now</span>
+                </div>
+
+                <!-- Session 2 -->
+                <div class="session-item">
+                  <div class="session-left">
+                    <svg class="session-device-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
+                    </svg>
+                    <div class="session-info">
+                      <span class="session-device-name">Windows 11 Pro &bull; Edge 123</span>
+                      <span class="session-device-meta">IP: 10.0.4.15 &bull; SecOps Workstation #2 &bull; 2h ago</span>
+                    </div>
+                  </div>
+                  <span class="session-pill inactive">Idle</span>
+                </div>
+              </div>
+            </section>
+
+            <!-- Card 6: Emergency Protocol & Danger Zone -->
+            <section class="profile-card danger-card" aria-labelledby="card-danger-title">
+              <div class="profile-card-header">
+                <div class="profile-card-title-group">
+                  <svg class="profile-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                  </svg>
+                  <div>
+                    <h2 class="profile-card-title" id="card-danger-title">Emergency Protocol &amp; Lockdown</h2>
+                    <p class="profile-card-subtitle">Critical security fail-safe routines and shard invalidation.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="danger-action-row">
+                <div class="danger-text-col">
+                  <span class="danger-title">Regenerate Master Offline Recovery Shard</span>
+                  <span class="danger-desc">Invalidates current paper backup shards and generates new 24-word seed phrase.</span>
+                </div>
+                <button type="button" class="btn-danger" onclick="handleRegeneratePassphrase()">Regenerate Shard</button>
+              </div>
+
+              <div class="danger-action-row">
+                <div class="danger-text-col">
+                  <span class="danger-title">Initiate Emergency Protocol Lockdown</span>
+                  <span class="danger-desc">Freezes all non-essential asset disbursements and enters quarantine mode.</span>
+                </div>
+                <button type="button" class="btn-danger" onclick="openModal('emergencyModal')">Lockdown System</button>
+              </div>
+            </section>
+
+          </div>
+        </div>
+
+      </main>
+
+      <!-- ====================================================================
+           Global Footer (Exact Trustee Structure & Style)
+           ==================================================================== -->
+      <footer class="app-footer">
+        <div class="footer-brand">
+          <div class="brand-shield-icon">
+            <svg viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 2L3 8V20C3 31.2 10.3 41.5 20 44C29.7 41.5 37 31.2 37 20V8L20 2Z" stroke="#F97316" stroke-width="2.5" stroke-linejoin="round" fill="rgba(249, 115, 22, 0.08)"/>
+              <path d="M20 8L8 13V21C8 28.5 13.1 35.5 20 37.5C26.9 35.5 32 28.5 32 21V13L20 8Z" fill="#F97316"/>
+              <path d="M20 13L13 16.5V22C13 26.5 16 30.5 20 32C24 30.5 27 26.5 27 22V16.5L20 13Z" fill="#FFA24C"/>
+            </svg>
+          </div>
+          <span class="brand-title">Aegis<span class="vault-accent">Vault</span></span>
+        </div>
+
+        <div class="footer-center-motto">
+          &ldquo;Because what matters today, should matter tomorrow too.&rdquo;
+        </div>
+
+        <div class="footer-links">
+          <a href="javascript:void(0)" onclick="typeof showToast === 'function' ? showToast('Privacy Policy (mock).') : null;">Privacy</a>
+          <a href="javascript:void(0)" onclick="typeof showToast === 'function' ? showToast('Terms of Service (mock).') : null;">Terms</a>
+          <a href="../Audit Logs/audit-logs.html">Audit</a>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       Modals
+       ==================================================================== -->
+
+  <!-- Register Hardware Key Modal -->
+  <div class="modal-overlay" id="registerKeyModal" role="dialog" aria-modal="true" aria-labelledby="modal-register-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-register-title">Register FIDO2 Hardware Key</h3>
+        <button class="modal-close-btn" onclick="closeModal('registerKeyModal')" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="key-setup-box">
+          <div class="key-setup-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="7.5" cy="15.5" r="4.5"/><path d="m21 3-9.5 9.5M15.5 8.5l3 3M18 6l2 2"/>
+            </svg>
+          </div>
+          <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin: 0;">Insert Security Key into USB Port</h4>
+          <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0; max-width: 320px;">
+            Touch the golden sensor contact on your hardware key when it blinks to complete WebAuthn cryptographic enrollment.
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="newKeyNickname">Key Nickname</label>
+          <input type="text" class="form-input" id="newKeyNickname" placeholder="e.g. YubiKey 5C NFC Backup">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="newKeyType">Key Protocol Specification</label>
+          <select class="form-input" id="newKeyType">
+            <option value="FIDO2 / WebAuthn" selected>FIDO2 / WebAuthn (Recommended)</option>
+            <option value="U2F Hardware Token">U2F Hardware Token</option>
+            <option value="PKCS#11 HSM Cryptographic Card">PKCS#11 HSM Cryptographic Card</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary-action" onclick="closeModal('registerKeyModal')">Cancel</button>
+        <button type="button" class="btn-primary-action" onclick="handleRegisterNewKey()">Enroll Key Now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Revoke Sessions Modal -->
+  <div class="modal-overlay" id="revokeSessionsModal" role="dialog" aria-modal="true" aria-labelledby="modal-revoke-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-revoke-title">Revoke Other Active Sessions</h3>
+        <button class="modal-close-btn" onclick="closeModal('revokeSessionsModal')" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin: 0;">
+          Are you sure you want to terminate all other administrative sessions across other workstations and devices?
+        </p>
+        <div style="padding: 0.85rem 1rem; border-radius: var(--radius-sm, 6px); background: rgba(249, 115, 22, 0.08); border: 1px solid rgba(249, 115, 22, 0.25); font-size: 0.78rem; color: var(--text-primary);">
+          Your current session on this device (macOS Sonoma &bull; 192.168.1.104) will remain active.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary-action" onclick="closeModal('revokeSessionsModal')">Cancel</button>
+        <button type="button" class="btn-primary-action" onclick="handleRevokeOtherSessions()">Confirm &amp; Terminate All Others</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Emergency Lockdown Modal -->
+  <div class="modal-overlay" id="emergencyModal" role="dialog" aria-modal="true" aria-labelledby="modal-emergency-title">
+    <div class="modal-dialog">
+      <div class="modal-header" style="border-bottom-color: rgba(239, 68, 68, 0.3);">
+        <h3 class="modal-title" id="modal-emergency-title" style="color: var(--coral, #ef4444);">Emergency Lockdown Verification</h3>
+        <button class="modal-close-btn" onclick="closeModal('emergencyModal')" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin: 0;">
+          This initiates protocol-level emergency lockdown. All scheduled automated disbursements and non-emergency time-locks will freeze in read-only mode until multisig guardian quorum restores normal operations.
+        </p>
+        <div class="form-group">
+          <label class="form-label" for="lockdownReason">Lockdown Incident Classification</label>
+          <select class="form-input" id="lockdownReason">
+            <option value="compromise">Suspected Credential Compromise</option>
+            <option value="audit">Immediate Regulatory Audit</option>
+            <option value="maintenance">Critical Zero-Day Kernel Patch</option>
+            <option value="other">Other Unforeseen Security Event</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary-action" onclick="closeModal('emergencyModal')">Cancel</button>
+        <button type="button" class="btn-danger" style="padding: 0.6rem 1.25rem;" onclick="handleEmergencyMaintenance()">Confirm Lockdown</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications Container -->
+  <div class="toast-container" aria-live="polite"></div>
+
+  <!-- Core Scripts: Admin Common Controller & Profile Management Logic -->
+  <script src="../common/js/admin-common.js"></script>
+  <script src="js/profile-management.js"></script>
+</body>
+</html>

@@ -1001,21 +1001,8 @@ body.dark-theme .status-summary-title {
     animation: lineDrawGlow 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Reduced Motion Override */
-@media (prefers-reduced-motion: reduce) {
-
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-    }
-}
-
 /* ==========================================================================
-   AegisVault â€” Admin Dashboard Module Responsive Breakpoints
+   AegisVault — Admin Dashboard Module Responsive Breakpoints
    Supports 1920px, 1440px, 1024px, 768px, 430px, 375px, 320px.
    ========================================================================== */
 
@@ -1049,10 +1036,6 @@ body.dark-theme .status-summary-title {
 
 /* 3. Tablets (769px - 1024px) */
 @media (max-width: 1024px) {
-    :root {
-        --sidebar-width: 200px;
-    }
-
     .hero-card {
         min-height: 230px;
         padding: 1.75rem 1.75rem;
