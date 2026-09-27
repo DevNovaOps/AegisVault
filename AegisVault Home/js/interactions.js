@@ -217,7 +217,7 @@
         const modalRoleConfig = {
             owner: {
                 title: 'Vault Owner',
-                targetPanel: '../AegisVault Dashboard Module/dashboard.html',
+                targetPanel: '../Owner/dashboard/dashboard.html',
                 targetLabel: 'Opens: Owner Dashboard',
                 signinSubmitText: 'Unlock Owner Vault',
                 signupSubmitText: 'Generate Owner Vault',
