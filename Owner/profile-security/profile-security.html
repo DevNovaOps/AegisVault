@@ -1,0 +1,1120 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AegisVault &mdash; Profile &amp; Security</title>
+  <meta name="description" content="Manage your personal information, account security, and preferences in AegisVault.">
+
+  <!-- Immediate Theme Initializer to eliminate flash -->
+  <script>
+    (function() {
+      try {
+        var savedTheme = localStorage.getItem('aegis_owner_theme');
+        if (savedTheme === 'light' || savedTheme === 'dark') {
+          document.documentElement.setAttribute('data-theme', savedTheme);
+        } else {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@1,500;1,600;1,700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../common/common.css">
+  <link rel="stylesheet" href="profile-security.css">
+</head>
+<body>
+  <div class="owner-app">
+
+    <!-- ====================================================================
+         Sidebar Navigation (Fixed 260px, full-bleed scenic backdrop)
+         ==================================================================== -->
+    <aside class="owner-sidebar" aria-label="Owner Navigation">
+      <!-- Brand Logo Header -->
+      <div class="sidebar-brand">
+        <div class="brand-shield-icon">
+          <svg viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 2L3 8V20C3 31.2 10.3 41.5 20 44C29.7 41.5 37 31.2 37 20V8L20 2Z" stroke="#F97316" stroke-width="2.5" stroke-linejoin="round" fill="rgba(249, 115, 22, 0.08)"/>
+            <path d="M20 8L8 13V21C8 28.5 13.1 35.5 20 37.5C26.9 35.5 32 28.5 32 21V13L20 8Z" fill="#F97316"/>
+            <path d="M20 13L13 16.5V22C13 26.5 16 30.5 20 32C24 30.5 27 26.5 27 22V16.5L20 13Z" fill="#FFA24C"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Aegis<span class="vault-accent">Vault</span></span>
+          <span class="brand-tagline">What matters, lives on.</span>
+        </div>
+      </div>
+
+      <!-- Navigation Links (10 modules) -->
+      <nav class="sidebar-nav">
+        <!-- 1. Dashboard -->
+        <a href="../dashboard/dashboard.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1V9.5z"/>
+            </svg>
+          </span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+
+        <!-- 2. My Vaults -->
+        <a href="../my-vaults/my-vaults.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+              <polyline points="2 17 12 22 22 17"/>
+              <polyline points="2 12 12 17 22 12"/>
+            </svg>
+          </span>
+          <span class="nav-label">My Vaults</span>
+        </a>
+
+        <!-- 3. Trustees -->
+        <a href="../trustees/trustees.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </span>
+          <span class="nav-label">Trustees</span>
+        </a>
+
+        <!-- 4. Invitations -->
+        <a href="../invitations/invitations.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <rect x="3" y="4" width="18" height="16" rx="2"/>
+              <path d="m22 7-10 7L2 7"/>
+            </svg>
+          </span>
+          <span class="nav-label">Invitations</span>
+          <span class="nav-badge">2</span>
+        </a>
+
+        <!-- 5. Share Management -->
+        <a href="../share-management/share-management.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="18" cy="5" r="3"/>
+              <circle cx="6" cy="12" r="3"/>
+              <circle cx="18" cy="19" r="3"/>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+          </span>
+          <span class="nav-label">Share Management</span>
+        </a>
+
+        <!-- 6. Release Management -->
+        <a href="../release-management/release-management.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </span>
+          <span class="nav-label">Release Management</span>
+        </a>
+
+        <!-- 7. Notifications -->
+        <a href="../notifications/notifications.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+          </span>
+          <span class="nav-label">Notifications</span>
+          <span class="nav-badge">3</span>
+        </a>
+
+        <!-- 8. Activity & History -->
+        <a href="../activity-history/activity-history.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </span>
+          <span class="nav-label">Activity &amp; History</span>
+        </a>
+
+        <!-- 9. Profile & Security (Active) -->
+        <a href="profile-security.html" class="nav-item active" aria-current="page">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </span>
+          <span class="nav-label">Profile &amp; Security</span>
+        </a>
+
+        <!-- 10. Help & Support -->
+        <a href="../help-support/help-support.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </span>
+          <span class="nav-label">Help &amp; Support</span>
+        </a>
+      </nav>
+
+      <!-- Sidebar Scenic Quote -->
+      <div class="sidebar-quote-block">
+        <p class="sidebar-scenic-quote">Your legacy.<br>Their tomorrow.</p>
+        <div class="sidebar-scenic-dash"></div>
+      </div>
+    </aside>
+
+    <!-- ====================================================================
+         Main App View Wrapper
+         ==================================================================== -->
+    <div class="owner-main">
+      
+      <!-- Top Navigation Bar (60px) -->
+      <header class="owner-topbar">
+        <div class="topbar-left">
+          <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle Mobile Navigation">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+          <div class="topbar-search">
+            <svg class="topbar-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" class="topbar-search-input" placeholder="Search vaults, trustees, invitations, releases, or settings..." autocomplete="off">
+          </div>
+        </div>
+
+        <div class="topbar-right">
+                    <!-- Theme Toggle (Trustee & Admin Style Pill Switch) -->
+          <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Dark / Light Theme" title="Toggle Theme" role="switch">
+            <span class="theme-switch-track">
+              <span class="switch-icon switch-icon-sun" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="4"/>
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                </svg>
+              </span>
+              <span class="switch-icon switch-icon-moon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+              </span>
+              <span class="theme-switch-thumb">
+                <span class="thumb-icon thumb-sun">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                  </svg>
+                </span>
+                <span class="thumb-icon thumb-moon">
+                  <svg viewBox="0 0 24 24" fill="#ffffff" stroke="none">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                  </svg>
+                </span>
+              </span>
+            </span>
+          </button>
+
+          <!-- Notification Bell -->
+          <a href="../notifications/notifications.html" class="icon-btn" title="View Notifications" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <span class="btn-badge" id="headerNotifBadge">3</span>
+          </a>
+
+          <!-- Profile Menu Chip -->
+          <div class="profile-menu-wrapper">
+            <button class="profile-chip" id="profileBtn" aria-label="Owner Profile Menu">
+              <div class="profile-avatar-circle">RP</div>
+              <span class="profile-name">Rakesh Patel</span>
+              <svg class="profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+            <div class="dropdown-panel" id="profileDropdown">
+              <div class="dropdown-header">Vault Owner</div>
+              <a href="profile-security.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>Profile &amp; Security</span>
+              </a>
+              <a href="../activity-history/activity-history.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span>Audit History</span>
+              </a>
+              <a href="../help-support/help-support.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <span>Help &amp; FAQs</span>
+              </a>
+              <div class="dropdown-divider"></div>
+              <a href="javascript:void(0)" class="dropdown-item" onclick="window.AegisOwner && window.AegisOwner.showToast ? window.AegisOwner.showToast('Signed out of owner session (mock).') : alert('Signed out');">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>Sign Out</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content Area -->
+      <main class="owner-content">
+
+        <!-- ====================================================================
+             Hero Panoramic Banner (Fixed 230px Height)
+             ==================================================================== -->
+        <section class="hero-card" aria-label="Profile & Security Hero Banner">
+          <div class="hero-left">
+            <div class="hero-eyebrow">09. PROFILE &amp; SECURITY</div>
+            <h1 class="hero-heading">Profile &amp; <span class="hero-accent">Security</span></h1>
+            <p class="hero-subtext">Manage your personal information, account security, and preferences.</p>
+          </div>
+          <div class="hero-quote-card">
+            <p class="hero-quote-text">&ldquo;A safer<br>tomorrow starts<br>with a more<br>secure today.&rdquo;</p>
+            <div class="hero-quote-dash"></div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             Horizontal Sub-Navigation Tabs
+             ==================================================================== -->
+        <nav class="profile-tabs-nav" aria-label="Profile Sections">
+          <button class="profile-tab-item active" data-tab="overview">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span>Profile Overview</span>
+          </button>
+
+          <button class="profile-tab-item" data-tab="personal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+            <span>Personal Information</span>
+          </button>
+
+          <button class="profile-tab-item" data-tab="security">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <span>Security</span>
+          </button>
+
+          <button class="profile-tab-item" data-tab="devices">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+              <line x1="12" y1="18" x2="12.01" y2="18"/>
+            </svg>
+            <span>Login &amp; Devices</span>
+          </button>
+
+          <button class="profile-tab-item" data-tab="preferences">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+            <span>Preferences</span>
+          </button>
+
+          <button class="profile-tab-item" data-tab="connected">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+            </svg>
+            <span>Connected Accounts</span>
+          </button>
+        </nav>
+
+        <!-- ====================================================================
+             Main Workspace Two-Column Grid
+             ==================================================================== -->
+        <section class="profile-layout-grid">
+
+          <!-- Left Column (Main Profile & Settings Cards) -->
+          <div class="profile-main-column">
+
+            <!-- 1. Top Card: Profile Overview -->
+            <div class="profile-overview-card" id="sectionOverview">
+              <div class="card-top-bar">
+                <div class="card-title-group">
+                  <div class="card-icon-circle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                      <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 class="card-title">Profile Overview</h2>
+                    <p class="card-subtext">A summary of your account information and security status.</p>
+                  </div>
+                </div>
+
+                <button class="btn-card-action" id="btnEditOverview">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 20h9"/>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                  </svg>
+                  <span>Edit Profile</span>
+                </button>
+              </div>
+
+              <div class="overview-body-grid">
+                <!-- User Avatar Block -->
+                <div class="overview-avatar-block">
+                  <div class="overview-avatar-circle">RP</div>
+                  <div class="overview-user-info">
+                    <h3 class="overview-name">Rakesh Patel</h3>
+                    <p class="overview-email">rakesh.patel@email.com</p>
+                    <span class="active-account-badge">
+                      <span class="dot-green"></span>
+                      <span>Active Account</span>
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Info Column 1: Member Since & Account Type -->
+                <div class="overview-meta-col">
+                  <div class="meta-row">
+                    <div class="meta-icon-box">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                      </svg>
+                    </div>
+                    <div class="meta-content">
+                      <span class="meta-title">Member Since</span>
+                      <span class="meta-value">12 Aug 2025</span>
+                    </div>
+                  </div>
+
+                  <div class="meta-row">
+                    <div class="meta-icon-box">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                      </svg>
+                    </div>
+                    <div class="meta-content">
+                      <span class="meta-title">Account Type</span>
+                      <span class="meta-value">Standard Plan</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Info Column 2: Last Login & Account Status -->
+                <div class="overview-meta-col">
+                  <div class="meta-row">
+                    <div class="meta-icon-box">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                      </svg>
+                    </div>
+                    <div class="meta-content">
+                      <span class="meta-title">Last Login</span>
+                      <span class="meta-value">15 Sep 2025, 10:24 AM</span>
+                    </div>
+                  </div>
+
+                  <div class="meta-row">
+                    <div class="meta-icon-box">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                      </svg>
+                    </div>
+                    <div class="meta-content">
+                      <span class="meta-title">Account Status</span>
+                      <span class="meta-value text-green">Secure</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Middle Row: Personal Information & Security Settings -->
+            <div class="profile-two-col-row">
+
+              <!-- Personal Information Card -->
+              <div class="profile-card" id="sectionPersonal">
+                <div class="card-top-bar">
+                  <div class="card-title-group">
+                    <div class="card-icon-circle">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 class="card-title">Personal Information</h3>
+                      <p class="card-subtext">Your personal details and contact information.</p>
+                    </div>
+                  </div>
+
+                  <button class="btn-card-action" id="btnEditPersonal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 20h9"/>
+                      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                    </svg>
+                    <span>Edit</span>
+                  </button>
+                </div>
+
+                <div class="profile-item-list">
+                  <div class="profile-item-row">
+                    <div class="item-left">
+                      <svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                      </svg>
+                      <span class="item-label">Full Name</span>
+                    </div>
+                    <span class="item-value">Rakesh Patel</span>
+                  </div>
+
+                  <div class="profile-item-row">
+                    <div class="item-left">
+                      <svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+                      </svg>
+                      <span class="item-label">Email Address</span>
+                    </div>
+                    <span class="item-value">rakesh.patel@email.com</span>
+                  </div>
+
+                  <div class="profile-item-row">
+                    <div class="item-left">
+                      <svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                      </svg>
+                      <span class="item-label">Phone Number</span>
+                    </div>
+                    <span class="item-value">+1 (415) 555-0123</span>
+                  </div>
+
+                  <div class="profile-item-row">
+                    <div class="item-left">
+                      <svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                      </svg>
+                      <span class="item-label">Location</span>
+                    </div>
+                    <span class="item-value">San Francisco, CA, USA</span>
+                  </div>
+
+                  <div class="profile-item-row">
+                    <div class="item-left">
+                      <svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                      </svg>
+                      <span class="item-label">Time Zone</span>
+                    </div>
+                    <span class="item-value">(UTC-08:00) Pacific Time</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Security Settings Card -->
+              <div class="profile-card" id="sectionSecurity">
+                <div class="card-top-bar">
+                  <div class="card-title-group">
+                    <div class="card-icon-circle">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 class="card-title">Security Settings</h3>
+                      <p class="card-subtext">Manage your password, two-factor authentication, and recovery options.</p>
+                    </div>
+                  </div>
+
+                  <button class="btn-card-action" id="btnManageSecurity">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="3"/>
+                      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                    <span>Manage</span>
+                  </button>
+                </div>
+
+                <div class="profile-item-list">
+                  <div class="profile-item-row clickable-row" id="rowChangePassword">
+                    <div class="item-left">
+                      <svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                      </svg>
+                      <span class="item-label">Password</span>
+                    </div>
+                    <div class="item-right-group">
+                      <span class="password-dots">&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;</span>
+                      <span class="security-level-badge">
+                        <span class="dot-green"></span>
+                        <span>Strong</span>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="profile-item-row clickable-row" id="rowToggle2FA">
+                    <div class="item-left">
+                      <svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                      </svg>
+                      <span class="item-label">Two-Factor Authentication</span>
+                    </div>
+                    <div class="item-right-group">
+                      <span class="item-value text-green">Enabled</span>
+                      <svg class="chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                  </div>
+
+                  <div class="profile-item-row clickable-row" id="rowRecoveryEmail">
+                    <div class="item-left">
+                      <svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/>
+                      </svg>
+                      <span class="item-label">Recovery Email</span>
+                    </div>
+                    <div class="item-right-group">
+                      <span class="item-value">recovery@email.com</span>
+                      <svg class="chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                  </div>
+
+                  <div class="profile-item-row clickable-row" id="rowAccountRecovery">
+                    <div class="item-left">
+                      <svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                      </svg>
+                      <span class="item-label">Account Recovery</span>
+                    </div>
+                    <div class="item-right-group">
+                      <span class="item-value">Configured</span>
+                      <svg class="chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- 3. Bottom Row: Login & Devices, Preferences, Connected Accounts -->
+            <div class="profile-three-col-row">
+
+              <!-- Card 1: Login & Devices -->
+              <div class="profile-card" id="sectionDevices">
+                <div class="card-top-bar">
+                  <div class="card-title-group">
+                    <div class="card-icon-circle">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                        <line x1="12" y1="18" x2="12.01" y2="18"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 class="card-title">Login &amp; Devices</h4>
+                      <p class="card-subtext">View and manage your recent logins and connected devices.</p>
+                    </div>
+                  </div>
+
+                  <button class="btn-card-link" id="btnViewAllDevices">View All &gt;</button>
+                </div>
+
+                <div class="devices-list">
+                  <!-- Device 1: Current -->
+                  <div class="device-row">
+                    <div class="device-icon-box">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                        <line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+                      </svg>
+                    </div>
+                    <div class="device-details">
+                      <div class="device-name-row">
+                        <span class="device-name">Windows &bull; Chrome</span>
+                        <span class="current-device-tag">
+                          <span class="dot-green"></span>
+                          <span>Current Device</span>
+                        </span>
+                      </div>
+                      <span class="device-location">San Francisco, CA</span>
+                    </div>
+                    <div class="device-time-col">
+                      <span class="device-date">15 Sep 2025</span>
+                      <span class="device-hour">10:24 AM</span>
+                    </div>
+                    <button class="btn-device-more" aria-label="Device options">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                    </button>
+                  </div>
+
+                  <!-- Device 2: iPhone -->
+                  <div class="device-row">
+                    <div class="device-icon-box">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                        <line x1="12" y1="18" x2="12.01" y2="18"/>
+                      </svg>
+                    </div>
+                    <div class="device-details">
+                      <span class="device-name">iPhone &bull; Safari</span>
+                      <span class="device-location">San Francisco, CA</span>
+                    </div>
+                    <div class="device-time-col">
+                      <span class="device-date">14 Sep 2025</span>
+                      <span class="device-hour">04:12 PM</span>
+                    </div>
+                    <button class="btn-device-more" aria-label="Device options">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                    </button>
+                  </div>
+
+                  <!-- Device 3: Mac -->
+                  <div class="device-row">
+                    <div class="device-icon-box">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                        <line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+                      </svg>
+                    </div>
+                    <div class="device-details">
+                      <span class="device-name">Mac &bull; Chrome</span>
+                      <span class="device-location">New York, NY</span>
+                    </div>
+                    <div class="device-time-col">
+                      <span class="device-date">12 Sep 2025</span>
+                      <span class="device-hour">09:18 AM</span>
+                    </div>
+                    <button class="btn-device-more" aria-label="Device options">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 2: Preferences -->
+              <div class="profile-card" id="sectionPreferences">
+                <div class="card-top-bar">
+                  <div class="card-title-group">
+                    <div class="card-icon-circle">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 class="card-title">Preferences</h4>
+                      <p class="card-subtext">Customize your experience and notification preferences.</p>
+                    </div>
+                  </div>
+
+                  <button class="btn-card-action" id="btnManagePreferences">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="3"/>
+                      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                    <span>Manage</span>
+                  </button>
+                </div>
+
+                <div class="profile-item-list">
+                  <div class="profile-item-row clickable-row">
+                    <div class="item-left">
+                      <svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                      </svg>
+                      <span class="item-label">Email Notifications</span>
+                    </div>
+                    <div class="item-right-group">
+                      <span class="item-value">Enabled</span>
+                      <svg class="chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                  </div>
+
+                  <div class="profile-item-row clickable-row">
+                    <div class="item-left">
+                      <svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                      </svg>
+                      <span class="item-label">Language</span>
+                    </div>
+                    <div class="item-right-group">
+                      <span class="item-value">English (US)</span>
+                      <svg class="chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                  </div>
+
+                  <div class="profile-item-row clickable-row">
+                    <div class="item-left">
+                      <svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                      </svg>
+                      <span class="item-label">Theme</span>
+                    </div>
+                    <div class="item-right-group">
+                      <span class="item-value" id="currentThemeLabel">Dark Mode</span>
+                      <svg class="chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                  </div>
+
+                  <div class="profile-item-row clickable-row">
+                    <div class="item-left">
+                      <svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/>
+                      </svg>
+                      <span class="item-label">Date Format</span>
+                    </div>
+                    <div class="item-right-group">
+                      <span class="item-value">DD MMM YYYY</span>
+                      <svg class="chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                  </div>
+
+                  <div class="profile-item-row clickable-row">
+                    <div class="item-left">
+                      <svg class="item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                      </svg>
+                      <span class="item-label">Time Format</span>
+                    </div>
+                    <div class="item-right-group">
+                      <span class="item-value">12-hour (AM/PM)</span>
+                      <svg class="chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 3: Connected Accounts -->
+              <div class="profile-card" id="sectionConnected">
+                <div class="card-top-bar">
+                  <div class="card-title-group">
+                    <div class="card-icon-circle">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 class="card-title">Connected Accounts</h4>
+                      <p class="card-subtext">Manage third-party accounts and integrations.</p>
+                    </div>
+                  </div>
+
+                  <button class="btn-card-action" id="btnManageIntegrations">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="3"/>
+                      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                    <span>Manage</span>
+                  </button>
+                </div>
+
+                <div class="connected-list">
+                  <!-- Google -->
+                  <div class="connected-row">
+                    <div class="connected-brand">
+                      <div class="brand-logo-circle logo-google">G</div>
+                      <span class="connected-brand-name">Google</span>
+                    </div>
+                    <span class="connected-status-text" id="statusGoogle">Connected</span>
+                    <button class="btn-connect-toggle" id="btnToggleGoogle">Disconnect</button>
+                  </div>
+
+                  <!-- Microsoft -->
+                  <div class="connected-row">
+                    <div class="connected-brand">
+                      <div class="brand-logo-circle logo-ms">
+                        <svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor">
+                          <rect x="1" y="1" width="6" height="6" fill="#F25022"/>
+                          <rect x="9" y="1" width="6" height="6" fill="#7FBA00"/>
+                          <rect x="1" y="9" width="6" height="6" fill="#00A4EF"/>
+                          <rect x="9" y="9" width="6" height="6" fill="#FFB900"/>
+                        </svg>
+                      </div>
+                      <span class="connected-brand-name">Microsoft</span>
+                    </div>
+                    <span class="connected-status-text text-muted" id="statusMs">Not connected</span>
+                    <button class="btn-connect-toggle btn-connect-outline" id="btnToggleMs">Connect</button>
+                  </div>
+
+                  <!-- Apple -->
+                  <div class="connected-row">
+                    <div class="connected-brand">
+                      <div class="brand-logo-circle logo-apple">
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
+                          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.84c.64-.78 1.08-1.86.96-2.95-1 .04-2.13.67-2.79 1.45-.58.67-1.1 1.77-.96 2.83 1.12.09 2.15-.55 2.79-1.33z"/>
+                        </svg>
+                      </div>
+                      <span class="connected-brand-name">Apple</span>
+                    </div>
+                    <span class="connected-status-text text-muted" id="statusApple">Not connected</span>
+                    <button class="btn-connect-toggle btn-connect-outline" id="btnToggleApple">Connect</button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Right Column: Quick Actions & Security Status -->
+          <div class="profile-side-column">
+
+            <!-- Card 1: Quick Actions -->
+            <div class="side-card">
+              <div class="side-card-header">
+                <svg class="side-card-icon bolt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
+                <h3 class="side-card-title">Quick Actions</h3>
+              </div>
+              <div class="quick-actions-list">
+                <!-- Action 1 -->
+                <button class="quick-action-item" id="qaChangePassword">
+                  <div class="qa-icon-wrap qa-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/>
+                    </svg>
+                  </div>
+                  <div class="qa-text">
+                    <span class="qa-title">Change Password</span>
+                    <span class="qa-sub">Update your account password</span>
+                  </div>
+                  <svg class="qa-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+
+                <!-- Action 2 -->
+                <button class="quick-action-item" id="qaEnable2FA">
+                  <div class="qa-icon-wrap qa-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                  </div>
+                  <div class="qa-text">
+                    <span class="qa-title">Enable Two-Factor Authentication</span>
+                    <span class="qa-sub">Add an extra layer of security</span>
+                  </div>
+                  <svg class="qa-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+
+                <!-- Action 3 -->
+                <button class="quick-action-item" id="qaManageDevices">
+                  <div class="qa-icon-wrap qa-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                      <line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+                    </svg>
+                  </div>
+                  <div class="qa-text">
+                    <span class="qa-title">Manage Devices</span>
+                    <span class="qa-sub">View and revoke device access</span>
+                  </div>
+                  <svg class="qa-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+
+                <!-- Action 4 -->
+                <button class="quick-action-item" id="qaDownloadData">
+                  <div class="qa-icon-wrap qa-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                  </div>
+                  <div class="qa-text">
+                    <span class="qa-title">Download My Data</span>
+                    <span class="qa-sub">Get a copy of your account data</span>
+                  </div>
+                  <svg class="qa-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Card 2: Security Status -->
+            <div class="side-card">
+              <div class="side-card-header">
+                <svg class="side-card-icon shield-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                <h3 class="side-card-title">Security Status</h3>
+              </div>
+              <div class="security-checklist">
+                <div class="security-check-item">
+                  <div class="check-left">
+                    <span class="check-icon-circle">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                    </span>
+                    <span class="check-label">Password</span>
+                  </div>
+                  <span class="check-status-val">
+                    <span class="dot-green"></span>
+                    <span>Strong</span>
+                  </span>
+                </div>
+
+                <div class="security-check-item">
+                  <div class="check-left">
+                    <span class="check-icon-circle">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                    </span>
+                    <span class="check-label">Two-Factor Authentication</span>
+                  </div>
+                  <span class="check-status-val">
+                    <span class="dot-green"></span>
+                    <span>Enabled</span>
+                  </span>
+                </div>
+
+                <div class="security-check-item">
+                  <div class="check-left">
+                    <span class="check-icon-circle">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                    </span>
+                    <span class="check-label">Active Devices</span>
+                  </div>
+                  <span class="check-status-val">
+                    <span class="dot-green"></span>
+                    <span>3 Devices</span>
+                  </span>
+                </div>
+
+                <div class="security-check-item">
+                  <div class="check-left">
+                    <span class="check-icon-circle">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                    </span>
+                    <span class="check-label">Email Verification</span>
+                  </div>
+                  <span class="check-status-val">
+                    <span class="dot-green"></span>
+                    <span>Verified</span>
+                  </span>
+                </div>
+
+                <div class="security-check-item">
+                  <div class="check-left">
+                    <span class="check-icon-circle">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                    </span>
+                    <span class="check-label">Account Recovery</span>
+                  </div>
+                  <span class="check-status-val">
+                    <span class="dot-green"></span>
+                    <span>Configured</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             Footer
+             ==================================================================== -->
+        <footer class="owner-footer">
+          <div class="footer-left">
+            <span class="footer-brand">Aegis<span class="brand-accent">Vault</span></span>
+            <span class="footer-tagline">&ldquo;Because what matters today, should matter tomorrow too.&rdquo;</span>
+          </div>
+          <div class="footer-right">
+            <a href="#" class="footer-link">Privacy</a>
+            <a href="#" class="footer-link">Terms</a>
+            <a href="../help-support/help-support.html" class="footer-link">Help</a>
+          </div>
+        </footer>
+
+      </main>
+    </div>
+
+  </div>
+
+  <!-- Modal: Edit Profile -->
+  <div class="modal-backdrop" id="editProfileModal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Edit Profile Information</h3>
+        <button class="modal-close" data-close="editProfileModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-input" id="inputFullName" value="Rakesh Patel">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-input" id="inputEmail" value="rakesh.patel@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input type="tel" class="form-input" id="inputPhone" value="+1 (415) 555-0123">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Location</label>
+          <input type="text" class="form-input" id="inputLocation" value="San Francisco, CA, USA">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-action-outline" data-close="editProfileModal">Cancel</button>
+        <button class="btn-primary" id="btnSaveProfile">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Change Password -->
+  <div class="modal-backdrop" id="changePasswordModal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Change Account Password</h3>
+        <button class="modal-close" data-close="changePasswordModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Current Password</label>
+          <input type="password" class="form-input" placeholder="Enter current master password">
+        </div>
+        <div class="form-group">
+          <label class="form-label">New Password</label>
+          <input type="password" class="form-input" placeholder="Minimum 12 characters">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm New Password</label>
+          <input type="password" class="form-input" placeholder="Repeat new password">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-action-outline" data-close="changePasswordModal">Cancel</button>
+        <button class="btn-primary" id="btnSavePassword">Update Password</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Scripts -->
+  <script src="../common/common.js"></script>
+  <script src="profile-security.js"></script>
+</body>
+</html>

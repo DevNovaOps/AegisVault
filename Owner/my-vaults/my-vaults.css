@@ -1,0 +1,602 @@
+/* ==========================================================================
+   AegisVault Owner Panel — My Vaults Stylesheet
+   Module 02: Vault Inventory, Filter Engine, Vault Data Table & Categories
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. My Vaults Main Grid Layout
+   -------------------------------------------------------------------------- */
+.vaults-layout-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 305px;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.vaults-main-column {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.vaults-side-column {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* --------------------------------------------------------------------------
+   2. Vaults Filter Toolbar
+   -------------------------------------------------------------------------- */
+.vaults-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.vaults-search-box {
+  position: relative;
+  flex: 1;
+  min-width: 220px;
+}
+
+.vaults-search-icon {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 15px;
+  height: 15px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.vaults-search-input {
+  width: 100%;
+  padding: 0.5rem 0.85rem 0.5rem 2.3rem;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-input);
+  border: 1px solid var(--bg-input-border);
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  transition: all var(--transition-fast);
+}
+
+.vaults-search-input:focus {
+  outline: none;
+  border-color: var(--brand-orange);
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-select {
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-input);
+  border: 1px solid var(--bg-input-border);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  transition: all var(--transition-fast);
+}
+
+.filter-select:focus {
+  border-color: var(--brand-orange);
+}
+
+.btn-filter {
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-input);
+  border: 1px solid var(--bg-input-border);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition: all var(--transition-fast);
+}
+
+.btn-filter:hover {
+  background-color: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--border-card);
+}
+
+.btn-filter svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* --------------------------------------------------------------------------
+   3. Vaults Table
+   -------------------------------------------------------------------------- */
+.vaults-table-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-card);
+}
+
+.vaults-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.vaults-card-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.vaults-card-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--brand-orange);
+}
+
+.vaults-card-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.vaults-table-wrap {
+  overflow-x: auto;
+}
+
+.vaults-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.85rem;
+}
+
+.vaults-table th {
+  padding: 0.7rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border-subtle);
+  white-space: nowrap;
+}
+
+.vaults-table th:first-child,
+.vaults-table td:first-child {
+  padding-left: 0.2rem;
+}
+
+.vaults-table th:last-child,
+.vaults-table td:last-child {
+  padding-right: 0.2rem;
+  text-align: right;
+}
+
+.vaults-table td {
+  padding: 0.6rem 0.6rem;
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+}
+
+.vaults-table tr:last-child td {
+  border-bottom: none;
+}
+
+.vaults-table tbody tr {
+  transition: background-color var(--transition-fast);
+}
+
+.vaults-table tbody tr:hover td {
+  background-color: var(--bg-card-hover);
+}
+
+/* Vault Info Cell */
+.vault-info-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 150px;
+}
+
+.vault-thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.vault-texts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.vault-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.vault-desc {
+  font-size: 0.73rem;
+  color: var(--text-muted);
+  max-width: 145px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Type Badges */
+.type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.type-badge.personal {
+  background-color: var(--status-info-bg);
+  color: var(--status-info);
+  border: 1px solid var(--status-info-border);
+}
+
+.type-badge.family {
+  background-color: var(--brand-orange-light);
+  color: var(--brand-orange);
+  border: 1px solid var(--brand-orange-border);
+}
+
+.type-badge.business {
+  background-color: var(--status-purple-bg);
+  color: var(--status-purple);
+  border: 1px solid var(--status-purple-border);
+}
+
+.type-badge.legacy {
+  background-color: rgba(56, 189, 248, 0.14);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.type-badge.health {
+  background-color: var(--status-danger-bg);
+  color: var(--status-danger);
+  border: 1px solid var(--status-danger-border);
+}
+
+.type-badge svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* Vault Status Pills */
+.vault-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.28rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-indicator-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  background-color: currentColor;
+}
+
+.vault-status-pill.status-active {
+  background-color: var(--status-success-bg);
+  color: var(--status-success);
+  border: 1px solid var(--status-success-border);
+}
+
+.vault-status-pill.status-draft {
+  background-color: var(--status-warning-bg);
+  color: var(--status-warning);
+  border: 1px solid var(--status-warning-border);
+}
+
+.vault-status-pill.status-locked {
+  background-color: var(--status-danger-bg);
+  color: var(--status-danger);
+  border: 1px solid var(--status-danger-border);
+}
+
+/* Shares Progress Bar */
+.shares-progress-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 65px;
+}
+
+.shares-ratio-text {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.shares-progress-bar {
+  width: 100%;
+  height: 5px;
+  background-color: var(--border-subtle);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.shares-progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background-color: var(--status-success);
+  transition: width 0.4s ease;
+}
+
+.shares-progress-fill.empty {
+  background-color: #64748b;
+}
+
+/* Table Actions */
+.table-actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.btn-table-action {
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--status-info-bg);
+  color: var(--status-info);
+  border: 1px solid var(--status-info-border);
+  font-size: 0.78rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all var(--transition-fast);
+}
+
+.btn-table-action:hover {
+  background-color: var(--status-info);
+  color: #ffffff;
+}
+
+.btn-table-action.edit-action {
+  background-color: var(--bg-card-hover);
+  color: var(--text-secondary);
+  border-color: var(--border-card);
+}
+
+.btn-table-action.edit-action:hover {
+  background-color: var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.btn-table-action svg {
+  width: 14px;
+  height: 14px;
+}
+
+.btn-more-dots {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-surface);
+  transition: all var(--transition-fast);
+}
+
+.btn-more-dots:hover {
+  background-color: var(--border-subtle);
+  color: var(--text-primary);
+  border-color: var(--border-card);
+}
+
+.btn-more-dots svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* --------------------------------------------------------------------------
+   4. Side Column Widgets
+   -------------------------------------------------------------------------- */
+/* Categories Widget */
+.categories-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.category-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  padding: 0.4rem 0.2rem;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.category-row:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-card-hover);
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.category-row-left {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.category-icon-box {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.category-icon-box.personal {
+  background-color: var(--status-info-bg);
+  color: var(--status-info);
+}
+
+.category-icon-box.family {
+  background-color: var(--brand-orange-light);
+  color: var(--brand-orange);
+}
+
+.category-icon-box.business {
+  background-color: var(--status-purple-bg);
+  color: var(--status-purple);
+}
+
+.category-icon-box.health {
+  background-color: var(--status-danger-bg);
+  color: var(--status-danger);
+}
+
+.category-icon-box.legacy {
+  background-color: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+}
+
+.category-icon-box svg {
+  width: 13px;
+  height: 13px;
+}
+
+.category-count {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Storage Overview Widget */
+.storage-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.storage-labels-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+
+.storage-title {
+  color: var(--text-muted);
+}
+
+.storage-value {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.storage-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.storage-bar-track {
+  flex: 1;
+  height: 8px;
+  background-color: var(--border-subtle);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+}
+
+.storage-bar-fill {
+  height: 100%;
+  width: 32%;
+  background: linear-gradient(90deg, #0284c7 0%, #38bdf8 100%);
+  border-radius: var(--radius-full);
+}
+
+.storage-percent {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--status-info);
+}
+
+.storage-link {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--status-info);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.25rem;
+}
+
+.storage-link:hover {
+  color: var(--brand-orange);
+}
+
+/* --------------------------------------------------------------------------
+   5. Responsive Breakpoints
+   -------------------------------------------------------------------------- */
+@media (max-width: 1200px) {
+  .vaults-layout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .vaults-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .filter-group {
+    flex-wrap: wrap;
+  }
+}

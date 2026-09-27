@@ -1,0 +1,762 @@
+/* ==========================================================================
+   AegisVault Owner Panel — Trustee Invitations Stylesheet
+   Module 04: Invitations Management, KPIs, Donut Overview & Multi-criteria Filter
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Invitations Main Grid Layout
+   -------------------------------------------------------------------------- */
+.invitations-layout-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 305px;
+  gap: 1.15rem;
+  align-items: start;
+}
+
+.invitations-main-column {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.invitations-side-column {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+}
+
+/* --------------------------------------------------------------------------
+   2. All Invitations Table Card & Toolbar
+   -------------------------------------------------------------------------- */
+.invitations-table-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  padding: 1.4rem;
+  box-shadow: var(--shadow-card);
+}
+
+.invitations-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.invitations-card-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.invitations-card-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--brand-orange);
+}
+
+.invitations-card-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Filter Toolbar */
+.invitations-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 1.2rem;
+  flex-wrap: wrap;
+}
+
+.invitations-search-box {
+  position: relative;
+  flex: 1;
+  min-width: 220px;
+}
+
+.invitations-search-icon {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 15px;
+  height: 15px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.invitations-search-input {
+  width: 100%;
+  padding: 0.5rem 0.85rem 0.5rem 2.3rem;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-input);
+  border: 1px solid var(--bg-input-border);
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  transition: all var(--transition-fast);
+}
+
+.invitations-search-input:focus {
+  outline: none;
+  border-color: var(--brand-orange);
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.filter-select {
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-input);
+  border: 1px solid var(--bg-input-border);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  transition: all var(--transition-fast);
+}
+
+.filter-select:focus {
+  border-color: var(--brand-orange);
+}
+
+.btn-filter {
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-input);
+  border: 1px solid var(--bg-input-border);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.btn-filter:hover {
+  background-color: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--border-card);
+}
+
+.btn-filter svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* --------------------------------------------------------------------------
+   3. Invitations Data Table
+   -------------------------------------------------------------------------- */
+.invitations-table-wrap {
+  overflow-x: auto;
+}
+
+.invitations-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.85rem;
+}
+
+.invitations-table th {
+  padding: 0.7rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border-subtle);
+  white-space: nowrap;
+}
+
+.invitations-table th:first-child,
+.invitations-table td:first-child {
+  padding-left: 0.2rem;
+}
+
+.invitations-table th:last-child,
+.invitations-table td:last-child {
+  padding-right: 0.2rem;
+  text-align: right;
+}
+
+.invitations-table td {
+  padding: 0.46rem 0.55rem;
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+}
+
+.invitations-table tr:last-child td {
+  border-bottom: none;
+}
+
+.invitations-table tbody tr {
+  transition: background-color var(--transition-fast);
+}
+
+.invitations-table tbody tr:hover td {
+  background-color: var(--bg-card-hover);
+}
+
+/* Invitee Avatar Cell */
+.invitee-avatar-cell {
+  width: 44px;
+}
+
+.invitee-avatar-img {
+  width: 35px;
+  height: 35px;
+  border-radius: var(--radius-full);
+  background-size: cover;
+  background-position: center;
+  border: 1.5px solid var(--border-subtle);
+  flex-shrink: 0;
+  display: block;
+}
+
+.invitee-avatar-initials {
+  width: 35px;
+  height: 35px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: #ffffff;
+  border: 1.5px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+/* Color variations for initials */
+.avatar-gradient-rk {
+  background: linear-gradient(135deg, #8b5cf6, #d946ef);
+}
+
+.avatar-gradient-vs {
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+}
+
+.avatar-gradient-ns {
+  background: linear-gradient(135deg, #475569, #64748b);
+}
+
+/* Name & Email Cell */
+.invitee-name-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 140px;
+}
+
+.invitee-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.invitee-email {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 165px;
+}
+
+/* Relationship Badges */
+.rel-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.22rem 0.6rem;
+  border-radius: var(--radius-full);
+  font-size: 0.74rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.rel-badge svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.rel-badge.brother {
+  background-color: var(--status-info-bg);
+  color: var(--status-info);
+  border: 1px solid var(--status-info-border);
+}
+
+.rel-badge.sister {
+  background-color: rgba(244, 63, 94, 0.14);
+  color: #f43f5e;
+  border: 1px solid rgba(244, 63, 94, 0.30);
+}
+
+.rel-badge.friend {
+  background-color: var(--status-success-bg);
+  color: var(--status-success);
+  border: 1px solid var(--status-success-border);
+}
+
+.rel-badge.spouse {
+  background-color: var(--status-purple-bg);
+  color: var(--status-purple);
+  border: 1px solid var(--status-purple-border);
+}
+
+.rel-badge.colleague {
+  background-color: var(--status-warning-bg);
+  color: var(--status-warning);
+  border: 1px solid var(--status-warning-border);
+}
+
+.rel-badge.cousin {
+  background-color: rgba(239, 68, 68, 0.14);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.30);
+}
+
+.rel-badge.legal-advisor {
+  background-color: rgba(147, 51, 234, 0.14);
+  color: #a855f7;
+  border: 1px solid rgba(147, 51, 234, 0.30);
+}
+
+/* Vault Column Link/Text */
+.vault-link-text {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #38bdf8;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+html[data-theme="light"] .vault-link-text {
+  color: #0284c7;
+}
+
+.vault-link-text:hover {
+  text-decoration: underline;
+}
+
+/* Status Badges */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+  padding: 0.22rem 0.6rem;
+  border-radius: var(--radius-full);
+  font-size: 0.74rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-pill svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.status-pill.pending {
+  background-color: var(--status-warning-bg);
+  color: var(--status-warning);
+  border: 1px solid var(--status-warning-border);
+}
+
+.status-pill.accepted {
+  background-color: var(--status-success-bg);
+  color: var(--status-success);
+  border: 1px solid var(--status-success-border);
+}
+
+.status-pill.declined {
+  background-color: var(--status-danger-bg);
+  color: var(--status-danger);
+  border: 1px solid var(--status-danger-border);
+}
+
+.status-pill.expired {
+  background-color: rgba(148, 163, 184, 0.14);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.30);
+}
+
+html[data-theme="light"] .status-pill.expired {
+  background-color: rgba(100, 116, 139, 0.12);
+  color: #64748b;
+  border-color: rgba(100, 116, 139, 0.25);
+}
+
+/* Sent Date Cell */
+.sent-date-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  white-space: nowrap;
+}
+
+.sent-date {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.sent-time {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+/* Action Buttons */
+.invitation-actions-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.45rem;
+  white-space: nowrap;
+}
+
+.btn-table-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #38bdf8;
+  background-color: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+html[data-theme="light"] .btn-table-action {
+  color: #0284c7;
+  background-color: rgba(2, 132, 199, 0.08);
+  border-color: rgba(2, 132, 199, 0.28);
+}
+
+.btn-table-action:hover {
+  background-color: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
+}
+
+.btn-table-action svg {
+  width: 13px;
+  height: 13px;
+}
+
+.btn-table-more {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-table-more:hover {
+  background-color: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--border-card);
+}
+
+.btn-table-more svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* --------------------------------------------------------------------------
+   4. Side Column Widgets
+   -------------------------------------------------------------------------- */
+
+/* Widget Card Shell */
+.widget-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-card);
+}
+
+.widget-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.05rem;
+}
+
+.widget-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.widget-title-icon {
+  width: 19px;
+  height: 19px;
+  color: var(--brand-orange);
+}
+
+.widget-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Donut Chart Widget */
+.invite-donut-card-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.donut-chart-wrap {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+}
+
+.donut-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.donut-bg-track {
+  fill: none;
+  stroke: var(--border-subtle);
+  stroke-width: 14;
+}
+
+.donut-seg {
+  fill: none;
+  stroke-width: 14;
+  transition: stroke-dasharray 0.6s ease;
+}
+
+.donut-seg.pending  { stroke: #f59e0b; }
+.donut-seg.accepted { stroke: #10b981; }
+.donut-seg.declined { stroke: #ef4444; }
+.donut-seg.expired  { stroke: #94a3b8; }
+
+.donut-center-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.donut-center-num {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.donut-center-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 0.2rem;
+}
+
+.donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  flex: 1;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-dot.amber { background-color: #f59e0b; }
+.legend-dot.green { background-color: #10b981; }
+.legend-dot.red   { background-color: #ef4444; }
+.legend-dot.gray  { background-color: #94a3b8; }
+
+.legend-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Recent Activity Widget */
+.invite-activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.activity-timeline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.activity-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 0.32rem;
+  flex-shrink: 0;
+}
+
+.activity-dot.amber {
+  background-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+}
+
+.activity-dot.green {
+  background-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.activity-dot.red {
+  background-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.activity-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.activity-title {
+  font-size: 0.81rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.35;
+}
+
+.activity-time {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.activity-divider {
+  height: 1px;
+  background-color: var(--border-subtle);
+  margin: 0.9rem 0;
+}
+
+/* Help & Guidelines List */
+.guidelines-bullets-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.guidelines-bullets-list li {
+  position: relative;
+  padding-left: 1.1rem;
+}
+
+.guidelines-bullets-list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  top: -1px;
+  color: var(--brand-orange);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.guidelines-bullets-list li a {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.guidelines-bullets-list li a:hover {
+  color: var(--brand-orange);
+  text-decoration: underline;
+}
+
+.guidelines-link {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--brand-orange);
+  text-decoration: none;
+  transition: opacity var(--transition-fast);
+}
+
+.guidelines-link:hover {
+  text-decoration: underline;
+  opacity: 0.9;
+}
+
+.modal-overlay.active,
+.modal-overlay.show {
+  display: flex !important;
+}
+
+/* --------------------------------------------------------------------------
+   5. Responsive Media Queries
+   -------------------------------------------------------------------------- */
+@media (max-width: 1200px) {
+  .invitations-layout-grid {
+    grid-template-columns: 1fr;
+  }
+  .invitations-side-column {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .invitations-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .filter-group {
+    flex-wrap: wrap;
+  }
+}

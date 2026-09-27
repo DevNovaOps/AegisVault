@@ -1,0 +1,612 @@
+/* ==========================================================================
+   AegisVault Owner Panel — Trustees Stylesheet
+   Module 03: Trustee Management, Verification Status, Donut Overview & Actions
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Trustees Main Grid Layout
+   -------------------------------------------------------------------------- */
+.trustees-layout-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 305px;
+  gap: 1.15rem;
+  align-items: start;
+}
+
+.trustees-main-column {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.trustees-side-column {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+}
+
+/* --------------------------------------------------------------------------
+   2. Filter Toolbar
+   -------------------------------------------------------------------------- */
+.trustees-table-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  padding: 1.4rem;
+  box-shadow: var(--shadow-card);
+}
+
+.trustees-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.trustees-card-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.trustees-card-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--brand-orange);
+}
+
+.trustees-card-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.trustees-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 1.2rem;
+  flex-wrap: wrap;
+}
+
+.trustees-search-box {
+  position: relative;
+  flex: 1;
+  min-width: 220px;
+}
+
+.trustees-search-icon {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 15px;
+  height: 15px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.trustees-search-input {
+  width: 100%;
+  padding: 0.5rem 0.85rem 0.5rem 2.3rem;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-input);
+  border: 1px solid var(--bg-input-border);
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  transition: all var(--transition-fast);
+}
+
+.trustees-search-input:focus {
+  outline: none;
+  border-color: var(--brand-orange);
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.filter-select {
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-input);
+  border: 1px solid var(--bg-input-border);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  transition: all var(--transition-fast);
+}
+
+.filter-select:focus {
+  border-color: var(--brand-orange);
+}
+
+.btn-filter {
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-input);
+  border: 1px solid var(--bg-input-border);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.btn-filter:hover {
+  background-color: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--border-card);
+}
+
+.btn-filter svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* --------------------------------------------------------------------------
+   3. Trustees Data Table
+   -------------------------------------------------------------------------- */
+.trustees-table-wrap {
+  overflow-x: auto;
+}
+
+.trustees-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.85rem;
+}
+
+.trustees-table th {
+  padding: 0.7rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border-subtle);
+  white-space: nowrap;
+}
+
+.trustees-table th:first-child,
+.trustees-table td:first-child {
+  padding-left: 0.2rem;
+}
+
+.trustees-table th:last-child,
+.trustees-table td:last-child {
+  padding-right: 0.2rem;
+  text-align: right;
+}
+
+.trustees-table td {
+  padding: 0.46rem 0.55rem;
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+}
+
+.trustees-table tr:last-child td {
+  border-bottom: none;
+}
+
+.trustees-table tbody tr {
+  transition: background-color var(--transition-fast);
+}
+
+.trustees-table tbody tr:hover td {
+  background-color: var(--bg-card-hover);
+}
+
+/* Trustee Avatar & Name Info */
+.trustee-avatar-cell {
+  width: 40px;
+}
+
+.trustee-avatar-img {
+  width: 35px;
+  height: 35px;
+  border-radius: var(--radius-full);
+  background-size: cover;
+  background-position: center;
+  border: 1.5px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.trustee-avatar-initials {
+  width: 35px;
+  height: 35px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: #ffffff;
+  border: 1.5px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.trustee-name-texts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 140px;
+}
+
+.trustee-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.trustee-email {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Relationship Badges */
+.rel-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  font-size: 0.74rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.rel-badge.brother {
+  background-color: var(--status-info-bg);
+  color: var(--status-info);
+  border: 1px solid var(--status-info-border);
+}
+
+.rel-badge.sister {
+  background-color: rgba(244, 63, 94, 0.14);
+  color: #f43f5e;
+  border: 1px solid rgba(244, 63, 94, 0.30);
+}
+
+.rel-badge.friend {
+  background-color: var(--status-success-bg);
+  color: var(--status-success);
+  border: 1px solid var(--status-success-border);
+}
+
+.rel-badge.spouse {
+  background-color: var(--status-purple-bg);
+  color: var(--status-purple);
+  border: 1px solid var(--status-purple-border);
+}
+
+.rel-badge.colleague {
+  background-color: var(--status-warning-bg);
+  color: var(--status-warning);
+  border: 1px solid var(--status-warning-border);
+}
+
+.rel-badge.cousin {
+  background-color: rgba(239, 68, 68, 0.14);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.30);
+}
+
+.rel-badge.legal-advisor {
+  background-color: rgba(147, 51, 234, 0.14);
+  color: #a855f7;
+  border: 1px solid rgba(147, 51, 234, 0.30);
+}
+
+.rel-badge svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* Vaults Assigned Badge */
+.vaults-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.24rem 0.65rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--status-info-bg);
+  color: var(--status-info);
+  border: 1px solid var(--status-info-border);
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Status & Verification Status Badges */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-pill.verified {
+  background-color: var(--status-success-bg);
+  color: var(--status-success);
+  border: 1px solid var(--status-success-border);
+}
+
+.status-pill.pending {
+  background-color: var(--status-warning-bg);
+  color: var(--status-warning);
+  border: 1px solid var(--status-warning-border);
+}
+
+.status-pill.not-started {
+  background-color: var(--status-danger-bg);
+  color: var(--status-danger);
+  border: 1px solid var(--status-danger-border);
+}
+
+.status-pill.active {
+  background-color: var(--status-success-bg);
+  color: var(--status-success);
+  border: 1px solid var(--status-success-border);
+}
+
+.status-pill.invited {
+  background-color: var(--status-purple-bg);
+  color: var(--status-purple);
+  border: 1px solid var(--status-purple-border);
+}
+
+.status-dot-icon {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+  display: inline-block;
+}
+
+/* Row Action Buttons */
+.trustee-actions-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.45rem;
+  white-space: nowrap;
+}
+
+.btn-icon-action {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--status-info);
+  border: 1px solid var(--status-info-border);
+  background-color: var(--status-info-bg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-icon-action:hover {
+  background-color: var(--status-info);
+  color: #ffffff;
+}
+
+.btn-icon-action.edit-action {
+  background-color: var(--bg-surface);
+  color: var(--status-info);
+  border-color: var(--border-subtle);
+}
+
+.btn-icon-action.edit-action:hover {
+  background-color: var(--status-info-bg);
+  border-color: var(--status-info);
+}
+
+.btn-icon-action.more-dots {
+  background-color: var(--bg-surface);
+  color: var(--text-muted);
+  border-color: var(--border-subtle);
+}
+
+.btn-icon-action.more-dots:hover {
+  background-color: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--border-card);
+}
+
+.btn-icon-action svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* --------------------------------------------------------------------------
+   4. Side Column Widgets
+   -------------------------------------------------------------------------- */
+
+/* Trustee Overview Donut Chart */
+.trustee-donut-card-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.donut-chart-wrap {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+}
+
+.donut-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.donut-bg-track {
+  fill: none;
+  stroke: var(--border-subtle);
+  stroke-width: 14;
+}
+
+.donut-seg {
+  fill: none;
+  stroke-width: 14;
+  transition: stroke-dasharray 0.6s ease;
+}
+
+.donut-seg.verified { stroke: #10b981; }
+.donut-seg.pending  { stroke: #f59e0b; }
+.donut-seg.invited  { stroke: #0284c7; }
+
+.donut-center-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.donut-center-num {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.donut-center-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+  margin-top: 0.2rem;
+}
+
+/* Donut Legend */
+.donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  flex: 1;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-dot.green { background-color: #10b981; }
+.legend-dot.amber { background-color: #f59e0b; }
+.legend-dot.blue  { background-color: #0284c7; }
+.legend-dot.red   { background-color: #ef4444; }
+
+.legend-label {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* Verification Progress Widget */
+.verification-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.verification-labels-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+}
+
+.verification-title {
+  color: var(--text-muted);
+}
+
+.verification-value {
+  font-weight: 700;
+  color: var(--status-success);
+}
+
+.verification-bar-track {
+  width: 100%;
+  height: 8px;
+  background-color: var(--border-subtle);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+}
+
+.verification-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+  border-radius: var(--radius-full);
+  transition: width 0.6s ease;
+}
+
+/* Help & Guidelines Widget */
+.guidelines-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.guidelines-text {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.guidelines-link {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--status-info);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+.guidelines-link:hover {
+  color: var(--brand-orange);
+  transform: translateX(2px);
+}

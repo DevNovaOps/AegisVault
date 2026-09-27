@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AegisVault &mdash; Share Management</title>
+  <meta name="description" content="Manage vault shares with trusted people, control access levels, and keep your digital legacy secure in AegisVault.">
+
+  <!-- Immediate Theme Initializer to eliminate flash -->
+  <script>
+    (function() {
+      try {
+        var savedTheme = localStorage.getItem('aegis_owner_theme');
+        if (savedTheme === 'light' || savedTheme === 'dark') {
+          document.documentElement.setAttribute('data-theme', savedTheme);
+        } else {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@1,500;1,600;1,700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../common/common.css">
+  <link rel="stylesheet" href="share-management.css">
+</head>
+<body>
+  <div class="owner-app">
+
+    <!-- ====================================================================
+         Sidebar Navigation (Fixed 260px, full-bleed scenic backdrop)
+         ==================================================================== -->
+    <aside class="owner-sidebar" aria-label="Owner Navigation">
+      <!-- Brand Logo Header -->
+      <div class="sidebar-brand">
+        <div class="brand-shield-icon">
+          <svg viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 2L3 8V20C3 31.2 10.3 41.5 20 44C29.7 41.5 37 31.2 37 20V8L20 2Z" stroke="#F97316" stroke-width="2.5" stroke-linejoin="round" fill="rgba(249, 115, 22, 0.08)"/>
+            <path d="M20 8L8 13V21C8 28.5 13.1 35.5 20 37.5C26.9 35.5 32 28.5 32 21V13L20 8Z" fill="#F97316"/>
+            <path d="M20 13L13 16.5V22C13 26.5 16 30.5 20 32C24 30.5 27 26.5 27 22V16.5L20 13Z" fill="#FFA24C"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Aegis<span class="vault-accent">Vault</span></span>
+          <span class="brand-tagline">What matters, lives on.</span>
+        </div>
+      </div>
+
+      <!-- Navigation Links (10 modules) -->
+      <nav class="sidebar-nav">
+        <!-- 1. Dashboard -->
+        <a href="../dashboard/dashboard.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1V9.5z"/>
+            </svg>
+          </span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+
+        <!-- 2. My Vaults -->
+        <a href="../my-vaults/my-vaults.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+              <polyline points="2 17 12 22 22 17"/>
+              <polyline points="2 12 12 17 22 12"/>
+            </svg>
+          </span>
+          <span class="nav-label">My Vaults</span>
+        </a>
+
+        <!-- 3. Trustees -->
+        <a href="../trustees/trustees.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </span>
+          <span class="nav-label">Trustees</span>
+        </a>
+
+        <!-- 4. Invitations -->
+        <a href="../invitations/invitations.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <rect x="3" y="4" width="18" height="16" rx="2"/>
+              <path d="m22 7-10 7L2 7"/>
+            </svg>
+          </span>
+          <span class="nav-label">Invitations</span>
+          <span class="nav-badge">2</span>
+        </a>
+
+        <!-- 5. Share Management (Active) -->
+        <a href="share-management.html" class="nav-item active" aria-current="page">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="18" cy="5" r="3"/>
+              <circle cx="6" cy="12" r="3"/>
+              <circle cx="18" cy="19" r="3"/>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+          </span>
+          <span class="nav-label">Share Management</span>
+        </a>
+
+        <!-- 6. Release Management -->
+        <a href="../release-management/release-management.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </span>
+          <span class="nav-label">Release Management</span>
+        </a>
+
+        <!-- 7. Notifications -->
+        <a href="../notifications/notifications.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+          </span>
+          <span class="nav-label">Notifications</span>
+          <span class="nav-badge">3</span>
+        </a>
+
+        <!-- 8. Activity & History -->
+        <a href="../activity-history/activity-history.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </span>
+          <span class="nav-label">Activity & History</span>
+        </a>
+
+        <!-- 9. Profile & Security -->
+        <a href="../profile-security/profile-security.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </span>
+          <span class="nav-label">Profile & Security</span>
+        </a>
+
+        <!-- 10. Help & Support -->
+        <a href="../help-support/help-support.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </span>
+          <span class="nav-label">Help & Support</span>
+        </a>
+      </nav>
+
+      <!-- Sidebar Scenic Quote -->
+      <div class="sidebar-quote-block">
+        <p class="sidebar-scenic-quote">Your legacy.<br>Their tomorrow.</p>
+        <div class="sidebar-scenic-dash"></div>
+      </div>
+    </aside>
+
+    <!-- ====================================================================
+         Main App View Wrapper
+         ==================================================================== -->
+    <div class="owner-main">
+      
+      <!-- Top Navigation Bar (60px) -->
+      <header class="owner-topbar">
+        <div class="topbar-left">
+          <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle Mobile Navigation">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+          <div class="topbar-search">
+            <svg class="topbar-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" class="topbar-search-input" placeholder="Search vaults, trustees, invitations, or settings..." autocomplete="off">
+          </div>
+        </div>
+
+        <div class="topbar-right">
+                    <!-- Theme Toggle (Trustee & Admin Style Pill Switch) -->
+          <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Dark / Light Theme" title="Toggle Theme" role="switch">
+            <span class="theme-switch-track">
+              <span class="switch-icon switch-icon-sun" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="4"/>
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                </svg>
+              </span>
+              <span class="switch-icon switch-icon-moon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+              </span>
+              <span class="theme-switch-thumb">
+                <span class="thumb-icon thumb-sun">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                  </svg>
+                </span>
+                <span class="thumb-icon thumb-moon">
+                  <svg viewBox="0 0 24 24" fill="#ffffff" stroke="none">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                  </svg>
+                </span>
+              </span>
+            </span>
+          </button>
+
+          <!-- Notification Bell -->
+          <a href="../notifications/notifications.html" class="icon-btn" title="View Notifications" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <span class="btn-badge">3</span>
+          </a>
+
+          <!-- Profile Menu Chip -->
+          <div class="profile-menu-wrapper">
+            <button class="profile-chip" id="profileBtn" aria-label="Owner Profile Menu">
+              <div class="profile-avatar-circle">RP</div>
+              <span class="profile-name">Rakesh Patel</span>
+              <svg class="profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+            <div class="dropdown-panel" id="profileDropdown">
+              <div class="dropdown-header">Vault Owner</div>
+              <a href="../profile-security/profile-security.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>Profile &amp; Security</span>
+              </a>
+              <a href="../activity-history/activity-history.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span>Audit History</span>
+              </a>
+              <a href="../help-support/help-support.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <span>Help &amp; FAQs</span>
+              </a>
+              <div class="dropdown-divider"></div>
+              <a href="javascript:void(0)" class="dropdown-item" onclick="window.AegisOwner.showToast('Signed out of owner session (mock).')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>Sign Out</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content Area -->
+      <main class="owner-content">
+
+        <!-- ====================================================================
+             Hero Panoramic Banner (Fixed 230px Height)
+             ==================================================================== -->
+        <section class="hero-card" aria-label="Share Management Hero Banner">
+          <div class="hero-left">
+            <div class="hero-eyebrow">05. SHARE MANAGEMENT</div>
+            <h1 class="hero-heading">Share <span class="hero-accent">Management</span></h1>
+            <p class="hero-subtext">Manage vault shares with trusted people, control access levels, and keep your digital legacy secure.</p>
+          </div>
+          <div class="hero-quote-card">
+            <p class="hero-quote-text">&ldquo;Share with<br>confidence.<br>Control for<br>a safer tomorrow.&rdquo;</p>
+            <div class="hero-quote-dash"></div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             4 KPI Metrics Row
+             ==================================================================== -->
+        <section class="metrics-row" aria-label="Share Statistics">
+          <!-- Metric 1: Total Shares -->
+          <div class="metric-card">
+            <div class="metric-icon-box blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="18" cy="5" r="3"/>
+                <circle cx="6" cy="12" r="3"/>
+                <circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+              </svg>
+            </div>
+            <div class="metric-content">
+              <span class="metric-value" id="statTotalShares">8</span>
+              <span class="metric-label">Total Shares</span>
+              <span class="metric-sub">Across all vaults</span>
+            </div>
+          </div>
+
+          <!-- Metric 2: Active Shares -->
+          <div class="metric-card">
+            <div class="metric-icon-box green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+            <div class="metric-content">
+              <span class="metric-value" id="statActiveShares">6</span>
+              <span class="metric-label">Active Shares</span>
+              <span class="metric-sub">Currently accessible</span>
+            </div>
+          </div>
+
+          <!-- Metric 3: Pending Share -->
+          <div class="metric-card">
+            <div class="metric-icon-box amber">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+            </div>
+            <div class="metric-content">
+              <span class="metric-value" id="statPendingShares">1</span>
+              <span class="metric-label">Pending Share</span>
+              <span class="metric-sub">Awaiting acceptance</span>
+            </div>
+          </div>
+
+          <!-- Metric 4: Revoked Share -->
+          <div class="metric-card">
+            <div class="metric-icon-box red">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="15" y1="9" x2="9" y2="15"/>
+                <line x1="9" y1="9" x2="15" y2="15"/>
+              </svg>
+            </div>
+            <div class="metric-content">
+              <span class="metric-value" id="statRevokedShares">1</span>
+              <span class="metric-label">Revoked Share</span>
+              <span class="metric-sub">Access removed</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             Main Two-Column Layout (All Shared Vaults Table + Side Widgets)
+             ==================================================================== -->
+        <div class="shares-layout-grid">
+
+          <!-- Left Column: All Shared Vaults Table Card -->
+          <div class="shares-main-column">
+            <article class="shares-table-card">
+              <!-- Card Header -->
+              <div class="shares-card-header">
+                <div class="shares-card-title-wrap">
+                  <svg class="shares-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="18" cy="5" r="3"/>
+                    <circle cx="6" cy="12" r="3"/>
+                    <circle cx="18" cy="19" r="3"/>
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                  </svg>
+                  <h2 class="shares-card-title">All Shared Vaults</h2>
+                </div>
+                <button class="btn btn-primary" id="btnOpenShareVault">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px; height:16px;">
+                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
+                  Share Vault
+                </button>
+              </div>
+
+              <!-- Filter Toolbar -->
+              <div class="shares-toolbar">
+                <div class="shares-search-box">
+                  <svg class="shares-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  </svg>
+                  <input type="text" class="shares-search-input" id="shareSearchInput" placeholder="Search by vault name, trustee name, or email..." autocomplete="off">
+                </div>
+
+                <div class="filter-group">
+                  <!-- Vault Filter -->
+                  <select class="filter-select" id="vaultFilterSelect" aria-label="Filter by Vault">
+                    <option value="all">All Vaults</option>
+                    <option value="Personal Vault">Personal Vault</option>
+                    <option value="Family Vault">Family Vault</option>
+                    <option value="Business Vault">Business Vault</option>
+                    <option value="Health Vault">Health Vault</option>
+                    <option value="Travel Vault">Travel Vault</option>
+                    <option value="Property Vault">Property Vault</option>
+                    <option value="Legal Vault">Legal Vault</option>
+                    <option value="Memories Vault">Memories Vault</option>
+                  </select>
+
+                  <!-- Access Level Filter -->
+                  <select class="filter-select" id="accessFilterSelect" aria-label="Filter by Access Level">
+                    <option value="all">All Access Levels</option>
+                    <option value="View Only">View Only</option>
+                    <option value="View &amp; Download">View &amp; Download</option>
+                    <option value="Full Access">Full Access</option>
+                  </select>
+
+                  <!-- Status Filter -->
+                  <select class="filter-select" id="statusFilterSelect" aria-label="Filter by Status">
+                    <option value="all">All Statuses</option>
+                    <option value="active">Active</option>
+                    <option value="pending">Pending</option>
+                    <option value="revoked">Revoked</option>
+                  </select>
+
+                  <button class="btn-filter" id="btnMoreFilters">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                    </svg>
+                    More Filters
+                  </button>
+                </div>
+              </div>
+
+              <!-- Data Table -->
+              <div class="shares-table-wrap">
+                <table class="shares-table">
+                  <thead>
+                    <tr>
+                      <th>Vault Name</th>
+                      <th>Shared With</th>
+                      <th>Access Level</th>
+                      <th>Status</th>
+                      <th>Shared On</th>
+                      <th>Expires On</th>
+                      <th style="text-align: right;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="sharesTableTbody">
+                    <!-- Populated dynamically via share-management.js -->
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          </div>
+
+          <!-- Right Column: Quick Actions, Access Level Guide & Recent Activity -->
+          <div class="shares-side-column">
+            
+            <!-- Widget 1: Quick Actions -->
+            <article class="widget-card">
+              <div class="widget-header">
+                <div class="widget-title-group">
+                  <svg class="widget-title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                  </svg>
+                  <h2 class="widget-title">Quick Actions</h2>
+                </div>
+              </div>
+
+              <div class="quick-actions-list">
+                <!-- Action 1: Share a Vault -->
+                <a href="javascript:void(0)" class="quick-action-card" id="btnQuickShareSide">
+                  <div class="action-card-left">
+                    <div class="action-card-icon blue">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="18" cy="5" r="3"/>
+                        <circle cx="6" cy="12" r="3"/>
+                        <circle cx="18" cy="19" r="3"/>
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                      </svg>
+                    </div>
+                    <div class="action-card-texts">
+                      <span class="action-card-title">Share a Vault</span>
+                      <span class="action-card-sub">Give access to a trustee</span>
+                    </div>
+                  </div>
+                  <svg class="action-card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </a>
+
+                <!-- Action 2: Manage Existing Shares -->
+                <a href="javascript:void(0)" class="quick-action-card" id="btnQuickFilterActiveShares">
+                  <div class="action-card-left">
+                    <div class="action-card-icon green">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                      </svg>
+                    </div>
+                    <div class="action-card-texts">
+                      <span class="action-card-title">Manage Existing Shares</span>
+                      <span class="action-card-sub">View and edit shared access</span>
+                    </div>
+                  </div>
+                  <svg class="action-card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </a>
+
+                <!-- Action 3: Access Settings -->
+                <a href="../profile-security/profile-security.html" class="quick-action-card">
+                  <div class="action-card-left">
+                    <div class="action-card-icon purple">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                      </svg>
+                    </div>
+                    <div class="action-card-texts">
+                      <span class="action-card-title">Access Settings</span>
+                      <span class="action-card-sub">Configure permissions</span>
+                    </div>
+                  </div>
+                  <svg class="action-card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </a>
+
+                <!-- Action 4: Share Activity -->
+                <a href="../activity-history/activity-history.html" class="quick-action-card">
+                  <div class="action-card-left">
+                    <div class="action-card-icon amber">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                      </svg>
+                    </div>
+                    <div class="action-card-texts">
+                      <span class="action-card-title">Share Activity</span>
+                      <span class="action-card-sub">View share history</span>
+                    </div>
+                  </div>
+                  <svg class="action-card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </a>
+              </div>
+            </article>
+
+            <!-- Widget 2: Access Level Guide -->
+            <article class="widget-card">
+              <div class="widget-header">
+                <div class="widget-title-group">
+                  <svg class="widget-title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    <polyline points="9 12 11 14 15 10"/>
+                  </svg>
+                  <h2 class="widget-title">Access Level Guide</h2>
+                </div>
+              </div>
+
+              <div class="access-guide-list">
+                <!-- Item 1: View Only -->
+                <div class="guide-item">
+                  <div class="guide-icon-box blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                  </div>
+                  <div class="guide-texts">
+                    <span class="guide-title">View Only</span>
+                    <span class="guide-desc">Can view files but cannot download</span>
+                  </div>
+                </div>
+
+                <!-- Item 2: View & Download -->
+                <div class="guide-item">
+                  <div class="guide-icon-box green">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="7 10 12 15 17 10"/>
+                      <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                  </div>
+                  <div class="guide-texts">
+                    <span class="guide-title">View &amp; Download</span>
+                    <span class="guide-desc">Can view and download files</span>
+                  </div>
+                </div>
+
+                <!-- Item 3: Full Access -->
+                <div class="guide-item">
+                  <div class="guide-icon-box orange">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                  </div>
+                  <div class="guide-texts">
+                    <span class="guide-title">Full Access</span>
+                    <span class="guide-desc">Can view, download, and manage (shared admin rights)</span>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <!-- Widget 3: Recent Share Activity -->
+            <article class="widget-card">
+              <div class="widget-header">
+                <div class="widget-title-group">
+                  <svg class="widget-title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  <h2 class="widget-title">Recent Share Activity</h2>
+                </div>
+              </div>
+
+              <div class="shares-activity-list">
+                <div class="activity-timeline-item">
+                  <span class="activity-dot green"></span>
+                  <div class="activity-info">
+                    <span class="activity-title">Sneha Mehta accepted access</span>
+                    <span class="activity-time">12 Sep 2025, 10:24 AM</span>
+                  </div>
+                </div>
+                <div class="activity-timeline-item">
+                  <span class="activity-dot amber"></span>
+                  <div class="activity-info">
+                    <span class="activity-title">Amit Kumar pending acceptance</span>
+                    <span class="activity-time">05 Sep 2025, 02:16 PM</span>
+                  </div>
+                </div>
+                <div class="activity-timeline-item">
+                  <span class="activity-dot red"></span>
+                  <div class="activity-info">
+                    <span class="activity-title">Vikram Shah access revoked</span>
+                    <span class="activity-time">28 Aug 2025, 11:05 AM</span>
+                  </div>
+                </div>
+                <div class="activity-timeline-item">
+                  <span class="activity-dot green"></span>
+                  <div class="activity-info">
+                    <span class="activity-title">Anita Desai shared new vault</span>
+                    <span class="activity-time">15 Aug 2025, 08:40 AM</span>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+          </div>
+        </div>
+      </main>
+
+      <!-- App Footer -->
+      <footer class="owner-footer">
+        <div class="footer-left">
+          <div class="footer-shield">
+            <svg viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 2L3 8V20C3 31.2 10.3 41.5 20 44C29.7 41.5 37 31.2 37 20V8L20 2Z" stroke="#F97316" stroke-width="2.5" stroke-linejoin="round" fill="rgba(249, 115, 22, 0.08)"/>
+              <path d="M20 8L8 13V21C8 28.5 13.1 35.5 20 37.5C26.9 35.5 32 28.5 32 21V13L20 8Z" fill="#F97316"/>
+              <path d="M20 13L13 16.5V22C13 26.5 16 30.5 20 32C24 30.5 27 26.5 27 22V16.5L20 13Z" fill="#FFA24C"/>
+            </svg>
+          </div>
+          <span class="footer-brand-title">AegisVault</span>
+          <span>&mdash; What matters, lives on.</span>
+        </div>
+
+        <div class="footer-center">
+          <p class="footer-quote">&ldquo;Because what matters today, should matter tomorrow too.&rdquo;</p>
+          <div class="footer-quote-dash"></div>
+        </div>
+
+        <div class="footer-right">
+          <a href="../help-support/help-support.html" class="footer-link">Privacy</a>
+          <a href="../help-support/help-support.html" class="footer-link">Terms</a>
+          <a href="../help-support/help-support.html" class="footer-link">Help</a>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       Modals
+       ==================================================================== -->
+
+  <!-- Modal 1: Share a Vault -->
+  <div class="modal-overlay" id="shareVaultModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Share Vault Access</h3>
+        <button class="modal-close-btn" data-modal-close aria-label="Close modal">&times;</button>
+      </div>
+      <form id="formShareVault">
+        <div class="modal-body">
+          <div style="margin-bottom: 1.15rem;">
+            <label for="shareTargetVault" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Select Vault</label>
+            <select id="shareTargetVault" required style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
+              <option value="Personal Vault">Personal Vault</option>
+              <option value="Family Vault">Family Vault</option>
+              <option value="Business Vault">Business Vault</option>
+              <option value="Health Vault">Health Vault</option>
+              <option value="Travel Vault">Travel Vault</option>
+              <option value="Property Vault">Property Vault</option>
+              <option value="Legal Vault">Legal Vault</option>
+              <option value="Memories Vault">Memories Vault</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom: 1.15rem;">
+            <label for="shareTargetTrustee" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Select Trustee</label>
+            <select id="shareTargetTrustee" required style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
+              <option value="Sneha Mehta">Sneha Mehta (sneha.mehta@email.com)</option>
+              <option value="Amit Kumar">Amit Kumar (amit.kumar@email.com)</option>
+              <option value="Rahul Kapoor">Rahul Kapoor (rahul.kapoor@email.com)</option>
+              <option value="Priya Sharma">Priya Sharma (priya.sharma@email.com)</option>
+              <option value="Anita Desai">Anita Desai (anita.desai@email.com)</option>
+              <option value="Neeraj Singh">Neeraj Singh (neeraj.singh@email.com)</option>
+              <option value="Karan Malhotra">Karan Malhotra (karan.malhotra@email.com)</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom: 1.15rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div>
+              <label for="shareAccessLevel" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Access Level</label>
+              <select id="shareAccessLevel" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
+                <option value="View &amp; Download">View &amp; Download</option>
+                <option value="View Only">View Only</option>
+                <option value="Full Access">Full Access</option>
+              </select>
+            </div>
+            <div>
+              <label for="shareExpiry" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Access Expiration</label>
+              <select id="shareExpiry" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
+                <option value="Never">Never (Permanent)</option>
+                <option value="30days">30 Days</option>
+                <option value="90days">90 Days</option>
+                <option value="1year">1 Year</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label for="shareNote" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Special Instructions or Note</label>
+            <textarea id="shareNote" rows="3" placeholder="Access granted for inheritance and contingency administration..." style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary); resize: none;"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+          <button type="submit" class="btn btn-primary">Grant Access</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: Edit Share Modal -->
+  <div class="modal-overlay" id="editShareModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="editShareModalTitle">Edit Share Access</h3>
+        <button class="modal-close-btn" data-modal-close aria-label="Close modal">&times;</button>
+      </div>
+      <form id="formEditShare">
+        <div class="modal-body" id="editShareModalBody">
+          <!-- Injected dynamically via JS -->
+        </div>
+        <div class="modal-footer" style="display: flex; justify-content: space-between;">
+          <button type="button" class="btn btn-danger" id="btnRevokeAccess">Revoke Access</button>
+          <div style="display: flex; gap: 0.5rem;">
+            <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 3: Action Confirmation Modal (Remind / Restore) -->
+  <div class="modal-overlay" id="confirmActionModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="confirmActionModalTitle">Confirm Action</h3>
+        <button class="modal-close-btn" data-modal-close aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body" id="confirmActionModalBody">
+        <!-- Rendered dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+        <button type="button" class="btn btn-primary" id="btnConfirmAction">Proceed</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../common/common.js"></script>
+  <script src="share-management.js"></script>
+</body>
+</html>

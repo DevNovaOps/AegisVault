@@ -1,0 +1,1244 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AegisVault &mdash; Notifications</title>
+  <meta name="description" content="Stay informed with important updates about your vaults, trustees, invitations, and releases in AegisVault.">
+
+  <!-- Immediate Theme Initializer to eliminate flash -->
+  <script>
+    (function() {
+      try {
+        var savedTheme = localStorage.getItem('aegis_owner_theme');
+        if (savedTheme === 'light' || savedTheme === 'dark') {
+          document.documentElement.setAttribute('data-theme', savedTheme);
+        } else {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@1,500;1,600;1,700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../common/common.css">
+  <link rel="stylesheet" href="notifications.css">
+</head>
+<body>
+  <div class="owner-app">
+
+    <!-- ====================================================================
+         Sidebar Navigation (Fixed 260px, full-bleed scenic backdrop)
+         ==================================================================== -->
+    <aside class="owner-sidebar" aria-label="Owner Navigation">
+      <!-- Brand Logo Header -->
+      <div class="sidebar-brand">
+        <div class="brand-shield-icon">
+          <svg viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 2L3 8V20C3 31.2 10.3 41.5 20 44C29.7 41.5 37 31.2 37 20V8L20 2Z" stroke="#F97316" stroke-width="2.5" stroke-linejoin="round" fill="rgba(249, 115, 22, 0.08)"/>
+            <path d="M20 8L8 13V21C8 28.5 13.1 35.5 20 37.5C26.9 35.5 32 28.5 32 21V13L20 8Z" fill="#F97316"/>
+            <path d="M20 13L13 16.5V22C13 26.5 16 30.5 20 32C24 30.5 27 26.5 27 22V16.5L20 13Z" fill="#FFA24C"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Aegis<span class="vault-accent">Vault</span></span>
+          <span class="brand-tagline">What matters, lives on.</span>
+        </div>
+      </div>
+
+      <!-- Navigation Links (10 modules) -->
+      <nav class="sidebar-nav">
+        <!-- 1. Dashboard -->
+        <a href="../dashboard/dashboard.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1V9.5z"/>
+            </svg>
+          </span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+
+        <!-- 2. My Vaults -->
+        <a href="../my-vaults/my-vaults.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+              <polyline points="2 17 12 22 22 17"/>
+              <polyline points="2 12 12 17 22 12"/>
+            </svg>
+          </span>
+          <span class="nav-label">My Vaults</span>
+        </a>
+
+        <!-- 3. Trustees -->
+        <a href="../trustees/trustees.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </span>
+          <span class="nav-label">Trustees</span>
+        </a>
+
+        <!-- 4. Invitations -->
+        <a href="../invitations/invitations.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <rect x="3" y="4" width="18" height="16" rx="2"/>
+              <path d="m22 7-10 7L2 7"/>
+            </svg>
+          </span>
+          <span class="nav-label">Invitations</span>
+          <span class="nav-badge">2</span>
+        </a>
+
+        <!-- 5. Share Management -->
+        <a href="../share-management/share-management.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="18" cy="5" r="3"/>
+              <circle cx="6" cy="12" r="3"/>
+              <circle cx="18" cy="19" r="3"/>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+          </span>
+          <span class="nav-label">Share Management</span>
+        </a>
+
+        <!-- 6. Release Management -->
+        <a href="../release-management/release-management.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </span>
+          <span class="nav-label">Release Management</span>
+        </a>
+
+        <!-- 7. Notifications (Active) -->
+        <a href="notifications.html" class="nav-item active" aria-current="page">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+          </span>
+          <span class="nav-label">Notifications</span>
+          <span class="nav-badge" id="sidebarNotifBadge">3</span>
+        </a>
+
+        <!-- 8. Activity & History -->
+        <a href="../activity-history/activity-history.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </span>
+          <span class="nav-label">Activity & History</span>
+        </a>
+
+        <!-- 9. Profile & Security -->
+        <a href="../profile-security/profile-security.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </span>
+          <span class="nav-label">Profile & Security</span>
+        </a>
+
+        <!-- 10. Help & Support -->
+        <a href="../help-support/help-support.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </span>
+          <span class="nav-label">Help & Support</span>
+        </a>
+      </nav>
+
+      <!-- Sidebar Scenic Quote -->
+      <div class="sidebar-quote-block">
+        <p class="sidebar-scenic-quote">Your legacy.<br>Their tomorrow.</p>
+        <div class="sidebar-scenic-dash"></div>
+      </div>
+    </aside>
+
+    <!-- ====================================================================
+         Main App View Wrapper
+         ==================================================================== -->
+    <div class="owner-main">
+      
+      <!-- Top Navigation Bar (60px) -->
+      <header class="owner-topbar">
+        <div class="topbar-left">
+          <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle Mobile Navigation">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+          <div class="topbar-search">
+            <svg class="topbar-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" class="topbar-search-input" placeholder="Search vaults, trustees, invitations, releases, or settings..." autocomplete="off">
+          </div>
+        </div>
+
+        <div class="topbar-right">
+                    <!-- Theme Toggle (Trustee & Admin Style Pill Switch) -->
+          <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Dark / Light Theme" title="Toggle Theme" role="switch">
+            <span class="theme-switch-track">
+              <span class="switch-icon switch-icon-sun" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="4"/>
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                </svg>
+              </span>
+              <span class="switch-icon switch-icon-moon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+              </span>
+              <span class="theme-switch-thumb">
+                <span class="thumb-icon thumb-sun">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                  </svg>
+                </span>
+                <span class="thumb-icon thumb-moon">
+                  <svg viewBox="0 0 24 24" fill="#ffffff" stroke="none">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                  </svg>
+                </span>
+              </span>
+            </span>
+          </button>
+
+          <!-- Notification Bell -->
+          <a href="../notifications/notifications.html" class="icon-btn" title="View Notifications" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <span class="btn-badge" id="headerNotifBadge">3</span>
+          </a>
+
+          <!-- Profile Menu Chip -->
+          <div class="profile-menu-wrapper">
+            <button class="profile-chip" id="profileBtn" aria-label="Owner Profile Menu">
+              <div class="profile-avatar-circle">RP</div>
+              <span class="profile-name">Rakesh Patel</span>
+              <svg class="profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+            <div class="dropdown-panel" id="profileDropdown">
+              <div class="dropdown-header">Vault Owner</div>
+              <a href="../profile-security/profile-security.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>Profile &amp; Security</span>
+              </a>
+              <a href="../activity-history/activity-history.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span>Audit History</span>
+              </a>
+              <a href="../help-support/help-support.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <span>Help &amp; FAQs</span>
+              </a>
+              <div class="dropdown-divider"></div>
+              <a href="javascript:void(0)" class="dropdown-item" onclick="window.AegisOwner && window.AegisOwner.showToast ? window.AegisOwner.showToast('Signed out of owner session (mock).') : alert('Signed out');">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>Sign Out</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content Area -->
+      <main class="owner-content">
+
+        <!-- ====================================================================
+             Hero Panoramic Banner (Fixed 230px Height)
+             ==================================================================== -->
+        <section class="hero-card" aria-label="Notifications Hero Banner">
+          <div class="hero-left">
+            <div class="hero-eyebrow">07. NOTIFICATIONS</div>
+            <h1 class="hero-heading">Notifications</h1>
+            <p class="hero-subtext">Stay informed with important updates about your vaults, trustees, invitations, and releases.</p>
+          </div>
+          <div class="hero-quote-card">
+            <p class="hero-quote-text">&ldquo;Important<br>updates today<br>for a safer<br>tomorrow.&rdquo;</p>
+            <div class="hero-quote-dash"></div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             5 KPI Metrics Row
+             ==================================================================== -->
+        <section class="metrics-row five-cards" aria-label="Notification Statistics">
+          <!-- Metric 1: Unread -->
+          <div class="metric-card" data-filter="unread" style="cursor: pointer;">
+            <div class="metric-icon-box blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              </svg>
+            </div>
+            <div class="metric-content">
+              <span class="metric-value" id="kpiUnreadCount">3</span>
+              <span class="metric-label">Unread</span>
+              <span class="metric-sub">Needs attention</span>
+            </div>
+          </div>
+
+          <!-- Metric 2: Invitations -->
+          <div class="metric-card" data-filter="invitations" style="cursor: pointer;">
+            <div class="metric-icon-box teal">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+            </div>
+            <div class="metric-content">
+              <span class="metric-value" id="kpiInvitationsCount">5</span>
+              <span class="metric-label">Invitations</span>
+              <span class="metric-sub">New updates</span>
+            </div>
+          </div>
+
+          <!-- Metric 3: Releases -->
+          <div class="metric-card" data-filter="releases" style="cursor: pointer;">
+            <div class="metric-icon-box purple">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 2L11 13"/>
+                <path d="M22 2L15 22L11 13L2 9L22 2Z"/>
+              </svg>
+            </div>
+            <div class="metric-content">
+              <span class="metric-value" id="kpiReleasesCount">2</span>
+              <span class="metric-label">Releases</span>
+              <span class="metric-sub">Status changes</span>
+            </div>
+          </div>
+
+          <!-- Metric 4: Trustees -->
+          <div class="metric-card" data-filter="trustees" style="cursor: pointer;">
+            <div class="metric-icon-box orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+            <div class="metric-content">
+              <span class="metric-value" id="kpiTrusteesCount">4</span>
+              <span class="metric-label">Trustees</span>
+              <span class="metric-sub">Activity updates</span>
+            </div>
+          </div>
+
+          <!-- Metric 5: Security -->
+          <div class="metric-card" data-filter="security" style="cursor: pointer;">
+            <div class="metric-icon-box red">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <div class="metric-content">
+              <span class="metric-value" id="kpiSecurityCount">3</span>
+              <span class="metric-label">Security</span>
+              <span class="metric-sub">Account &amp; access</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             Main Two-Column Workspace Layout (Table + 3 Side Cards)
+             ==================================================================== -->
+        <section class="notifications-layout-grid">
+
+          <!-- Left Main Column: Notifications Table Card -->
+          <div class="notifications-main-column">
+            <div class="notif-table-card">
+
+              <!-- Card Header -->
+              <div class="notif-card-header">
+                <div class="notif-card-title-wrap">
+                  <svg class="notif-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                  </svg>
+                  <h2 class="notif-card-title">All Notifications</h2>
+                </div>
+
+                <div class="notif-header-actions">
+                  <button class="btn-action-outline" id="btnMarkAllRead">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    <span>Mark All as Read</span>
+                  </button>
+                  <button class="btn-action-outline" id="btnNotifSettings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="3"/>
+                      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                    <span>Notification Settings</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Filter Toolbar -->
+              <div class="notif-toolbar">
+                <div class="notif-search-box">
+                  <svg class="notif-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  </svg>
+                  <input type="text" id="notifSearchInput" placeholder="Search notifications..." class="notif-search-input">
+                </div>
+
+                <div class="filter-group">
+                  <select id="filterType" class="filter-select">
+                    <option value="all">All Types</option>
+                    <option value="invitation">Invitations</option>
+                    <option value="release">Releases</option>
+                    <option value="trustee">Trustees</option>
+                    <option value="security">Security</option>
+                    <option value="vault">Vault Updates</option>
+                  </select>
+
+                  <select id="filterVault" class="filter-select">
+                    <option value="all">All Vaults</option>
+                    <option value="Family Vault">Family Vault</option>
+                    <option value="Personal Vault">Personal Vault</option>
+                    <option value="Health Vault">Health Vault</option>
+                    <option value="Business Vault">Business Vault</option>
+                    <option value="Travel Vault">Travel Vault</option>
+                    <option value="Legacy Vault">Legacy Vault</option>
+                    <option value="Property Vault">Property Vault</option>
+                    <option value="Account Security">Account Security</option>
+                  </select>
+
+                  <select id="filterStatus" class="filter-select">
+                    <option value="all">All Statuses</option>
+                    <option value="unread">Unread</option>
+                    <option value="read">Read</option>
+                  </select>
+
+                  <select id="filterDate" class="filter-select">
+                    <option value="30">Last 30 Days</option>
+                    <option value="7">Last 7 Days</option>
+                    <option value="90">Last 90 Days</option>
+                    <option value="all">All Time</option>
+                  </select>
+
+                  <button class="btn-filter" id="btnMoreFilters">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                    </svg>
+                    <span>More Filters</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Selection Bulk Banner (Hidden by default) -->
+              <div class="bulk-action-bar" id="bulkActionBar" style="display: none;">
+                <span id="bulkSelectedText">1 notification selected</span>
+                <div class="bulk-buttons">
+                  <button class="btn-bulk-action" id="btnBulkMarkRead">Mark as Read</button>
+                  <button class="btn-bulk-action" id="btnBulkMarkUnread">Mark as Unread</button>
+                  <button class="btn-bulk-action btn-bulk-delete" id="btnBulkDelete">Delete</button>
+                </div>
+              </div>
+
+              <!-- Data Table -->
+              <div class="notif-table-wrap">
+                <table class="notif-table" id="notifTable">
+                  <thead>
+                    <tr>
+                      <th style="width: 34px;">
+                        <input type="checkbox" id="selectAllCheckbox" class="custom-checkbox" aria-label="Select all notifications">
+                      </th>
+                      <th style="width: 48px;">TYPE</th>
+                      <th>MESSAGE</th>
+                      <th>RELATED TO</th>
+                      <th>DATE &amp; TIME</th>
+                      <th>STATUS</th>
+                      <th style="text-align: right; width: 60px;">ACTIONS</th>
+                    </tr>
+                  </thead>
+                  <tbody id="notifTableBody">
+                    <!-- Row 1: New trustee invitation sent -->
+                    <tr class="notif-row unread" data-id="1" data-type="invitation" data-vault="Family Vault" data-status="unread" data-date="2025-09-12">
+                      <td>
+                        <input type="checkbox" class="row-checkbox custom-checkbox" aria-label="Select notification 1">
+                      </td>
+                      <td>
+                        <div class="type-circle type-teal">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                          </svg>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="notif-msg-cell">
+                          <span class="notif-msg-title">New trustee invitation sent</span>
+                          <span class="notif-msg-sub">You invited Amit Kumar to your Family Vault.</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="related-badge badge-blue">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                          </svg>
+                          <span>Family Vault</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="notif-datetime">
+                          <span class="date-text">12 Sep 2025</span>
+                          <span class="time-text">10:24 AM</span>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="status-pill status-unread">
+                          <span class="status-dot"></span>
+                          <span>Unread</span>
+                        </span>
+                      </td>
+                      <td style="text-align: right;">
+                        <button class="btn-action-more" aria-label="More options" data-id="1">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="1"/>
+                            <circle cx="19" cy="12" r="1"/>
+                            <circle cx="5" cy="12" r="1"/>
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- Row 2: Trustee accepted invitation -->
+                    <tr class="notif-row read" data-id="2" data-type="trustee" data-vault="Personal Vault" data-status="read" data-date="2025-09-05">
+                      <td>
+                        <input type="checkbox" class="row-checkbox custom-checkbox" aria-label="Select notification 2">
+                      </td>
+                      <td>
+                        <div class="type-circle type-purple">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                          </svg>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="notif-msg-cell">
+                          <span class="notif-msg-title">Trustee accepted invitation</span>
+                          <span class="notif-msg-sub">Sneha Mehta has accepted your invitation.</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="related-badge badge-purple">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                          </svg>
+                          <span>Personal Vault</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="notif-datetime">
+                          <span class="date-text">05 Sep 2025</span>
+                          <span class="time-text">02:16 PM</span>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="status-pill status-read">
+                          <span class="status-dot"></span>
+                          <span>Read</span>
+                        </span>
+                      </td>
+                      <td style="text-align: right;">
+                        <button class="btn-action-more" aria-label="More options" data-id="2">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="1"/>
+                            <circle cx="19" cy="12" r="1"/>
+                            <circle cx="5" cy="12" r="1"/>
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- Row 3: Release scheduled -->
+                    <tr class="notif-row unread" data-id="3" data-type="release" data-vault="Health Vault" data-status="unread" data-date="2025-09-01">
+                      <td>
+                        <input type="checkbox" class="row-checkbox custom-checkbox" aria-label="Select notification 3">
+                      </td>
+                      <td>
+                        <div class="type-circle type-orange">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 2L11 13"/>
+                            <path d="M22 2L15 22L11 13L2 9L22 2Z"/>
+                          </svg>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="notif-msg-cell">
+                          <span class="notif-msg-title">Release scheduled</span>
+                          <span class="notif-msg-sub">A release for Medical Records is scheduled.</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="related-badge badge-red">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                          </svg>
+                          <span>Health Vault</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="notif-datetime">
+                          <span class="date-text">01 Sep 2025</span>
+                          <span class="time-text">04:38 PM</span>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="status-pill status-unread">
+                          <span class="status-dot"></span>
+                          <span>Unread</span>
+                        </span>
+                      </td>
+                      <td style="text-align: right;">
+                        <button class="btn-action-more" aria-label="More options" data-id="3">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="1"/>
+                            <circle cx="19" cy="12" r="1"/>
+                            <circle cx="5" cy="12" r="1"/>
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- Row 4: Login from new device -->
+                    <tr class="notif-row read" data-id="4" data-type="security" data-vault="Account Security" data-status="read" data-date="2025-08-28">
+                      <td>
+                        <input type="checkbox" class="row-checkbox custom-checkbox" aria-label="Select notification 4">
+                      </td>
+                      <td>
+                        <div class="type-circle type-red">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                          </svg>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="notif-msg-cell">
+                          <span class="notif-msg-title">Login from new device</span>
+                          <span class="notif-msg-sub">A new device was used to access your account.</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="related-badge badge-red">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                          </svg>
+                          <span>Account Security</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="notif-datetime">
+                          <span class="date-text">28 Aug 2025</span>
+                          <span class="time-text">11:05 AM</span>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="status-pill status-read">
+                          <span class="status-dot"></span>
+                          <span>Read</span>
+                        </span>
+                      </td>
+                      <td style="text-align: right;">
+                        <button class="btn-action-more" aria-label="More options" data-id="4">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="1"/>
+                            <circle cx="19" cy="12" r="1"/>
+                            <circle cx="5" cy="12" r="1"/>
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- Row 5: Vault updated -->
+                    <tr class="notif-row read" data-id="5" data-type="vault" data-vault="Business Vault" data-status="read" data-date="2025-08-22">
+                      <td>
+                        <input type="checkbox" class="row-checkbox custom-checkbox" aria-label="Select notification 5">
+                      </td>
+                      <td>
+                        <div class="type-circle type-blue">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                          </svg>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="notif-msg-cell">
+                          <span class="notif-msg-title">Vault updated</span>
+                          <span class="notif-msg-sub">You updated documents in Business Vault.</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="related-badge badge-blue">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                          </svg>
+                          <span>Business Vault</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="notif-datetime">
+                          <span class="date-text">22 Aug 2025</span>
+                          <span class="time-text">03:21 PM</span>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="status-pill status-read">
+                          <span class="status-dot"></span>
+                          <span>Read</span>
+                        </span>
+                      </td>
+                      <td style="text-align: right;">
+                        <button class="btn-action-more" aria-label="More options" data-id="5">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="1"/>
+                            <circle cx="19" cy="12" r="1"/>
+                            <circle cx="5" cy="12" r="1"/>
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- Row 6: Release completed -->
+                    <tr class="notif-row unread" data-id="6" data-type="release" data-vault="Travel Vault" data-status="unread" data-date="2025-08-18">
+                      <td>
+                        <input type="checkbox" class="row-checkbox custom-checkbox" aria-label="Select notification 6">
+                      </td>
+                      <td>
+                        <div class="type-circle type-orange">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                          </svg>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="notif-msg-cell">
+                          <span class="notif-msg-title">Release completed</span>
+                          <span class="notif-msg-sub">Your Travel Itinerary has been released.</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="related-badge badge-purple">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 2L11 13"/>
+                            <path d="M22 2L15 22L11 13L2 9L22 2Z"/>
+                          </svg>
+                          <span>Travel Vault</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="notif-datetime">
+                          <span class="date-text">18 Aug 2025</span>
+                          <span class="time-text">10:14 AM</span>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="status-pill status-unread">
+                          <span class="status-dot"></span>
+                          <span>Unread</span>
+                        </span>
+                      </td>
+                      <td style="text-align: right;">
+                        <button class="btn-action-more" aria-label="More options" data-id="6">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="1"/>
+                            <circle cx="19" cy="12" r="1"/>
+                            <circle cx="5" cy="12" r="1"/>
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- Row 7: Trustee declined invitation -->
+                    <tr class="notif-row read" data-id="7" data-type="trustee" data-vault="Legacy Vault" data-status="read" data-date="2025-08-12">
+                      <td>
+                        <input type="checkbox" class="row-checkbox custom-checkbox" aria-label="Select notification 7">
+                      </td>
+                      <td>
+                        <div class="type-circle type-purple">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                          </svg>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="notif-msg-cell">
+                          <span class="notif-msg-title">Trustee declined invitation</span>
+                          <span class="notif-msg-sub">Vikram Shah declined your invitation.</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="related-badge badge-purple">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                          </svg>
+                          <span>Legacy Vault</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="notif-datetime">
+                          <span class="date-text">12 Aug 2025</span>
+                          <span class="time-text">01:45 PM</span>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="status-pill status-read">
+                          <span class="status-dot"></span>
+                          <span>Read</span>
+                        </span>
+                      </td>
+                      <td style="text-align: right;">
+                        <button class="btn-action-more" aria-label="More options" data-id="7">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="1"/>
+                            <circle cx="19" cy="12" r="1"/>
+                            <circle cx="5" cy="12" r="1"/>
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+
+                    <!-- Row 8: Release action required -->
+                    <tr class="notif-row unread" data-id="8" data-type="release" data-vault="Property Vault" data-status="unread" data-date="2025-08-10">
+                      <td>
+                        <input type="checkbox" class="row-checkbox custom-checkbox" aria-label="Select notification 8">
+                      </td>
+                      <td>
+                        <div class="type-circle type-red">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="12"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16"/>
+                          </svg>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="notif-msg-cell">
+                          <span class="notif-msg-title">Release action required</span>
+                          <span class="notif-msg-sub">A manual release requires your approval.</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="related-badge badge-orange">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                          </svg>
+                          <span>Property Vault</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="notif-datetime">
+                          <span class="date-text">10 Aug 2025</span>
+                          <span class="time-text">09:20 AM</span>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="status-pill status-unread">
+                          <span class="status-dot"></span>
+                          <span>Unread</span>
+                        </span>
+                      </td>
+                      <td style="text-align: right;">
+                        <button class="btn-action-more" aria-label="More options" data-id="8">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="1"/>
+                            <circle cx="19" cy="12" r="1"/>
+                            <circle cx="5" cy="12" r="1"/>
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Right Column: 3 Side Cards -->
+          <div class="notifications-side-column">
+
+            <!-- Card 1: Quick Actions -->
+            <div class="side-card">
+              <div class="side-card-header">
+                <svg class="side-card-icon bolt-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
+                <h3 class="side-card-title">Quick Actions</h3>
+              </div>
+              <div class="quick-actions-list">
+                <!-- Action 1 -->
+                <button class="quick-action-item" id="qaNotifSettings">
+                  <div class="qa-icon-wrap qa-purple">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="3"/>
+                      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                  </div>
+                  <div class="qa-text">
+                    <span class="qa-title">Notification Settings</span>
+                    <span class="qa-sub">Manage your preferences</span>
+                  </div>
+                  <svg class="qa-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </button>
+
+                <!-- Action 2 -->
+                <button class="quick-action-item" id="qaEmailPrefs">
+                  <div class="qa-icon-wrap qa-teal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                      <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                  </div>
+                  <div class="qa-text">
+                    <span class="qa-title">Email Preferences</span>
+                    <span class="qa-sub">Choose what to receive</span>
+                  </div>
+                  <svg class="qa-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </button>
+
+                <!-- Action 3 -->
+                <button class="quick-action-item" id="qaPushNotifs">
+                  <div class="qa-icon-wrap qa-orange">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                      <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                  </div>
+                  <div class="qa-text">
+                    <span class="qa-title">Push Notifications</span>
+                    <span class="qa-sub">Manage device alerts</span>
+                  </div>
+                  <svg class="qa-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </button>
+
+                <!-- Action 4 -->
+                <button class="quick-action-item" id="qaSmsNotifs">
+                  <div class="qa-icon-wrap qa-green">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                      <line x1="12" y1="18" x2="12.01" y2="18"/>
+                    </svg>
+                  </div>
+                  <div class="qa-text">
+                    <span class="qa-title">SMS Notifications</span>
+                    <span class="qa-sub">Configure phone alerts</span>
+                  </div>
+                  <svg class="qa-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Card 2: Notification Filters -->
+            <div class="side-card">
+              <div class="side-card-header">
+                <svg class="side-card-icon funnel-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                </svg>
+                <h3 class="side-card-title">Notification Filters</h3>
+              </div>
+              <div class="filter-checkbox-list">
+                <label class="filter-checkbox-item">
+                  <input type="checkbox" class="custom-checkbox side-filter-check" data-category="invitation" checked>
+                  <span class="filter-check-label">Invitations</span>
+                  <span class="filter-count-badge">5</span>
+                </label>
+
+                <label class="filter-checkbox-item">
+                  <input type="checkbox" class="custom-checkbox side-filter-check" data-category="release" checked>
+                  <span class="filter-check-label">Releases</span>
+                  <span class="filter-count-badge">2</span>
+                </label>
+
+                <label class="filter-checkbox-item">
+                  <input type="checkbox" class="custom-checkbox side-filter-check" data-category="trustee">
+                  <span class="filter-check-label">Trustees</span>
+                  <span class="filter-count-badge">4</span>
+                </label>
+
+                <label class="filter-checkbox-item">
+                  <input type="checkbox" class="custom-checkbox side-filter-check" data-category="security">
+                  <span class="filter-check-label">Security</span>
+                  <span class="filter-count-badge">3</span>
+                </label>
+
+                <label class="filter-checkbox-item">
+                  <input type="checkbox" class="custom-checkbox side-filter-check" data-category="vault">
+                  <span class="filter-check-label">System Updates</span>
+                  <span class="filter-count-badge">6</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Card 3: Recent Activity -->
+            <div class="side-card">
+              <div class="side-card-header">
+                <svg class="side-card-icon clock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
+                </svg>
+                <h3 class="side-card-title">Recent Activity</h3>
+              </div>
+              <div class="activity-timeline">
+                <!-- Timeline item 1 -->
+                <div class="activity-item">
+                  <div class="timeline-dot dot-teal"></div>
+                  <div class="timeline-line"></div>
+                  <div class="activity-body">
+                    <span class="activity-title">New trustee invitation sent</span>
+                    <span class="activity-time">12 Sep 2025, 10:24 AM</span>
+                  </div>
+                </div>
+
+                <!-- Timeline item 2 -->
+                <div class="activity-item">
+                  <div class="timeline-dot dot-purple"></div>
+                  <div class="timeline-line"></div>
+                  <div class="activity-body">
+                    <span class="activity-title">Trustee accepted invitation</span>
+                    <span class="activity-time">05 Sep 2025, 02:16 PM</span>
+                  </div>
+                </div>
+
+                <!-- Timeline item 3 -->
+                <div class="activity-item">
+                  <div class="timeline-dot dot-orange"></div>
+                  <div class="timeline-line"></div>
+                  <div class="activity-body">
+                    <span class="activity-title">Release scheduled</span>
+                    <span class="activity-time">01 Sep 2025, 04:38 PM</span>
+                  </div>
+                </div>
+
+                <!-- Timeline item 4 -->
+                <div class="activity-item">
+                  <div class="timeline-dot dot-red"></div>
+                  <div class="activity-body">
+                    <span class="activity-title">Login from new device</span>
+                    <span class="activity-time">28 Aug 2025, 11:05 AM</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             Footer
+             ==================================================================== -->
+        <footer class="owner-footer">
+          <div class="footer-left">
+            <span class="footer-brand">Aegis<span class="brand-accent">Vault</span></span>
+            <span class="footer-tagline">&ldquo;Because what matters today, should matter tomorrow too.&rdquo;</span>
+          </div>
+          <div class="footer-right">
+            <a href="#" class="footer-link">Privacy</a>
+            <a href="#" class="footer-link">Terms</a>
+            <a href="../help-support/help-support.html" class="footer-link">Help</a>
+          </div>
+        </footer>
+
+      </main>
+    </div>
+
+  </div>
+
+  <!-- Context / Action Dropdown Menu -->
+  <div class="context-menu" id="notifContextMenu" style="display: none;">
+    <button class="context-item" id="ctxToggleRead">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      <span>Toggle Read/Unread</span>
+    </button>
+    <button class="context-item" id="ctxViewDetails">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+      <span>View Details</span>
+    </button>
+    <button class="context-item item-danger" id="ctxDelete">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="3 6 5 6 21 6"/>
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+      </svg>
+      <span>Delete Notification</span>
+    </button>
+  </div>
+
+  <!-- Modal: Notification Settings -->
+  <div class="modal-backdrop" id="notifSettingsModal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Notification Settings</h3>
+        <button class="modal-close" data-close="notifSettingsModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-intro">Control how and when AegisVault delivers alerts across your devices.</p>
+        <div class="setting-toggle-group">
+          <div class="setting-row">
+            <div>
+              <div class="setting-name">Email Notifications</div>
+              <div class="setting-desc">Receive real-time email notices for vault activity and invitations.</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="setToggleEmail" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-name">Push Alerts</div>
+              <div class="setting-desc">Instant browser and mobile notifications for urgent release triggers.</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="setTogglePush" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-name">SMS Critical Alerts</div>
+              <div class="setting-desc">Direct text message verification alerts and dead-man switch reminders.</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="setToggleSms" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-name">Security Digests</div>
+              <div class="setting-desc">Weekly summary of logins, access logs, and trustee checks.</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="setToggleDigest">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-action-outline" data-close="notifSettingsModal">Cancel</button>
+        <button class="btn-primary" id="btnSaveNotifSettings">Save Preferences</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Notification Detail -->
+  <div class="modal-backdrop" id="notifDetailModal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" id="detailModalTitle">Notification Details</h3>
+        <button class="modal-close" data-close="notifDetailModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="detail-header-block">
+          <div class="detail-icon" id="detailIcon"></div>
+          <div>
+            <h4 class="detail-heading" id="detailHeading">New trustee invitation sent</h4>
+            <span class="detail-timestamp" id="detailTimestamp">12 Sep 2025, 10:24 AM</span>
+          </div>
+        </div>
+        <div class="detail-content-box">
+          <p id="detailContentText">You invited Amit Kumar to your Family Vault. An invitation link was dispatched with encrypted 72-hour validity.</p>
+        </div>
+        <div class="detail-meta-grid">
+          <div class="meta-item">
+            <span class="meta-label">Associated Vault</span>
+            <span class="meta-val" id="detailVaultName">Family Vault</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Category</span>
+            <span class="meta-val" id="detailCategory">Invitation</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Delivery Channel</span>
+            <span class="meta-val">Email + In-App</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Security Clearance</span>
+            <span class="meta-val">Level 2 (Owner Authorized)</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-action-outline" data-close="notifDetailModal">Close</button>
+        <button class="btn-primary" id="detailActionBtn">Go to Associated Item</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Scripts -->
+  <script src="../common/common.js"></script>
+  <script src="notifications.js"></script>
+</body>
+</html>

@@ -1,0 +1,835 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AegisVault &mdash; Help &amp; Support</title>
+  <meta name="description" content="Find answers, get support, and learn how to make the most of AegisVault.">
+
+  <!-- Immediate Theme Initializer to eliminate flash -->
+  <script>
+    (function() {
+      try {
+        var savedTheme = localStorage.getItem('aegis_owner_theme');
+        if (savedTheme === 'light' || savedTheme === 'dark') {
+          document.documentElement.setAttribute('data-theme', savedTheme);
+        } else {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@1,500;1,600;1,700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../common/common.css">
+  <link rel="stylesheet" href="help-support.css">
+</head>
+<body>
+  <div class="owner-app">
+
+    <!-- ====================================================================
+         Sidebar Navigation (Fixed 260px, full-bleed scenic backdrop)
+         ==================================================================== -->
+    <aside class="owner-sidebar" aria-label="Owner Navigation">
+      <!-- Brand Logo Header -->
+      <div class="sidebar-brand">
+        <div class="brand-shield-icon">
+          <svg viewBox="0 0 40 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 2L3 8V20C3 31.2 10.3 41.5 20 44C29.7 41.5 37 31.2 37 20V8L20 2Z" stroke="#F97316" stroke-width="2.5" stroke-linejoin="round" fill="rgba(249, 115, 22, 0.08)"/>
+            <path d="M20 8L8 13V21C8 28.5 13.1 35.5 20 37.5C26.9 35.5 32 28.5 32 21V13L20 8Z" fill="#F97316"/>
+            <path d="M20 13L13 16.5V22C13 26.5 16 30.5 20 32C24 30.5 27 26.5 27 22V16.5L20 13Z" fill="#FFA24C"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Aegis<span class="vault-accent">Vault</span></span>
+          <span class="brand-tagline">What matters, lives on.</span>
+        </div>
+      </div>
+
+      <!-- Navigation Links (10 modules) -->
+      <nav class="sidebar-nav">
+        <!-- 1. Dashboard -->
+        <a href="../dashboard/dashboard.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1V9.5z"/>
+            </svg>
+          </span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+
+        <!-- 2. My Vaults -->
+        <a href="../my-vaults/my-vaults.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+              <polyline points="2 17 12 22 22 17"/>
+              <polyline points="2 12 12 17 22 12"/>
+            </svg>
+          </span>
+          <span class="nav-label">My Vaults</span>
+        </a>
+
+        <!-- 3. Trustees -->
+        <a href="../trustees/trustees.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </span>
+          <span class="nav-label">Trustees</span>
+        </a>
+
+        <!-- 4. Invitations -->
+        <a href="../invitations/invitations.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <rect x="3" y="4" width="18" height="16" rx="2"/>
+              <path d="m22 7-10 7L2 7"/>
+            </svg>
+          </span>
+          <span class="nav-label">Invitations</span>
+          <span class="nav-badge">2</span>
+        </a>
+
+        <!-- 5. Share Management -->
+        <a href="../share-management/share-management.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="18" cy="5" r="3"/>
+              <circle cx="6" cy="12" r="3"/>
+              <circle cx="18" cy="19" r="3"/>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+          </span>
+          <span class="nav-label">Share Management</span>
+        </a>
+
+        <!-- 6. Release Management -->
+        <a href="../release-management/release-management.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </span>
+          <span class="nav-label">Release Management</span>
+        </a>
+
+        <!-- 7. Notifications -->
+        <a href="../notifications/notifications.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+          </span>
+          <span class="nav-label">Notifications</span>
+          <span class="nav-badge">3</span>
+        </a>
+
+        <!-- 8. Activity & History -->
+        <a href="../activity-history/activity-history.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </span>
+          <span class="nav-label">Activity &amp; History</span>
+        </a>
+
+        <!-- 9. Profile & Security -->
+        <a href="../profile-security/profile-security.html" class="nav-item">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </span>
+          <span class="nav-label">Profile &amp; Security</span>
+        </a>
+
+        <!-- 10. Help & Support (Active) -->
+        <a href="help-support.html" class="nav-item active" aria-current="page">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </span>
+          <span class="nav-label">Help &amp; Support</span>
+        </a>
+      </nav>
+
+      <!-- Sidebar Scenic Quote -->
+      <div class="sidebar-quote-block">
+        <p class="sidebar-scenic-quote">Your legacy.<br>Their tomorrow.</p>
+        <div class="sidebar-scenic-dash"></div>
+      </div>
+    </aside>
+
+    <!-- ====================================================================
+         Main App View Wrapper
+         ==================================================================== -->
+    <div class="owner-main">
+      
+      <!-- Top Navigation Bar (60px) -->
+      <header class="owner-topbar">
+        <div class="topbar-left">
+          <button class="sidebar-toggle-btn" id="sidebarToggleBtn" aria-label="Toggle Mobile Navigation">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          </button>
+          <div class="topbar-search">
+            <svg class="topbar-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" class="topbar-search-input" placeholder="Search vaults, trustees, invitations, releases, or settings..." autocomplete="off">
+          </div>
+        </div>
+
+        <div class="topbar-right">
+                    <!-- Theme Toggle (Trustee & Admin Style Pill Switch) -->
+          <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Dark / Light Theme" title="Toggle Theme" role="switch">
+            <span class="theme-switch-track">
+              <span class="switch-icon switch-icon-sun" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="4"/>
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                </svg>
+              </span>
+              <span class="switch-icon switch-icon-moon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+              </span>
+              <span class="theme-switch-thumb">
+                <span class="thumb-icon thumb-sun">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4"/>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                  </svg>
+                </span>
+                <span class="thumb-icon thumb-moon">
+                  <svg viewBox="0 0 24 24" fill="#ffffff" stroke="none">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                  </svg>
+                </span>
+              </span>
+            </span>
+          </button>
+
+          <!-- Notification Bell -->
+          <a href="../notifications/notifications.html" class="icon-btn" title="View Notifications" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <span class="btn-badge" id="headerNotifBadge">3</span>
+          </a>
+
+          <!-- Profile Menu Chip -->
+          <div class="profile-menu-wrapper">
+            <button class="profile-chip" id="profileBtn" aria-label="Owner Profile Menu">
+              <div class="profile-avatar-circle">RP</div>
+              <span class="profile-name">Rakesh Patel</span>
+              <svg class="profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+            <div class="dropdown-panel" id="profileDropdown">
+              <div class="dropdown-header">Vault Owner</div>
+              <a href="../profile-security/profile-security.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>Profile &amp; Security</span>
+              </a>
+              <a href="../activity-history/activity-history.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <span>Audit History</span>
+              </a>
+              <a href="help-support.html" class="dropdown-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <span>Help &amp; FAQs</span>
+              </a>
+              <div class="dropdown-divider"></div>
+              <a href="javascript:void(0)" class="dropdown-item" onclick="window.AegisOwner && window.AegisOwner.showToast ? window.AegisOwner.showToast('Signed out of owner session (mock).') : alert('Signed out');">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span>Sign Out</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content Area -->
+      <main class="owner-content">
+
+        <!-- ====================================================================
+             Hero Panoramic Banner (Fixed 230px Height)
+             ==================================================================== -->
+        <section class="hero-card" aria-label="Help & Support Hero Banner">
+          <div class="hero-left">
+            <div class="hero-eyebrow">10. HELP &amp; SUPPORT</div>
+            <h1 class="hero-heading">Help &amp; <span class="hero-accent">Support</span></h1>
+            <p class="hero-subtext">Find answers, get support, and learn how to make the most of AegisVault.</p>
+          </div>
+          <div class="hero-quote-card">
+            <p class="hero-quote-text">&ldquo;Support today<br>for a more secure<br>tomorrow.&rdquo;</p>
+            <div class="hero-quote-dash"></div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             4 Top Resource Cards Row
+             ==================================================================== -->
+        <section class="top-resources-grid" aria-label="Core Help Resources">
+          <!-- Card 1: Knowledge Base -->
+          <div class="resource-card" id="cardKb">
+            <div class="resource-icon-wrap res-blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+              </svg>
+            </div>
+            <div class="resource-info">
+              <h3 class="resource-title">Knowledge Base</h3>
+              <p class="resource-desc">Find step-by-step guides and helpful articles.</p>
+            </div>
+          </div>
+
+          <!-- Card 2: Video Tutorials -->
+          <div class="resource-card" id="cardVideo">
+            <div class="resource-icon-wrap res-green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polygon points="10 8 16 12 10 16 10 8"/>
+              </svg>
+            </div>
+            <div class="resource-info">
+              <h3 class="resource-title">Video Tutorials</h3>
+              <p class="resource-desc">Watch quick tutorials to learn key features.</p>
+            </div>
+          </div>
+
+          <!-- Card 3: Contact Support -->
+          <div class="resource-card" id="cardSupport">
+            <div class="resource-icon-wrap res-purple">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+            </div>
+            <div class="resource-info">
+              <h3 class="resource-title">Contact Support</h3>
+              <p class="resource-desc">Get help from our support team.</p>
+            </div>
+          </div>
+
+          <!-- Card 4: User Guides -->
+          <div class="resource-card" id="cardGuides">
+            <div class="resource-icon-wrap res-orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
+            </div>
+            <div class="resource-info">
+              <h3 class="resource-title">User Guides</h3>
+              <p class="resource-desc">Download detailed documentation.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             Main Workspace Two-Column Grid
+             ==================================================================== -->
+        <section class="help-layout-grid">
+
+          <!-- Left Column (Knowledge Base Topics & FAQ Accordion) -->
+          <div class="help-main-column">
+
+            <!-- 1. Knowledge Base Topics Card -->
+            <div class="help-card" id="kbTopicsSection">
+              <div class="help-card-header">
+                <div class="help-header-title-wrap">
+                  <div class="help-header-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 class="help-card-title">Knowledge Base</h2>
+                    <p class="help-card-sub">Browse helpful articles organized by topic.</p>
+                  </div>
+                </div>
+
+                <a href="javascript:void(0)" class="btn-card-link-orange" id="btnViewAllArticles">
+                  <span>View All Articles</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </a>
+              </div>
+
+              <!-- 6 Topics Grid (3x2) -->
+              <div class="kb-topics-grid">
+                <!-- Topic 1: Getting Started -->
+                <div class="topic-box" data-topic="getting-started">
+                  <div class="topic-icon-wrap t-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                  </div>
+                  <div class="topic-info">
+                    <div class="topic-title-row">
+                      <span class="topic-title">Getting Started</span>
+                      <svg class="topic-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                    <span class="topic-count">5 articles</span>
+                    <p class="topic-desc">Learn the basics and set up your account.</p>
+                  </div>
+                </div>
+
+                <!-- Topic 2: Vault Management -->
+                <div class="topic-box" data-topic="vault-management">
+                  <div class="topic-icon-wrap t-green">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                      <polyline points="2 17 12 22 22 17"/>
+                      <polyline points="2 12 12 17 22 12"/>
+                    </svg>
+                  </div>
+                  <div class="topic-info">
+                    <div class="topic-title-row">
+                      <span class="topic-title">Vault Management</span>
+                      <svg class="topic-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                    <span class="topic-count">8 articles</span>
+                    <p class="topic-desc">Create, manage, and organize your vaults.</p>
+                  </div>
+                </div>
+
+                <!-- Topic 3: Trustees & Sharing -->
+                <div class="topic-box" data-topic="trustees-sharing">
+                  <div class="topic-icon-wrap t-purple">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                      <circle cx="9" cy="7" r="4"/>
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                  </div>
+                  <div class="topic-info">
+                    <div class="topic-title-row">
+                      <span class="topic-title">Trustees &amp; Sharing</span>
+                      <svg class="topic-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                    <span class="topic-count">6 articles</span>
+                    <p class="topic-desc">Add trustees and manage access permissions.</p>
+                  </div>
+                </div>
+
+                <!-- Topic 4: Invitations & Releases -->
+                <div class="topic-box" data-topic="invitations-releases">
+                  <div class="topic-icon-wrap t-orange">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="22" y1="2" x2="11" y2="13"/>
+                      <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                  </div>
+                  <div class="topic-info">
+                    <div class="topic-title-row">
+                      <span class="topic-title">Invitations &amp; Releases</span>
+                      <svg class="topic-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                    <span class="topic-count">7 articles</span>
+                    <p class="topic-desc">Send invitations and schedule releases.</p>
+                  </div>
+                </div>
+
+                <!-- Topic 5: Account & Security -->
+                <div class="topic-box" data-topic="account-security">
+                  <div class="topic-icon-wrap t-red">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                  </div>
+                  <div class="topic-info">
+                    <div class="topic-title-row">
+                      <span class="topic-title">Account &amp; Security</span>
+                      <svg class="topic-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                    <span class="topic-count">9 articles</span>
+                    <p class="topic-desc">Manage your profile, security settings, and devices.</p>
+                  </div>
+                </div>
+
+                <!-- Topic 6: Billing & Subscription -->
+                <div class="topic-box" data-topic="billing-subscription">
+                  <div class="topic-icon-wrap t-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                      <line x1="1" y1="10" x2="23" y2="10"/>
+                    </svg>
+                  </div>
+                  <div class="topic-info">
+                    <div class="topic-title-row">
+                      <span class="topic-title">Billing &amp; Subscription</span>
+                      <svg class="topic-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
+                    <span class="topic-count">4 articles</span>
+                    <p class="topic-desc">Manage your plan and payment information.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Frequently Asked Questions (Accordion) -->
+            <div class="help-card" id="faqSection">
+              <div class="help-card-header">
+                <div class="help-header-title-wrap">
+                  <div class="help-header-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"/>
+                      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                      <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 class="help-card-title">Frequently Asked Questions</h2>
+                    <p class="help-card-sub">Find quick answers to common questions.</p>
+                  </div>
+                </div>
+
+                <div class="faq-search-box">
+                  <svg class="faq-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  </svg>
+                  <input type="text" id="faqSearchInput" placeholder="Search FAQs..." class="faq-search-input">
+                </div>
+              </div>
+
+              <!-- Accordion List -->
+              <div class="faq-accordion-list" id="faqAccordion">
+                <!-- FAQ 1 -->
+                <div class="faq-item">
+                  <button class="faq-question-btn" aria-expanded="false">
+                    <span class="faq-q-text">What is AegisVault and how does it work?</span>
+                    <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                  <div class="faq-answer-panel">
+                    <p>AegisVault is an enterprise-grade digital legacy and dead-man's-switch platform. It uses zero-knowledge client-side encryption (AES-256-GCM) to safeguard your digital assets, documents, and credentials, releasing them to your designated trustees only when verified triggers or inactivity conditions are fulfilled.</p>
+                  </div>
+                </div>
+
+                <!-- FAQ 2 -->
+                <div class="faq-item">
+                  <button class="faq-question-btn" aria-expanded="false">
+                    <span class="faq-q-text">How do I create and manage a vault?</span>
+                    <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                  <div class="faq-answer-panel">
+                    <p>Navigate to the "My Vaults" tab on the left navigation. Click the "+ Create Vault" button, choose a category icon, specify a name, upload your encrypted files, and set your access control parameters. You can edit, lock, or delete vaults at any time.</p>
+                  </div>
+                </div>
+
+                <!-- FAQ 3 -->
+                <div class="faq-item">
+                  <button class="faq-question-btn" aria-expanded="false">
+                    <span class="faq-q-text">How do I add trustees?</span>
+                    <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                  <div class="faq-answer-panel">
+                    <p>Open the "Trustees" page and click "+ Add Trustee". Enter their full name, email address, relationship, and assign the vaults they should receive. An encrypted 72-hour invitation link is dispatched for their biometric or passkey verification.</p>
+                  </div>
+                </div>
+
+                <!-- FAQ 4 -->
+                <div class="faq-item">
+                  <button class="faq-question-btn" aria-expanded="false">
+                    <span class="faq-q-text">Can I schedule a release for a future date?</span>
+                    <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                  <div class="faq-answer-panel">
+                    <p>Yes. In the "Release Management" section, click "+ Create Release", select "Specific Date" as the trigger condition, select your target date and time, assign recipients, and confirm. AegisVault will securely release the designated payload automatically on that date.</p>
+                  </div>
+                </div>
+
+                <!-- FAQ 5 -->
+                <div class="faq-item">
+                  <button class="faq-question-btn" aria-expanded="false">
+                    <span class="faq-q-text">Is my data secure and private?</span>
+                    <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                  <div class="faq-answer-panel">
+                    <p>Completely. AegisVault operates on zero-knowledge architecture. All cryptographic keys are derived locally in your browser using Argon2id. We cannot read your files, access your secrets, or decrypt your assets even under court order.</p>
+                  </div>
+                </div>
+
+                <!-- FAQ 6 -->
+                <div class="faq-item">
+                  <button class="faq-question-btn" aria-expanded="false">
+                    <span class="faq-q-text">How do I update my account or billing information?</span>
+                    <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                  <div class="faq-answer-panel">
+                    <p>Go to "Profile &amp; Security" to edit your contact details, recovery emails, and authentication methods. For billing and subscription tier upgrades, visit the "Billing &amp; Subscription" knowledge section or contact support.</p>
+                  </div>
+                </div>
+
+                <!-- FAQ 7 -->
+                <div class="faq-item">
+                  <button class="faq-question-btn" aria-expanded="false">
+                    <span class="faq-q-text">What happens if I forget my password?</span>
+                    <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                  </button>
+                  <div class="faq-answer-panel">
+                    <p>You can recover account access using your 24-word Emergency Master Recovery Key provided during registration. Without this recovery key or your master password, zero-knowledge encrypted vaults cannot be decrypted by anyone.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right Column (Contact Support, System Status, Other Resources) -->
+          <div class="help-side-column">
+
+            <!-- Card 1: Contact Support -->
+            <div class="side-card">
+              <div class="side-card-header">
+                <svg class="side-card-icon headset-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
+                  <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
+                </svg>
+                <div class="side-title-block">
+                  <h3 class="side-card-title">Contact Support</h3>
+                  <span class="side-card-subtitle">Our support team is here to help you.</span>
+                </div>
+              </div>
+
+              <div class="contact-options-list">
+                <!-- Option 1: Submit Request -->
+                <button class="contact-option-btn" id="btnSubmitTicket">
+                  <div class="contact-icon-box c-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                      <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                  </div>
+                  <div class="contact-text">
+                    <span class="contact-title">Submit a Support Request</span>
+                    <span class="contact-sub">Get help with a specific issue</span>
+                  </div>
+                  <svg class="qa-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+
+                <!-- Option 2: Live Chat -->
+                <button class="contact-option-btn" id="btnLiveChat">
+                  <div class="contact-icon-box c-green">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                  </div>
+                  <div class="contact-text">
+                    <span class="contact-title">Live Chat</span>
+                    <span class="contact-sub">Chat with our support team</span>
+                    <span class="contact-hours">Mon &ndash; Fri, 9 AM &ndash; 6 PM (IST)</span>
+                  </div>
+                  <svg class="qa-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+
+                <!-- Option 3: Email Support -->
+                <div class="contact-option-static">
+                  <div class="contact-icon-box c-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                      <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                  </div>
+                  <div class="contact-text">
+                    <span class="contact-title">Email Support</span>
+                    <a href="mailto:support@aegisvault.com" class="contact-link">support@aegisvault.com</a>
+                    <span class="contact-sub">We typically respond within 24 hours</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: System Status -->
+            <div class="side-card">
+              <div class="side-card-header">
+                <div class="pulse-icon-box">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                  </svg>
+                </div>
+                <div class="side-title-block">
+                  <div class="status-header-row">
+                    <h3 class="side-card-title">System Status</h3>
+                    <a href="javascript:void(0)" class="btn-card-link-orange text-xs" id="btnViewStatus">
+                      <span>View Status</span>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </a>
+                  </div>
+                  <div class="operational-badge-row">
+                    <span class="dot-green"></span>
+                    <span class="operational-text">All Systems Operational</span>
+                  </div>
+                  <span class="side-card-subtitle">All services are running smoothly.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 3: Other Resources -->
+            <div class="side-card">
+              <div class="side-card-header">
+                <svg class="side-card-icon link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                </svg>
+                <h3 class="side-card-title">Other Resources</h3>
+              </div>
+
+              <div class="resources-links-list">
+                <!-- Link 1: User Guide -->
+                <button class="resource-link-btn" id="btnDownloadGuide">
+                  <div class="res-link-icon c-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                  </div>
+                  <div class="res-link-text">
+                    <span class="res-link-title">User Guide (PDF)</span>
+                    <span class="res-link-sub">Download the full user guide</span>
+                  </div>
+                  <svg class="qa-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+
+                <!-- Link 2: Video Library -->
+                <button class="resource-link-btn" id="btnOpenVideoLib">
+                  <div class="res-link-icon c-red">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polygon points="5 3 19 12 5 21 5 3"/>
+                    </svg>
+                  </div>
+                  <div class="res-link-text">
+                    <span class="res-link-title">Video Library</span>
+                    <span class="res-link-sub">Watch step-by-step tutorials</span>
+                  </div>
+                  <svg class="qa-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+
+                <!-- Link 3: Community Forum -->
+                <button class="resource-link-btn" id="btnCommunity">
+                  <div class="res-link-icon c-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                      <circle cx="9" cy="7" r="4"/>
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                  </div>
+                  <div class="res-link-text">
+                    <span class="res-link-title">Community Forum</span>
+                    <span class="res-link-sub">Get help from the community</span>
+                  </div>
+                  <svg class="qa-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+
+                <!-- Link 4: What's New -->
+                <button class="resource-link-btn" id="btnWhatsNew">
+                  <div class="res-link-icon c-orange">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                  </div>
+                  <div class="res-link-text">
+                    <span class="res-link-title">What&rsquo;s New</span>
+                    <span class="res-link-sub">See the latest features and updates</span>
+                  </div>
+                  <svg class="qa-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ====================================================================
+             Footer
+             ==================================================================== -->
+        <footer class="owner-footer">
+          <div class="footer-left">
+            <span class="footer-brand">Aegis<span class="brand-accent">Vault</span></span>
+            <span class="footer-tagline">&ldquo;Because what matters today, should matter tomorrow too.&rdquo;</span>
+          </div>
+          <div class="footer-right">
+            <a href="#" class="footer-link">Privacy</a>
+            <a href="#" class="footer-link">Terms</a>
+            <a href="help-support.html" class="footer-link">Help</a>
+          </div>
+        </footer>
+
+      </main>
+    </div>
+
+  </div>
+
+  <!-- Modal: Support Ticket Request -->
+  <div class="modal-backdrop" id="supportTicketModal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Submit Support Request</h3>
+        <button class="modal-close" data-close="supportTicketModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select id="ticketCategory" class="form-input">
+            <option value="vault">Vault Access &amp; Encryption</option>
+            <option value="trustee">Trustee Verification</option>
+            <option value="release">Dead-Man Release Trigger</option>
+            <option value="security">Account &amp; Security</option>
+            <option value="billing">Billing &amp; Subscription</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Subject</label>
+          <input type="text" class="form-input" id="ticketSubject" placeholder="Summary of the issue">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Detailed Description</label>
+          <textarea class="form-input" id="ticketDescription" rows="4" placeholder="Please describe what happened, including any steps to reproduce..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-action-outline" data-close="supportTicketModal">Cancel</button>
+        <button class="btn-primary" id="btnSubmitTicketConfirm">Submit Ticket</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Scripts -->
+  <script src="../common/common.js"></script>
+  <script src="help-support.js"></script>
+</body>
+</html>
