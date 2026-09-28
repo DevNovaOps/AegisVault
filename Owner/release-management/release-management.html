@@ -289,6 +289,86 @@
         </section>
 
         <!-- ====================================================================
+             Dead Man's Switch / Live Heartbeat Monitor
+             ==================================================================== -->
+        <section class="heartbeat-hero-section" aria-label="Dead Man's Switch Heartbeat Monitor">
+          <div class="heartbeat-card-wrap">
+            <div class="heartbeat-card-left">
+              <div class="heartbeat-badge-row">
+                <span class="heartbeat-status-badge active" id="heartbeatStatusBadge">
+                  <span class="pulsing-dot"></span>
+                  <span>Dead Man's Switch: ACTIVE</span>
+                </span>
+                <span class="heartbeat-interval-pill" id="heartbeatIntervalPill">Interval: Every 30 Days</span>
+              </div>
+              <h2 class="heartbeat-title">
+                <span class="heartbeat-icon-wrap" aria-hidden="true">❤️</span> Next Check-In Deadline
+              </h2>
+              <p class="heartbeat-desc">
+                Your regular check-in proves you are active and keeps all digital vaults sealed. If this countdown reaches zero, the automated grace period activates before notifying your designated trustees.
+              </p>
+              <div class="heartbeat-meta-row">
+                <div class="meta-item">
+                  <span class="meta-label">Last Check-In</span>
+                  <span class="meta-value" id="heartbeatLastCheckIn">Just now</span>
+                </div>
+                <div class="meta-divider"></div>
+                <div class="meta-item">
+                  <span class="meta-label">Protocol Status</span>
+                  <span class="meta-value text-green" id="heartbeatProtocolStatus">All 6 Vaults Sealed</span>
+                </div>
+                <div class="meta-divider"></div>
+                <div class="meta-item">
+                  <span class="meta-label">Emergency Override</span>
+                  <span class="meta-value">1-Click Live Reset</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="heartbeat-card-right">
+              <div class="timer-countdown-box">
+                <span class="countdown-eyebrow">REMAINING TIME UNTIL NEXT REQUIRED CHECK-IN</span>
+                <div class="countdown-display" id="heartbeatCountdownDisplay">
+                  <div class="countdown-unit">
+                    <span class="countdown-number" id="cdDays">29</span>
+                    <span class="countdown-tag">DAYS</span>
+                  </div>
+                  <span class="countdown-colon">:</span>
+                  <div class="countdown-unit">
+                    <span class="countdown-number" id="cdHours">23</span>
+                    <span class="countdown-tag">HOURS</span>
+                  </div>
+                  <span class="countdown-colon">:</span>
+                  <div class="countdown-unit">
+                    <span class="countdown-number" id="cdMinutes">59</span>
+                    <span class="countdown-tag">MIN</span>
+                  </div>
+                  <span class="countdown-colon">:</span>
+                  <div class="countdown-unit">
+                    <span class="countdown-number" id="cdSeconds">59</span>
+                    <span class="countdown-tag">SEC</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="heartbeat-action-group">
+                <button type="button" class="btn-im-alive" id="btnImAliveMain" aria-label="I'm Alive Check-in">
+                  <span class="btn-heart-beat">❤️</span>
+                  <span class="btn-alive-text">I'M ALIVE &mdash; RESET TIMER</span>
+                </button>
+                <button type="button" class="btn-heartbeat-settings" id="btnHeartbeatSettings" title="Configure Heartbeat Protocol">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                  </svg>
+                  <span>Configure</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====================================================================
              4 KPI Metrics Row
              ==================================================================== -->
         <section class="metrics-row" aria-label="Release Statistics">

@@ -210,7 +210,386 @@
         }
       }
     });
+
+    // Initialize Dead Man's Switch Heartbeat Controller
+    if (window.AegisHeartbeat) {
+      window.AegisHeartbeat.init();
+    }
   });
+
+  // --------------------------------------------------------------------------
+  // 3. Dead Man's Switch & Live Heartbeat Controller
+  // --------------------------------------------------------------------------
+  const HEARTBEAT_KEY = 'aegis_heartbeat_last_ping';
+  const INTERVAL_KEY = 'aegis_heartbeat_interval_days';
+
+  function playHeartbeatSound() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const now = ctx.currentTime;
+      
+      // Beat 1 (Lub)
+      const osc1 = ctx.createOscillator();
+      const gain1 = ctx.createGain();
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(65, now);
+      osc1.frequency.exponentialRampToValueAtTime(32, now + 0.12);
+      gain1.gain.setValueAtTime(0.35, now);
+      gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+      osc1.connect(gain1);
+      gain1.connect(ctx.destination);
+      osc1.start(now);
+      osc1.stop(now + 0.12);
+
+      // Beat 2 (Dub)
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(80, now + 0.14);
+      osc2.frequency.exponentialRampToValueAtTime(38, now + 0.28);
+      gain2.gain.setValueAtTime(0.28, now + 0.14);
+      gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+      osc2.connect(gain2);
+      gain2.connect(ctx.destination);
+      osc2.start(now + 0.14);
+      osc2.stop(now + 0.28);
+    } catch (e) {
+      // Audio context suppressed or unsupported
+    }
+  }
+
+  window.AegisHeartbeat = {
+    getIntervalDays: () => {
+      try {
+        const val = parseInt(localStorage.getItem(INTERVAL_KEY), 10);
+        return isNaN(val) || val <= 0 ? 30 : val;
+      } catch (e) {
+        return 30;
+      }
+    },
+
+    setIntervalDays: (days) => {
+      try {
+        localStorage.setItem(INTERVAL_KEY, days);
+      } catch (e) {}
+      window.AegisHeartbeat.updateUI();
+      window.dispatchEvent(new CustomEvent('aegis-heartbeat-interval-changed', { detail: { days } }));
+    },
+
+    getLastPing: () => {
+      try {
+        const val = parseInt(localStorage.getItem(HEARTBEAT_KEY), 10);
+        return isNaN(val) ? Date.now() : val;
+      } catch (e) {
+        return Date.now();
+      }
+    },
+
+    resetHeartbeat: (silent = false) => {
+      const now = Date.now();
+      try {
+        localStorage.setItem(HEARTBEAT_KEY, now);
+      } catch (e) {}
+
+      if (!silent) {
+        playHeartbeatSound();
+        const days = window.AegisHeartbeat.getIntervalDays();
+        if (window.AegisOwner && window.AegisOwner.showToast) {
+          window.AegisOwner.showToast(`❤️ Heartbeat confirmed! You are verified alive. Dead Man's Switch timer reset for ${days} days.`, 'success');
+        }
+
+        // Pulse animation effect on all heart icons
+        document.querySelectorAll('.heartbeat-pulse-icon, .btn-heart-beat, .heartbeat-icon-wrap').forEach(el => {
+          el.style.animation = 'none';
+          el.offsetHeight; // trigger reflow
+          el.style.animation = 'heartbeat-pulse 0.4s ease-in-out 3';
+        });
+
+        // Store activity history entry if possible
+        try {
+          const act = JSON.parse(localStorage.getItem('aegis_owner_activities') || '[]');
+          act.unshift({
+            id: `hb-${now}`,
+            date: 'Just now',
+            action: 'Heartbeat Check-In',
+            actionColor: 'green',
+            vault: 'All Sealed Vaults',
+            details: `Owner clicked "I'm Alive". Dead Man's Switch reset for ${days} days.`
+          });
+          localStorage.setItem('aegis_owner_activities', JSON.stringify(act.slice(0, 20)));
+        } catch(e) {}
+      }
+
+      window.AegisHeartbeat.updateUI();
+      window.dispatchEvent(new CustomEvent('aegis-heartbeat-ping', { detail: { timestamp: now } }));
+    },
+
+    simulateNearExpiry: () => {
+      // Set last ping so that remaining time is exactly 12 seconds
+      const intervalMs = window.AegisHeartbeat.getIntervalDays() * 24 * 60 * 60 * 1000;
+      const targetLastPing = Date.now() - intervalMs + 12000;
+      try {
+        localStorage.setItem(HEARTBEAT_KEY, targetLastPing);
+      } catch(e) {}
+      window.AegisHeartbeat.updateUI();
+      if (window.AegisOwner && window.AegisOwner.showToast) {
+        window.AegisOwner.showToast('⚠️ Fast-forwarded timer to 12s remaining to simulate impending grace period!', 'warning');
+      }
+    },
+
+    updateUI: () => {
+      const intervalDays = window.AegisHeartbeat.getIntervalDays();
+      const lastPing = window.AegisHeartbeat.getLastPing();
+      const deadline = lastPing + (intervalDays * 24 * 60 * 60 * 1000);
+      const remainingMs = deadline - Date.now();
+
+      const isOverdue = remainingMs <= 0;
+      const safeMs = Math.max(0, remainingMs);
+
+      const days = Math.floor(safeMs / (24 * 60 * 60 * 1000));
+      const hours = Math.floor((safeMs % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+      const mins = Math.floor((safeMs % (60 * 60 * 1000)) / (60 * 1000));
+      const secs = Math.floor((safeMs % (60 * 1000)) / 1000);
+
+      const pad = (n) => String(n).padStart(2, '0');
+
+      // 1. Update Full Countdown Displays
+      const elDays = document.getElementById('cdDays');
+      const elHours = document.getElementById('cdHours');
+      const elMins = document.getElementById('cdMinutes');
+      const elSecs = document.getElementById('cdSeconds');
+
+      if (elDays) elDays.textContent = pad(days);
+      if (elHours) elHours.textContent = pad(hours);
+      if (elMins) elMins.textContent = pad(mins);
+      if (elSecs) elSecs.textContent = pad(secs);
+
+      // 2. Update Topbar Widget
+      const elTopbarTimer = document.getElementById('heartbeatTopbarTimer');
+      if (elTopbarTimer) {
+        elTopbarTimer.textContent = isOverdue ? '00d 00h 00m' : `${days}d ${pad(hours)}h ${pad(mins)}m`;
+        if (isOverdue) {
+          elTopbarTimer.style.color = '#ef4444';
+        } else {
+          elTopbarTimer.style.color = '';
+        }
+      }
+
+      // 3. Update Status Badges
+      const elBadge = document.getElementById('heartbeatStatusBadge');
+      if (elBadge) {
+        if (isOverdue) {
+          elBadge.className = 'heartbeat-status-badge warning';
+          elBadge.innerHTML = '<span class="pulsing-dot"></span><span>GRACE PERIOD: ACTION REQUIRED</span>';
+        } else {
+          elBadge.className = 'heartbeat-status-badge active';
+          elBadge.innerHTML = '<span class="pulsing-dot"></span><span>Dead Man\'s Switch: ACTIVE</span>';
+        }
+      }
+
+      // 4. Update Interval Label
+      const elIntervalPill = document.getElementById('heartbeatIntervalPill');
+      if (elIntervalPill) {
+        elIntervalPill.textContent = `Interval: Every ${intervalDays} Days`;
+      }
+
+      // 5. Update Last Check-in Text
+      const elLastCheckIn = document.getElementById('heartbeatLastCheckIn');
+      if (elLastCheckIn) {
+        const diffMinutes = Math.floor((Date.now() - lastPing) / 60000);
+        if (diffMinutes < 1) {
+          elLastCheckIn.textContent = 'Just now';
+        } else if (diffMinutes < 60) {
+          elLastCheckIn.textContent = `${diffMinutes}m ago`;
+        } else {
+          const d = new Date(lastPing);
+          elLastCheckIn.textContent = d.toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
+      }
+    },
+
+    init: () => {
+      // Ensure defaults in storage
+      if (!localStorage.getItem(HEARTBEAT_KEY)) {
+        localStorage.setItem(HEARTBEAT_KEY, Date.now());
+      }
+      if (!localStorage.getItem(INTERVAL_KEY)) {
+        localStorage.setItem(INTERVAL_KEY, 30);
+      }
+
+      // Inject topbar widget if not already in DOM
+      window.AegisHeartbeat.injectTopbarWidget();
+
+      // Inject configuration modal if not in DOM
+      window.AegisHeartbeat.injectModal();
+
+      // Initial render & 1-second ticking loop
+      window.AegisHeartbeat.updateUI();
+      setInterval(() => {
+        window.AegisHeartbeat.updateUI();
+      }, 1000);
+
+      // Global delegation for any "I'm Alive" buttons
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('#btnImAliveMain, #btnAliveQuick, .btn-im-alive, #btnQuickHeartbeatCheckin');
+        if (btn) {
+          e.preventDefault();
+          window.AegisHeartbeat.resetHeartbeat();
+          return;
+        }
+
+        const settingsBtn = e.target.closest('#btnHeartbeatSettings, .btn-heartbeat-settings');
+        if (settingsBtn) {
+          e.preventDefault();
+          window.AegisOwner.openModal('heartbeatConfigModal');
+        }
+      });
+    },
+
+    injectTopbarWidget: () => {
+      const topbarRight = document.querySelector('.topbar-right');
+      if (!topbarRight || document.getElementById('heartbeatTopbarWidget')) return;
+
+      const widget = document.createElement('div');
+      widget.className = 'heartbeat-topbar-widget';
+      widget.id = 'heartbeatTopbarWidget';
+      widget.title = 'Dead Man\'s Switch — Click to view heartbeat settings or check in';
+      widget.innerHTML = `
+        <span class="heartbeat-pulse-icon" aria-hidden="true">❤️</span>
+        <div class="heartbeat-topbar-text">
+          <span class="heartbeat-topbar-label">HEARTBEAT</span>
+          <span class="heartbeat-topbar-timer" id="heartbeatTopbarTimer">29d 23h 59m</span>
+        </div>
+        <button type="button" class="btn-alive-quick" id="btnAliveQuick" title="I'm Alive Check-in">
+          I'm Alive
+        </button>
+      `;
+
+      // Insert right before Theme Toggle
+      const themeToggle = document.getElementById('themeToggleBtn');
+      if (themeToggle) {
+        topbarRight.insertBefore(widget, themeToggle);
+      } else {
+        topbarRight.prepend(widget);
+      }
+
+      // Clicking widget outside of "I'm Alive" button opens modal
+      widget.addEventListener('click', (e) => {
+        if (!e.target.closest('#btnAliveQuick')) {
+          window.AegisOwner.openModal('heartbeatConfigModal');
+        }
+      });
+    },
+
+    injectModal: () => {
+      if (document.getElementById('heartbeatConfigModal')) return;
+
+      const modalHtml = `
+        <div class="modal-overlay" id="heartbeatConfigModal">
+          <div class="modal-content" style="max-width: 520px;">
+            <div class="modal-header">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:1.3rem;">❤️</span>
+                <h3 class="modal-title">Dead Man's Switch Protocol</h3>
+              </div>
+              <button class="modal-close-btn" data-modal-close aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+              <div class="modal-heartbeat-content">
+                <p style="font-size:0.85rem;color:var(--text-secondary);line-height:1.5;">
+                  AegisVault protects your estate by requiring a periodic heartbeat confirmation. If you don't click <strong>"I'm Alive"</strong> before this timer reaches zero, a grace period begins followed by shard release to your designated trustees.
+                </p>
+
+                <div class="heartbeat-form-group">
+                  <label class="heartbeat-form-label" for="selectHeartbeatInterval">Heartbeat Interval</label>
+                  <span class="heartbeat-form-sub">How often you must confirm check-in:</span>
+                  <select class="heartbeat-select" id="selectHeartbeatInterval">
+                    <option value="7">Every 7 Days (High Security / Weekly)</option>
+                    <option value="14">Every 14 Days (Bi-weekly)</option>
+                    <option value="30" selected>Every 30 Days (Monthly — Recommended)</option>
+                    <option value="60">Every 60 Days (Bi-monthly)</option>
+                    <option value="90">Every 90 Days (Quarterly)</option>
+                    <option value="180">Every 180 Days (Half-Yearly)</option>
+                    <option value="365">Every 365 Days (Annual Check-in)</option>
+                  </select>
+                </div>
+
+                <div class="heartbeat-form-group">
+                  <label class="heartbeat-form-label" for="selectGracePeriod">Escalation Grace Period</label>
+                  <span class="heartbeat-form-sub">Time given to confirm after a missed heartbeat:</span>
+                  <select class="heartbeat-select" id="selectGracePeriod">
+                    <option value="3">3 Days (Urgent)</option>
+                    <option value="7" selected>7 Days (Standard)</option>
+                    <option value="14">14 Days (Extended)</option>
+                    <option value="30">30 Days (Maximum Security Margin)</option>
+                  </select>
+                </div>
+
+                <div class="heartbeat-simulation-box">
+                  <div>
+                    <strong style="font-size:0.82rem;color:var(--status-warning);display:block;">Timer Sandbox Mode</strong>
+                    <span style="font-size:0.73rem;color:var(--text-muted);">Jump the timer to 12s remaining to see warning states.</span>
+                  </div>
+                  <button type="button" class="btn-simulate-urgent" id="btnSimulateUrgent">
+                    Simulate 12s Expiry
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer" style="display:flex;justify-content:space-between;align-items:center;">
+              <button type="button" class="btn btn-outline" data-modal-close>Close</button>
+              <div style="display:flex;gap:8px;">
+                <button type="button" class="btn btn-primary" id="btnSaveHeartbeatConfig">Save Protocol</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const div = document.createElement('div');
+      div.innerHTML = modalHtml;
+      document.body.appendChild(div.firstElementChild);
+
+      // Wire close buttons for the new modal
+      const newModal = document.getElementById('heartbeatConfigModal');
+      if (newModal) {
+        newModal.querySelectorAll('[data-modal-close]').forEach(b => {
+          b.addEventListener('click', () => window.AegisOwner.closeModal('heartbeatConfigModal'));
+        });
+        newModal.addEventListener('click', (e) => {
+          if (e.target === newModal) window.AegisOwner.closeModal('heartbeatConfigModal');
+        });
+
+        // Initialize select value from storage
+        const sel = document.getElementById('selectHeartbeatInterval');
+        if (sel) {
+          sel.value = String(window.AegisHeartbeat.getIntervalDays());
+        }
+
+        // Save button
+        const btnSave = document.getElementById('btnSaveHeartbeatConfig');
+        if (btnSave) {
+          btnSave.addEventListener('click', () => {
+            const days = parseInt(sel.value, 10) || 30;
+            window.AegisHeartbeat.setIntervalDays(days);
+            window.AegisOwner.closeModal('heartbeatConfigModal');
+            window.AegisOwner.showToast(`Dead Man's Switch protocol updated to Every ${days} Days.`, 'success');
+          });
+        }
+
+        // Sandbox test button
+        const btnSim = document.getElementById('btnSimulateUrgent');
+        if (btnSim) {
+          btnSim.addEventListener('click', () => {
+            window.AegisHeartbeat.simulateNearExpiry();
+            window.AegisOwner.closeModal('heartbeatConfigModal');
+          });
+        }
+      }
+    }
+  };
 
   // Universal Owner Sign Out
   window.signOutOwner = function () {
@@ -226,4 +605,5 @@
     }, 600);
   };
 })();
+
 
