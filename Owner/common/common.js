@@ -182,5 +182,48 @@
         }
       });
     });
+
+    // Global Link & Sign Out Interceptor
+    document.addEventListener('click', (e) => {
+      const target = e.target.closest('a, button');
+      if (!target) return;
+
+      const text = target.textContent.trim().toLowerCase();
+
+      // Check for Sign Out
+      if (text.includes('sign out') || text === 'sign out') {
+        e.preventDefault();
+        e.stopPropagation();
+        window.signOutOwner();
+        return;
+      }
+
+      // Check for Footer Privacy / Terms links
+      const href = target.getAttribute('href');
+      if (target.closest('.owner-footer, .footer-right') || href === '#' || href === 'javascript:void(0)') {
+        if (text === 'privacy' || text.includes('privacy policy')) {
+          e.preventDefault();
+          window.AegisOwner.showToast('Privacy Policy: Zero-knowledge protocol with client-side AES-256-GCM encryption.', 'info');
+        } else if (text === 'terms' || text.includes('terms of service')) {
+          e.preventDefault();
+          window.AegisOwner.showToast('Terms of Service: Automated cryptographic custody and Shamir quorum conditions apply.', 'info');
+        }
+      }
+    });
   });
+
+  // Universal Owner Sign Out
+  window.signOutOwner = function () {
+    if (window.AegisOwner && window.AegisOwner.showToast) {
+      window.AegisOwner.showToast('Signing out... Redirecting to AegisVault Home', 'info');
+    }
+    try {
+      localStorage.removeItem('aegis_auth_role');
+      localStorage.removeItem('aegis_user');
+    } catch (e) {}
+    setTimeout(() => {
+      window.location.href = '../../AegisVault Home/index.html';
+    }, 600);
+  };
 })();
+

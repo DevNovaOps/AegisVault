@@ -167,3 +167,79 @@ window.closeModal = function (modalId) {
   const modal = document.getElementById(modalId);
   if (modal) modal.classList.remove('active');
 };
+
+// Universal Trustee Sign Out
+window.signOutTrustee = function () {
+  window.showToast('Signing out... Redirecting to AegisVault Home', 'info');
+  try {
+    localStorage.removeItem('aegis_auth_role');
+    localStorage.removeItem('aegis_user');
+  } catch (e) {}
+  setTimeout(() => {
+    const p = window.location.pathname.replace(/\\/g, '/');
+    if (p.includes('/Desktop/Trustee/')) {
+      window.location.href = '../aegisvault_root/AegisVault Home/index.html';
+    } else {
+      window.location.href = '../../AegisVault Home/index.html';
+    }
+  }, 600);
+};
+
+// Global Link & Action Interceptors
+function initGlobalInterceptors() {
+  // Ensure profileDropdown has Sign Out if not already present
+  const profileDropdown = document.getElementById('profileDropdown');
+  if (profileDropdown && !profileDropdown.textContent.includes('Sign Out')) {
+    const divider = document.createElement('div');
+    divider.className = 'dropdown-divider';
+    divider.style.cssText = 'height: 1px; background: var(--border-subtle, rgba(255,255,255,0.08)); margin: 0.35rem 0;';
+    profileDropdown.appendChild(divider);
+
+    const signoutBtn = document.createElement('a');
+    signoutBtn.href = 'javascript:void(0)';
+    signoutBtn.className = 'dropdown-item';
+    signoutBtn.innerHTML = `
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;vertical-align:middle;">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+      </svg>
+      <span>Sign Out</span>
+    `;
+    signoutBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.signOutTrustee();
+    });
+    profileDropdown.appendChild(signoutBtn);
+  }
+
+  // Intercept any click on Sign Out or Footer Privacy/Terms
+  document.addEventListener('click', (e) => {
+    const target = e.target.closest('a, button');
+    if (!target) return;
+
+    const text = target.textContent.trim().toLowerCase();
+
+    // Check for Sign Out
+    if (text.includes('sign out') || text === 'sign out') {
+      e.preventDefault();
+      window.signOutTrustee();
+      return;
+    }
+
+    // Check for Footer Privacy / Terms links
+    const href = target.getAttribute('href');
+    if (target.closest('.footer-links, .trustee-footer') || href === '#' || href === 'javascript:void(0)') {
+      if (text === 'privacy' || text.includes('privacy policy')) {
+        e.preventDefault();
+        window.showToast('Privacy Policy: Zero-knowledge protocol with client-side AES-256-GCM encryption.', 'info');
+      } else if (text === 'terms' || text.includes('terms of service')) {
+        e.preventDefault();
+        window.showToast('Terms of Service: Automated cryptographic custody and Shamir quorum conditions apply.', 'info');
+      }
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initGlobalInterceptors();
+});
+

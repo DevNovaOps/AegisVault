@@ -50,6 +50,7 @@
         el.notifDropdown = document.getElementById('notifications-dropdown');
         el.profileBtn = document.getElementById('user-profile-btn');
         el.profileDropdown = document.getElementById('profile-dropdown');
+        el.btnToggleFilter = document.getElementById('btn-toggle-filter-panel');
         el.btnExport = document.getElementById('btn-export-trustees');
 
         // Views
@@ -633,6 +634,15 @@
                     if (checked) state.selectedTrusteeIds.add(id);
                     else state.selectedTrusteeIds.delete(id);
                 });
+            });
+        }
+
+        // Filter Toggle Button
+        if (el.btnToggleFilter && el.filterRow) {
+            el.btnToggleFilter.addEventListener('click', () => {
+                const isHidden = window.getComputedStyle(el.filterRow).display === 'none';
+                el.filterRow.style.display = isHidden ? 'flex' : 'none';
+                el.btnToggleFilter.classList.toggle('active', isHidden);
             });
         }
 
