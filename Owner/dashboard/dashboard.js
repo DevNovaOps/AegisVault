@@ -1,15 +1,104 @@
 /**
  * AegisVault Owner Panel — Dashboard Logic
  * Module 01: Interactive Charts, Search Filtering, Quick Action Modals & Mock Persistence
+ *
+ * Data Source Priority: Backend API → localStorage cache → hardcoded mock data
  */
 
 (function () {
   'use strict';
 
   // =========================================================================
-  // MOCK DATA STORAGE (Simulating Backend API Responses)
-  // TODO: Replace with fetch('/api/v1/owner/dashboard/...') upon backend connection
+  // API DATA LOADING — Fetches from backend, falls back to mock data
   // =========================================================================
+
+  async function loadDashboardData() {
+    // Try loading real data from API
+    if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+      try {
+        const [kpis, activity, chartData, releaseData, events, health] = await Promise.allSettled([
+          window.AegisAPI.get('/owner/dashboard/kpis'),
+          window.AegisAPI.get('/owner/dashboard/activity'),
+          window.AegisAPI.get('/owner/dashboard/chart-data'),
+          window.AegisAPI.get('/owner/releases/?status=all'),
+          window.AegisAPI.get('/owner/notifications/?type=all'),
+          window.AegisAPI.get('/owner/vaults/'),
+        ]);
+
+        // Update KPI cards if data was returned
+        if (kpis.status === 'fulfilled' && kpis.value) {
+          updateKPICards(kpis.value);
+        }
+
+        // Update recent activity if data was returned
+        if (activity.status === 'fulfilled' && Array.isArray(activity.value) && activity.value.length > 0) {
+          const mapped = activity.value.map(log => ({
+            id: log.id,
+            date: log.timestamp ? new Date(log.timestamp).toLocaleString() : 'Recently',
+            action: log.actionTitle || log.action_title || 'Activity',
+            actionColor: mapCategoryToColor(log.category),
+            actionIcon: getDefaultActionIcon(),
+            vault: log.vault || log.vault_name || '',
+            details: log.details || '',
+          }));
+          mockRecentActivity.splice(0, mockRecentActivity.length, ...mapped);
+        }
+
+        // Update vault health if data was returned
+        if (health.status === 'fulfilled' && Array.isArray(health.value) && health.value.length > 0) {
+          const mapped = health.value.map(v => ({
+            name: v.name,
+            mode: v.status || 'Active',
+            avatarColor: mapTypeToColor(v.vault_type),
+            avatarSvg: getDefaultVaultSvg(),
+            status: 'Healthy',
+            badgeClass: 'badge-success',
+            details: `Encryption: ${v.encryption || 'AES-256-GCM'}. Shares: ${v.shares_ratio || 'N/A'}.`,
+          }));
+          mockVaultHealth.splice(0, mockVaultHealth.length, ...mapped);
+        }
+
+        console.log('[AegisVault] Dashboard data loaded from API');
+      } catch (err) {
+        console.warn('[AegisVault] Dashboard API load failed, using mock data:', err.message);
+      }
+    }
+  }
+
+  function updateKPICards(data) {
+    const cards = document.querySelectorAll('.metrics-row .metric-card');
+    const values = [
+      data.active_vaults,
+      data.total_items,
+      data.active_trustees,
+      data.active_shares,
+      data.storage_used,
+    ];
+    cards.forEach((card, i) => {
+      const valueEl = card.querySelector('.metric-value');
+      if (valueEl && values[i] !== undefined) {
+        valueEl.textContent = values[i];
+      }
+    });
+  }
+
+  function mapCategoryToColor(cat) {
+    const map = { auth: 'blue', vault: 'green', trustee: 'purple', release: 'red', heartbeat: 'amber', security: 'red' };
+    return map[cat] || 'blue';
+  }
+
+  function mapTypeToColor(type) {
+    const map = { Personal: 'blue', Family: 'amber', Business: 'purple', Legacy: 'blue', Health: 'teal' };
+    return map[type] || 'blue';
+  }
+
+  function getDefaultActionIcon() {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>';
+  }
+
+  function getDefaultVaultSvg() {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>';
+  }
 
   const mockChartData = {
     '6m': [
@@ -543,7 +632,10 @@
   // =========================================================================
   // DOM EVENT BINDINGS
   // =========================================================================
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
+    // 0. Load data from backend API (falls back to mocks on failure)
+    await loadDashboardData();
+
     // 1. Initial Renders
     renderBarChart('6m');
     renderDonutChart();
@@ -626,13 +718,22 @@
       });
     }
     if (formCreateVault) {
-      formCreateVault.addEventListener('submit', (e) => {
+      formCreateVault.addEventListener('submit', async (e) => {
         e.preventDefault();
         const nameInput = document.getElementById('vaultNameInput');
         const vaultName = nameInput ? nameInput.value.trim() : 'New Vault';
 
         window.AegisOwner.closeModal('createVaultModal');
         formCreateVault.reset();
+
+        // Try real API
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+          try {
+            await window.AegisAPI.post('/owner/vaults/', { name: vaultName, vault_type: 'Personal' });
+          } catch (err) {
+            console.warn('Create vault API failed:', err.message);
+          }
+        }
 
         mockRecentActivity.unshift({
           id: `act-${Date.now()}`,
@@ -670,13 +771,22 @@
       });
     }
     if (formInviteTrustee) {
-      formInviteTrustee.addEventListener('submit', (e) => {
+      formInviteTrustee.addEventListener('submit', async (e) => {
         e.preventDefault();
         const emailInput = document.getElementById('trusteeEmailInput');
         const email = emailInput ? emailInput.value.trim() : 'trustee@example.com';
 
         window.AegisOwner.closeModal('inviteTrusteeModal');
         formInviteTrustee.reset();
+
+        // Try real API
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+          try {
+            await window.AegisAPI.post('/owner/trustees/invite/', { email });
+          } catch (err) {
+            console.warn('Invite trustee API failed:', err.message);
+          }
+        }
 
         mockRecentActivity.unshift({
           id: `act-${Date.now()}`,

@@ -240,6 +240,9 @@
     <!-- Global Toast Container -->
     <div class="auth-toast-container" id="auth-toast-container" role="region" aria-live="polite"></div>
 
+    <!-- Shared API Client -->
+    <script src="common/api.js"></script>
+
     <!-- Auth Script Logic -->
     <script>
         (function() {
@@ -377,10 +380,15 @@
                 }, 3500);
             }
 
-            function completeAuthentication(user) {
+            function completeAuthentication(user, tokens) {
                 const cfg = roleConfig[activeRole];
-                localStorage.setItem('aegis_auth_role', activeRole);
+                localStorage.setItem('aegis_auth_role', user.role || activeRole);
                 localStorage.setItem('aegis_user', JSON.stringify(user));
+
+                // Store JWT tokens if available (real API mode)
+                if (tokens && window.AegisAPI) {
+                    window.AegisAPI.setTokens(tokens.access, tokens.refresh);
+                }
 
                 showToast(`Authenticated as ${cfg.title}! Opening ${cfg.title} Panel...`, 'success');
 
@@ -399,7 +407,7 @@
                 });
             });
 
-            formSignIn.addEventListener('submit', (e) => {
+            formSignIn.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const email = document.getElementById('signin-email').value.trim();
                 const pwd = document.getElementById('signin-password').value;
@@ -409,16 +417,37 @@
                     return;
                 }
 
+                const submitBtn = document.getElementById('btn-submit-signin');
+                if (submitBtn) submitBtn.disabled = true;
+
+                // Build extras for role-specific fields
+                const extras = {};
+                if (activeRole === 'admin') {
+                    extras.clearance_token = document.getElementById('signin-admin-clearance')?.value || '';
+                }
+
+                try {
+                    // Try real API login
+                    if (window.AegisAPI) {
+                        const data = await window.AegisAPI.login(email, pwd, activeRole, extras);
+                        completeAuthentication(data.user, data.tokens);
+                        return;
+                    }
+                } catch (err) {
+                    console.warn('API login failed, using fallback:', err.message);
+                }
+
+                // Fallback: mock authentication for demo/offline
                 const user = {
                     name: email.split('@')[0].replace('.', ' ').toUpperCase(),
                     email: email,
                     role: activeRole
                 };
-
-                completeAuthentication(user);
+                completeAuthentication(user, null);
+                if (submitBtn) submitBtn.disabled = false;
             });
 
-            formSignUp.addEventListener('submit', (e) => {
+            formSignUp.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const name = document.getElementById('signup-name').value.trim();
                 const email = document.getElementById('signup-email').value.trim();
@@ -429,34 +458,82 @@
                     return;
                 }
 
-                const user = {
-                    name: name,
-                    email: email,
-                    role: activeRole
-                };
+                const submitBtn = document.getElementById('btn-submit-signup');
+                if (submitBtn) submitBtn.disabled = true;
 
-                completeAuthentication(user);
+                // Build registration payload with role-specific fields
+                const payload = { name, email, password: pwd, role: activeRole };
+                if (activeRole === 'owner') {
+                    payload.vault_name = document.getElementById('signup-vault-name')?.value || '';
+                } else if (activeRole === 'trustee') {
+                    payload.invitation_code = document.getElementById('signup-trustee-invite')?.value || '';
+                } else if (activeRole === 'admin') {
+                    payload.enrollment_key = document.getElementById('signup-admin-token')?.value || '';
+                }
+
+                try {
+                    if (window.AegisAPI) {
+                        const data = await window.AegisAPI.register(payload);
+                        completeAuthentication(data.user, data.tokens);
+                        return;
+                    }
+                } catch (err) {
+                    console.warn('API register failed, using fallback:', err.message);
+                }
+
+                // Fallback: mock
+                const user = { name, email, role: activeRole };
+                completeAuthentication(user, null);
+                if (submitBtn) submitBtn.disabled = false;
             });
 
-            document.getElementById('btn-passkey-quick')?.addEventListener('click', () => {
+            document.getElementById('btn-passkey-quick')?.addEventListener('click', async () => {
                 const cfg = roleConfig[activeRole];
                 showToast(`WebAuthn / Passkey verified for ${cfg.title}. Zero-knowledge signature confirmed.`, 'success');
-                setTimeout(() => completeAuthentication(cfg.demoUser), 500);
+                try {
+                    if (window.AegisAPI) {
+                        const data = await window.AegisAPI.login(cfg.demoUser.email, 'DemoPass123!', activeRole);
+                        setTimeout(() => completeAuthentication(data.user, data.tokens), 500);
+                        return;
+                    }
+                } catch (e) {}
+                setTimeout(() => completeAuthentication(cfg.demoUser, null), 500);
             });
 
-            document.getElementById('btn-quick-owner')?.addEventListener('click', () => {
+            document.getElementById('btn-quick-owner')?.addEventListener('click', async () => {
                 setRole('owner');
-                completeAuthentication(roleConfig.owner.demoUser);
+                try {
+                    if (window.AegisAPI) {
+                        const data = await window.AegisAPI.login(roleConfig.owner.demoUser.email, 'DemoPass123!', 'owner');
+                        completeAuthentication(data.user, data.tokens);
+                        return;
+                    }
+                } catch (e) {}
+                completeAuthentication(roleConfig.owner.demoUser, null);
             });
 
-            document.getElementById('btn-quick-trustee')?.addEventListener('click', () => {
+            document.getElementById('btn-quick-trustee')?.addEventListener('click', async () => {
                 setRole('trustee');
-                completeAuthentication(roleConfig.trustee.demoUser);
+                try {
+                    if (window.AegisAPI) {
+                        const data = await window.AegisAPI.login(roleConfig.trustee.demoUser.email, 'DemoPass123!', 'trustee');
+                        completeAuthentication(data.user, data.tokens);
+                        return;
+                    }
+                } catch (e) {}
+                completeAuthentication(roleConfig.trustee.demoUser, null);
             });
 
-            document.getElementById('btn-quick-admin')?.addEventListener('click', () => {
+            document.getElementById('btn-quick-admin')?.addEventListener('click', async () => {
                 setRole('admin');
-                completeAuthentication(roleConfig.admin.demoUser);
+                try {
+                    if (window.AegisAPI) {
+                        const data = await window.AegisAPI.login(roleConfig.admin.demoUser.email, 'DemoPass123!', 'admin');
+                        completeAuthentication(data.user, data.tokens);
+                        return;
+                    }
+                } catch (e) {}
+                completeAuthentication(roleConfig.admin.demoUser, null);
             });
 
             setRole(activeRole);

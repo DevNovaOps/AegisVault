@@ -338,8 +338,18 @@
         signOut() {
             this.closeProfileDropdown();
             this.showToast('Signing out... Redirecting to home', 'warning', 2000);
+            
+            // Call backend logout API
+            if (window.AegisAPI) {
+                window.AegisAPI.logout().catch(() => {});
+            }
+
             try {
                 localStorage.removeItem('aegis_admin_session');
+                localStorage.removeItem('aegis_auth_role');
+                localStorage.removeItem('aegis_user');
+                localStorage.removeItem('aegis_access_token');
+                localStorage.removeItem('aegis_refresh_token');
             } catch (err) {}
             setTimeout(() => {
                 window.location.href = '../../AegisVault Home/index.html';

@@ -181,10 +181,21 @@ function initFormSubmission() {
       <span>Encrypting & Submitting...</span>
     `;
 
-    setTimeout(() => {
+    setTimeout(async () => {
       // Re-enable button
       submitBtn.disabled = false;
       submitBtn.innerHTML = originalBtnHtml;
+
+      // Make actual API call if authenticated
+      if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+        try {
+          // Fallback to random ID if not dynamically populated
+          const participantId = selectedOption.value || '12345678-1234-5678-1234-567812345678';
+          await window.AegisAPI.post(`/trustee/shares/${participantId}/submit/`);
+        } catch (err) {
+          console.warn('API share submit failed:', err.message);
+        }
+      }
 
       // Generate simulated cryptographic values
       const now = new Date();

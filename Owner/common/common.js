@@ -276,6 +276,17 @@
       } catch (e) {}
       window.AegisHeartbeat.updateUI();
       window.dispatchEvent(new CustomEvent('aegis-heartbeat-interval-changed', { detail: { days } }));
+
+      // Sync with backend API
+      if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+        const graceDays = parseInt(document.getElementById('selectGracePeriod')?.value || '7', 10);
+        window.AegisAPI.put('/owner/heartbeat/config/', {
+          interval_days: days,
+          grace_period_days: graceDays
+        }).catch(err => {
+          console.warn('Heartbeat config API sync failed:', err.message);
+        });
+      }
     },
 
     getLastPing: () => {
@@ -292,6 +303,13 @@
       try {
         localStorage.setItem(HEARTBEAT_KEY, now);
       } catch (e) {}
+
+      // Sync with backend API
+      if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+        window.AegisAPI.post('/owner/heartbeat/checkin/').catch(err => {
+          console.warn('Heartbeat API sync failed:', err.message);
+        });
+      }
 
       if (!silent) {
         playHeartbeatSound();
@@ -596,9 +614,17 @@
     if (window.AegisOwner && window.AegisOwner.showToast) {
       window.AegisOwner.showToast('Signing out... Redirecting to AegisVault Home', 'info');
     }
+
+    // Call backend logout API
+    if (window.AegisAPI) {
+      window.AegisAPI.logout().catch(() => {});
+    }
+
     try {
       localStorage.removeItem('aegis_auth_role');
       localStorage.removeItem('aegis_user');
+      localStorage.removeItem('aegis_access_token');
+      localStorage.removeItem('aegis_refresh_token');
     } catch (e) {}
     setTimeout(() => {
       window.location.href = '../../AegisVault Home/index.html';

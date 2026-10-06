@@ -171,9 +171,17 @@ window.closeModal = function (modalId) {
 // Universal Trustee Sign Out
 window.signOutTrustee = function () {
   window.showToast('Signing out... Redirecting to AegisVault Home', 'info');
+
+  // Call backend logout API
+  if (window.AegisAPI) {
+    window.AegisAPI.logout().catch(() => {});
+  }
+
   try {
     localStorage.removeItem('aegis_auth_role');
     localStorage.removeItem('aegis_user');
+    localStorage.removeItem('aegis_access_token');
+    localStorage.removeItem('aegis_refresh_token');
   } catch (e) {}
   setTimeout(() => {
     const p = window.location.pathname.replace(/\\/g, '/');
