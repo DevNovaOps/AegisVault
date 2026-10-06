@@ -1,0 +1,7 @@
+from django.apps import AppConfig
+
+
+class TrusteesConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'trustees'
+    verbose_name = 'Trustees & Invitations'
