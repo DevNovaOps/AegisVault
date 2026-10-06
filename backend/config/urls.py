@@ -3,9 +3,27 @@ AegisVault Backend — URL Configuration
 All API routes are versioned under /api/v1/
 """
 from django.contrib import admin
+from django.http import JsonResponse
 from django.urls import path, include
 
+
+def api_root(request):
+    return JsonResponse({
+        "status": "online",
+        "service": "AegisVault Backend API",
+        "version": "v1",
+        "admin_url": "/admin/",
+        "api_endpoints": {
+            "auth": "/api/v1/auth/",
+            "owner": "/api/v1/owner/",
+            "admin": "/api/v1/admin/",
+            "trustee": "/api/v1/trustee/",
+        }
+    })
+
+
 urlpatterns = [
+    path('', api_root, name='api-root'),
     path('admin/', admin.site.urls),
 
     # ─── API v1 ──────────────────────────────────────────────────────────
