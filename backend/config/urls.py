@@ -1,29 +1,15 @@
 """
 AegisVault Backend — URL Configuration
 All API routes are versioned under /api/v1/
+Frontend routes and static assets served from workspace root.
 """
+from django.conf import settings
 from django.contrib import admin
-from django.http import JsonResponse
-from django.urls import path, include
-
-
-def api_root(request):
-    return JsonResponse({
-        "status": "online",
-        "service": "AegisVault Backend API",
-        "version": "v1",
-        "admin_url": "/admin/",
-        "api_endpoints": {
-            "auth": "/api/v1/auth/",
-            "owner": "/api/v1/owner/",
-            "admin": "/api/v1/admin/",
-            "trustee": "/api/v1/trustee/",
-        }
-    })
-
+from django.urls import path, include, re_path
+from web.views import frontend_serve
 
 urlpatterns = [
-    path('', api_root, name='api-root'),
+    # Django framework admin (developer database console)
     path('admin/', admin.site.urls),
 
     # ─── API v1 ──────────────────────────────────────────────────────────
@@ -48,4 +34,10 @@ urlpatterns = [
 
     # Trustee panel APIs
     path('api/v1/trustee/', include('trustees.urls_trustee')),
+
+    # Web routes (Landing, Auth, Portals)
+    path('', include('web.urls')),
+
+    # Serve all static files, HTML pages, CSS, JS, and assets from workspace root
+    re_path(r'^(?P<path>.*)$', frontend_serve),
 ]

@@ -10,6 +10,7 @@ from decouple import config, Csv
 
 # ─── Paths ────────────────────────────────────────────────────────────────────
 BASE_DIR = Path(__file__).resolve().parent.parent
+FRONTEND_DIR = BASE_DIR.parent
 
 # ─── Security ─────────────────────────────────────────────────────────────────
 SECRET_KEY = config('SECRET_KEY', default='insecure-dev-key-change-in-production')
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
     'analytics.apps.AnalyticsConfig',
     'reports.apps.ReportsConfig',
     'system_health.apps.SystemHealthConfig',
+    'web.apps.WebConfig',
 ]
 
 MIDDLEWARE = [
@@ -64,7 +66,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [FRONTEND_DIR],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -114,8 +116,9 @@ USE_I18N = True
 USE_TZ = True
 
 # ─── Static Files ────────────────────────────────────────────────────────────
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [FRONTEND_DIR]
 
 # ─── Default Primary Key ─────────────────────────────────────────────────────
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -173,15 +176,26 @@ CORS_ALLOWED_ORIGINS = config(
 )
 CORS_ALLOW_CREDENTIALS = True
 
-# ─── Redis ────────────────────────────────────────────────────────────────────
+# ─── Redis & Cache ────────────────────────────────────────────────────────────
 REDIS_URL = config('REDIS_URL', default='redis://127.0.0.1:6379/0')
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': REDIS_URL,
+try:
+    import redis
+    _r = redis.from_url(REDIS_URL, socket_connect_timeout=1)
+    _r.ping()
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+            'LOCATION': REDIS_URL,
+        }
     }
-}
+except Exception:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'aegisvault-dev-cache',
+        }
+    }
 
 # ─── Celery ───────────────────────────────────────────────────────────────────
 CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='redis://127.0.0.1:6379/1')
