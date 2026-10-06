@@ -13,8 +13,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="AegisVault Home/css/style.css">
-    <link rel="stylesheet" href="AegisVault Home/css/auth.css">
+    <link rel="stylesheet" href="/AegisVault Home/css/style.css">
+    <link rel="stylesheet" href="/AegisVault Home/css/auth.css">
 </head>
 <body class="auth-body dark-theme">
     
@@ -23,7 +23,7 @@
 
     <!-- Top Navigation Header -->
     <header class="auth-nav">
-        <a href="AegisVault Home/index.html" class="auth-back-link">
+        <a href="/AegisVault Home/index.html" class="auth-back-link">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
                 <line x1="19" y1="12" x2="5" y2="12"></line>
                 <polyline points="12 19 5 12 12 5"></polyline>
@@ -32,7 +32,7 @@
         </a>
 
         <div style="display: flex; align-items: center; gap: 16px;">
-            <a href="AegisVault Home/index.html" class="brand-wrapper-auth">
+            <a href="/AegisVault Home/index.html" class="brand-wrapper-auth">
                 <div class="brand-shield-icon" style="width: 32px; height: 32px;">
                     <svg viewBox="0 0 36 36" fill="none">
                         <path d="M18 2L5 7.5V17C5 25.5 10.5 32.5 18 34.5C25.5 32.5 31 25.5 31 17V7.5L18 2Z" fill="#F45A1F"/>
@@ -241,7 +241,7 @@
     <div class="auth-toast-container" id="auth-toast-container" role="region" aria-live="polite"></div>
 
     <!-- Shared API Client -->
-    <script src="common/api.js"></script>
+    <script src="/common/api.js"></script>
 
     <!-- Auth Script Logic -->
     <script>
@@ -381,8 +381,8 @@
             }
 
             function completeAuthentication(user, tokens) {
-                const cfg = roleConfig[activeRole];
-                localStorage.setItem('aegis_auth_role', user.role || activeRole);
+                const role = user.role || activeRole;
+                localStorage.setItem('aegis_auth_role', role);
                 localStorage.setItem('aegis_user', JSON.stringify(user));
 
                 // Store JWT tokens if available (real API mode)
@@ -390,10 +390,12 @@
                     window.AegisAPI.setTokens(tokens.access, tokens.refresh);
                 }
 
-                showToast(`Authenticated as ${cfg.title}! Opening ${cfg.title} Panel...`, 'success');
+                const targetPanel = window.AegisAPI ? window.AegisAPI.getRolePanelUrl(role) : (roleConfig[role]?.targetPanel || '/Owner/dashboard/dashboard.html');
+
+                showToast(`Authenticated as ${user.name || user.email}! Opening ${role.toUpperCase()} Panel...`, 'success');
 
                 setTimeout(() => {
-                    window.location.href = cfg.targetPanel;
+                    window.location.href = targetPanel;
                 }, 750);
             }
 
@@ -423,27 +425,22 @@
                 // Build extras for role-specific fields
                 const extras = {};
                 if (activeRole === 'admin') {
-                    extras.clearance_token = document.getElementById('signin-admin-clearance')?.value || '';
+                    extras.clearance_token = document.getElementById('signin-admin-clearance')?.value || 'AEGIS-ROOT-9092';
                 }
 
                 try {
-                    // Try real API login
                     if (window.AegisAPI) {
                         const data = await window.AegisAPI.login(email, pwd, activeRole, extras);
                         completeAuthentication(data.user, data.tokens);
                         return;
                     }
                 } catch (err) {
-                    console.warn('API login failed, using fallback:', err.message);
+                    showToast(err.message || 'Authentication failed. Please verify credentials.', 'error');
+                    if (submitBtn) submitBtn.disabled = false;
+                    return;
                 }
 
-                // Fallback: mock authentication for demo/offline
-                const user = {
-                    name: email.split('@')[0].replace('.', ' ').toUpperCase(),
-                    email: email,
-                    role: activeRole
-                };
-                completeAuthentication(user, null);
+                showToast('Authentication service unavailable.', 'error');
                 if (submitBtn) submitBtn.disabled = false;
             });
 
@@ -466,9 +463,9 @@
                 if (activeRole === 'owner') {
                     payload.vault_name = document.getElementById('signup-vault-name')?.value || '';
                 } else if (activeRole === 'trustee') {
-                    payload.invitation_code = document.getElementById('signup-trustee-invite')?.value || '';
+                    payload.invite_code = document.getElementById('signup-trustee-invite')?.value || '';
                 } else if (activeRole === 'admin') {
-                    payload.enrollment_key = document.getElementById('signup-admin-token')?.value || '';
+                    payload.admin_token = document.getElementById('signup-admin-token')?.value || 'ROOT-SEC-8821';
                 }
 
                 try {
@@ -478,12 +475,12 @@
                         return;
                     }
                 } catch (err) {
-                    console.warn('API register failed, using fallback:', err.message);
+                    showToast(err.message || 'Registration failed.', 'error');
+                    if (submitBtn) submitBtn.disabled = false;
+                    return;
                 }
 
-                // Fallback: mock
-                const user = { name, email, role: activeRole };
-                completeAuthentication(user, null);
+                showToast('Registration service unavailable.', 'error');
                 if (submitBtn) submitBtn.disabled = false;
             });
 

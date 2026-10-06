@@ -3,11 +3,57 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (requireTrusteeAuth()) {
+    syncTrusteeUserProfile();
+  }
   initMobileSidebar();
   initDropdowns();
   initSearch();
   initModals();
 });
+
+function getStoredTrusteeUser() {
+  try {
+    const raw = localStorage.getItem('aegis_user');
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function requireTrusteeAuth() {
+  const user = getStoredTrusteeUser();
+  const token = localStorage.getItem('aegis_access_token');
+  if (!user && !token) {
+    window.location.href = '/AegisVault%20Home/auth.html';
+    return false;
+  }
+  return true;
+}
+
+function syncTrusteeUserProfile() {
+  const user = getStoredTrusteeUser();
+  if (!user) return;
+
+  const name = user.name || (user.email ? user.email.split('@')[0] : 'Trustee');
+  const parts = name.trim().split(/\s+/);
+  const initials = (parts.length > 1 ? parts[0][0] + parts[parts.length - 1][0] : parts[0].substring(0, 2)).toUpperCase();
+
+  document.querySelectorAll('.profile-name, .profile-user-fullname, .overview-name').forEach(el => {
+    el.textContent = name;
+  });
+  document.querySelectorAll('.profile-avatar-circle, .avatar-initials, .avatar-text').forEach(el => {
+    el.textContent = initials;
+  });
+  document.querySelectorAll('.profile-email, .user-email').forEach(el => {
+    if (user.email) el.textContent = user.email;
+  });
+
+  const profLegalName = document.getElementById('profLegalName');
+  if (profLegalName && user.name) {
+    profLegalName.value = user.name;
+  }
+}
 
 // Mobile Sidebar Toggle
 function initMobileSidebar() {
@@ -170,27 +216,32 @@ window.closeModal = function (modalId) {
 
 // Universal Trustee Sign Out
 window.signOutTrustee = function () {
-  window.showToast('Signing out... Redirecting to AegisVault Home', 'info');
-
-  // Call backend logout API
-  if (window.AegisAPI) {
-    window.AegisAPI.logout().catch(() => {});
+  if (typeof window.showToast === 'function') {
+    window.showToast('Signing out... Redirecting to Authentication Gateway', 'info');
   }
+
+  try {
+    const refresh = localStorage.getItem('aegis_refresh_token');
+    if (refresh) {
+      fetch('/api/v1/auth/logout/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refresh })
+      }).catch(() => {});
+    }
+  } catch (e) {}
 
   try {
     localStorage.removeItem('aegis_auth_role');
     localStorage.removeItem('aegis_user');
     localStorage.removeItem('aegis_access_token');
     localStorage.removeItem('aegis_refresh_token');
+    localStorage.removeItem('aegis_trustee_session');
   } catch (e) {}
+
   setTimeout(() => {
-    const p = window.location.pathname.replace(/\\/g, '/');
-    if (p.includes('/Desktop/Trustee/')) {
-      window.location.href = '../aegisvault_root/AegisVault Home/index.html';
-    } else {
-      window.location.href = '../../AegisVault Home/index.html';
-    }
-  }, 600);
+    window.location.href = '/AegisVault%20Home/auth.html';
+  }, 500);
 };
 
 // Global Link & Action Interceptors

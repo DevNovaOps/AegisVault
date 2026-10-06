@@ -25,6 +25,8 @@
          * Initialize all common Admin controls
          */
         init() {
+            if (!this.requireAdminAuth()) return;
+            this.syncAdminUserProfile();
             this.initTheme();
             this.initHeaderDropdowns();
             this.initProfileMenu();
@@ -34,6 +36,40 @@
             this.initGlobalSearch();
             this.initSidebarNavSync();
             this.startLiveClock();
+        },
+
+        requireAdminAuth() {
+            const raw = localStorage.getItem('aegis_user');
+            const token = localStorage.getItem('aegis_access_token');
+            const adminSession = localStorage.getItem('aegis_admin_session');
+            let user = null;
+            try { user = raw ? JSON.parse(raw) : null; } catch (e) {}
+
+            if (!user && !token && !adminSession) {
+                window.location.href = '/AegisVault%20Home/auth.html';
+                return false;
+            }
+            return true;
+        },
+
+        syncAdminUserProfile() {
+            const raw = localStorage.getItem('aegis_user');
+            let user = null;
+            try { user = raw ? JSON.parse(raw) : null; } catch (e) {}
+
+            const name = (user && user.name) ? user.name : ((user && user.email) ? user.email.split('@')[0] : 'Admin');
+            const parts = name.trim().split(/\s+/);
+            const initials = (parts.length > 1 ? parts[0][0] + parts[parts.length - 1][0] : parts[0].substring(0, 2)).toUpperCase();
+
+            document.querySelectorAll('.profile-name, .profile-user-fullname, .overview-name').forEach(el => {
+                el.textContent = name;
+            });
+            document.querySelectorAll('.profile-avatar-circle, .avatar-initials, .avatar-text').forEach(el => {
+                el.textContent = initials;
+            });
+            document.querySelectorAll('.profile-email, .user-email').forEach(el => {
+                if (user && user.email) el.textContent = user.email;
+            });
         },
 
         /* =====================================================================
@@ -337,12 +373,18 @@
 
         signOut() {
             this.closeProfileDropdown();
-            this.showToast('Signing out... Redirecting to home', 'warning', 2000);
+            this.showToast('Signing out... Redirecting to Authentication Gateway', 'warning', 2000);
             
-            // Call backend logout API
-            if (window.AegisAPI) {
-                window.AegisAPI.logout().catch(() => {});
-            }
+            try {
+                const refresh = localStorage.getItem('aegis_refresh_token');
+                if (refresh) {
+                    fetch('/api/v1/auth/logout/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ refresh })
+                    }).catch(() => {});
+                }
+            } catch (e) {}
 
             try {
                 localStorage.removeItem('aegis_admin_session');
@@ -352,7 +394,7 @@
                 localStorage.removeItem('aegis_refresh_token');
             } catch (err) {}
             setTimeout(() => {
-                window.location.href = '../../AegisVault Home/index.html';
+                window.location.href = '/AegisVault%20Home/auth.html';
             }, 500);
         },
 

@@ -211,6 +211,66 @@
       }
     });
 
+    // ------------------------------------------------------------------------
+    // Session & User Profile Controller
+    // ------------------------------------------------------------------------
+    function getStoredUser() {
+      try {
+        const raw = localStorage.getItem('aegis_user');
+        return raw ? JSON.parse(raw) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function requireOwnerAuth() {
+      const user = getStoredUser();
+      const token = localStorage.getItem('aegis_access_token');
+      if (!user && !token) {
+        window.location.href = '/AegisVault%20Home/auth.html';
+        return false;
+      }
+      return true;
+    }
+
+    function syncOwnerUserProfile() {
+      const user = getStoredUser();
+      if (!user) return;
+
+      const name = user.name || (user.email ? user.email.split('@')[0] : 'Owner');
+      const parts = name.trim().split(/\s+/);
+      const initials = (parts.length > 1 ? parts[0][0] + parts[parts.length - 1][0] : parts[0].substring(0, 2)).toUpperCase();
+      const firstName = parts[0];
+
+      // Update header profile chip
+      document.querySelectorAll('.profile-name, .profile-user-fullname, .overview-name').forEach(el => {
+        el.textContent = name;
+      });
+      document.querySelectorAll('.profile-avatar-circle, .avatar-initials, .avatar-text').forEach(el => {
+        el.textContent = initials;
+      });
+      document.querySelectorAll('.profile-email, .user-email').forEach(el => {
+        if (user.email) el.textContent = user.email;
+      });
+
+      // Update hero greeting banner (e.g. Welcome back, Rakesh! -> Welcome back, Admin!)
+      const heroAccent = document.querySelector('.hero-heading .hero-accent');
+      if (heroAccent) {
+        heroAccent.textContent = firstName + '!';
+      }
+
+      // Update legal name field on profile settings page
+      const inputFullName = document.getElementById('inputFullName');
+      if (inputFullName && user.name) {
+        inputFullName.value = user.name;
+      }
+    }
+
+    // Run auth check and profile sync
+    if (requireOwnerAuth()) {
+      syncOwnerUserProfile();
+    }
+
     // Initialize Dead Man's Switch Heartbeat Controller
     if (window.AegisHeartbeat) {
       window.AegisHeartbeat.init();
@@ -612,24 +672,33 @@
   // Universal Owner Sign Out
   window.signOutOwner = function () {
     if (window.AegisOwner && window.AegisOwner.showToast) {
-      window.AegisOwner.showToast('Signing out... Redirecting to AegisVault Home', 'info');
+      window.AegisOwner.showToast('Signing out... Redirecting to Authentication Gateway', 'info');
     }
 
-    // Call backend logout API
-    if (window.AegisAPI) {
-      window.AegisAPI.logout().catch(() => {});
-    }
+    try {
+      const refresh = localStorage.getItem('aegis_refresh_token');
+      if (refresh) {
+        fetch('/api/v1/auth/logout/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ refresh })
+        }).catch(() => {});
+      }
+    } catch (e) {}
 
     try {
       localStorage.removeItem('aegis_auth_role');
       localStorage.removeItem('aegis_user');
       localStorage.removeItem('aegis_access_token');
       localStorage.removeItem('aegis_refresh_token');
+      localStorage.removeItem('aegis_owner_session');
     } catch (e) {}
+
     setTimeout(() => {
-      window.location.href = '../../AegisVault Home/index.html';
-    }, 600);
+      window.location.href = '/AegisVault%20Home/auth.html';
+    }, 500);
   };
+  window.AegisOwner.signOut = window.signOutOwner;
 })();
 
 

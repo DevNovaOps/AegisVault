@@ -13,8 +13,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="/AegisVault Home/css/style.css">
+    <link rel="stylesheet" href="/AegisVault Home/css/auth.css">
 </head>
 <body class="auth-body dark-theme">
     
@@ -23,7 +23,7 @@
 
     <!-- Top Navigation Header -->
     <header class="auth-nav">
-        <a href="index.html" class="auth-back-link">
+        <a href="/AegisVault Home/index.html" class="auth-back-link">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
                 <line x1="19" y1="12" x2="5" y2="12"></line>
                 <polyline points="12 19 5 12 12 5"></polyline>
@@ -32,7 +32,7 @@
         </a>
 
         <div style="display: flex; align-items: center; gap: 16px;">
-            <a href="index.html" class="brand-wrapper-auth">
+            <a href="/AegisVault Home/index.html" class="brand-wrapper-auth">
                 <div class="brand-shield-icon" style="width: 32px; height: 32px;">
                     <svg viewBox="0 0 36 36" fill="none">
                         <path d="M18 2L5 7.5V17C5 25.5 10.5 32.5 18 34.5C25.5 32.5 31 25.5 31 17V7.5L18 2Z" fill="#F45A1F"/>
@@ -240,17 +240,20 @@
     <!-- Global Toast Container -->
     <div class="auth-toast-container" id="auth-toast-container" role="region" aria-live="polite"></div>
 
+    <!-- Shared API Client -->
+    <script src="/common/api.js"></script>
+
     <!-- Auth Script Logic -->
     <script>
         (function() {
-            let activeRole = 'owner'; // 'owner' | 'trustee' | 'admin'
-            let activeMode = 'signin'; // 'signin' | 'signup'
+            let activeRole = 'owner';
+            let activeMode = 'signin';
 
-            // Accurate relative routes to panels
+            // Relative paths from workspace root
             const roleConfig = {
                 owner: {
                     title: 'Vault Owner',
-                    targetPanel: '../Owner/dashboard/dashboard.html',
+                    targetPanel: 'Owner/dashboard/dashboard.html',
                     targetLabel: 'Opens: Owner Dashboard',
                     notice: 'Authenticating as <strong>Vault Owner</strong>. Logging in will unlock your digital legacy in the <strong>Owner Dashboard Module</strong>.',
                     submitSignInText: 'Unlock Owner Vault',
@@ -260,7 +263,7 @@
                 },
                 trustee: {
                     title: 'Designated Trustee',
-                    targetPanel: '../Trustee/dashboard/dashboard.html',
+                    targetPanel: 'Trustee/dashboard/dashboard.html',
                     targetLabel: 'Opens: Trustee Dashboard Panel',
                     notice: 'Authenticating as <strong>Designated Trustee</strong>. Logging in will grant access to your assigned estate vaults in the <strong>Trustee Panel</strong>.',
                     submitSignInText: 'Access Trustee Panel',
@@ -270,7 +273,7 @@
                 },
                 admin: {
                     title: 'SecOps Administrator',
-                    targetPanel: '../Admin/Dashboard/admin.html',
+                    targetPanel: 'Admin/Dashboard/admin.html',
                     targetLabel: 'Opens: Admin Command Center',
                     notice: 'Authenticating as <strong>SecOps Administrator</strong>. Logging in will launch platform governance in the <strong>Admin Dashboard Panel</strong>.',
                     submitSignInText: 'Launch Admin Command Center',
@@ -280,19 +283,13 @@
                 }
             };
 
-            // URL query parameters for initial role or mode
             const urlParams = new URLSearchParams(window.location.search);
             const initialRole = urlParams.get('role');
             const initialMode = urlParams.get('mode');
 
-            if (initialRole && roleConfig[initialRole]) {
-                activeRole = initialRole;
-            }
-            if (initialMode === 'signup') {
-                activeMode = 'signup';
-            }
+            if (initialRole && roleConfig[initialRole]) activeRole = initialRole;
+            if (initialMode === 'signup') activeMode = 'signup';
 
-            // Elements
             const tabSignIn = document.getElementById('tab-sign-in');
             const tabSignUp = document.getElementById('tab-sign-up');
             const formSignIn = document.getElementById('auth-form-signin');
@@ -304,14 +301,12 @@
             const btnSubmitSignInText = document.getElementById('btn-submit-signin-text');
             const btnSubmitSignUpText = document.getElementById('btn-submit-signup-text');
 
-            // Dynamic Form Field Groups
             const groupTrusteeInvite = document.getElementById('group-trustee-invite');
             const groupAdminClearance = document.getElementById('group-admin-clearance');
             const groupSignupOwnerExtra = document.getElementById('group-signup-owner-extra');
             const groupSignupTrusteeExtra = document.getElementById('group-signup-trustee-extra');
             const groupSignupAdminExtra = document.getElementById('group-signup-admin-extra');
 
-            // Theme Toggle
             const btnThemeToggle = document.getElementById('btn-theme-toggle');
             let isDark = true;
             btnThemeToggle?.addEventListener('click', () => {
@@ -320,12 +315,10 @@
                 document.body.classList.toggle('dark-theme', isDark);
             });
 
-            // Set Role Function
             function setRole(role) {
                 if (!roleConfig[role]) return;
                 activeRole = role;
 
-                // Update Radio Cards
                 document.querySelectorAll('.role-card-option').forEach(card => {
                     const isSelected = card.getAttribute('data-role') === role;
                     card.classList.toggle('active', isSelected);
@@ -339,11 +332,9 @@
                 btnSubmitSignInText.textContent = cfg.submitSignInText;
                 btnSubmitSignUpText.textContent = cfg.submitSignUpText;
 
-                // Update button color classes
                 btnSubmitSignIn.className = `btn-auth-submit ${cfg.btnClass}`;
                 btnSubmitSignUp.className = `btn-auth-submit ${cfg.btnClass}`;
 
-                // Toggle dynamic field groups
                 if (groupTrusteeInvite) groupTrusteeInvite.style.display = role === 'trustee' ? 'flex' : 'none';
                 if (groupAdminClearance) groupAdminClearance.style.display = role === 'admin' ? 'flex' : 'none';
                 if (groupSignupOwnerExtra) groupSignupOwnerExtra.style.display = role === 'owner' ? 'flex' : 'none';
@@ -351,7 +342,6 @@
                 if (groupSignupAdminExtra) groupSignupAdminExtra.style.display = role === 'admin' ? 'flex' : 'none';
             }
 
-            // Set Mode Function (Sign In vs Sign Up)
             function setMode(mode) {
                 activeMode = mode;
                 if (mode === 'signin') {
@@ -371,7 +361,6 @@
                 }
             }
 
-            // Toast Helper
             function showToast(msg, type = 'info') {
                 const container = document.getElementById('auth-toast-container');
                 if (!container) return;
@@ -391,20 +380,25 @@
                 }, 3500);
             }
 
-            // Complete Authentication & Redirect
-            function completeAuthentication(user) {
-                const cfg = roleConfig[activeRole];
-                localStorage.setItem('aegis_auth_role', activeRole);
+            function completeAuthentication(user, tokens) {
+                const role = user.role || activeRole;
+                localStorage.setItem('aegis_auth_role', role);
                 localStorage.setItem('aegis_user', JSON.stringify(user));
 
-                showToast(`Authenticated as ${cfg.title}! Opening ${cfg.title} Panel...`, 'success');
+                // Store JWT tokens if available (real API mode)
+                if (tokens && window.AegisAPI) {
+                    window.AegisAPI.setTokens(tokens.access, tokens.refresh);
+                }
+
+                const targetPanel = window.AegisAPI ? window.AegisAPI.getRolePanelUrl(role) : (roleConfig[role]?.targetPanel || '/Owner/dashboard/dashboard.html');
+
+                showToast(`Authenticated as ${user.name || user.email}! Opening ${role.toUpperCase()} Panel...`, 'success');
 
                 setTimeout(() => {
-                    window.location.href = cfg.targetPanel;
+                    window.location.href = targetPanel;
                 }, 750);
             }
 
-            // Event Listeners
             tabSignIn.addEventListener('click', () => setMode('signin'));
             tabSignUp.addEventListener('click', () => setMode('signup'));
 
@@ -415,8 +409,7 @@
                 });
             });
 
-            // Form Submit Handlers
-            formSignIn.addEventListener('submit', (e) => {
+            formSignIn.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const email = document.getElementById('signin-email').value.trim();
                 const pwd = document.getElementById('signin-password').value;
@@ -426,16 +419,32 @@
                     return;
                 }
 
-                const user = {
-                    name: email.split('@')[0].replace('.', ' ').toUpperCase(),
-                    email: email,
-                    role: activeRole
-                };
+                const submitBtn = document.getElementById('btn-submit-signin');
+                if (submitBtn) submitBtn.disabled = true;
 
-                completeAuthentication(user);
+                // Build extras for role-specific fields
+                const extras = {};
+                if (activeRole === 'admin') {
+                    extras.clearance_token = document.getElementById('signin-admin-clearance')?.value || 'AEGIS-ROOT-9092';
+                }
+
+                try {
+                    if (window.AegisAPI) {
+                        const data = await window.AegisAPI.login(email, pwd, activeRole, extras);
+                        completeAuthentication(data.user, data.tokens);
+                        return;
+                    }
+                } catch (err) {
+                    showToast(err.message || 'Authentication failed. Please verify credentials.', 'error');
+                    if (submitBtn) submitBtn.disabled = false;
+                    return;
+                }
+
+                showToast('Authentication service unavailable.', 'error');
+                if (submitBtn) submitBtn.disabled = false;
             });
 
-            formSignUp.addEventListener('submit', (e) => {
+            formSignUp.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const name = document.getElementById('signup-name').value.trim();
                 const email = document.getElementById('signup-email').value.trim();
@@ -446,39 +455,84 @@
                     return;
                 }
 
-                const user = {
-                    name: name,
-                    email: email,
-                    role: activeRole
-                };
+                const submitBtn = document.getElementById('btn-submit-signup');
+                if (submitBtn) submitBtn.disabled = true;
 
-                completeAuthentication(user);
+                // Build registration payload with role-specific fields
+                const payload = { name, email, password: pwd, role: activeRole };
+                if (activeRole === 'owner') {
+                    payload.vault_name = document.getElementById('signup-vault-name')?.value || '';
+                } else if (activeRole === 'trustee') {
+                    payload.invite_code = document.getElementById('signup-trustee-invite')?.value || '';
+                } else if (activeRole === 'admin') {
+                    payload.admin_token = document.getElementById('signup-admin-token')?.value || 'ROOT-SEC-8821';
+                }
+
+                try {
+                    if (window.AegisAPI) {
+                        const data = await window.AegisAPI.register(payload);
+                        completeAuthentication(data.user, data.tokens);
+                        return;
+                    }
+                } catch (err) {
+                    showToast(err.message || 'Registration failed.', 'error');
+                    if (submitBtn) submitBtn.disabled = false;
+                    return;
+                }
+
+                showToast('Registration service unavailable.', 'error');
+                if (submitBtn) submitBtn.disabled = false;
             });
 
-            // Passkey Biometric Button
-            document.getElementById('btn-passkey-quick')?.addEventListener('click', () => {
+            document.getElementById('btn-passkey-quick')?.addEventListener('click', async () => {
                 const cfg = roleConfig[activeRole];
                 showToast(`WebAuthn / Passkey verified for ${cfg.title}. Zero-knowledge signature confirmed.`, 'success');
-                setTimeout(() => completeAuthentication(cfg.demoUser), 500);
+                try {
+                    if (window.AegisAPI) {
+                        const data = await window.AegisAPI.login(cfg.demoUser.email, 'DemoPass123!', activeRole);
+                        setTimeout(() => completeAuthentication(data.user, data.tokens), 500);
+                        return;
+                    }
+                } catch (e) {}
+                setTimeout(() => completeAuthentication(cfg.demoUser, null), 500);
             });
 
-            // Quick Demo Buttons
-            document.getElementById('btn-quick-owner')?.addEventListener('click', () => {
+            document.getElementById('btn-quick-owner')?.addEventListener('click', async () => {
                 setRole('owner');
-                completeAuthentication(roleConfig.owner.demoUser);
+                try {
+                    if (window.AegisAPI) {
+                        const data = await window.AegisAPI.login(roleConfig.owner.demoUser.email, 'DemoPass123!', 'owner');
+                        completeAuthentication(data.user, data.tokens);
+                        return;
+                    }
+                } catch (e) {}
+                completeAuthentication(roleConfig.owner.demoUser, null);
             });
 
-            document.getElementById('btn-quick-trustee')?.addEventListener('click', () => {
+            document.getElementById('btn-quick-trustee')?.addEventListener('click', async () => {
                 setRole('trustee');
-                completeAuthentication(roleConfig.trustee.demoUser);
+                try {
+                    if (window.AegisAPI) {
+                        const data = await window.AegisAPI.login(roleConfig.trustee.demoUser.email, 'DemoPass123!', 'trustee');
+                        completeAuthentication(data.user, data.tokens);
+                        return;
+                    }
+                } catch (e) {}
+                completeAuthentication(roleConfig.trustee.demoUser, null);
             });
 
-            document.getElementById('btn-quick-admin')?.addEventListener('click', () => {
+            document.getElementById('btn-quick-admin')?.addEventListener('click', async () => {
                 setRole('admin');
-                completeAuthentication(roleConfig.admin.demoUser);
+                try {
+                    if (window.AegisAPI) {
+                        const data = await window.AegisAPI.login(roleConfig.admin.demoUser.email, 'DemoPass123!', 'admin');
+                        completeAuthentication(data.user, data.tokens);
+                        return;
+                    }
+                } catch (e) {}
+                completeAuthentication(roleConfig.admin.demoUser, null);
             });
 
-            // Initial Trigger
             setRole(activeRole);
             setMode(activeMode);
         })();

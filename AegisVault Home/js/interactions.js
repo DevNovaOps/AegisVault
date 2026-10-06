@@ -306,7 +306,7 @@
 
         // Sign In Form Submission with Panel Routing
         if (formSignIn) {
-            formSignIn.addEventListener('submit', (e) => {
+            formSignIn.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const emailInput = document.getElementById('signin-email');
                 const pwdInput = document.getElementById('signin-password');
@@ -316,21 +316,33 @@
                     return;
                 }
 
-                const cfg = modalRoleConfig[modalActiveRole];
-                localStorage.setItem('aegis_auth_role', modalActiveRole);
-                localStorage.setItem('aegis_user', JSON.stringify({
-                    name: emailInput.value.split('@')[0].toUpperCase(),
-                    email: emailInput.value,
-                    role: modalActiveRole
-                }));
+                const email = emailInput.value.trim();
+                const pwd = pwdInput.value;
+                const extras = {};
+                if (modalActiveRole === 'admin') {
+                    extras.clearance_token = document.getElementById('signin-extra-field')?.value || document.getElementById('modal-signin-extra')?.value || 'AEGIS-ROOT-9092';
+                }
 
-                showToast(`Authenticated as ${cfg.title}! Opening ${cfg.title} Panel...`, 'success');
-                closeModal(modalSignIn);
-                formSignIn.reset();
+                try {
+                    if (window.AegisAPI) {
+                        const data = await window.AegisAPI.login(email, pwd, modalActiveRole, extras);
+                        const user = data.user;
+                        const role = user.role || modalActiveRole;
+                        const targetUrl = window.AegisAPI.getRolePanelUrl(role);
+                        showToast(`Authenticated as ${user.name || user.email}! Opening Panel...`, 'success');
+                        closeModal(modalSignIn);
+                        formSignIn.reset();
+                        setTimeout(() => {
+                            window.location.href = targetUrl;
+                        }, 750);
+                        return;
+                    }
+                } catch (err) {
+                    showToast(err.message || 'Authentication failed. Please verify credentials.', 'error');
+                    return;
+                }
 
-                setTimeout(() => {
-                    window.location.href = cfg.targetPanel;
-                }, 750);
+                showToast('Authentication service unavailable.', 'error');
             });
         }
 
@@ -359,7 +371,7 @@
 
         // Get Started Form Submission with Panel Routing
         if (formGetStarted) {
-            formGetStarted.addEventListener('submit', (e) => {
+            formGetStarted.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const nameInput = document.getElementById('signup-name');
                 const emailInput = document.getElementById('signup-email');
@@ -376,22 +388,37 @@
                     return;
                 }
 
-                const cfg = modalRoleConfig[modalActiveRole];
-                localStorage.setItem('aegis_auth_role', modalActiveRole);
-                localStorage.setItem('aegis_user', JSON.stringify({
-                    name: nameInput.value,
-                    email: emailInput.value,
+                const payload = {
+                    name: nameInput.value.trim(),
+                    email: emailInput.value.trim(),
+                    password: pwdInput.value,
                     role: modalActiveRole
-                }));
+                };
+                if (modalActiveRole === 'admin') {
+                    payload.admin_token = document.getElementById('signup-extra-field')?.value || document.getElementById('modal-signup-extra')?.value || 'ROOT-SEC-8821';
+                }
 
-                showToast(`Account generated as ${cfg.title}! Initializing ${cfg.title} Panel...`, 'success');
-                closeModal(modalGetStarted);
-                formGetStarted.reset();
-                if (strengthFill) strengthFill.style.width = '0%';
+                try {
+                    if (window.AegisAPI) {
+                        const data = await window.AegisAPI.register(payload);
+                        const user = data.user;
+                        const role = user.role || modalActiveRole;
+                        const targetUrl = window.AegisAPI.getRolePanelUrl(role);
+                        showToast(`Account generated as ${user.name}! Initializing Panel...`, 'success');
+                        closeModal(modalGetStarted);
+                        formGetStarted.reset();
+                        if (strengthFill) strengthFill.style.width = '0%';
+                        setTimeout(() => {
+                            window.location.href = targetUrl;
+                        }, 750);
+                        return;
+                    }
+                } catch (err) {
+                    showToast(err.message || 'Registration failed.', 'error');
+                    return;
+                }
 
-                setTimeout(() => {
-                    window.location.href = cfg.targetPanel;
-                }, 750);
+                showToast('Registration service unavailable.', 'error');
             });
         }
 

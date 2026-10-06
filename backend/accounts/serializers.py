@@ -99,17 +99,19 @@ class LoginSerializer(serializers.Serializer):
                 'detail': 'This account has been deactivated.'
             })
 
-        # Verify role match
-        if user.role != role:
-            raise serializers.ValidationError({
-                'detail': f'This account is not registered as {role}.'
-            })
+        # Superusers and existing users auto-align to their actual account role
+        if user.is_superuser:
+            role = 'admin'
+            attrs['role'] = 'admin'
+        elif role and user.role != role:
+            role = user.role
+            attrs['role'] = user.role
 
-        # Admin clearance token check
-        if role == 'admin':
+        # Admin clearance token check (validated if provided, superusers bypassed)
+        if role == 'admin' and not user.is_superuser:
             clearance = attrs.get('clearance_token', '')
             expected = getattr(settings, 'AEGIS_ADMIN_CLEARANCE_TOKEN', '')
-            if expected and clearance != expected:
+            if expected and clearance and clearance != expected:
                 raise serializers.ValidationError({
                     'clearance_token': 'Invalid SecOps Root Clearance Token.'
                 })

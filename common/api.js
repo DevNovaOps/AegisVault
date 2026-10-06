@@ -12,7 +12,9 @@
 (function () {
   'use strict';
 
-  const API_BASE = 'http://127.0.0.1:8000/api/v1';
+  const API_BASE = (typeof window !== 'undefined' && window.location && window.location.origin && window.location.origin.startsWith('http'))
+    ? `${window.location.origin}/api/v1`
+    : 'http://127.0.0.1:8000/api/v1';
 
   // ─── Token Storage ──────────────────────────────────────────────────
   const TOKEN_KEY = 'aegis_access_token';
@@ -40,13 +42,16 @@
       localStorage.removeItem(REFRESH_KEY);
       localStorage.removeItem(USER_KEY);
       localStorage.removeItem('aegis_auth_role');
+      localStorage.removeItem('aegis_admin_session');
+      localStorage.removeItem('aegis_owner_session');
+      localStorage.removeItem('aegis_trustee_session');
     } catch (e) {}
   }
 
   function setUser(user) {
     try {
       localStorage.setItem(USER_KEY, JSON.stringify(user));
-      if (user.role) localStorage.setItem('aegis_auth_role', user.role);
+      if (user && user.role) localStorage.setItem('aegis_auth_role', user.role);
     } catch (e) {}
   }
 
@@ -134,7 +139,16 @@
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      const error = new Error(errorData.detail || `API Error: ${response.status}`);
+      let msg = errorData.detail;
+      if (Array.isArray(msg)) {
+        msg = msg.join(' ');
+      } else if (typeof msg === 'object' && msg !== null) {
+        msg = Object.values(msg).flat().join(' ');
+      } else if (!msg && typeof errorData === 'object') {
+        const vals = Object.values(errorData).flat();
+        if (vals.length) msg = vals.join(' ');
+      }
+      const error = new Error(msg || `API Error: ${response.status}`);
       error.status = response.status;
       error.data = errorData;
       throw error;
@@ -179,7 +193,9 @@
   async function logout() {
     const refreshToken = getRefreshToken();
     try {
-      await apiRequest('/auth/logout/', { method: 'POST', body: { refresh: refreshToken } });
+      if (refreshToken) {
+        await apiRequest('/auth/logout/', { method: 'POST', body: { refresh: refreshToken } });
+      }
     } catch (e) {
       // Logout endpoint failures are non-blocking
     }
@@ -194,17 +210,11 @@
 
   // ─── Auth Guards ────────────────────────────────────────────────────
   function isAuthenticated() {
-    return !!getAccessToken();
+    return !!(getAccessToken() || getUser());
   }
 
   function redirectToAuth() {
-    // Compute relative path to auth.html from any panel location
-    const path = window.location.pathname.replace(/\\/g, '/');
-    let authPath = '../../auth.html';
-    if (path.includes('/Admin/')) authPath = '../../auth.html';
-    if (path.includes('/Trustee/')) authPath = '../../auth.html';
-    if (path.includes('/Owner/')) authPath = '../../auth.html';
-    window.location.href = authPath;
+    window.location.href = '/AegisVault%20Home/auth.html';
   }
 
   function requireAuth() {
@@ -213,6 +223,60 @@
       return false;
     }
     return true;
+  }
+
+  function getRolePanelUrl(role) {
+    switch ((role || '').toLowerCase()) {
+      case 'admin':
+        return '/Admin/Dashboard/admin.html';
+      case 'trustee':
+        return '/Trustee/dashboard/dashboard.html';
+      case 'owner':
+      default:
+        return '/Owner/dashboard/dashboard.html';
+    }
+  }
+
+  function syncUserProfileUI() {
+    const user = getUser();
+    if (!user) return;
+    const name = user.name || (user.email ? user.email.split('@')[0] : 'User');
+    const parts = name.trim().split(/\s+/);
+    const initials = (parts.length > 1 ? parts[0][0] + parts[parts.length - 1][0] : parts[0].substring(0, 2)).toUpperCase();
+    const firstName = parts[0];
+
+    document.querySelectorAll('.profile-name, .profile-user-fullname, .overview-name').forEach(el => {
+      el.textContent = name;
+    });
+    document.querySelectorAll('.profile-avatar-circle, .avatar-initials, .avatar-text').forEach(el => {
+      el.textContent = initials;
+    });
+    document.querySelectorAll('.profile-email, .user-email').forEach(el => {
+      if (user.email) el.textContent = user.email;
+    });
+
+    const heroAccent = document.querySelector('.hero-heading .hero-accent');
+    if (heroAccent) {
+      heroAccent.textContent = firstName + '!';
+    }
+
+    // Wire sign out links if present
+    document.querySelectorAll('a, button').forEach(el => {
+      const txt = (el.textContent || '').trim().toLowerCase();
+      if (txt === 'sign out' || txt === 'log out' || txt.includes('sign out')) {
+        el.onclick = (e) => {
+          e.preventDefault();
+          logout().then(() => redirectToAuth());
+        };
+      }
+    });
+  }
+
+  // Auto-sync UI when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', syncUserProfileUI);
+  } else {
+    setTimeout(syncUserProfileUI, 10);
   }
 
   // ─── Public API ─────────────────────────────────────────────────────
@@ -241,9 +305,12 @@
     isAuthenticated,
     requireAuth,
     redirectToAuth,
+    getRolePanelUrl,
+    syncUserProfileUI,
 
     // Config
     API_BASE,
   };
 
 })();
+
