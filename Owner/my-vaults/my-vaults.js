@@ -364,16 +364,29 @@
 
     menu.querySelector('[data-action="toggle-lock"]').addEventListener('click', () => {
       closeContextMenu();
-      if (vault.status === 'Locked') {
-        vault.status = 'Active';
-        vault.statusClass = 'status-active';
-        window.AegisOwner.showToast(`Vault "${vault.name}" unlocked successfully!`, 'success');
+      const isLocked = vault.status === 'Locked';
+      const action = isLocked ? 'unlock' : 'lock';
+      if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+        window.AegisAPI.post(`/owner/vaults/${vault.id}/${action}/`).then(res => {
+          vault.status = res.status.charAt(0).toUpperCase() + res.status.slice(1);
+          vault.statusClass = 'status-' + res.status.toLowerCase();
+          window.AegisOwner.showToast(`Vault "${vault.name}" ${action}ed successfully!`, isLocked ? 'success' : 'warning');
+          renderVaultsTable();
+        }).catch(err => {
+          window.AegisOwner.showToast(`Failed to ${action} vault: ${err.message}`, 'error');
+        });
       } else {
-        vault.status = 'Locked';
-        vault.statusClass = 'status-locked';
-        window.AegisOwner.showToast(`Vault "${vault.name}" locked.`, 'warning');
+        if (isLocked) {
+          vault.status = 'Active';
+          vault.statusClass = 'status-active';
+          window.AegisOwner.showToast(`Vault "${vault.name}" unlocked successfully!`, 'success');
+        } else {
+          vault.status = 'Locked';
+          vault.statusClass = 'status-locked';
+          window.AegisOwner.showToast(`Vault "${vault.name}" locked.`, 'warning');
+        }
+        renderVaultsTable();
       }
-      renderVaultsTable();
     });
 
     menu.querySelector('[data-action="release"]').addEventListener('click', () => {
@@ -384,9 +397,19 @@
     menu.querySelector('[data-action="delete"]').addEventListener('click', () => {
       closeContextMenu();
       if (confirm(`Are you sure you want to delete "${vault.name}"? This action cannot be undone.`)) {
-        mockVaults = mockVaults.filter(v => v.id !== vault.id);
-        renderVaultsTable();
-        window.AegisOwner.showToast(`Vault "${vault.name}" deleted.`, 'info');
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+          window.AegisAPI.delete(`/owner/vaults/${vault.id}/`).then(() => {
+            mockVaults = mockVaults.filter(v => v.id !== vault.id);
+            renderVaultsTable();
+            window.AegisOwner.showToast(`Vault "${vault.name}" deleted.`, 'info');
+          }).catch(err => {
+            window.AegisOwner.showToast(`Failed to delete vault: ${err.message}`, 'error');
+          });
+        } else {
+          mockVaults = mockVaults.filter(v => v.id !== vault.id);
+          renderVaultsTable();
+          window.AegisOwner.showToast(`Vault "${vault.name}" deleted.`, 'info');
+        }
       }
     });
 
@@ -483,7 +506,41 @@
       typeSelect.value = initialCategory;
     }
 
-    renderVaultsTable();
+    if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+      window.AegisAPI.get('/owner/vaults/').then(data => {
+        const TYPE_ICONS = {
+          'Personal': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+          'Family': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+          'Business': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
+          'Legacy': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>',
+          'Health': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>'
+        };
+        mockVaults = data.map(v => ({
+          id: v.id,
+          name: v.name,
+          desc: v.description || '',
+          type: v.vault_type,
+          typeBadgeClass: (v.vault_type || '').toLowerCase(),
+          typeIcon: TYPE_ICONS[v.vault_type] || TYPE_ICONS['Personal'],
+          status: v.status.charAt(0).toUpperCase() + v.status.slice(1),
+          statusClass: 'status-' + (v.status || '').toLowerCase(),
+          trustees: v.trustees_count || 0,
+          sharesRatio: v.shares_ratio || '0 / 0',
+          sharesPercent: v.shares_percent || 0,
+          date: new Date(v.created_at).toLocaleDateString(),
+          time: new Date(v.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          thumbImg: '../assets/images/vault-thumb-1.png',
+          releaseCondition: v.release_condition || 'Not set',
+          storageUsed: v.storage_used || '0 MB'
+        }));
+        renderVaultsTable();
+      }).catch(err => {
+        console.error('Failed to load vaults', err);
+        renderVaultsTable();
+      });
+    } else {
+      renderVaultsTable();
+    }
 
     // Search & Filter Listeners
     [searchInput, statusSelect, typeSelect, sortSelect].forEach(el => {
@@ -599,32 +656,70 @@
         const desc = document.getElementById('newVaultDesc')?.value.trim() || 'Confidential digital repository.';
 
         const typeBadge = type.toLowerCase();
-
-        const newVault = {
-          id: `vault-${Date.now()}`,
-          name: name,
-          desc: desc,
-          type: type,
-          typeBadgeClass: typeBadge,
-          typeIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
-          status: 'Active',
-          statusClass: 'status-active',
-          trustees: 1,
-          sharesRatio: '1 / 1',
-          sharesPercent: 100,
-          date: 'Just now',
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          thumbImg: '../assets/images/vault-thumb-1.png',
-          releaseCondition: '60 days heartbeat inactivity',
-          storageUsed: '10 MB'
-        };
-
-        mockVaults.unshift(newVault);
-        window.AegisOwner.closeModal('createVaultModal');
-        formCreate.reset();
-        renderVaultsTable();
-
-        window.AegisOwner.showToast(`Vault "${name}" created successfully!`, 'success');
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+          window.AegisAPI.post('/owner/vaults/', {
+            name: name,
+            description: desc,
+            vault_type: type
+          }).then(v => {
+            const TYPE_ICONS = {
+              'Personal': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+              'Family': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+              'Business': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
+              'Legacy': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>',
+              'Health': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>'
+            };
+            const newVault = {
+              id: v.id,
+              name: v.name,
+              desc: v.description || '',
+              type: v.vault_type,
+              typeBadgeClass: (v.vault_type || '').toLowerCase(),
+              typeIcon: TYPE_ICONS[v.vault_type] || TYPE_ICONS['Personal'],
+              status: v.status.charAt(0).toUpperCase() + v.status.slice(1),
+              statusClass: 'status-' + (v.status || '').toLowerCase(),
+              trustees: v.trustees_count || 0,
+              sharesRatio: v.shares_ratio || '0 / 0',
+              sharesPercent: v.shares_percent || 0,
+              date: new Date(v.created_at).toLocaleDateString(),
+              time: new Date(v.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              thumbImg: '../assets/images/vault-thumb-1.png',
+              releaseCondition: v.release_condition || 'Not set',
+              storageUsed: v.storage_used || '0 MB'
+            };
+            mockVaults.unshift(newVault);
+            window.AegisOwner.closeModal('createVaultModal');
+            formCreate.reset();
+            renderVaultsTable();
+            window.AegisOwner.showToast(`Vault "${name}" created successfully!`, 'success');
+          }).catch(err => {
+            window.AegisOwner.showToast(`Failed to create vault: ${err.message}`, 'error');
+          });
+        } else {
+          const newVault = {
+            id: `vault-${Date.now()}`,
+            name: name,
+            desc: desc,
+            type: type,
+            typeBadgeClass: typeBadge,
+            typeIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+            status: 'Active',
+            statusClass: 'status-active',
+            trustees: 1,
+            sharesRatio: '1 / 1',
+            sharesPercent: 100,
+            date: 'Just now',
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            thumbImg: '../assets/images/vault-thumb-1.png',
+            releaseCondition: '60 days heartbeat inactivity',
+            storageUsed: '10 MB'
+          };
+          mockVaults.unshift(newVault);
+          window.AegisOwner.closeModal('createVaultModal');
+          formCreate.reset();
+          renderVaultsTable();
+          window.AegisOwner.showToast(`Vault "${name}" created successfully!`, 'success');
+        }
       });
     }
 
@@ -639,18 +734,39 @@
         const desc = document.getElementById('editVaultDesc')?.value.trim();
 
         const target = mockVaults.find(v => v.id === id);
-        if (target) {
-          target.name = name || target.name;
-          target.type = type || target.type;
-          target.typeBadgeClass = (type || target.type).toLowerCase();
-          target.desc = desc || target.desc;
-          target.date = 'Just now';
-          target.time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+          window.AegisAPI.put(`/owner/vaults/${id}/`, {
+            name: name || target.name,
+            description: desc || target.desc,
+            vault_type: type || target.type
+          }).then(() => {
+            if (target) {
+              target.name = name || target.name;
+              target.type = type || target.type;
+              target.typeBadgeClass = (type || target.type).toLowerCase();
+              target.desc = desc || target.desc;
+              target.date = 'Just now';
+              target.time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+            window.AegisOwner.closeModal('editVaultModal');
+            renderVaultsTable();
+            window.AegisOwner.showToast(`Vault "${name}" updated successfully!`, 'success');
+          }).catch(err => {
+            window.AegisOwner.showToast(`Failed to update vault: ${err.message}`, 'error');
+          });
+        } else {
+          if (target) {
+            target.name = name || target.name;
+            target.type = type || target.type;
+            target.typeBadgeClass = (type || target.type).toLowerCase();
+            target.desc = desc || target.desc;
+            target.date = 'Just now';
+            target.time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          }
+          window.AegisOwner.closeModal('editVaultModal');
+          renderVaultsTable();
+          window.AegisOwner.showToast(`Vault "${name}" updated successfully!`, 'success');
         }
-
-        window.AegisOwner.closeModal('editVaultModal');
-        renderVaultsTable();
-        window.AegisOwner.showToast(`Vault "${name}" updated successfully!`, 'success');
       });
     }
   });
