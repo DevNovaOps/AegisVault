@@ -4,14 +4,51 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  initTabs();
-  initSearch();
-  initVaultCardClicks();
-  initActionAlertButton();
+  if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+    window.AegisAPI.get('/trustee/assigned-vaults/').then(data => {
+      VAULT_ITEMS = data.map(share => {
+        let categories = ['all'];
+        if (share.status === 'active') categories.push('active');
+        return {
+          id: share.vault || 'vault-' + Math.random(),
+          name: share.vault_name || 'Vault',
+          owner: share.trustee_name || 'Unknown Owner',
+          email: share.trustee_email || 'unknown@example.com',
+          assignedOn: new Date(share.created_at || Date.now()).toLocaleDateString(),
+          verificationStatus: 'Verified',
+          verificationSub: '',
+          shareStatus: share.status || 'Active',
+          shareDate: 'N/A',
+          releaseStatus: 'No Release',
+          releaseSub: 'Not initiated',
+          tags: ['Assigned'],
+          categories: categories,
+          lockColor: 'blue',
+          requiresAction: false,
+          scheme: 'Shamir Secret Sharing (2-of-3)',
+          shareHash: 'sha256:...',
+          description: share.vault_description || ''
+        };
+      });
+      finishInit();
+    }).catch(err => {
+      console.warn('Failed to load assigned vaults', err);
+      finishInit();
+    });
+  } else {
+    finishInit();
+  }
 });
 
+function finishInit() {
+  initTabs();
+  initSearch();
+  initActionAlertButton();
+  renderFilteredVaults();
+}
+
 // Vault data store
-const VAULT_ITEMS = [
+let VAULT_ITEMS = [
   {
     id: 'vault-personal',
     name: 'Personal Vault',
@@ -90,31 +127,82 @@ function renderFilteredVaults() {
   const emptySub = document.getElementById('emptyBoxSub');
   if (!container) return;
 
-  const cards = container.querySelectorAll('.assigned-vault-card');
+  // Clear existing static cards on first dynamic render
+  if (!window._vaultsRendered) {
+    container.querySelectorAll('.assigned-vault-card').forEach(c => c.remove());
+    window._vaultsRendered = true;
+  }
+  
+  // Clear currently rendered dynamic cards
+  container.querySelectorAll('.assigned-vault-card').forEach(c => c.remove());
+
   let visibleCount = 0;
 
-  cards.forEach(card => {
-    const vaultId = card.getAttribute('data-vault-id');
-    const vault = VAULT_ITEMS.find(v => v.id === vaultId);
-
-    if (!vault) return;
-
-    // Check filter tab match
+  VAULT_ITEMS.forEach(vault => {
     const matchesFilter = (currentFilter === 'all') || vault.categories.includes(currentFilter);
-
-    // Check search term match
     const searchableText = `${vault.name} ${vault.owner} ${vault.email} ${vault.tags.join(' ')}`.toLowerCase();
     const matchesSearch = !currentSearch || searchableText.includes(currentSearch);
 
     if (matchesFilter && matchesSearch) {
-      card.style.display = 'flex';
       visibleCount++;
-    } else {
-      card.style.display = 'none';
+      
+      const card = document.createElement('div');
+      card.className = 'assigned-vault-card';
+      card.setAttribute('data-vault-id', vault.id);
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+
+      card.innerHTML = `
+        <div class="vault-col-primary">
+          <div class="vault-big-lock ${vault.lockColor || 'blue'}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </div>
+          <div class="vault-meta-info">
+            <span class="vault-card-title">${vault.name}</span>
+            <span class="vault-card-owner">Owner: ${vault.owner}</span>
+            <span class="vault-card-email">${vault.email}</span>
+            <div class="vault-card-tags">
+              ${vault.tags.map(t => `<span class="tag-badge ${t.toLowerCase()}">${t}</span>`).join('')}
+            </div>
+          </div>
+        </div>
+
+        <div class="vault-col-data">
+          <span class="vault-data-label">Assigned On</span>
+          <span class="vault-date-value">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            ${vault.assignedOn}
+          </span>
+        </div>
+
+        <div class="vault-col-data">
+          <span class="vault-data-label">Verification Status</span>
+          <span class="status-badge ${vault.verificationStatus.toLowerCase() === 'verified' ? 'verified' : 'pending'}"><span class="badge-dot"></span>${vault.verificationStatus}</span>
+        </div>
+
+        <div class="vault-col-data">
+          <span class="vault-data-label">Share Status</span>
+          <span class="status-badge ${vault.shareStatus.toLowerCase().includes('not') ? 'pending' : 'submitted'}"><span class="badge-dot"></span>${vault.shareStatus}</span>
+          <span class="vault-status-subtext">${vault.shareDate}</span>
+        </div>
+
+        <div class="vault-col-data">
+          <span class="vault-data-label">Release Status</span>
+          <span class="status-badge ${vault.releaseStatus.toLowerCase().includes('in progress') ? 'in-progress' : 'no-release'}"><span class="badge-dot"></span>${vault.releaseStatus}</span>
+          <span class="vault-status-subtext">${vault.releaseSub}</span>
+        </div>
+
+        <svg class="vault-chevron-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      `;
+      
+      container.insertBefore(card, emptyBox);
     }
   });
 
-  // Handle empty state visibility
   if (visibleCount === 0) {
     if (emptyBox) emptyBox.style.display = 'flex';
     if (currentSearch) {
@@ -128,13 +216,15 @@ function renderFilteredVaults() {
       if (emptySub) emptySub.textContent = 'Check back as vault owners update assignment conditions.';
     }
   } else {
-    // In normal view with items, show the default bottom reminder box
     if (emptyBox) {
       emptyBox.style.display = (currentFilter === 'all' && !currentSearch) ? 'flex' : 'none';
       if (emptyTitle) emptyTitle.textContent = 'No more vaults assigned (for now)';
       if (emptySub) emptySub.textContent = 'When a vault owner assigns you to a new vault, it will appear here.';
     }
   }
+  
+  // Re-bind clicks
+  initVaultCardClicks();
 }
 
 // Vault Card Click -> Modal Preview
