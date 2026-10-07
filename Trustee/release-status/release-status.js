@@ -3,10 +3,93 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  initTableFiltering();
-  initFaqAccordion();
-  updateMetricCounts();
+  if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+    window.AegisAPI.get('/trustee/releases/').then(data => {
+      window.RELEASE_DATA = data;
+      renderReleaseTable();
+      initTableFiltering();
+      initFaqAccordion();
+      updateMetricCounts();
+    }).catch(err => {
+      console.warn('Failed to load release status data:', err);
+      renderReleaseTable();
+      initTableFiltering();
+      initFaqAccordion();
+      updateMetricCounts();
+    });
+  } else {
+    window.RELEASE_DATA = [];
+    renderReleaseTable();
+    initTableFiltering();
+    initFaqAccordion();
+    updateMetricCounts();
+  }
 });
+
+function renderReleaseTable() {
+  const tableBody = document.getElementById('releaseTableBody');
+  if (!tableBody || !window.RELEASE_DATA) return;
+  tableBody.innerHTML = '';
+  
+  window.RELEASE_DATA.forEach((req, index) => {
+    const tr = document.createElement('tr');
+    tr.setAttribute('data-vault', req.vault_name || 'Vault');
+    tr.setAttribute('data-type', req.trigger_type || 'Unknown');
+    tr.setAttribute('data-status', req.release_status || 'Pending');
+    tr.setAttribute('data-id', req.release_id || '');
+    
+    let badgeClass = 'pending';
+    let badgeIcon = '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/>';
+    const statusLower = (req.release_status || '').toLowerCase();
+    if (statusLower.includes('review') || statusLower.includes('progress')) {
+      badgeClass = 'in-review';
+      badgeIcon = '<circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>';
+    } else if (statusLower.includes('approved') || statusLower.includes('released')) {
+      badgeClass = 'approved';
+      badgeIcon = '<circle cx="12" cy="12" r="10"/><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>';
+    } else if (statusLower.includes('denied') || statusLower.includes('fail')) {
+      badgeClass = 'denied';
+      badgeIcon = '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>';
+    }
+
+    const dateObj = req.created_at ? new Date(req.created_at) : new Date();
+    const dateStr = dateObj.toLocaleDateString();
+    const timeStr = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    tr.innerHTML = `
+      <td class="table-row-num">${index + 1}</td>
+      <td>
+        <div class="release-vault-cell">
+          <span class="vault-cell-icon blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </span>
+          <span>${req.vault_name || 'Vault'}</span>
+        </div>
+      </td>
+      <td>${req.trigger_type || 'Manual Release'}</td>
+      <td>
+        <div class="table-date-time">
+          <span class="date-main">${dateStr}</span>
+          <span class="time-sub">${timeStr}</span>
+        </div>
+      </td>
+      <td>
+        <span class="status-badge ${badgeClass}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">${badgeIcon}</svg>
+          <span>${req.release_status || 'Pending'}</span>
+        </span>
+      </td>
+      <td class="next-step-cell">${req.participant_status === 'pending' ? 'Awaiting your submission' : 'Verified'}</td>
+      <td style="text-align: right;">
+        <button type="button" class="view-details-link" onclick="openReleaseDetails('${req.release_id || 'REQ-000'}', '${req.vault_name || 'Vault'}', '${req.trigger_type || 'Release'}', '${dateStr}, ${timeStr}', '${req.release_status || 'Pending'}', 'Next step', 'Owner', '${req.collected_shares || 0} of ${req.required_shares || 0} Shares Received', 1)">
+          <span>View Details</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </td>
+    `;
+    tableBody.appendChild(tr);
+  });
+}
 
 /**
  * Filter Management & Live Search
