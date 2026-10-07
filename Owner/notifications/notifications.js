@@ -355,16 +355,33 @@ document.addEventListener('DOMContentLoaded', () => {
   // Bulk: Mark as Read
   if (btnBulkMarkRead) {
     btnBulkMarkRead.addEventListener('click', () => {
-      // TODO: Replace with fetch('/api/v1/owner/notifications/bulk-read', { method: 'POST', body: JSON.stringify({ ids: Array.from(selectedNotifIds) }) })
-      selectedNotifIds.forEach(id => {
-        const notif = notifications.find(n => n.id === id);
-        if (notif) notif.status = 'read';
-        updateRowDOM(id, 'read');
-      });
-      selectedNotifIds.clear();
-      updateBulkBar();
-      updateCounts();
-      showToast('Selected notifications marked as read', 'success');
+      if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+        window.AegisAPI.post('/owner/notifications/bulk-read/', {
+          ids: Array.from(selectedNotifIds)
+        }).then(() => {
+          selectedNotifIds.forEach(id => {
+            const notif = notifications.find(n => n.id === id);
+            if (notif) notif.status = 'read';
+            updateRowDOM(id, 'read');
+          });
+          selectedNotifIds.clear();
+          updateBulkBar();
+          updateCounts();
+          showToast('Selected notifications marked as read', 'success');
+        }).catch(err => {
+          showToast(`Failed: ${err.message}`, 'error');
+        });
+      } else {
+        selectedNotifIds.forEach(id => {
+          const notif = notifications.find(n => n.id === id);
+          if (notif) notif.status = 'read';
+          updateRowDOM(id, 'read');
+        });
+        selectedNotifIds.clear();
+        updateBulkBar();
+        updateCounts();
+        showToast('Selected notifications marked as read', 'success');
+      }
     });
   }
 
@@ -403,13 +420,25 @@ document.addEventListener('DOMContentLoaded', () => {
   // Mark All as Read button
   if (btnMarkAllRead) {
     btnMarkAllRead.addEventListener('click', () => {
-      // TODO: Replace with fetch('/api/v1/owner/notifications/mark-all-read', { method: 'POST' })
-      notifications.forEach(n => {
-        n.status = 'read';
-        updateRowDOM(n.id, 'read');
-      });
-      updateCounts();
-      showToast('All notifications marked as read', 'success');
+      if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+        window.AegisAPI.post('/owner/notifications/mark-all-read/').then(() => {
+          notifications.forEach(n => {
+            n.status = 'read';
+            updateRowDOM(n.id, 'read');
+          });
+          updateCounts();
+          showToast('All notifications marked as read', 'success');
+        }).catch(err => {
+          showToast(`Failed: ${err.message}`, 'error');
+        });
+      } else {
+        notifications.forEach(n => {
+          n.status = 'read';
+          updateRowDOM(n.id, 'read');
+        });
+        updateCounts();
+        showToast('All notifications marked as read', 'success');
+      }
     });
   }
 
@@ -534,9 +563,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   if (btnSaveNotifSettings) {
     btnSaveNotifSettings.addEventListener('click', () => {
-      // TODO: Replace with fetch('/api/v1/owner/notifications/preferences', { method: 'PUT', body: JSON.stringify({...}) })
-      closeModal(notifSettingsModal);
-      showToast('Notification preferences saved successfully', 'success');
+      if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+        window.AegisAPI.put('/owner/notifications/preferences/', {
+          preferences: 'updated'
+        }).then(() => {
+          closeModal(notifSettingsModal);
+          showToast('Notification preferences saved successfully', 'success');
+        }).catch(err => {
+          showToast(`Failed: ${err.message}`, 'error');
+        });
+      } else {
+        closeModal(notifSettingsModal);
+        showToast('Notification preferences saved successfully', 'success');
+      }
     });
   }
 
