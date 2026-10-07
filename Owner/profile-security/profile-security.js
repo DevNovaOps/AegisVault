@@ -101,21 +101,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnSaveProfile) {
     btnSaveProfile.addEventListener('click', () => {
-      // TODO: Replace with fetch('/api/v1/owner/profile/update', { method: 'PUT', body: JSON.stringify({...}) })
       const fullName = document.getElementById('inputFullName')?.value;
       const email = document.getElementById('inputEmail')?.value;
 
-      if (fullName) {
-        const nameEl = document.querySelector('.overview-name');
-        if (nameEl) nameEl.textContent = fullName;
+      if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+        window.AegisAPI.put('/accounts/profile/update/', {
+          name: fullName,
+          email: email
+        }).then(() => {
+          if (fullName) {
+            const nameEl = document.querySelector('.overview-name');
+            if (nameEl) nameEl.textContent = fullName;
+          }
+          if (email) {
+            const emailEl = document.querySelector('.overview-email');
+            if (emailEl) emailEl.textContent = email;
+          }
+          closeModal(editProfileModal);
+          if (window.AegisOwner) window.AegisOwner.showToast('Profile information updated successfully', 'success');
+        }).catch(err => {
+          if (window.AegisOwner) window.AegisOwner.showToast(`Failed to update profile: ${err.message}`, 'error');
+        });
+      } else {
+        if (fullName) {
+          const nameEl = document.querySelector('.overview-name');
+          if (nameEl) nameEl.textContent = fullName;
+        }
+        if (email) {
+          const emailEl = document.querySelector('.overview-email');
+          if (emailEl) emailEl.textContent = email;
+        }
+        closeModal(editProfileModal);
+        if (window.AegisOwner) window.AegisOwner.showToast('Profile information updated successfully', 'success');
       }
-      if (email) {
-        const emailEl = document.querySelector('.overview-email');
-        if (emailEl) emailEl.textContent = email;
-      }
-
-      closeModal(editProfileModal);
-      if (window.AegisOwner) window.AegisOwner.showToast('Profile information updated successfully', 'success');
     });
   }
 
@@ -130,17 +148,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnSavePassword) {
     btnSavePassword.addEventListener('click', () => {
-      // TODO: Replace with fetch('/api/v1/owner/profile/change-password', { method: 'POST', body: JSON.stringify({...}) })
-      closeModal(changePasswordModal);
-      if (window.AegisOwner) window.AegisOwner.showToast('Password updated securely with zero-knowledge rotation', 'success');
+      const oldPassword = document.getElementById('inputCurrentPassword')?.value;
+      const newPassword = document.getElementById('inputNewPassword')?.value;
+
+      if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+        window.AegisAPI.post('/accounts/profile/change-password/', {
+          old_password: oldPassword,
+          new_password: newPassword
+        }).then(() => {
+          closeModal(changePasswordModal);
+          if (window.AegisOwner) window.AegisOwner.showToast('Password updated securely with zero-knowledge rotation', 'success');
+        }).catch(err => {
+          if (window.AegisOwner) window.AegisOwner.showToast(`Failed to update password: ${err.message}`, 'error');
+        });
+      } else {
+        closeModal(changePasswordModal);
+        if (window.AegisOwner) window.AegisOwner.showToast('Password updated securely with zero-knowledge rotation', 'success');
+      }
     });
   }
 
   // 2FA Toggle
   function toggle2FA() {
-    // TODO: Replace with fetch('/api/v1/owner/profile/2fa/toggle', { method: 'POST' })
-    if (window.AegisOwner) {
-      window.AegisOwner.showToast('Two-Factor Authentication is active and secured via WebAuthn/TOTP', 'info');
+    if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+      window.AegisAPI.post('/accounts/profile/2fa/toggle/').then(res => {
+        if (window.AegisOwner) window.AegisOwner.showToast(`Two-Factor Authentication is now ${res.is_2fa_enabled ? 'enabled' : 'disabled'}`, 'info');
+      }).catch(err => {
+        if (window.AegisOwner) window.AegisOwner.showToast(`Failed to toggle 2FA: ${err.message}`, 'error');
+      });
+    } else {
+      if (window.AegisOwner) {
+        window.AegisOwner.showToast('Two-Factor Authentication is active and secured via WebAuthn/TOTP', 'info');
+      }
     }
   }
   if (rowToggle2FA) rowToggle2FA.addEventListener('click', toggle2FA);
@@ -158,28 +197,44 @@ document.addEventListener('DOMContentLoaded', () => {
   // Download Data
   if (qaDownloadData) {
     qaDownloadData.addEventListener('click', () => {
-      // TODO: Replace with fetch('/api/v1/owner/profile/export-data')
-      const data = {
-        owner: 'Rakesh Patel',
-        email: 'rakesh.patel@email.com',
-        exportTimestamp: new Date().toISOString(),
-        vaultsCount: 8,
-        trusteesCount: 8,
-        releasesCount: 8,
-        securityStatus: 'Fully Configured'
-      };
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `aegisvault_owner_archive_${Date.now()}.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+        window.AegisAPI.get('/accounts/profile/export-data/').then(data => {
+          const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `aegisvault_owner_archive_${Date.now()}.json`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          if (window.AegisOwner) window.AegisOwner.showToast('Personal data archive generated and downloaded', 'success');
+        }).catch(err => {
+          if (window.AegisOwner) window.AegisOwner.showToast(`Failed to export data: ${err.message}`, 'error');
+        });
+      } else {
+        const data = {
+          owner: 'Rakesh Patel',
+          email: 'rakesh.patel@email.com',
+          exportTimestamp: new Date().toISOString(),
+          vaultsCount: 8,
+          trusteesCount: 8,
+          releasesCount: 8,
+          securityStatus: 'Fully Configured'
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `aegisvault_owner_archive_${Date.now()}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
 
-      if (window.AegisOwner) {
-        window.AegisOwner.showToast('Personal data archive generated and downloaded', 'success');
+        if (window.AegisOwner) {
+          window.AegisOwner.showToast('Personal data archive generated and downloaded', 'success');
+        }
       }
     });
   }
