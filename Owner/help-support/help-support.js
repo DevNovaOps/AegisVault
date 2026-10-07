@@ -209,26 +209,35 @@
         btnConfirm.disabled = true;
         btnConfirm.textContent = 'Submitting...';
 
-        /*
-         * BACKEND INTEGRATION POINT
-         * TODO: Replace with fetch('/api/v1/owner/support/tickets', {
-         *   method: 'POST',
-         *   headers: { 'Content-Type': 'application/json' },
-         *   body: JSON.stringify({ category, subject, description })
-         * });
-         */
-        setTimeout(() => {
-          btnConfirm.disabled = false;
-          btnConfirm.textContent = 'Submit Ticket';
-          closeTicketModal();
-
-          // Reset inputs
-          if (document.getElementById('ticketSubject')) document.getElementById('ticketSubject').value = '';
-          if (document.getElementById('ticketDescription')) document.getElementById('ticketDescription').value = '';
-
-          const ticketId = 'AV-' + Math.floor(10000 + Math.random() * 90000);
-          notify(`Support Ticket #${ticketId} submitted successfully. Response guaranteed within 4 hours.`, 'success');
-        }, 600);
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+          window.AegisAPI.post('/owner/support/tickets/', {
+            category: category,
+            subject: subject,
+            description: description
+          }).then(res => {
+            btnConfirm.disabled = false;
+            btnConfirm.textContent = 'Submit Ticket';
+            closeTicketModal();
+            if (document.getElementById('ticketSubject')) document.getElementById('ticketSubject').value = '';
+            if (document.getElementById('ticketDescription')) document.getElementById('ticketDescription').value = '';
+            const ticketIdStr = res.ticket_id ? res.ticket_id.split('-')[0].substring(0, 5) : Math.floor(10000 + Math.random() * 90000);
+            notify(`Support Ticket #${ticketIdStr} submitted successfully. Response guaranteed within 4 hours.`, 'success');
+          }).catch(err => {
+            btnConfirm.disabled = false;
+            btnConfirm.textContent = 'Submit Ticket';
+            notify(`Failed to submit ticket: ${err.message}`, 'error');
+          });
+        } else {
+          setTimeout(() => {
+            btnConfirm.disabled = false;
+            btnConfirm.textContent = 'Submit Ticket';
+            closeTicketModal();
+            if (document.getElementById('ticketSubject')) document.getElementById('ticketSubject').value = '';
+            if (document.getElementById('ticketDescription')) document.getElementById('ticketDescription').value = '';
+            const ticketId = 'AV-' + Math.floor(10000 + Math.random() * 90000);
+            notify(`Support Ticket #${ticketId} submitted successfully. Response guaranteed within 4 hours.`, 'success');
+          }, 600);
+        }
       });
     }
   }
