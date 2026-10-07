@@ -10,7 +10,25 @@ document.addEventListener('DOMContentLoaded', () => {
   initActivityClicks();
   initMetricClicks();
   animateImpactRing();
+  fetchTrusteeDashboardData();
 });
+
+function fetchTrusteeDashboardData() {
+  if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+    window.AegisAPI.get('/trustee/dashboard/').then(data => {
+      const metricValues = document.querySelectorAll('.metric-value');
+      if (metricValues.length >= 4) {
+        metricValues[0].textContent = data.active_shares || '0';
+        metricValues[1].textContent = data.pending_invitations || '0';
+        // Pending Actions = invitations + releases
+        metricValues[2].textContent = (data.pending_invitations + data.pending_releases) || '0';
+        metricValues[3].textContent = data.completed_releases || '0';
+      }
+    }).catch(err => {
+      console.warn('Failed to load trustee dashboard data', err);
+    });
+  }
+}
 
 // Animate the circular progress ring
 function animateImpactRing() {
