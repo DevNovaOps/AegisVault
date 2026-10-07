@@ -800,40 +800,53 @@
         const sDate = schedParts.slice(0, 3).join(' ') || '15 Sep 2025';
         const sTime = schedParts.slice(3).join(' ') || '10:00 AM';
 
-        const newRelease = {
-          id: newId,
-          title: title,
-          subtext: 'Encrypted Release Workflow',
-          iconTheme: 'blue',
-          iconType: 'file-text',
-          vault: vault,
-          recipientType: 'single',
-          recipientName: recipient,
-          recipientEmail: `${recipient.toLowerCase().replace(/\s+/g, '.')}@email.com`,
-          avatarType: 'img',
-          avatar: '../assets/images/trustee-avatar-2.png',
-          trigger: trigger.split('(')[0].trim(),
-          triggerDetail: trigger.includes('(') ? '(' + trigger.split('(')[1] : '',
-          status: 'scheduled',
-          scheduledDate: sDate,
-          scheduledTime: sTime,
-          note: note
-        };
+        const vaultName = vaultSelect && vaultSelect.options ? vaultSelect.options[vaultSelect.selectedIndex]?.text : vault;
+        const triggerType = trigger.split('(')[0].trim();
+        const triggerDetail = trigger.includes('(') ? '(' + trigger.split('(')[1] : '';
 
-        // TODO: Replace with fetch('/api/v1/owner/releases', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify(newRelease)
-        // })
-
-        releases.unshift(newRelease);
-        updateKPIsAndDonut();
-        renderTable();
-
-        if (createReleaseModal) createReleaseModal.classList.remove('show', 'active');
-        document.body.style.overflow = '';
-        if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') {
-          window.AegisOwner.showToast(`Release workflow "${title}" scheduled successfully!`);
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+          window.AegisAPI.post('/owner/releases/', {
+            title: title,
+            vault_id: vault,
+            trigger_type: triggerType,
+            trigger_detail: triggerDetail,
+            status: 'scheduled',
+            note: note,
+            scheduled_at: new Date(sDate + ' ' + sTime).toISOString()
+          }).then(r => {
+            const newRelease = {
+              id: r.id, title: r.title, subtext: r.description || 'Encrypted Release Workflow',
+              iconTheme: 'blue', iconType: 'file-text', vault: vaultName,
+              recipientType: 'single', recipientName: recipient, recipientEmail: `${recipient.toLowerCase().replace(/ /g, '.')}@email.com`,
+              avatarType: 'img', avatar: '../assets/images/trustee-avatar-2.png',
+              trigger: r.trigger_type, triggerDetail: r.trigger_detail, status: r.status.toLowerCase(),
+              scheduledDate: r.scheduled_at ? new Date(r.scheduled_at).toLocaleDateString() : sDate,
+              scheduledTime: r.scheduled_at ? new Date(r.scheduled_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : sTime, note: r.note || ''
+            };
+            releases.unshift(newRelease);
+            updateKPIsAndDonut();
+            renderTable();
+            if (createReleaseModal) createReleaseModal.classList.remove('show', 'active');
+            document.body.style.overflow = '';
+            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Release workflow "${title}" scheduled successfully!`);
+          }).catch(err => {
+            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Failed to configure release: ${err.message}`, 'error');
+          });
+        } else {
+          const newRelease = {
+            id: newId, title: title, subtext: 'Encrypted Release Workflow',
+            iconTheme: 'blue', iconType: 'file-text', vault: vaultName,
+            recipientType: 'single', recipientName: recipient, recipientEmail: `${recipient.toLowerCase().replace(/ /g, '.')}@email.com`,
+            avatarType: 'img', avatar: '../assets/images/trustee-avatar-2.png',
+            trigger: triggerType, triggerDetail: triggerDetail, status: 'scheduled',
+            scheduledDate: sDate, scheduledTime: sTime, note: note
+          };
+          releases.unshift(newRelease);
+          updateKPIsAndDonut();
+          renderTable();
+          if (createReleaseModal) createReleaseModal.classList.remove('show', 'active');
+          document.body.style.overflow = '';
+          if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Release workflow "${title}" scheduled successfully!`);
         }
       });
     }
@@ -858,19 +871,26 @@
         }
         if (noteText) activeReleaseItem.note = noteText.value.trim();
 
-        // TODO: Replace with fetch('/api/v1/owner/releases/' + activeReleaseItem.id, {
-        //   method: 'PUT',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify(activeReleaseItem)
-        // })
-
-        updateKPIsAndDonut();
-        renderTable();
-
-        if (editReleaseModal) editReleaseModal.classList.remove('show', 'active');
-        document.body.style.overflow = '';
-        if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') {
-          window.AegisOwner.showToast(`Release parameters updated for "${activeReleaseItem.title}".`);
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+          window.AegisAPI.put(`/owner/releases/${activeReleaseItem.id}/`, {
+            trigger_type: activeReleaseItem.trigger,
+            trigger_detail: activeReleaseItem.triggerDetail,
+            note: activeReleaseItem.note
+          }).then(() => {
+            updateKPIsAndDonut();
+            renderTable();
+            if (editReleaseModal) editReleaseModal.classList.remove('show', 'active');
+            document.body.style.overflow = '';
+            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Release parameters updated for "${activeReleaseItem.title}".`);
+          }).catch(err => {
+            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Failed to update release: ${err.message}`, 'error');
+          });
+        } else {
+          updateKPIsAndDonut();
+          renderTable();
+          if (editReleaseModal) editReleaseModal.classList.remove('show', 'active');
+          document.body.style.overflow = '';
+          if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Release parameters updated for "${activeReleaseItem.title}".`);
         }
       });
     }
@@ -879,16 +899,24 @@
     if (btnCancelReleaseAction) {
       btnCancelReleaseAction.addEventListener('click', function() {
         if (!activeReleaseItem) return;
-
-        // TODO: Replace with fetch('/api/v1/owner/releases/' + activeReleaseItem.id + '/cancel', { method: 'POST' })
-        activeReleaseItem.status = 'cancelled';
-        updateKPIsAndDonut();
-        renderTable();
-
-        if (editReleaseModal) editReleaseModal.classList.remove('show', 'active');
-        document.body.style.overflow = '';
-        if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') {
-          window.AegisOwner.showToast(`Release "${activeReleaseItem.title}" has been cancelled.`, 'warning');
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+          window.AegisAPI.post(`/owner/releases/${activeReleaseItem.id}/cancel/`).then(() => {
+            activeReleaseItem.status = 'cancelled';
+            updateKPIsAndDonut();
+            renderTable();
+            if (editReleaseModal) editReleaseModal.classList.remove('show', 'active');
+            document.body.style.overflow = '';
+            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Release "${activeReleaseItem.title}" has been cancelled.`, 'warning');
+          }).catch(err => {
+            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Failed to cancel release: ${err.message}`, 'error');
+          });
+        } else {
+          activeReleaseItem.status = 'cancelled';
+          updateKPIsAndDonut();
+          renderTable();
+          if (editReleaseModal) editReleaseModal.classList.remove('show', 'active');
+          document.body.style.overflow = '';
+          if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Release "${activeReleaseItem.title}" has been cancelled.`, 'warning');
         }
       });
     }
@@ -908,8 +936,43 @@
   // =========================================================================
   document.addEventListener('DOMContentLoaded', function() {
     initEvents();
-    updateKPIsAndDonut();
-    renderTable();
+    if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+      window.AegisAPI.get('/owner/vaults/').then(vs => {
+        const sel = document.getElementById('newReleaseVault');
+        if (sel) sel.innerHTML = vs.map(v => `<option value="${v.id}">${v.name}</option>`).join('');
+      }).catch(e=>{});
+
+      window.AegisAPI.get('/owner/releases/').then(data => {
+        releases = data.map(r => ({
+          id: r.id,
+          title: r.title,
+          subtext: r.description || 'Encrypted Release Workflow',
+          iconTheme: 'blue',
+          iconType: 'file-text',
+          vault: r.vault_name,
+          recipientType: 'single',
+          recipientName: r.participants && r.participants.length > 0 ? r.participants[0].trustee_name : 'No participants',
+          recipientEmail: r.participants && r.participants.length > 0 ? r.participants[0].trustee_email : '',
+          avatarType: 'img',
+          avatar: '../assets/images/trustee-avatar-2.png',
+          trigger: r.trigger_type,
+          triggerDetail: r.trigger_detail,
+          status: r.status.toLowerCase(),
+          scheduledDate: r.scheduled_at ? new Date(r.scheduled_at).toLocaleDateString() : '-',
+          scheduledTime: r.scheduled_at ? new Date(r.scheduled_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
+          note: r.note || ''
+        }));
+        updateKPIsAndDonut();
+        renderTable();
+      }).catch(err => {
+        console.error('Failed to load releases', err);
+        updateKPIsAndDonut();
+        renderTable();
+      });
+    } else {
+      updateKPIsAndDonut();
+      renderTable();
+    }
   });
 
 })();
