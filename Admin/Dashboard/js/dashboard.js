@@ -25,6 +25,7 @@ const AegisDashboard = {
 
         this.initSearch();
         this.initReportModal();
+        this.fetchAdminStats();
 
         // 2. Initialize Data Tables & Sections
         this.renderNotifications();
@@ -40,6 +41,28 @@ const AegisDashboard = {
 
     isDark() {
         return window.AegisAdminCommon ? AegisAdminCommon.isDark() : document.body.classList.contains('dark-theme');
+    },
+
+    fetchAdminStats() {
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+            window.AegisAPI.get('/admin/dashboard/stats/').then(data => {
+                const map = {
+                    'metric-card-users': data.total_users,
+                    'metric-card-trustees': data.active_trustees,
+                    'metric-card-vaults': data.active_vaults,
+                    'metric-card-health': data.system_health === 'Healthy' ? '100%' : 'Degraded'
+                };
+                for (const [id, value] of Object.entries(map)) {
+                    const card = document.getElementById(id);
+                    if (card) {
+                        const numDisplay = card.querySelector('.metric-number-display');
+                        if (numDisplay) numDisplay.textContent = value;
+                    }
+                }
+            }).catch(err => {
+                console.warn('Failed to fetch admin stats:', err);
+            });
+        }
     },
 
     /* =========================================================================
