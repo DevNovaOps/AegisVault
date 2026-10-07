@@ -831,56 +831,54 @@
         const name = nameInput ? nameInput.value.trim() : '';
         const email = emailInput ? emailInput.value.trim() : '';
         const rel = relInput ? relInput.value : 'Friend';
-        const vault = vaultInput ? vaultInput.value : 'Family Vault';
+        const vault_id = vaultInput ? vaultInput.value : 'Family Vault';
+        const vaultName = vaultInput && vaultInput.options ? vaultInput.options[vaultInput.selectedIndex]?.text : vault_id;
         const note = noteInput ? noteInput.value.trim() : '';
 
         if (!name || !email) return;
 
-        // Generate initials
-        const parts = name.split(' ');
-        const initials = parts.length > 1
-          ? (parts[0][0] + parts[1][0]).toUpperCase()
-          : name.slice(0, 2).toUpperCase();
-
-        const newId = 'inv-' + Date.now();
-        const now = new Date();
-        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        const sentDate = `${String(now.getDate()).padStart(2, '0')} ${months[now.getMonth()]} ${now.getFullYear()}`;
-        const sentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-        const newInvite = {
-          id: newId,
-          name: name,
-          email: email,
-          rel: rel,
-          relClass: rel.toLowerCase().replace(/\s+/g, '-'),
-          vault: vault,
-          status: 'pending',
-          sentDate: sentDate,
-          sentTime: sentTime,
-          initials: initials,
-          avatarType: 'initials',
-          avatarClass: 'avatar-gradient-rk',
-          expiryDays: 14,
-          note: note
-        };
-
-        // TODO: Replace with fetch('/api/v1/owner/invitations', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify(newInvite)
-        // })
-
-        invitations.unshift(newInvite);
-        updateKPIsAndDonut();
-        renderTable();
-
-        if (sendInviteModal) {
-          sendInviteModal.classList.remove('show', 'active');
-          document.body.style.overflow = '';
-        }
-        if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') {
-          window.AegisOwner.showToast(`Cryptographic invitation dispatched to ${name} (${email})!`);
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+          window.AegisAPI.post('/owner/invitations/', {
+            invitee_name: name,
+            invitee_email: email,
+            relationship: rel,
+            vault_id: vault_id,
+            note: note
+          }).then(inv => {
+            const parts = name.split(' ');
+            const initials = parts.length > 1 ? (parts[0][0] + parts[1][0]).toUpperCase() : name.slice(0, 2).toUpperCase();
+            const newInvite = {
+              id: inv.id, name: name, email: email, rel: rel, relClass: rel.toLowerCase().replace(/ /g, '-'),
+              vault: vaultName, status: 'pending', sentDate: new Date(inv.sent_at).toLocaleDateString(), sentTime: new Date(inv.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              initials: initials, avatarType: 'initials', avatarClass: 'avatar-gradient-rk', expiryDays: 14, note: note
+            };
+            invitations.unshift(newInvite);
+            updateKPIsAndDonut();
+            renderTable();
+            if (sendInviteModal) {
+              sendInviteModal.classList.remove('show', 'active');
+              document.body.style.overflow = '';
+            }
+            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Cryptographic invitation dispatched to ${name} (${email})!`);
+          }).catch(err => {
+            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Failed to send invitation: ${err.message}`, 'error');
+          });
+        } else {
+          const parts = name.split(' ');
+          const initials = parts.length > 1 ? (parts[0][0] + parts[1][0]).toUpperCase() : name.slice(0, 2).toUpperCase();
+          const newInvite = {
+            id: 'inv-' + Date.now(), name: name, email: email, rel: rel, relClass: rel.toLowerCase().replace(/ /g, '-'),
+            vault: vaultName, status: 'pending', sentDate: new Date().toLocaleDateString(), sentTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            initials: initials, avatarType: 'initials', avatarClass: 'avatar-gradient-rk', expiryDays: 14, note: note
+          };
+          invitations.unshift(newInvite);
+          updateKPIsAndDonut();
+          renderTable();
+          if (sendInviteModal) {
+            sendInviteModal.classList.remove('show', 'active');
+            document.body.style.overflow = '';
+          }
+          if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Cryptographic invitation dispatched to ${name} (${email})!`);
         }
       });
     }
@@ -889,43 +887,37 @@
     if (btnConfirmResend) {
       btnConfirmResend.addEventListener('click', function() {
         if (!activeCandidate) return;
-
-        // TODO: Replace with fetch('/api/v1/owner/invitations/' + activeCandidate.id + '/resend', {
-        //   method: 'POST'
-        // })
-
-        if (activeCandidate.status === 'expired') {
-          activeCandidate.status = 'pending';
-          const now = new Date();
-          const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-          activeCandidate.sentDate = `${String(now.getDate()).padStart(2, '0')} ${months[now.getMonth()]} ${now.getFullYear()}`;
-          activeCandidate.sentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
+        const endpoint = activeCandidate.status === 'expired' ? 'renew' : 'resend';
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+          window.AegisAPI.post(`/owner/invitations/${activeCandidate.id}/${endpoint}/`).then(() => {
+            if (activeCandidate.status === 'expired') {
+              activeCandidate.status = 'pending';
+            }
+            activeCandidate.sentDate = new Date().toLocaleDateString();
+            activeCandidate.sentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            updateKPIsAndDonut();
+            renderTable();
+            if (resendInviteModal) {
+              resendInviteModal.classList.remove('show', 'active');
+              document.body.style.overflow = '';
+            }
+            window.AegisOwner?.showToast(endpoint === 'renew' ? `Invitation renewed for ${activeCandidate.name}!` : `Reminder sent to ${activeCandidate.name}!`);
+          }).catch(err => {
+            window.AegisOwner?.showToast(`Failed to ${endpoint} invitation: ${err.message}`, 'error');
+          });
+        } else {
+          if (activeCandidate.status === 'expired') {
+            activeCandidate.status = 'pending';
+          }
+          activeCandidate.sentDate = new Date().toLocaleDateString();
+          activeCandidate.sentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
           updateKPIsAndDonut();
           renderTable();
-
           if (resendInviteModal) {
             resendInviteModal.classList.remove('show', 'active');
             document.body.style.overflow = '';
           }
-          if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') {
-            window.AegisOwner.showToast(`Invitation renewed! Fresh 14-day link dispatched to ${activeCandidate.email}.`);
-          }
-        } else {
-          // Normal resend
-          const now = new Date();
-          const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-          activeCandidate.sentDate = `${String(now.getDate()).padStart(2, '0')} ${months[now.getMonth()]} ${now.getFullYear()}`;
-          activeCandidate.sentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-          renderTable();
-          if (resendInviteModal) {
-            resendInviteModal.classList.remove('show', 'active');
-            document.body.style.overflow = '';
-          }
-          if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') {
-            window.AegisOwner.showToast(`Fresh cryptographic invitation link sent to ${activeCandidate.email}.`);
-          }
+          window.AegisOwner?.showToast(endpoint === 'renew' ? `Invitation renewed for ${activeCandidate.name}!` : `Reminder sent to ${activeCandidate.name}!`);
         }
       });
     }
@@ -946,8 +938,41 @@
   // =========================================================================
   document.addEventListener('DOMContentLoaded', function() {
     initEvents();
-    updateKPIsAndDonut();
-    renderTable();
+    if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+      window.AegisAPI.get('/owner/vaults/').then(vs => {
+        const sel = document.getElementById('newInviteVault');
+        if (sel) sel.innerHTML = vs.map(v => `<option value="${v.id}">${v.name}</option>`).join('');
+      }).catch(e=>{});
+
+      window.AegisAPI.get('/owner/invitations/').then(data => {
+        invitations = data.map(inv => ({
+          id: inv.id,
+          name: inv.invitee_name,
+          email: inv.invitee_email,
+          rel: inv.relationship,
+          relClass: (inv.relationship || '').toLowerCase().replace(' ', '-'),
+          vault: inv.vault_name,
+          status: inv.status.toLowerCase(),
+          sentDate: new Date(inv.sent_at).toLocaleDateString(),
+          sentTime: new Date(inv.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          avatar: '../assets/images/trustee-avatar-1.png',
+          avatarType: 'img',
+          expiryDays: inv.expiry_days || 14,
+          isRecent: true,
+          note: inv.note || '',
+          acceptedDate: inv.accepted_at ? new Date(inv.accepted_at).toLocaleString() : undefined
+        }));
+        updateKPIsAndDonut();
+        renderTable();
+      }).catch(err => {
+        console.error('Failed to load invitations', err);
+        updateKPIsAndDonut();
+        renderTable();
+      });
+    } else {
+      updateKPIsAndDonut();
+      renderTable();
+    }
   });
 
 })();
