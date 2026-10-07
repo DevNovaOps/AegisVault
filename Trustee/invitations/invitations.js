@@ -5,12 +5,46 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+    window.AegisAPI.get('/trustee/invitations/').then(data => {
+      INVITATIONS_DATA = data.map(inv => ({
+        id: inv.id,
+        vaultName: inv.vault?.name || 'Vault',
+        ownerName: inv.owner?.name || 'Owner',
+        ownerRole: 'Owner',
+        ownerEmail: inv.owner?.email || '',
+        message: inv.note || '',
+        invitedOn: new Date(inv.sent_at).toLocaleDateString() + ', ' + new Date(inv.sent_at).toLocaleTimeString(),
+        expiresIn: inv.expires_at ? new Date(inv.expires_at).toLocaleDateString() : null,
+        respondedOn: inv.accepted_at ? new Date(inv.accepted_at).toLocaleDateString() : (inv.declined_at ? new Date(inv.declined_at).toLocaleDateString() : null),
+        status: inv.status.charAt(0).toUpperCase() + inv.status.slice(1),
+        relationship: inv.relationship || 'Unknown',
+        avatarInitials: inv.owner?.name ? inv.owner.name.substring(0, 2).toUpperCase() : 'U',
+        iconType: inv.status === 'pending' ? 'shield' : (inv.status === 'accepted' ? 'check' : 'cross'),
+        iconColor: inv.status === 'pending' ? 'amber' : (inv.status === 'accepted' ? 'green' : 'red'),
+        rawDate: new Date(inv.sent_at),
+        expireDays: inv.expires_at ? Math.ceil((new Date(inv.expires_at) - new Date()) / (1000 * 60 * 60 * 24)) : 999
+      }));
+      if (INVITATIONS_DATA.length > 0) {
+        selectedInvitationId = INVITATIONS_DATA[0].id;
+      }
+      finishInit();
+    }).catch(err => {
+      console.warn('Failed to load invitations:', err);
+      finishInit();
+    });
+  } else {
+    finishInit();
+  }
+});
+
+function finishInit() {
   initInvitationsState();
   initFilterTabs();
   initSort();
   initSearch();
   initPanelActions();
-});
+}
 
 // Mock Invitation Data
 let INVITATIONS_DATA = [
@@ -384,16 +418,30 @@ window.acceptInvitation = function (id) {
   const inv = INVITATIONS_DATA.find(i => i.id === id);
   if (!inv) return;
 
-  inv.status = 'Accepted';
-  inv.respondedOn = 'Just now';
-  inv.expiresIn = null;
-  inv.iconType = 'check';
-  inv.iconColor = 'green';
+  if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+    window.AegisAPI.post(`/trustee/invitations/${id}/accept/`).then(() => {
+      inv.status = 'Accepted';
+      inv.respondedOn = 'Just now';
+      inv.expiresIn = null;
+      inv.iconType = 'check';
+      inv.iconColor = 'green';
+      updateTabBadgeCounts();
+      renderInvitationsList();
+      renderSelectedDetailsPanel();
+      window.showToast(`Accepted trustee invitation for "${inv.vaultName}". It is now linked to your Assigned Vaults!`);
+    }).catch(err => window.showToast(`Error accepting invitation: ${err.message}`, 'error'));
+  } else {
+    inv.status = 'Accepted';
+    inv.respondedOn = 'Just now';
+    inv.expiresIn = null;
+    inv.iconType = 'check';
+    inv.iconColor = 'green';
 
-  updateTabBadgeCounts();
-  renderInvitationsList();
-  renderSelectedDetailsPanel();
-  window.showToast(`Accepted trustee invitation for "${inv.vaultName}". It is now linked to your Assigned Vaults!`);
+    updateTabBadgeCounts();
+    renderInvitationsList();
+    renderSelectedDetailsPanel();
+    window.showToast(`Accepted trustee invitation for "${inv.vaultName}". It is now linked to your Assigned Vaults!`);
+  }
 };
 
 // Decline Invitation Action
@@ -401,16 +449,30 @@ window.declineInvitation = function (id) {
   const inv = INVITATIONS_DATA.find(i => i.id === id);
   if (!inv) return;
 
-  inv.status = 'Declined';
-  inv.respondedOn = 'Just now';
-  inv.expiresIn = null;
-  inv.iconType = 'cross';
-  inv.iconColor = 'red';
+  if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+    window.AegisAPI.post(`/trustee/invitations/${id}/decline/`).then(() => {
+      inv.status = 'Declined';
+      inv.respondedOn = 'Just now';
+      inv.expiresIn = null;
+      inv.iconType = 'cross';
+      inv.iconColor = 'red';
+      updateTabBadgeCounts();
+      renderInvitationsList();
+      renderSelectedDetailsPanel();
+      window.showToast(`Declined invitation for "${inv.vaultName}".`);
+    }).catch(err => window.showToast(`Error declining invitation: ${err.message}`, 'error'));
+  } else {
+    inv.status = 'Declined';
+    inv.respondedOn = 'Just now';
+    inv.expiresIn = null;
+    inv.iconType = 'cross';
+    inv.iconColor = 'red';
 
-  updateTabBadgeCounts();
-  renderInvitationsList();
-  renderSelectedDetailsPanel();
-  window.showToast(`Declined invitation for "${inv.vaultName}".`);
+    updateTabBadgeCounts();
+    renderInvitationsList();
+    renderSelectedDetailsPanel();
+    window.showToast(`Declined invitation for "${inv.vaultName}".`);
+  }
 };
 
 // Panel actions bindings
