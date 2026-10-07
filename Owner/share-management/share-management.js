@@ -448,11 +448,18 @@
     if (btnConfirmAction) {
       btnConfirmAction.textContent = 'Dispatch Reminder';
       btnConfirmAction.onclick = function() {
-        // TODO: Replace with fetch('/api/v1/owner/shares/' + item.id + '/remind', { method: 'POST' })
-        if (confirmActionModal) confirmActionModal.classList.remove('show', 'active');
-        document.body.style.overflow = '';
-        if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') {
-          window.AegisOwner.showToast(`Reminder sent to ${item.trusteeName} (${item.trusteeEmail})!`);
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+          window.AegisAPI.post(`/owner/shares/${item.id}/remind/`).then(() => {
+            if (confirmActionModal) confirmActionModal.classList.remove('show', 'active');
+            document.body.style.overflow = '';
+            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Reminder sent to ${item.trusteeName} (${item.trusteeEmail})!`);
+          }).catch(err => {
+            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Failed to send reminder: ${err.message}`, 'error');
+          });
+        } else {
+          if (confirmActionModal) confirmActionModal.classList.remove('show', 'active');
+          document.body.style.overflow = '';
+          if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Reminder sent to ${item.trusteeName} (${item.trusteeEmail})!`);
         }
       };
     }
@@ -480,15 +487,24 @@
     if (btnConfirmAction) {
       btnConfirmAction.textContent = 'Restore Access';
       btnConfirmAction.onclick = function() {
-        // TODO: Replace with fetch('/api/v1/owner/shares/' + item.id + '/restore', { method: 'POST' })
-        item.status = 'active';
-        updateKPIs();
-        renderTable();
-
-        if (confirmActionModal) confirmActionModal.classList.remove('show', 'active');
-        document.body.style.overflow = '';
-        if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') {
-          window.AegisOwner.showToast(`Access restored for ${item.trusteeName} on ${item.vault}!`);
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+          window.AegisAPI.post(`/owner/shares/${item.id}/restore/`).then(res => {
+            item.status = 'active';
+            updateKPIs();
+            renderTable();
+            if (confirmActionModal) confirmActionModal.classList.remove('show', 'active');
+            document.body.style.overflow = '';
+            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Access restored for ${item.trusteeName} on ${item.vault}!`);
+          }).catch(err => {
+            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Failed to restore access: ${err.message}`, 'error');
+          });
+        } else {
+          item.status = 'active';
+          updateKPIs();
+          renderTable();
+          if (confirmActionModal) confirmActionModal.classList.remove('show', 'active');
+          document.body.style.overflow = '';
+          if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Access restored for ${item.trusteeName} on ${item.vault}!`);
         }
       };
     }
@@ -690,54 +706,72 @@
         const expirySelect = document.getElementById('shareExpiry');
         const noteInput = document.getElementById('shareNote');
 
-        const vault = vaultSelect ? vaultSelect.value : 'Personal Vault';
+        const vaultVal = vaultSelect ? vaultSelect.value : 'Personal Vault';
+        const vaultName = vaultSelect ? vaultSelect.options[vaultSelect.selectedIndex].text : 'Personal Vault';
+        
         const trusteeText = trusteeSelect ? trusteeSelect.options[trusteeSelect.selectedIndex].text : '';
-        const trusteeName = trusteeSelect ? trusteeSelect.value : 'Sneha Mehta';
+        const trusteeOpt = trusteeSelect ? trusteeSelect.options[trusteeSelect.selectedIndex] : null;
+        const trusteeName = trusteeOpt && trusteeOpt.dataset.name ? trusteeOpt.dataset.name : (trusteeSelect ? trusteeSelect.value : 'Sneha Mehta');
+        
         const access = accessSelect ? accessSelect.value : 'View & Download';
         const expiry = expirySelect ? expirySelect.value : 'Never';
         const note = noteInput ? noteInput.value.trim() : '';
 
-        // Extract email if formatted like Name (email)
         const emailMatch = trusteeText.match(/\(([^)]+)\)/);
-        const email = emailMatch ? emailMatch[1] : `${trusteeName.toLowerCase().replace(/\s+/g, '.')}@email.com`;
+        const email = (trusteeOpt && trusteeOpt.dataset.email) ? trusteeOpt.dataset.email : (emailMatch ? emailMatch[1] : `${trusteeName.toLowerCase().replace(/\s+/g, '.')}@email.com`);
 
-        const newId = 'share-' + Date.now();
-        const now = new Date();
-        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        const sharedDate = `${String(now.getDate()).padStart(2, '0')} ${months[now.getMonth()]} ${now.getFullYear()}`;
-        const sharedTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-        const newShare = {
-          id: newId,
-          vault: vault,
-          vaultDesc: 'Encrypted assets...',
-          vaultThumb: '../assets/images/vault-thumb-1.png',
-          trusteeName: trusteeName,
-          trusteeEmail: email,
-          avatarType: 'img',
-          avatar: '../assets/images/trustee-avatar-2.png',
-          accessLevel: access,
-          status: 'active',
-          sharedDate: sharedDate,
-          sharedTime: sharedTime,
-          expiresOn: expiry === 'Never' ? 'Never' : '30 Days',
-          note: note
-        };
-
-        // TODO: Replace with fetch('/api/v1/owner/shares', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify(newShare)
-        // })
-
-        shares.unshift(newShare);
-        updateKPIs();
-        renderTable();
-
-        if (shareVaultModal) shareVaultModal.classList.remove('show', 'active');
-        document.body.style.overflow = '';
-        if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') {
-          window.AegisOwner.showToast(`Shared ${vault} with ${trusteeName} successfully!`);
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+          const payload = {
+            vault_id: vaultVal,
+            trustee_email: email,
+            access_level: access,
+            note: note,
+            expires_at: expiry === 'Never' ? null : new Date(Date.now() + 30*24*60*60*1000).toISOString()
+          };
+          window.AegisAPI.post('/owner/shares/', payload).then(s => {
+            const newShare = {
+              id: s.id,
+              vault: s.vault_name,
+              vaultDesc: s.vault_description || '',
+              vaultThumb: '../assets/images/vault-thumb-1.png',
+              trusteeName: s.trustee_name,
+              trusteeEmail: s.trustee_email,
+              avatarType: 'img',
+              avatar: '../assets/images/trustee-avatar-2.png',
+              accessLevel: s.access_level,
+              status: s.status,
+              sharedDate: new Date(s.created_at).toLocaleDateString(),
+              sharedTime: new Date(s.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              expiresOn: s.expires_at ? new Date(s.expires_at).toLocaleDateString() : 'Never',
+              note: s.note || ''
+            };
+            shares.unshift(newShare);
+            updateKPIs();
+            renderTable();
+            if (shareVaultModal) shareVaultModal.classList.remove('show', 'active');
+            document.body.style.overflow = '';
+            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Shared ${s.vault_name} with ${s.trustee_name} successfully!`);
+          }).catch(err => {
+            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Failed to share vault: ${err.message}`, 'error');
+          });
+        } else {
+          const newId = 'share-' + Date.now();
+          const now = new Date();
+          const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+          const sharedDate = `${String(now.getDate()).padStart(2, '0')} ${months[now.getMonth()]} ${now.getFullYear()}`;
+          const sharedTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const newShare = {
+            id: newId, vault: vaultVal, vaultDesc: 'Encrypted assets...', vaultThumb: '../assets/images/vault-thumb-1.png',
+            trusteeName: trusteeName, trusteeEmail: email, avatarType: 'img', avatar: '../assets/images/trustee-avatar-2.png',
+            accessLevel: access, status: 'active', sharedDate: sharedDate, sharedTime: sharedTime,
+            expiresOn: expiry === 'Never' ? 'Never' : '30 Days', note: note
+          };
+          shares.unshift(newShare);
+          updateKPIs();
+          renderTable();
+          if (shareVaultModal) shareVaultModal.classList.remove('show', 'active');
+          document.body.style.overflow = '';
+          if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Shared ${vaultVal} with ${trusteeName} successfully!`);
         }
       });
     }
@@ -752,23 +786,36 @@
         const expirySelect = document.getElementById('editExpirySelect');
         const noteInput = document.getElementById('editShareNote');
 
-        if (accessSelect) activeShareItem.accessLevel = accessSelect.value;
-        if (expirySelect) activeShareItem.expiresOn = expirySelect.value;
-        if (noteInput) activeShareItem.note = noteInput.value.trim();
+        const newAccess = accessSelect ? accessSelect.value : activeShareItem.accessLevel;
+        const newExpiry = expirySelect ? expirySelect.value : activeShareItem.expiresOn;
+        const newNote = noteInput ? noteInput.value.trim() : activeShareItem.note;
 
-        // TODO: Replace with fetch('/api/v1/owner/shares/' + activeShareItem.id, {
-        //   method: 'PUT',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify(activeShareItem)
-        // })
-
-        updateKPIs();
-        renderTable();
-
-        if (editShareModal) editShareModal.classList.remove('show', 'active');
-        document.body.style.overflow = '';
-        if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') {
-          window.AegisOwner.showToast(`Share permissions updated for ${activeShareItem.trusteeName}.`);
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+          window.AegisAPI.put(`/owner/shares/${activeShareItem.id}/`, {
+            access_level: newAccess,
+            note: newNote,
+            expires_at: newExpiry === 'Never' ? null : new Date(Date.now() + 30*24*60*60*1000).toISOString()
+          }).then(s => {
+            activeShareItem.accessLevel = s.access_level;
+            activeShareItem.expiresOn = s.expires_at ? new Date(s.expires_at).toLocaleDateString() : 'Never';
+            activeShareItem.note = s.note;
+            updateKPIs();
+            renderTable();
+            if (editShareModal) editShareModal.classList.remove('show', 'active');
+            document.body.style.overflow = '';
+            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Share permissions updated for ${activeShareItem.trusteeName}.`);
+          }).catch(err => {
+            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Failed to update share: ${err.message}`, 'error');
+          });
+        } else {
+          activeShareItem.accessLevel = newAccess;
+          activeShareItem.expiresOn = newExpiry;
+          activeShareItem.note = newNote;
+          updateKPIs();
+          renderTable();
+          if (editShareModal) editShareModal.classList.remove('show', 'active');
+          document.body.style.overflow = '';
+          if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Share permissions updated for ${activeShareItem.trusteeName}.`);
         }
       });
     }
@@ -777,16 +824,24 @@
     if (btnRevokeAccess) {
       btnRevokeAccess.addEventListener('click', function() {
         if (!activeShareItem) return;
-
-        // TODO: Replace with fetch('/api/v1/owner/shares/' + activeShareItem.id + '/revoke', { method: 'POST' })
-        activeShareItem.status = 'revoked';
-        updateKPIs();
-        renderTable();
-
-        if (editShareModal) editShareModal.classList.remove('show', 'active');
-        document.body.style.overflow = '';
-        if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') {
-          window.AegisOwner.showToast(`Access to ${activeShareItem.vault} revoked for ${activeShareItem.trusteeName}.`, 'warning');
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+          window.AegisAPI.post(`/owner/shares/${activeShareItem.id}/revoke/`).then(() => {
+            activeShareItem.status = 'revoked';
+            updateKPIs();
+            renderTable();
+            if (editShareModal) editShareModal.classList.remove('show', 'active');
+            document.body.style.overflow = '';
+            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Access to ${activeShareItem.vault} revoked for ${activeShareItem.trusteeName}.`, 'warning');
+          }).catch(err => {
+            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Failed to revoke access: ${err.message}`, 'error');
+          });
+        } else {
+          activeShareItem.status = 'revoked';
+          updateKPIs();
+          renderTable();
+          if (editShareModal) editShareModal.classList.remove('show', 'active');
+          document.body.style.overflow = '';
+          if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Access to ${activeShareItem.vault} revoked for ${activeShareItem.trusteeName}.`, 'warning');
         }
       });
     }
@@ -807,8 +862,44 @@
   // =========================================================================
   document.addEventListener('DOMContentLoaded', function() {
     initEvents();
-    updateKPIs();
-    renderTable();
+    if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+      window.AegisAPI.get('/owner/vaults/').then(vs => {
+        const sel = document.getElementById('shareTargetVault');
+        if(sel) sel.innerHTML = vs.map(v => `<option value="${v.id}">${v.name}</option>`).join('');
+      }).catch(e=>{});
+      window.AegisAPI.get('/owner/trustees/').then(ts => {
+        const sel = document.getElementById('shareTargetTrustee');
+        if(sel) sel.innerHTML = ts.map(t => `<option value="${t.id}" data-email="${t.email}" data-name="${t.name}">${t.name} (${t.email})</option>`).join('');
+      }).catch(e=>{});
+
+      window.AegisAPI.get('/owner/shares/').then(data => {
+        shares = data.map(s => ({
+          id: s.id,
+          vault: s.vault_name,
+          vaultDesc: s.vault_description || '',
+          vaultThumb: '../assets/images/vault-thumb-1.png',
+          trusteeName: s.trustee_name,
+          trusteeEmail: s.trustee_email,
+          avatarType: 'img',
+          avatar: '../assets/images/trustee-avatar-2.png',
+          accessLevel: s.access_level,
+          status: s.status,
+          sharedDate: new Date(s.created_at).toLocaleDateString(),
+          sharedTime: new Date(s.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          expiresOn: s.expires_at ? new Date(s.expires_at).toLocaleDateString() : 'Never',
+          note: s.note || ''
+        }));
+        updateKPIs();
+        renderTable();
+      }).catch(err => {
+        console.error('Failed to load shares', err);
+        updateKPIs();
+        renderTable();
+      });
+    } else {
+      updateKPIs();
+      renderTable();
+    }
   });
 
 })();
