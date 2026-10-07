@@ -474,18 +474,39 @@
 
     menu.querySelector('[data-action="remind"]').addEventListener('click', () => {
       closeTrusteeContextMenu();
-      window.AegisOwner?.showToast(`Verification reminder dispatched to ${t.email}!`, 'success');
+      if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+        window.AegisAPI.post(`/owner/trustees/${t.id}/remind/`).then(() => {
+          window.AegisOwner?.showToast(`Verification reminder dispatched to ${t.email}!`, 'success');
+        }).catch(err => {
+          window.AegisOwner?.showToast(`Failed to send reminder: ${err.message}`, 'error');
+        });
+      } else {
+        window.AegisOwner?.showToast(`Verification reminder dispatched to ${t.email}!`, 'success');
+      }
     });
 
     menu.querySelector('[data-action="revoke"]').addEventListener('click', () => {
       closeTrusteeContextMenu();
       if (confirm(`Revoke trustee status for "${t.name}"? They will lose decryption authorization.`)) {
-        t.status = 'Removed';
-        t.statusClass = 'removed';
-        t.verifStatus = 'Revoked';
-        t.verifClass = 'removed';
-        renderTrusteesTable();
-        window.AegisOwner?.showToast(`Trustee access revoked for ${t.name}.`, 'warning');
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+          window.AegisAPI.post(`/owner/trustees/${t.id}/revoke/`).then(() => {
+            t.status = 'Removed';
+            t.statusClass = 'removed';
+            t.verifStatus = 'Revoked';
+            t.verifClass = 'removed';
+            renderTrusteesTable();
+            window.AegisOwner?.showToast(`Trustee access revoked for ${t.name}.`, 'warning');
+          }).catch(err => {
+            window.AegisOwner?.showToast(`Failed to revoke access: ${err.message}`, 'error');
+          });
+        } else {
+          t.status = 'Removed';
+          t.statusClass = 'removed';
+          t.verifStatus = 'Revoked';
+          t.verifClass = 'removed';
+          renderTrusteesTable();
+          window.AegisOwner?.showToast(`Trustee access revoked for ${t.name}.`, 'warning');
+        }
       }
     });
 
@@ -584,7 +605,41 @@
       if (matchOpt) statusSelect.value = matchOpt.value;
     }
 
-    renderTrusteesTable();
+    if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+      window.AegisAPI.get('/owner/vaults/').then(vs => {
+        const sel = document.getElementById('trusteeVaultAssign');
+        if (sel) sel.innerHTML = vs.map(v => `<option value="${v.id}">${v.name}</option>`).join('');
+      }).catch(e=>{});
+
+      window.AegisAPI.get('/owner/trustees/').then(data => {
+        mockTrustees = data.map(t => ({
+          id: t.id,
+          name: t.name,
+          email: t.email,
+          phone: t.phone || '+1 (555) 000-0000',
+          avatarType: 'initials',
+          initials: (t.name.split(' ').length > 1 ? t.name.split(' ')[0][0] + t.name.split(' ')[1][0] : t.name.substring(0, 2)).toUpperCase(),
+          initialsBg: 'linear-gradient(135deg, #0284c7 0%, #38bdf8 100%)',
+          relationship: t.relationship,
+          relClass: (t.relationship || '').toLowerCase().replace(' ', '-'),
+          relIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+          vaults: t.vaults || [],
+          vaultsCount: t.vaults_count || 0,
+          verifStatus: t.verification_status,
+          verifClass: (t.verification_status || '').toLowerCase().replace(' ', '-'),
+          status: t.status,
+          statusClass: (t.status || '').toLowerCase(),
+          dateAdded: new Date(t.date_added).toLocaleDateString(),
+          sharesHeld: t.shares_held || '0 shares'
+        }));
+        renderTrusteesTable();
+      }).catch(err => {
+        console.error('Failed to load trustees', err);
+        renderTrusteesTable();
+      });
+    } else {
+      renderTrusteesTable();
+    }
 
     // Search & Filters live listener
     searchInput?.addEventListener('input', renderTrusteesTable);
@@ -686,45 +741,66 @@
     // Form: Add Trustee Submit
     document.getElementById('formAddTrustee')?.addEventListener('submit', function (e) {
       e.preventDefault();
-
       const name = document.getElementById('trusteeName').value.trim();
       const email = document.getElementById('trusteeEmail').value.trim();
       const relationship = document.getElementById('trusteeRelationship').value;
-      const vault = document.getElementById('trusteeVaultAssign').value;
+      const vault_id = document.getElementById('trusteeVaultAssign').value;
+      
+      const vaultSelect = document.getElementById('trusteeVaultAssign');
+      const vaultName = vaultSelect.options ? vaultSelect.options[vaultSelect.selectedIndex]?.text : vault_id;
 
-      // Generate initials
-      const parts = name.split(' ');
-      const initials = parts.length > 1 ? (parts[0][0] + parts[1][0]).toUpperCase() : name.substring(0, 2).toUpperCase();
-
-      const newTrustee = {
-        id: 'trustee-' + Date.now(),
-        name: name,
-        email: email,
-        phone: '+1 (555) 000-0000',
-        avatarType: 'initials',
-        initials: initials,
-        initialsBg: 'linear-gradient(135deg, #0284c7 0%, #38bdf8 100%)',
-        relationship: relationship,
-        relClass: relationship.toLowerCase().replace(' ', '-'),
-        relIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>',
-        vaults: [vault],
-        vaultsCount: 1,
-        verifStatus: 'Pending',
-        verifClass: 'pending',
-        status: 'Invited',
-        statusClass: 'invited',
-        dateAdded: 'Today',
-        sharesHeld: 'Invitation sent'
-      };
-
-      mockTrustees.unshift(newTrustee);
-      renderTrusteesTable();
-
-      // Close modal & reset form
-      document.getElementById('addTrusteeModal')?.classList.remove('active');
-      this.reset();
-
-      window.AegisOwner?.showToast(`Invitation successfully sent to ${name}!`);
+      if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+        window.AegisAPI.post('/owner/trustees/', {
+          name, email, relationship, vault_id
+        }).then(res => {
+          const t = res.trustee || res; // depending on backend format
+          const parts = name.split(' ');
+          const initials = parts.length > 1 ? (parts[0][0] + parts[1][0]).toUpperCase() : name.substring(0, 2).toUpperCase();
+          const newTrustee = {
+            id: t.id || ('trustee-' + Date.now()),
+            name: name,
+            email: email,
+            phone: '+1 (555) 000-0000',
+            avatarType: 'initials',
+            initials: initials,
+            initialsBg: 'linear-gradient(135deg, #0284c7 0%, #38bdf8 100%)',
+            relationship: relationship,
+            relClass: relationship.toLowerCase().replace(' ', '-'),
+            relIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>',
+            vaults: [vaultName],
+            vaultsCount: 1,
+            verifStatus: 'Not Started',
+            verifClass: 'not-started',
+            status: 'Invited',
+            statusClass: 'invited',
+            dateAdded: 'Today',
+            sharesHeld: 'Invitation sent'
+          };
+          mockTrustees.unshift(newTrustee);
+          renderTrusteesTable();
+          document.getElementById('addTrusteeModal')?.classList.remove('active');
+          this.reset();
+          window.AegisOwner?.showToast(`Invitation successfully sent to ${name}!`);
+        }).catch(err => {
+          window.AegisOwner?.showToast(`Failed to invite trustee: ${err.message}`, 'error');
+        });
+      } else {
+        const parts = name.split(' ');
+        const initials = parts.length > 1 ? (parts[0][0] + parts[1][0]).toUpperCase() : name.substring(0, 2).toUpperCase();
+        const newTrustee = {
+          id: 'trustee-' + Date.now(), name, email, phone: '+1 (555) 000-0000',
+          avatarType: 'initials', initials, initialsBg: 'linear-gradient(135deg, #0284c7 0%, #38bdf8 100%)',
+          relationship, relClass: relationship.toLowerCase().replace(' ', '-'),
+          relIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>',
+          vaults: [vaultName], vaultsCount: 1, verifStatus: 'Pending', verifClass: 'pending',
+          status: 'Invited', statusClass: 'invited', dateAdded: 'Today', sharesHeld: 'Invitation sent'
+        };
+        mockTrustees.unshift(newTrustee);
+        renderTrusteesTable();
+        document.getElementById('addTrusteeModal')?.classList.remove('active');
+        this.reset();
+        window.AegisOwner?.showToast(`Invitation successfully sent to ${name}!`);
+      }
     });
 
     // Form: Edit Trustee Submit
@@ -735,15 +811,35 @@
       const t = mockTrustees.find(x => x.id === id);
       if (!t) return;
 
-      t.name = document.getElementById('editTrusteeName').value.trim();
-      t.email = document.getElementById('editTrusteeEmail').value.trim();
-      t.relationship = document.getElementById('editTrusteeRel').value;
-      t.relClass = t.relationship.toLowerCase().replace(' ', '-');
+      const newName = document.getElementById('editTrusteeName').value.trim();
+      const newEmail = document.getElementById('editTrusteeEmail').value.trim();
+      const newRel = document.getElementById('editTrusteeRel').value;
 
-      renderTrusteesTable();
-
-      document.getElementById('editTrusteeModal')?.classList.remove('active');
-      window.AegisOwner?.showToast(`Updated permissions for ${t.name}!`);
+      if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+        window.AegisAPI.put(`/owner/trustees/${id}/`, {
+          name: newName,
+          email: newEmail,
+          relationship: newRel
+        }).then(() => {
+          t.name = newName;
+          t.email = newEmail;
+          t.relationship = newRel;
+          t.relClass = newRel.toLowerCase().replace(' ', '-');
+          renderTrusteesTable();
+          document.getElementById('editTrusteeModal')?.classList.remove('active');
+          window.AegisOwner?.showToast(`Updated permissions for ${t.name}!`);
+        }).catch(err => {
+          window.AegisOwner?.showToast(`Failed to update trustee: ${err.message}`, 'error');
+        });
+      } else {
+        t.name = newName;
+        t.email = newEmail;
+        t.relationship = newRel;
+        t.relClass = newRel.toLowerCase().replace(' ', '-');
+        renderTrusteesTable();
+        document.getElementById('editTrusteeModal')?.classList.remove('active');
+        window.AegisOwner?.showToast(`Updated permissions for ${t.name}!`);
+      }
     });
   });
 
