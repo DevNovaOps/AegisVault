@@ -273,3 +273,10 @@ LOGGING = {
         },
     },
 }
+
+# ─── AegisVault Custom Configuration ─────────────────────────────────────────
+AEGIS_ADMIN_ENROLLMENT_KEY = config('ADMIN_ENROLLMENT_KEY', default='ROOT-SEC-8821')
+AEGIS_ADMIN_CLEARANCE_TOKEN = config('ADMIN_CLEARANCE_TOKEN', default='AEGIS-ROOT-9092')
+AEGIS_INVITATION_EXPIRY_DAYS = config('INVITATION_EXPIRY_DAYS', default=14, cast=int)
+VAULT_ENCRYPTION_KEY = config('VAULT_ENCRYPTION_KEY', default='')
+
