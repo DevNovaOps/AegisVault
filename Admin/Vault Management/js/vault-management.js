@@ -28,6 +28,37 @@ const AegisVaultController = {
             this.renderVaultTypesDonut();
         });
 
+        // Try fetch vaults
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+            window.AegisAPI.get('/admin/vaults/').then(data => {
+                if (!window.AegisVaultMockData) window.AegisVaultMockData = {};
+                window.AegisVaultMockData.vaults = data.map(v => ({
+                    id: v.id || 'VLT...',
+                    name: v.name || 'Unknown Vault',
+                    owner: v.owner_name || 'Unknown Owner',
+                    ownerEmail: v.owner_email || 'owner@example.com',
+                    type: v.vault_type || 'Personal',
+                    status: v.status || 'Active',
+                    storageUsed: '0 MB',
+                    storageTotal: '5 GB',
+                    storagePercent: 0,
+                    sharesConfigured: `${v.required_shares || 0}/${v.total_shares || 0}`,
+                    trusteesAssigned: v.total_shares || 0,
+                    createdAt: new Date(v.created_at).toLocaleDateString(),
+                    lastAccessed: 'Never',
+                    alertFlag: false
+                }));
+                this.continueInit();
+            }).catch(err => {
+                console.warn('Failed to load vaults:', err);
+                this.continueInit();
+            });
+        } else {
+            this.continueInit();
+        }
+    },
+
+    continueInit() {
         // 2. Initialize KPI and Overview widgets
         this.renderKPIs();
         this.renderVaultTypesDonut();

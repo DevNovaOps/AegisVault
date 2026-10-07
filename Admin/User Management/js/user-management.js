@@ -22,8 +22,40 @@ window.AegisUserManagement = {
     activeTab: "overview",
 
     init() {
-        this.users = [...(window.AegisMockUsers || [])];
-        this.filteredUsers = [...this.users];
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+            window.AegisAPI.get('/admin/users/').then(data => {
+                this.users = data.map(user => ({
+                    id: user.id || 'USR...',
+                    name: user.name || 'Unknown',
+                    email: user.email || 'email@example.com',
+                    role: user.role || 'User',
+                    status: user.is_active ? 'Active' : 'Suspended',
+                    verification: user.is_email_verified ? 'Verified' : 'Pending',
+                    avatar: user.name ? user.name.substring(0, 2).toUpperCase() : 'U',
+                    joinDate: new Date(user.date_joined).toLocaleDateString(),
+                    lastLogin: user.last_login ? new Date(user.last_login).toLocaleDateString() : 'Never',
+                    twoFactor: user.is_2fa_enabled || false,
+                    isFlagged: false,
+                    vaultsOwned: 0,
+                    trusteeOf: 0,
+                    riskScore: 10
+                }));
+                this.filteredUsers = [...this.users];
+                this.renderTable();
+                this.updateSummaryMetrics();
+            }).catch(err => {
+                console.warn('Failed to load admin users:', err);
+                this.users = [...(window.AegisMockUsers || [])];
+                this.filteredUsers = [...this.users];
+                this.renderTable();
+                this.updateSummaryMetrics();
+            });
+        } else {
+            this.users = [...(window.AegisMockUsers || [])];
+            this.filteredUsers = [...this.users];
+            this.renderTable();
+            this.updateSummaryMetrics();
+        }
 
         // 1. Initialize Modals
         this.initModals();
