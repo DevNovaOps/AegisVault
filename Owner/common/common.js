@@ -497,6 +497,26 @@
         localStorage.setItem(INTERVAL_KEY, 30);
       }
 
+      // Sync with backend API
+      if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+        window.AegisAPI.get('/owner/heartbeat/status/').then(res => {
+          if (res && res.configured) {
+            localStorage.setItem(INTERVAL_KEY, res.interval_days);
+            if (res.last_checkin) {
+              localStorage.setItem(HEARTBEAT_KEY, new Date(res.last_checkin).getTime());
+            }
+            // Sync grace period in the UI if present
+            const graceSel = document.getElementById('selectGracePeriod');
+            if (graceSel && res.grace_period_days) {
+              graceSel.value = String(res.grace_period_days);
+            }
+            window.AegisHeartbeat.updateUI();
+          }
+        }).catch(err => {
+          console.warn('Heartbeat status API fetch failed:', err.message);
+        });
+      }
+
       // Inject topbar widget if not already in DOM
       window.AegisHeartbeat.injectTopbarWidget();
 
