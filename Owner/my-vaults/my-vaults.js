@@ -11,116 +11,7 @@
   // TODO: Replace with fetch('/api/v1/owner/vaults/...') upon backend connection
   // =========================================================================
 
-  let mockVaults = [
-    {
-      id: 'vault-1',
-      name: 'Personal Vault',
-      desc: 'Personal documents, memories, and important files.',
-      type: 'Personal',
-      typeBadgeClass: 'personal',
-      typeIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
-      status: 'Active',
-      statusClass: 'status-active',
-      trustees: 3,
-      sharesRatio: '3 / 3',
-      sharesPercent: 100,
-      date: '12 Sep 2025',
-      time: '10:24 AM',
-      thumbImg: '../assets/images/vault-thumb-1.png',
-      releaseCondition: '60 days inactivity + 3/3 trustee consensus',
-      storageUsed: '1.2 GB'
-    },
-    {
-      id: 'vault-2',
-      name: 'Family Vault',
-      desc: 'Family documents, photos, and legacy information.',
-      type: 'Family',
-      typeBadgeClass: 'family',
-      typeIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
-      status: 'Active',
-      statusClass: 'status-active',
-      trustees: 2,
-      sharesRatio: '2 / 2',
-      sharesPercent: 100,
-      date: '11 Sep 2025',
-      time: '04:18 PM',
-      thumbImg: '../assets/images/vault-thumb-2.png',
-      releaseCondition: '90 days inactivity + 2/2 trustee consensus',
-      storageUsed: '850 MB'
-    },
-    {
-      id: 'vault-3',
-      name: 'Business Vault',
-      desc: 'Business records and professional information.',
-      type: 'Business',
-      typeBadgeClass: 'business',
-      typeIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
-      status: 'Active',
-      statusClass: 'status-active',
-      trustees: 2,
-      sharesRatio: '2 / 2',
-      sharesPercent: 100,
-      date: '10 Sep 2025',
-      time: '09:12 AM',
-      thumbImg: '../assets/images/vault-thumb-3.png',
-      releaseCondition: '30 days inactivity + corporate attorney approval',
-      storageUsed: '620 MB'
-    },
-    {
-      id: 'vault-4',
-      name: 'Legacy Vault',
-      desc: 'Long-term legacy and inheritance information.',
-      type: 'Legacy',
-      typeBadgeClass: 'legacy',
-      typeIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>',
-      status: 'Draft',
-      statusClass: 'status-draft',
-      trustees: 0,
-      sharesRatio: '0 / 2',
-      sharesPercent: 0,
-      date: '08 Sep 2025',
-      time: '02:36 PM',
-      thumbImg: '../assets/images/vault-thumb-4.png',
-      releaseCondition: 'Draft state — Release parameters not yet activated',
-      storageUsed: '120 MB'
-    },
-    {
-      id: 'vault-5',
-      name: 'Health Vault',
-      desc: 'Medical records and health information.',
-      type: 'Health',
-      typeBadgeClass: 'health',
-      typeIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
-      status: 'Active',
-      statusClass: 'status-active',
-      trustees: 1,
-      sharesRatio: '1 / 1',
-      sharesPercent: 100,
-      date: '05 Sep 2025',
-      time: '11:09 AM',
-      thumbImg: '../assets/images/vault-thumb-5.png',
-      releaseCondition: 'Emergency medical proxy immediate authorization',
-      storageUsed: '410 MB'
-    },
-    {
-      id: 'vault-6',
-      name: 'Travel Vault',
-      desc: 'Travel documents, bookings, and important information.',
-      type: 'Personal',
-      typeBadgeClass: 'personal',
-      typeIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
-      status: 'Locked',
-      statusClass: 'status-locked',
-      trustees: 0,
-      sharesRatio: '0 / 2',
-      sharesPercent: 0,
-      date: '22 Aug 2025',
-      time: '03:56 PM',
-      thumbImg: '../assets/images/vault-thumb-6.png',
-      releaseCondition: 'Vault locked manually. Requires master key to unlock.',
-      storageUsed: '50 MB'
-    }
-  ];
+  let mockVaults = [];
 
   // =========================================================================
   // RENDER & FILTER CONTROLLER
@@ -315,7 +206,7 @@
     closeContextMenu();
 
     const menu = document.createElement('div');
-    menu.className = 'dropdown-panel';
+    menu.className = 'dropdown-panel show';
     menu.style.position = 'fixed';
     menu.style.zIndex = '9999';
     menu.style.minWidth = '180px';
@@ -515,7 +406,8 @@
           'Legacy': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>',
           'Health': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>'
         };
-        mockVaults = data.map(v => ({
+        const vaultsData = Array.isArray(data) ? data : (data.results || []);
+        mockVaults = vaultsData.map(v => ({
           id: v.id,
           name: v.name,
           desc: v.description || '',
