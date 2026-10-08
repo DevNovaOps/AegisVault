@@ -14,9 +14,13 @@
 
   async function loadDashboardData() {
     // Try loading real data from API
-    if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-      try {
-        const user = window.AegisAPI.getUser();
+    if (!window.AegisAPI || !window.AegisAPI.isAuthenticated()) {
+       window.location.href = '../../AegisVault Home/auth.html';
+       return;
+    }
+    
+    try {
+      const user = window.AegisAPI.getUser();
         if (user && user.first_name) {
           const heroAccent = document.querySelector('.hero-accent');
           if (heroAccent) heroAccent.textContent = user.first_name.toUpperCase() + '!';
@@ -109,7 +113,6 @@
       } catch (err) {
         console.warn('[AegisVault] Dashboard API load failed, using mock data:', err.message);
       }
-    }
   }
 
   function updateHeartbeatUI(data) {
