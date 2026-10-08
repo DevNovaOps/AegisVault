@@ -16,18 +16,30 @@
     // Try loading real data from API
     if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
       try {
-        const [kpis, activity, chartData, releaseData, events, health] = await Promise.allSettled([
+        const user = window.AegisAPI.getUser();
+        if (user && user.first_name) {
+          const heroAccent = document.querySelector('.hero-accent');
+          if (heroAccent) heroAccent.textContent = user.first_name.toUpperCase() + '!';
+        }
+
+        const [kpis, activity, chartData, releaseData, events, health, heartbeat] = await Promise.allSettled([
           window.AegisAPI.get('/owner/dashboard/kpis'),
           window.AegisAPI.get('/owner/dashboard/activity'),
           window.AegisAPI.get('/owner/dashboard/chart-data'),
           window.AegisAPI.get('/owner/releases/?status=all'),
           window.AegisAPI.get('/owner/notifications/?type=all'),
           window.AegisAPI.get('/owner/vaults/'),
+          window.AegisAPI.get('/owner/heartbeat/status/').catch(e => null),
         ]);
 
         // Update KPI cards if data was returned
         if (kpis.status === 'fulfilled' && kpis.value) {
           updateKPICards(kpis.value);
+        }
+
+        // Update heartbeat if returned
+        if (heartbeat.status === 'fulfilled' && heartbeat.value) {
+          updateHeartbeatUI(heartbeat.value);
         }
 
         // Update recent activity if data was returned
@@ -58,21 +70,115 @@
           mockVaultHealth.splice(0, mockVaultHealth.length, ...mapped);
         }
 
+        // Vault overview chart data
+        if (chartData.status === 'fulfilled' && chartData.value) {
+           window.API_CHART_DATA = chartData.value;
+        }
+
+        // Release status donut data
+        if (releaseData.status === 'fulfilled' && releaseData.value) {
+           const releases = releaseData.value;
+           let completed = 0, in_progress = 0, scheduled = 0, not_started = 0;
+           releases.forEach(r => {
+              const st = (r.status || '').toLowerCase();
+              if (st === 'completed' || st === 'released') completed++;
+              else if (st === 'in_progress' || st === 'pending') in_progress++;
+              else if (st === 'scheduled') scheduled++;
+              else not_started++;
+           });
+           window.API_RELEASE_DATA = {
+             total: releases.length,
+             segments: [
+               { label: 'Completed', count: completed, color: '#10b981', key: 'completed' },
+               { label: 'In Progress', count: in_progress, color: '#0284c7', key: 'in_progress' },
+               { label: 'Scheduled', count: scheduled, color: '#f59e0b', key: 'scheduled' },
+               { label: 'Not Started', count: not_started, color: '#ef4444', key: 'not_started' }
+             ]
+           };
+        }
+
         console.log('[AegisVault] Dashboard data loaded from API');
+        
+        // Re-render everything with new API data
+        if (typeof renderRecentActivity === 'function') renderRecentActivity();
+        if (typeof renderVaultHealth === 'function') renderVaultHealth();
+        if (typeof renderBarChart === 'function') renderBarChart();
+        if (typeof renderDonutChart === 'function') renderDonutChart();
+        if (typeof renderUpcomingEvents === 'function') renderUpcomingEvents();
+
       } catch (err) {
         console.warn('[AegisVault] Dashboard API load failed, using mock data:', err.message);
       }
     }
   }
 
+  function updateHeartbeatUI(data) {
+    const badge = document.getElementById('heartbeatStatusBadge');
+    if (badge) {
+      if (data.is_active) {
+        badge.className = 'heartbeat-status-badge active';
+        badge.innerHTML = '<span class="pulsing-dot"></span><span>Dead Man\'s Switch: ACTIVE</span>';
+      } else {
+        badge.className = 'heartbeat-status-badge inactive';
+        badge.innerHTML = '<span>Dead Man\'s Switch: INACTIVE</span>';
+      }
+    }
+    
+    const intervalPill = document.getElementById('heartbeatIntervalPill');
+    if (intervalPill) intervalPill.textContent = `Interval: Every ${data.interval_days} Days`;
+    
+    const lastCheckin = document.getElementById('heartbeatLastCheckIn');
+    if (lastCheckin && data.last_checkin) {
+      lastCheckin.textContent = new Date(data.last_checkin).toLocaleString([], {month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit'});
+    }
+
+    if (data.next_checkin) {
+      // Start the countdown timer
+      window.targetDeadline = new Date(data.next_checkin).getTime();
+      startHeartbeatTimer();
+    }
+  }
+
+  function startHeartbeatTimer() {
+    if (window.heartbeatInterval) clearInterval(window.heartbeatInterval);
+    const dEl = document.getElementById('cdDays');
+    const hEl = document.getElementById('cdHours');
+    const mEl = document.getElementById('cdMinutes');
+    const sEl = document.getElementById('cdSeconds');
+
+    window.heartbeatInterval = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = window.targetDeadline - now;
+
+      if (distance < 0) {
+        clearInterval(window.heartbeatInterval);
+        if (dEl) dEl.textContent = '00';
+        if (hEl) hEl.textContent = '00';
+        if (mEl) mEl.textContent = '00';
+        if (sEl) sEl.textContent = '00';
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      if (dEl) dEl.textContent = days.toString().padStart(2, '0');
+      if (hEl) hEl.textContent = hours.toString().padStart(2, '0');
+      if (mEl) mEl.textContent = minutes.toString().padStart(2, '0');
+      if (sEl) sEl.textContent = seconds.toString().padStart(2, '0');
+    }, 1000);
+  }
+
   function updateKPICards(data) {
     const cards = document.querySelectorAll('.metrics-row .metric-card');
     const values = [
-      data.active_vaults,
-      data.total_items,
-      data.active_trustees,
-      data.active_shares,
-      data.storage_used,
+      data.total_vaults !== undefined ? data.total_vaults : '0',
+      data.active_vaults !== undefined ? data.active_vaults : '0',
+      data.trustees !== undefined ? data.trustees : '0',
+      data.pending_invitations !== undefined ? data.pending_invitations : '0',
+      data.release_requests !== undefined ? data.release_requests : '0',
     ];
     cards.forEach((card, i) => {
       const valueEl = card.querySelector('.metric-value');
@@ -368,8 +474,9 @@
     const svg = document.getElementById('donutSvg');
     if (!svg) return;
 
-    const segments = mockReleaseStatus.segments;
-    const total = mockReleaseStatus.total;
+    const sourceData = window.API_RELEASE_DATA || mockReleaseStatus;
+    const segments = sourceData.segments;
+    const total = sourceData.total > 0 ? sourceData.total : 1;
     const radius = 54;
     const circumference = 2 * Math.PI * radius; // ~339.29
 
@@ -397,6 +504,29 @@
       svg.appendChild(circle);
       accumulatedAngle += strokeLength;
     });
+    
+    // Update center count
+    const centerCount = document.querySelector('.donut-count');
+    if (centerCount) centerCount.textContent = total;
+
+    // Update legend
+    const legendList = document.querySelector('.donut-legend-list');
+    if (legendList) {
+      legendList.innerHTML = '';
+      segments.forEach(seg => {
+        let colorClass = 'blue';
+        if (seg.key === 'completed') colorClass = 'green';
+        if (seg.key === 'scheduled') colorClass = 'amber';
+        if (seg.key === 'not_started') colorClass = 'red';
+        
+        legendList.innerHTML += `
+          <div class="donut-legend-row">
+            <span class="donut-dot ${colorClass}"></span>
+            <span>${seg.count} ${seg.label}</span>
+          </div>
+        `;
+      });
+    }
   }
 
   // 3. Render Upcoming Events

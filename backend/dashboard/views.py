@@ -22,35 +22,25 @@ class OwnerDashboardKPIView(APIView):
     def get(self, request):
         user = request.user
 
+        total_vaults = Vault.objects.filter(owner=user).count()
         active_vaults = Vault.objects.filter(owner=user, status='Active').count()
-        total_items = VaultItem.objects.filter(vault__owner=user).count()
-        active_trustees = TrusteeProfile.objects.filter(
-            owner=user, status='Active'
-        ).count()
-        active_shares = VaultShare.objects.filter(
-            vault__owner=user, status='active'
-        ).count()
-
-        storage = Vault.objects.filter(owner=user).aggregate(
-            total=Sum('storage_used_bytes')
-        )['total'] or 0
-
-        # Storage formatting
-        if storage < 1024:
-            storage_str = f"{storage} B"
-        elif storage < 1024 ** 2:
-            storage_str = f"{storage / 1024:.1f} KB"
-        elif storage < 1024 ** 3:
-            storage_str = f"{storage / (1024 ** 2):.1f} MB"
-        else:
-            storage_str = f"{storage / (1024 ** 3):.2f} GB"
+        
+        # Trustees (active)
+        trustees = TrusteeProfile.objects.filter(owner=user, status='Active').count()
+        
+        # Pending Invitations
+        pending_invitations = TrusteeProfile.objects.filter(owner=user, status='Pending').count()
+        
+        # Release Requests (pending or in progress releases)
+        from releases.models import ReleaseRequest
+        release_requests = ReleaseRequest.objects.filter(vault__owner=user, status__in=['pending', 'in_progress']).count()
 
         return Response({
+            'total_vaults': total_vaults,
             'active_vaults': active_vaults,
-            'total_items': total_items,
-            'active_trustees': active_trustees,
-            'active_shares': active_shares,
-            'storage_used': storage_str,
+            'trustees': trustees,
+            'pending_invitations': pending_invitations,
+            'release_requests': release_requests,
         })
 
 
