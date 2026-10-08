@@ -804,11 +804,13 @@
           <h4 style="margin-bottom: 1rem; color: var(--text-primary);">Step 3: Vault Contents</h4>
           <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">You can upload files and secure notes now, or skip this step and add them later from the Vault Details page.</p>
           
-          <div style="text-align: center; padding: 3rem; border: 2px dashed var(--bg-input-border); border-radius: var(--radius-lg); margin-bottom: 1.5rem;">
+          <div id="wizardAssetDropzone" style="text-align: center; padding: 3rem; border: 2px dashed var(--bg-input-border); border-radius: var(--radius-lg); margin-bottom: 1.5rem; cursor: pointer; transition: background 0.2s;">
+            <input type="file" id="wizardAssetInput" multiple style="display: none;">
             <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" style="width:48px;height:48px;margin-bottom:1rem;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            <h5 style="color: var(--text-primary); margin-bottom: 0.5rem; font-size: 1rem;">Asset Management requires Vault Creation</h5>
-            <p style="color: var(--text-muted); font-size: 0.85rem; max-width: 400px; margin: 0 auto;">To begin uploading actual secure assets, please finish the wizard and activate your vault. You'll be redirected to the comprehensive Vault Asset Manager.</p>
+            <h5 style="color: var(--text-primary); margin-bottom: 0.5rem; font-size: 1rem;">Click or drag files to upload</h5>
+            <p style="color: var(--text-muted); font-size: 0.85rem; max-width: 400px; margin: 0 auto;">Files will be securely encrypted and added to your draft vault.</p>
           </div>
+          <div id="wizardAssetList" style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; max-height: 200px; overflow-y: auto;"></div>
         </div>
 
         <!-- Step 4: Trustees & Access -->

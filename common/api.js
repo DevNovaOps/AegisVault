@@ -114,9 +114,14 @@
     };
 
     if (options.body) {
-      fetchOptions.body = typeof options.body === 'string'
-        ? options.body
-        : JSON.stringify(options.body);
+      if (options.body instanceof FormData) {
+        delete headers['Content-Type'];
+        fetchOptions.body = options.body;
+      } else {
+        fetchOptions.body = typeof options.body === 'string'
+          ? options.body
+          : JSON.stringify(options.body);
+      }
     }
 
     let response = await fetch(url, fetchOptions);

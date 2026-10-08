@@ -186,42 +186,36 @@ document.addEventListener('DOMContentLoaded', () => {
         const formData = new FormData();
         formData.append('file', file);
         formData.append('name', file.name);
-        formData.append('category', 'document'); // Default
-        formData.append('sensitivity', 'Normal'); // Default
+        formData.append('asset_category', 'document'); // Fixed field name to match backend
+        formData.append('notes', '');
 
-        const token = localStorage.getItem('access_token');
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', `http://127.0.0.1:8000/api/owner/vaults/${vaultId}/assets/`, true);
-        xhr.setRequestHeader('Authorization', `Bearer ${token}`);
-        
-        xhr.upload.onprogress = (e) => {
-            if (e.lengthComputable) {
-                const percent = Math.round((e.loaded / e.total) * 100);
-                document.getElementById('uploadPercent').textContent = `${percent}%`;
-                document.getElementById('uploadProgressBar').style.width = `${percent}%`;
-            }
-        };
+        // Fake progress for visual effect since fetch doesn't support upload progress easily
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            progress += 20;
+            if (progress > 90) progress = 90;
+            document.getElementById('uploadPercent').textContent = `${progress}%`;
+            document.getElementById('uploadProgressBar').style.width = `${progress}%`;
+        }, 100);
 
-        xhr.onload = () => {
-            if (xhr.status === 201) {
+        window.AegisAPI.post(`/owner/vaults/${vaultId}/assets/`, formData)
+            .then(() => {
+                clearInterval(progressInterval);
+                document.getElementById('uploadPercent').textContent = `100%`;
+                document.getElementById('uploadProgressBar').style.width = `100%`;
+                
                 window.AegisOwner.showToast('Asset encrypted and saved successfully!', 'success');
                 setTimeout(() => {
                     document.getElementById('uploadProgressContainer').style.display = 'none';
                     loadVaultAssets();
                     loadVaultDetails(); // refresh storage use
                 }, 1000);
-            } else {
-                window.AegisOwner.showToast('Upload failed: ' + xhr.responseText, 'error');
+            })
+            .catch(err => {
+                clearInterval(progressInterval);
+                window.AegisOwner.showToast('Upload failed: ' + err.message, 'error');
                 document.getElementById('uploadProgressContainer').style.display = 'none';
-            }
-        };
-
-        xhr.onerror = () => {
-            window.AegisOwner.showToast('Upload failed due to network error.', 'error');
-            document.getElementById('uploadProgressContainer').style.display = 'none';
-        };
-
-        xhr.send(formData);
+            });
     }
 
     // Secure Note Modal

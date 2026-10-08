@@ -550,6 +550,79 @@
       });
     }
 
+    const wizardAssetInput = document.getElementById('wizardAssetInput');
+    const wizardAssetDropzone = document.getElementById('wizardAssetDropzone');
+    const wizardAssetList = document.getElementById('wizardAssetList');
+
+    if (wizardAssetDropzone && wizardAssetInput) {
+      wizardAssetDropzone.addEventListener('click', () => wizardAssetInput.click());
+      wizardAssetDropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        wizardAssetDropzone.style.background = 'rgba(255, 126, 43, 0.05)';
+        wizardAssetDropzone.style.borderColor = 'var(--brand-orange)';
+      });
+      wizardAssetDropzone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        wizardAssetDropzone.style.background = 'transparent';
+        wizardAssetDropzone.style.borderColor = 'var(--bg-input-border)';
+      });
+      wizardAssetDropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        wizardAssetDropzone.style.background = 'transparent';
+        wizardAssetDropzone.style.borderColor = 'var(--bg-input-border)';
+        if (e.dataTransfer.files.length) handleAssetUploads(e.dataTransfer.files);
+      });
+      wizardAssetInput.addEventListener('change', (e) => {
+        if (e.target.files.length) handleAssetUploads(e.target.files);
+      });
+    }
+
+    function handleAssetUploads(files) {
+      if (!window.AegisAPI || !window.AegisAPI.isAuthenticated()) {
+        window.AegisOwner.showToast('Authentication required.', 'error');
+        return;
+      }
+      if (!draftVaultId) {
+        window.AegisOwner.showToast('Vault not initialized.', 'error');
+        return;
+      }
+
+      Array.from(files).forEach(file => {
+        const fileItem = document.createElement('div');
+        fileItem.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:0.75rem;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);';
+        fileItem.innerHTML = `
+          <div style="display:flex;align-items:center;gap:0.75rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--brand-orange)" stroke-width="2" style="width:20px;height:20px;"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+            <div>
+              <div style="color:var(--text-primary);font-size:0.9rem;font-weight:500;">${file.name}</div>
+              <div class="upload-status" style="color:var(--brand-orange);font-size:0.75rem;">Uploading...</div>
+            </div>
+          </div>
+          <div class="upload-icon" style="color:var(--text-muted);">...</div>
+        `;
+        wizardAssetList.appendChild(fileItem);
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('name', file.name);
+        formData.append('asset_category', 'document');
+        formData.append('notes', '');
+
+        window.AegisAPI.post(`/owner/vaults/${draftVaultId}/assets/`, formData)
+          .then(res => {
+            fileItem.querySelector('.upload-icon').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="var(--status-success)" stroke-width="2" style="width:20px;height:20px;"><polyline points="20 6 9 17 4 12"/></svg>`;
+            fileItem.querySelector('.upload-status').textContent = 'Uploaded';
+            fileItem.querySelector('.upload-status').style.color = 'var(--text-muted)';
+          })
+          .catch(err => {
+            fileItem.querySelector('.upload-icon').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="var(--status-danger)" stroke-width="2" style="width:20px;height:20px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+            fileItem.querySelector('.upload-status').textContent = `Failed: ${err.message}`;
+            fileItem.querySelector('.upload-status').style.color = 'var(--status-danger)';
+          });
+      });
+      wizardAssetInput.value = '';
+    }
+
     function populateReviewStep() {
       document.getElementById('revName').textContent = document.getElementById('newVaultName').value || 'Unnamed Vault';
       document.getElementById('revCategory').textContent = document.getElementById('newVaultCategory').value;
