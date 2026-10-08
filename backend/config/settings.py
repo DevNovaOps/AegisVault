@@ -120,6 +120,14 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [FRONTEND_DIR]
 
+# ─── Media & File Uploads ────────────────────────────────────────────────────
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# Storage Quota Config
+MAX_UPLOAD_SIZE = config('MAX_UPLOAD_SIZE', default=50 * 1024 * 1024, cast=int) # 50 MB
+STORAGE_QUOTA = config('STORAGE_QUOTA', default=10 * 1024 * 1024 * 1024, cast=int) # 10 GB
+
 # ─── Default Primary Key ─────────────────────────────────────────────────────
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

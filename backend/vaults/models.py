@@ -51,7 +51,13 @@ class Vault(models.Model):
 
     # Encrypted storage metadata (vault contents are encrypted; we store metadata)
     storage_used_bytes = models.BigIntegerField(default=0)
+    storage_limit_bytes = models.BigIntegerField(default=10 * 1024 * 1024 * 1024) # 10 GB
     encryption_algorithm = models.CharField(max_length=50, default='AES-256-GCM')
+
+    # PRD additions
+    purpose = models.TextField(blank=True, default='')
+    priority = models.CharField(max_length=20, default='Normal')
+    tags = models.JSONField(default=list, blank=True)
 
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
@@ -81,13 +87,16 @@ class Vault(models.Model):
         return f"{b / (1024 ** 3):.1f} GB"
 
 
-class VaultItem(models.Model):
+def vault_asset_path(instance, filename):
+    return f'vaults/{instance.vault.owner.id}/{instance.vault.id}/{uuid.uuid4()}_{filename}'
+
+class VaultAsset(models.Model):
     """
-    An encrypted item stored inside a vault.
-    The backend stores encrypted payloads — never plaintext secrets.
+    An encrypted asset (file or secure note) stored inside a vault.
+    Replaces the mock/stub VaultItem model.
     """
 
-    class ItemCategory(models.TextChoices):
+    class AssetCategory(models.TextChoices):
         DOCUMENT = 'document', 'Document'
         CREDENTIAL = 'credential', 'Credential'
         FINANCIAL = 'financial', 'Financial'
@@ -95,14 +104,30 @@ class VaultItem(models.Model):
         RECOVERY = 'recovery', 'Recovery'
         CUSTOM = 'custom', 'Custom'
 
+    class Sensitivity(models.TextChoices):
+        NORMAL = 'Normal', 'Normal'
+        SENSITIVE = 'Sensitive', 'Sensitive'
+        HIGHLY_SENSITIVE = 'Highly Sensitive', 'Highly Sensitive'
+        CRITICAL = 'Critical', 'Critical'
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    vault = models.ForeignKey(Vault, on_delete=models.CASCADE, related_name='items')
+    vault = models.ForeignKey(Vault, on_delete=models.CASCADE, related_name='assets')
     name = models.CharField(max_length=255)
     category = models.CharField(
-        max_length=20, choices=ItemCategory.choices, default=ItemCategory.DOCUMENT
+        max_length=20, choices=AssetCategory.choices, default=AssetCategory.DOCUMENT
     )
-    # Encrypted content — stored as base64-encoded ciphertext
-    encrypted_data = models.TextField()
+    sensitivity = models.CharField(
+        max_length=20, choices=Sensitivity.choices, default=Sensitivity.NORMAL
+    )
+    description = models.TextField(blank=True, default='')
+
+    # For Secure Notes, this holds encrypted text. 
+    # For Files, this is null.
+    encrypted_data = models.TextField(blank=True, default='')
+    
+    # For actual physical assets
+    file = models.FileField(upload_to=vault_asset_path, null=True, blank=True)
+
     # Encryption metadata needed for decryption (IV/nonce, not the key)
     encryption_iv = models.CharField(max_length=64, blank=True, default='')
     encryption_tag = models.CharField(max_length=64, blank=True, default='')
@@ -115,7 +140,7 @@ class VaultItem(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'aegis_vault_items'
+        db_table = 'aegis_vault_assets'
         ordering = ['-created_at']
 
     def __str__(self):

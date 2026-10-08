@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.db.models import Sum
 
 from accounts.permissions import IsOwner, IsAdminUser
-from vaults.models import Vault, VaultItem, VaultShare
+from vaults.models import Vault, VaultAsset, VaultShare
 from trustees.models import TrusteeProfile, Invitation
 from heartbeat.models import HeartbeatConfig
 from accounts.models import User

@@ -8,10 +8,14 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 
-from .models import Vault, VaultShare
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from django.db.models import Sum
+from django.conf import settings
+from .models import Vault, VaultShare, VaultAsset
 from .serializers import (
     VaultSerializer, VaultCreateSerializer,
     VaultShareSerializer, VaultShareCreateSerializer,
+    VaultAssetSerializer
 )
 from accounts.permissions import IsOwner, IsVaultOwner
 from accounts.models import User
@@ -339,3 +343,116 @@ class ShareRevokeView(APIView):
         )
 
         return Response(VaultShareSerializer(share).data)
+
+
+# ─── Asset Management Views ──────────────────────────────────────────────────
+
+class VaultAssetListCreateView(APIView):
+    """
+    GET  /api/v1/owner/vaults/{vault_id}/assets     — List assets in a vault
+    POST /api/v1/owner/vaults/{vault_id}/assets     — Upload new asset
+    """
+    permission_classes = [IsAuthenticated, IsOwner]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    def get(self, request, vault_id):
+        vault = get_object_or_404(Vault, pk=vault_id, owner=request.user)
+        assets = VaultAsset.objects.filter(vault=vault)
+        serializer = VaultAssetSerializer(assets, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, vault_id):
+        vault = get_object_or_404(Vault, pk=vault_id, owner=request.user)
+        
+        serializer = VaultAssetSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        # Calculate file size if file is provided
+        file_obj = request.FILES.get('file')
+        file_size = file_obj.size if file_obj else 0
+        
+        # Enforce Quota
+        total_used = VaultAsset.objects.filter(vault__owner=request.user).aggregate(Sum('file_size_bytes'))['file_size_bytes__sum'] or 0
+        if total_used + file_size > getattr(settings, 'STORAGE_QUOTA', 10 * 1024 * 1024 * 1024):
+            return Response({'detail': 'Storage quota exceeded.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        asset = serializer.save(
+            vault=vault,
+            file_size_bytes=file_size,
+            mime_type=file_obj.content_type if file_obj else ''
+        )
+
+        # Update Vault storage used
+        vault.storage_used_bytes += file_size
+        vault.save(update_fields=['storage_used_bytes', 'updated_at'])
+
+        AuditService.log(
+            user=request.user,
+            action_key='asset_uploaded',
+            action_title='Asset Uploaded',
+            details=f'Uploaded asset "{asset.name}" to "{vault.name}"',
+            category='vault',
+            vault_name=vault.name,
+        )
+
+        return Response(VaultAssetSerializer(asset).data, status=status.HTTP_201_CREATED)
+
+
+class VaultAssetDetailView(APIView):
+    """
+    GET    /api/v1/owner/vaults/{vault_id}/assets/{asset_id}   — View asset details / download
+    DELETE /api/v1/owner/vaults/{vault_id}/assets/{asset_id}   — Delete asset
+    """
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def get(self, request, vault_id, pk):
+        asset = get_object_or_404(VaultAsset, pk=pk, vault__id=vault_id, vault__owner=request.user)
+        
+        # In a real app with object storage, this would generate a signed URL
+        # For now we just return metadata, or we could stream the file if requested.
+        data = VaultAssetSerializer(asset).data
+        if asset.file:
+            data['download_url'] = request.build_absolute_uri(asset.file.url)
+        elif asset.encrypted_data:
+            data['decrypted_note'] = asset.encrypted_data # Fake decryption for now
+            
+        return Response(data)
+
+    def delete(self, request, vault_id, pk):
+        asset = get_object_or_404(VaultAsset, pk=pk, vault__id=vault_id, vault__owner=request.user)
+        vault = asset.vault
+        file_size = asset.file_size_bytes
+        asset_name = asset.name
+        
+        asset.delete()
+        
+        vault.storage_used_bytes = max(0, vault.storage_used_bytes - file_size)
+        vault.save(update_fields=['storage_used_bytes', 'updated_at'])
+        
+        AuditService.log(
+            user=request.user,
+            action_key='asset_deleted',
+            action_title='Asset Deleted',
+            details=f'Deleted asset "{asset_name}" from "{vault.name}"',
+            category='vault',
+            vault_name=vault.name,
+        )
+        return Response({'detail': 'Asset deleted.'}, status=status.HTTP_204_NO_CONTENT)
+
+
+class StorageOverviewView(APIView):
+    """
+    GET /api/v1/owner/storage/overview
+    """
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def get(self, request):
+        used = VaultAsset.objects.filter(vault__owner=request.user).aggregate(Sum('file_size_bytes'))['file_size_bytes__sum'] or 0
+        total = getattr(settings, 'STORAGE_QUOTA', 10 * 1024 * 1024 * 1024)
+        
+        return Response({
+            'used_bytes': used,
+            'total_bytes': total,
+            'remaining_bytes': max(0, total - used),
+            'usage_percentage': min(100, round((used / total) * 100)) if total > 0 else 0
+        })

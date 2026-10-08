@@ -57,11 +57,11 @@ class ReportService:
     @staticmethod
     def generate_vault_report():
         """Vault statistics report."""
-        from vaults.models import Vault, VaultItem, VaultShare
+        from vaults.models import Vault, VaultAsset, VaultShare
 
         total_vaults = Vault.objects.count()
         active_vaults = Vault.objects.filter(status='Active').count()
-        total_items = VaultItem.objects.count()
+        total_items = VaultAsset.objects.count()
         total_shares = VaultShare.objects.count()
         active_shares = VaultShare.objects.filter(status='active').count()
 

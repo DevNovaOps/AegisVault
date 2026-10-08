@@ -8,6 +8,8 @@ from .views import (
     VaultLockView, VaultUnlockView,
     ShareListCreateView, ShareDetailView,
     ShareRemindView, ShareRestoreView, ShareRevokeView,
+    VaultAssetListCreateView, VaultAssetDetailView,
+    StorageOverviewView
 )
 
 urlpatterns = [
@@ -16,6 +18,13 @@ urlpatterns = [
     path('vaults/<uuid:pk>/', VaultDetailView.as_view(), name='vault-detail'),
     path('vaults/<uuid:pk>/lock/', VaultLockView.as_view(), name='vault-lock'),
     path('vaults/<uuid:pk>/unlock/', VaultUnlockView.as_view(), name='vault-unlock'),
+
+    # Vault Assets
+    path('vaults/<uuid:vault_id>/assets/', VaultAssetListCreateView.as_view(), name='vault-asset-list-create'),
+    path('vaults/<uuid:vault_id>/assets/<uuid:pk>/', VaultAssetDetailView.as_view(), name='vault-asset-detail'),
+
+    # Storage
+    path('storage/overview/', StorageOverviewView.as_view(), name='storage-overview'),
 
     # Shares
     path('shares/', ShareListCreateView.as_view(), name='share-list-create'),

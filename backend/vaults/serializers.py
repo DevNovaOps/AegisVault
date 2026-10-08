@@ -3,7 +3,7 @@ AegisVault — Vault Serializers
 Matches frontend my-vaults.js and share-management.js data shapes.
 """
 from rest_framework import serializers
-from .models import Vault, VaultItem, VaultShare
+from .models import Vault, VaultAsset, VaultShare
 
 
 class VaultSerializer(serializers.ModelSerializer):
@@ -21,6 +21,7 @@ class VaultSerializer(serializers.ModelSerializer):
         model = Vault
         fields = [
             'id', 'name', 'description', 'vault_type', 'status',
+            'purpose', 'priority', 'tags',
             'trustees_count', 'shares_ratio', 'shares_percent',
             'release_condition', 'inactivity_days',
             'required_shares', 'total_shares',
@@ -49,7 +50,8 @@ class VaultCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vault
         fields = ['name', 'description', 'vault_type', 'release_condition',
-                  'inactivity_days', 'required_shares', 'total_shares']
+                  'inactivity_days', 'required_shares', 'total_shares',
+                  'purpose', 'priority', 'tags', 'status']
 
     def create(self, validated_data):
         validated_data['owner'] = self.context['request'].user
@@ -89,13 +91,13 @@ class VaultShareCreateSerializer(serializers.Serializer):
     expires_at = serializers.DateTimeField(required=False, allow_null=True, default=None)
 
 
-class VaultItemSerializer(serializers.ModelSerializer):
-    """Vault item serializer — never exposes decrypted content."""
+class VaultAssetSerializer(serializers.ModelSerializer):
+    """Vault asset serializer — never exposes decrypted content."""
 
     class Meta:
-        model = VaultItem
+        model = VaultAsset
         fields = [
-            'id', 'vault', 'name', 'category',
+            'id', 'vault', 'name', 'category', 'sensitivity', 'description',
             'file_size_bytes', 'mime_type', 'notes',
             'created_at', 'updated_at',
         ]

@@ -234,7 +234,7 @@
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
               <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
             </svg>
-            <span class="btn-badge">3</span>
+            <span class="btn-badge" style="display:none;">0</span>
           </a>
 
           <!-- Profile Menu Chip -->
@@ -690,47 +690,232 @@
        Modals
        ==================================================================== -->
 
-  <!-- Modal 1: Create New Vault -->
+  <!-- Modal 1: Create New Vault Wizard -->
   <div class="modal-overlay" id="createVaultModal">
-    <div class="modal-content">
+    <div class="modal-content" style="max-width: 750px; display: flex; flex-direction: column; max-height: 90vh;">
       <div class="modal-header">
-        <h3 class="modal-title">Create New Digital Vault</h3>
+        <h3 class="modal-title" id="wizardTitle">Create Digital Vault</h3>
         <button class="modal-close-btn" data-modal-close aria-label="Close modal">&times;</button>
       </div>
-      <form id="formCreateNewVault">
-        <div class="modal-body">
+      
+      <!-- Wizard Progress Indicators -->
+      <div class="wizard-progress" style="display: flex; gap: 4px; padding: 1rem 1.5rem; background: var(--bg-surface); border-bottom: 1px solid var(--border-subtle);">
+        <div class="wizard-step-dot active" data-step="1" title="Basic Info" style="flex:1; height:6px; border-radius:3px; background:var(--brand-orange);"></div>
+        <div class="wizard-step-dot" data-step="2" title="Assets" style="flex:1; height:6px; border-radius:3px; background:var(--bg-input-border);"></div>
+        <div class="wizard-step-dot" data-step="3" title="Contents" style="flex:1; height:6px; border-radius:3px; background:var(--bg-input-border);"></div>
+        <div class="wizard-step-dot" data-step="4" title="Trustees" style="flex:1; height:6px; border-radius:3px; background:var(--bg-input-border);"></div>
+        <div class="wizard-step-dot" data-step="5" title="Heartbeat" style="flex:1; height:6px; border-radius:3px; background:var(--bg-input-border);"></div>
+        <div class="wizard-step-dot" data-step="6" title="Release" style="flex:1; height:6px; border-radius:3px; background:var(--bg-input-border);"></div>
+        <div class="wizard-step-dot" data-step="7" title="Review" style="flex:1; height:6px; border-radius:3px; background:var(--bg-input-border);"></div>
+      </div>
+
+      <div class="modal-body" id="wizardBody" style="overflow-y: auto; padding-bottom: 2rem;">
+        
+        <!-- Step 1: Basic Information -->
+        <div class="wizard-step-content active" id="wizardStep1">
+          <h4 style="margin-bottom: 1rem; color: var(--text-primary);">Step 1: Basic Information</h4>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Configure the core identity and purpose of this vault.</p>
+          
           <div style="margin-bottom: 1.15rem;">
-            <label for="newVaultName" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Vault Name</label>
+            <label for="newVaultName" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Vault Name <span style="color:var(--status-critical);">*</span></label>
             <input type="text" id="newVaultName" required placeholder="e.g. Master Financial Assets" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
           </div>
-          <div style="margin-bottom: 1.15rem;">
-            <label for="newVaultCategory" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Vault Category</label>
-            <select id="newVaultCategory" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
-              <option value="Personal">Personal Vault</option>
-              <option value="Family">Family Vault</option>
-              <option value="Business">Business Vault</option>
-              <option value="Legacy">Legacy Vault</option>
-              <option value="Health">Health Directives Vault</option>
-            </select>
+          
+          <div style="display: flex; gap: 1rem; margin-bottom: 1.15rem;">
+            <div style="flex: 1;">
+              <label for="newVaultCategory" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Vault Category</label>
+              <select id="newVaultCategory" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
+                <option value="Personal">Personal</option>
+                <option value="Family">Family</option>
+                <option value="Financial">Financial</option>
+                <option value="Business">Business</option>
+                <option value="Property">Property</option>
+                <option value="Health">Health</option>
+                <option value="Digital Accounts">Digital Accounts</option>
+                <option value="Emergency">Emergency</option>
+                <option value="Legacy">Legacy</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div style="flex: 1;">
+              <label for="newVaultPriority" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Priority Level</label>
+              <select id="newVaultPriority" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
+                <option value="Normal">Normal</option>
+                <option value="Important">Important</option>
+                <option value="Critical">Critical</option>
+              </select>
+            </div>
           </div>
+          
           <div style="margin-bottom: 1.15rem;">
-            <label for="newVaultDesc" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Description &amp; Notes</label>
-            <textarea id="newVaultDesc" rows="3" placeholder="Briefly describe what confidential items are protected inside..." style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary); resize: none;"></textarea>
+            <label for="newVaultDesc" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Purpose / Intent</label>
+            <textarea id="newVaultDesc" rows="3" placeholder="e.g. Store important family documents and instructions to be released to trusted trustees if I become unavailable." style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary); resize: none;"></textarea>
           </div>
-          <div>
-            <label for="newVaultQuorum" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Shamir Consensus Quorum</label>
-            <select id="newVaultQuorum" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
-              <option value="2 of 3">2 of 3 Trustees Required</option>
-              <option value="3 of 3">3 of 3 Unanimous Trustees</option>
-              <option value="1 of 2">1 of 2 Quick Emergency Quorum</option>
-            </select>
+          
+          <div style="margin-bottom: 1.15rem;">
+            <label for="newVaultTags" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Tags (Comma separated)</label>
+            <input type="text" id="newVaultTags" placeholder="e.g. family, insurance, property" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
           </div>
         </div>
-        <div class="modal-footer">
+        
+        <!-- Step 2: Protected Asset Types -->
+        <div class="wizard-step-content" id="wizardStep2" style="display: none;">
+          <h4 style="margin-bottom: 1rem; color: var(--text-primary);">Step 2: Protected Asset Types</h4>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Select the types of information this vault will contain. This helps organize your assets.</p>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;" id="assetTypesGrid">
+            <label style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); cursor: pointer;">
+              <input type="checkbox" value="Documents" class="asset-type-cb">
+              <span style="color: var(--text-primary); font-weight: 500;">Documents</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); cursor: pointer;">
+              <input type="checkbox" value="Financial Information" class="asset-type-cb">
+              <span style="color: var(--text-primary); font-weight: 500;">Financial Information</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); cursor: pointer;">
+              <input type="checkbox" value="Property Records" class="asset-type-cb">
+              <span style="color: var(--text-primary); font-weight: 500;">Property Records</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); cursor: pointer;">
+              <input type="checkbox" value="Insurance Information" class="asset-type-cb">
+              <span style="color: var(--text-primary); font-weight: 500;">Insurance Information</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); cursor: pointer;">
+              <input type="checkbox" value="Digital Account Info" class="asset-type-cb">
+              <span style="color: var(--text-primary); font-weight: 500;">Digital Account Info</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); cursor: pointer;">
+              <input type="checkbox" value="Recovery Information" class="asset-type-cb">
+              <span style="color: var(--text-primary); font-weight: 500;">Recovery Information</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); cursor: pointer;">
+              <input type="checkbox" value="Personal Messages" class="asset-type-cb">
+              <span style="color: var(--text-primary); font-weight: 500;">Personal Messages</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); cursor: pointer;">
+              <input type="checkbox" value="Photos / Media" class="asset-type-cb">
+              <span style="color: var(--text-primary); font-weight: 500;">Photos / Media</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Step 3: Vault Contents -->
+        <div class="wizard-step-content" id="wizardStep3" style="display: none;">
+          <h4 style="margin-bottom: 1rem; color: var(--text-primary);">Step 3: Vault Contents</h4>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">You can upload files and secure notes now, or skip this step and add them later from the Vault Details page.</p>
+          
+          <div style="text-align: center; padding: 3rem; border: 2px dashed var(--bg-input-border); border-radius: var(--radius-lg); margin-bottom: 1.5rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" style="width:48px;height:48px;margin-bottom:1rem;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <h5 style="color: var(--text-primary); margin-bottom: 0.5rem; font-size: 1rem;">Asset Management requires Vault Creation</h5>
+            <p style="color: var(--text-muted); font-size: 0.85rem; max-width: 400px; margin: 0 auto;">To begin uploading actual secure assets, please finish the wizard and activate your vault. You'll be redirected to the comprehensive Vault Asset Manager.</p>
+          </div>
+        </div>
+
+        <!-- Step 4: Trustees & Access -->
+        <div class="wizard-step-content" id="wizardStep4" style="display: none;">
+          <h4 style="margin-bottom: 1rem; color: var(--text-primary);">Step 4: Trustees & Access</h4>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Who should have access to this vault upon release?</p>
+          
+          <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 1.5rem; border-radius: var(--radius-lg); margin-bottom: 1.5rem;">
+             <h5 style="color: var(--text-primary); margin-bottom: 1rem;">Quorum Consensus (K-of-N)</h5>
+             <div style="display: flex; gap: 1.5rem;">
+               <div style="flex: 1;">
+                 <label style="display:block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Total Trustees (N)</label>
+                 <input type="number" id="wizardTotalTrustees" value="3" min="1" max="10" style="width:100%; padding: 0.5rem; background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary); border-radius: var(--radius-md);">
+               </div>
+               <div style="flex: 1;">
+                 <label style="display:block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Required Approvals (K)</label>
+                 <input type="number" id="wizardRequiredApprovals" value="2" min="1" max="10" style="width:100%; padding: 0.5rem; background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary); border-radius: var(--radius-md);">
+               </div>
+             </div>
+             <p style="margin-top: 1rem; font-size: 0.8rem; color: var(--status-warning);">This means <strong><span id="kValDisplay">2</span> out of <span id="nValDisplay">3</span></strong> trustees must approve a release request before decryption.</p>
+          </div>
+        </div>
+
+        <!-- Step 5: Dead Man's Switch -->
+        <div class="wizard-step-content" id="wizardStep5" style="display: none;">
+          <h4 style="margin-bottom: 1rem; color: var(--text-primary);">Step 5: Dead Man's Switch (Heartbeat)</h4>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Configure the inactivity detection engine.</p>
+          
+          <div style="margin-bottom: 1.5rem;">
+             <label style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Check-in Frequency</label>
+             <select id="wizardHeartbeatFreq" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
+                <option value="7">Every 7 Days</option>
+                <option value="14">Every 14 Days</option>
+                <option value="30" selected>Every 30 Days</option>
+                <option value="60">Every 60 Days</option>
+                <option value="90">Every 90 Days</option>
+             </select>
+          </div>
+          
+          <div style="margin-bottom: 1.5rem;">
+             <label style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Grace Period (Before actual release triggers)</label>
+             <select id="wizardGracePeriod" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
+                <option value="3">3 Days</option>
+                <option value="7" selected>7 Days</option>
+                <option value="14">14 Days</option>
+                <option value="30">30 Days</option>
+             </select>
+          </div>
+        </div>
+
+        <!-- Step 6: Release Policy -->
+        <div class="wizard-step-content" id="wizardStep6" style="display: none;">
+          <h4 style="margin-bottom: 1rem; color: var(--text-primary);">Step 6: Release Policy</h4>
+          
+          <div style="margin-bottom: 1.15rem;">
+            <label for="wizardReleaseCondition" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Release Condition Instructions</label>
+            <textarea id="wizardReleaseCondition" rows="4" placeholder="e.g. Do not release unless trustees have verified with each other." style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary); resize: none;"></textarea>
+          </div>
+          
+          <label style="display: flex; align-items: flex-start; gap: 0.75rem; padding: 1rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); margin-top: 1rem;">
+            <input type="checkbox" id="wizardEmergencyClaim" style="margin-top: 0.25rem;">
+            <div>
+              <span style="color: var(--text-primary); font-weight: 600; display: block; margin-bottom: 0.25rem;">Allow Emergency Claim</span>
+              <span style="color: var(--text-muted); font-size: 0.8rem;">Trustees can instantly initiate a claim which bypasses heartbeat waiting if quorum is met immediately.</span>
+            </div>
+          </label>
+        </div>
+
+        <!-- Step 7: Review -->
+        <div class="wizard-step-content" id="wizardStep7" style="display: none;">
+          <h4 style="margin-bottom: 1rem; color: var(--text-primary);">Step 7: Security & Review</h4>
+          
+          <div style="background: rgba(249, 115, 22, 0.05); border: 1px solid rgba(249, 115, 22, 0.2); padding: 1.5rem; border-radius: var(--radius-lg); margin-bottom: 1.5rem;">
+             <h5 style="color: var(--brand-orange); margin-bottom: 1rem;">Vault Summary</h5>
+             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.9rem;">
+                <div><strong style="color:var(--text-muted);">Name:</strong> <span id="revName" style="color:var(--text-primary);"></span></div>
+                <div><strong style="color:var(--text-muted);">Category:</strong> <span id="revCategory" style="color:var(--text-primary);"></span></div>
+                <div><strong style="color:var(--text-muted);">Priority:</strong> <span id="revPriority" style="color:var(--text-primary);"></span></div>
+                <div><strong style="color:var(--text-muted);">Quorum:</strong> <span id="revQuorum" style="color:var(--text-primary);"></span></div>
+                <div><strong style="color:var(--text-muted);">Heartbeat:</strong> <span id="revHeartbeat" style="color:var(--text-primary);"></span></div>
+             </div>
+          </div>
+          
+          <label style="display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.75rem; cursor: pointer;">
+             <input type="checkbox" id="wizardConfirm1" required>
+             <span style="color: var(--text-primary); font-size: 0.85rem;">I understand that authorized trustees may gain access to protected assets after release conditions are satisfied.</span>
+          </label>
+          <label style="display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.75rem; cursor: pointer;">
+             <input type="checkbox" id="wizardConfirm2" required>
+             <span style="color: var(--text-primary); font-size: 0.85rem;">I confirm that the information and trustees configured for this vault are correct.</span>
+          </label>
+          <label style="display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 1.5rem; cursor: pointer;">
+             <input type="checkbox" id="wizardConfirm3" required>
+             <span style="color: var(--text-primary); font-size: 0.85rem;">I understand that vault and release activity is audited by the AegisVault engine.</span>
+          </label>
+        </div>
+        
+      </div>
+      
+      <div class="modal-footer" style="display: flex; justify-content: space-between; border-top: 1px solid var(--border-subtle); padding: 1.25rem 1.5rem; background: var(--bg-surface); border-radius: 0 0 var(--radius-lg) var(--radius-lg);">
+        <button type="button" class="btn btn-secondary" id="wizardPrevBtn" style="visibility: hidden;">Back</button>
+        <div style="display: flex; gap: 0.75rem;">
           <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
-          <button type="submit" class="btn btn-primary">Create Vault</button>
+          <button type="button" class="btn btn-primary" id="wizardNextBtn">Next Step</button>
+          <button type="button" class="btn btn-primary" id="wizardFinishBtn" style="display:none; background:var(--status-success);">Activate Vault</button>
         </div>
-      </form>
+      </div>
     </div>
   </div>
 

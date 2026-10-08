@@ -1,0 +1,43 @@
+/* Same core styles as my-vaults.css */
+@import url('../my-vaults/my-vaults.css');
+
+.vault-tabs {
+  display: flex;
+  gap: 2rem;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 2rem;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 1rem 0;
+  color: var(--text-muted);
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  color: var(--text-primary);
+}
+
+.tab-btn.active {
+  color: var(--brand-orange);
+  border-bottom: 2px solid var(--brand-orange);
+}
+
+.tab-content {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+#uploadZone.dragover {
+  border-color: var(--status-success);
+  background: rgba(16, 185, 129, 0.05);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

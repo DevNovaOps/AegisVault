@@ -313,48 +313,7 @@
   // =========================================================================
 
   function openVaultDetailsModal(vault) {
-    const title = document.getElementById('detailsModalTitle');
-    const body = document.getElementById('detailsModalBody');
-    if (title && body) {
-      title.textContent = vault.name;
-      body.innerHTML = `
-        <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.25rem;">
-          <div class="vault-thumb" style="width:52px; height:52px; background-image:url('${vault.thumbImg}'); background-size:cover; border-radius:var(--radius-md);"></div>
-          <div>
-            <div style="font-weight:700; font-size:1.15rem; color:var(--text-primary);">${vault.name}</div>
-            <div style="display:flex; gap:0.5rem; margin-top:0.35rem; align-items:center;">
-              <span class="type-badge ${vault.typeBadgeClass}">${vault.type}</span>
-              <span class="vault-status-pill ${vault.statusClass}">
-                <span class="status-indicator-dot"></span>
-                ${vault.status}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div style="background-color:var(--bg-card-elevated); padding:1.1rem; border-radius:var(--radius-md); border:1px solid var(--border-card); margin-bottom:1.2rem;">
-          <div style="font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--text-muted); margin-bottom:0.35rem;">Description</div>
-          <p style="font-size:0.88rem; color:var(--text-secondary); line-height:1.5;">${vault.desc}</p>
-        </div>
-
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.85rem; margin-bottom:1.2rem;">
-          <div style="background-color:var(--bg-input); padding:0.85rem; border-radius:var(--radius-md); border:1px solid var(--border-subtle);">
-            <div style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">Assigned Trustees</div>
-            <div style="font-size:1.1rem; font-weight:800; color:var(--text-primary); margin-top:0.25rem;">${vault.trustees} Guardians</div>
-          </div>
-          <div style="background-color:var(--bg-input); padding:0.85rem; border-radius:var(--radius-md); border:1px solid var(--border-subtle);">
-            <div style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">Shamir Quorum</div>
-            <div style="font-size:1.1rem; font-weight:800; color:var(--status-success); margin-top:0.25rem;">${vault.sharesRatio} Shares Verified</div>
-          </div>
-        </div>
-
-        <div style="background-color:var(--bg-input); padding:0.85rem; border-radius:var(--radius-md); border:1px solid var(--border-subtle); margin-bottom:1rem;">
-          <div style="font-size:0.75rem; color:var(--text-muted); font-weight:600; margin-bottom:0.25rem;">Release Trigger Protocol</div>
-          <div style="font-size:0.85rem; color:var(--text-primary);">${vault.releaseCondition}</div>
-        </div>
-      `;
-      window.AegisOwner.openModal('vaultDetailsModal');
-    }
+    window.location.href = `../vault-details/vault-details.html?id=${vault.id}`;
   }
 
   function openEditVaultModal(vault) {
@@ -540,78 +499,174 @@
       btnQuickCreate.addEventListener('click', () => window.AegisOwner.openModal('createVaultModal'));
     }
 
-    if (formCreate) {
-      formCreate.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const name = document.getElementById('newVaultName')?.value.trim() || 'Custom Vault';
-        const type = document.getElementById('newVaultCategory')?.value || 'Personal';
-        const desc = document.getElementById('newVaultDesc')?.value.trim() || 'Confidential digital repository.';
+    // -------------------------------------------------------------
+    // Digital Vault Creation Wizard (7 Steps)
+    // -------------------------------------------------------------
+    const wizardModal = document.getElementById('createVaultModal');
+    const wizardBody = document.getElementById('wizardBody');
+    const wizardNextBtn = document.getElementById('wizardNextBtn');
+    const wizardPrevBtn = document.getElementById('wizardPrevBtn');
+    const wizardFinishBtn = document.getElementById('wizardFinishBtn');
+    
+    let currentStep = 1;
+    const totalSteps = 7;
+    let draftVaultId = null;
 
-        const typeBadge = type.toLowerCase();
-        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-          window.AegisAPI.post('/owner/vaults/', {
-            name: name,
-            description: desc,
-            vault_type: type
-          }).then(v => {
-            const TYPE_ICONS = {
-              'Personal': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
-              'Family': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
-              'Business': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
-              'Legacy': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>',
-              'Health': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>'
-            };
-            const newVault = {
-              id: v.id,
-              name: v.name,
-              desc: v.description || '',
-              type: v.vault_type,
-              typeBadgeClass: (v.vault_type || '').toLowerCase(),
-              typeIcon: TYPE_ICONS[v.vault_type] || TYPE_ICONS['Personal'],
-              status: v.status.charAt(0).toUpperCase() + v.status.slice(1),
-              statusClass: 'status-' + (v.status || '').toLowerCase(),
-              trustees: v.trustees_count || 0,
-              sharesRatio: v.shares_ratio || '0 / 0',
-              sharesPercent: v.shares_percent || 0,
-              date: new Date(v.created_at).toLocaleDateString(),
-              time: new Date(v.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-              thumbImg: '../assets/images/vault-thumb-1.png',
-              releaseCondition: v.release_condition || 'Not set',
-              storageUsed: v.storage_used || '0 MB'
-            };
-            mockVaults.unshift(newVault);
+    function updateWizardUI() {
+      // Show/Hide steps
+      document.querySelectorAll('.wizard-step-content').forEach((el, index) => {
+        el.style.display = (index + 1 === currentStep) ? 'block' : 'none';
+      });
+      // Update dots
+      document.querySelectorAll('.wizard-step-dot').forEach((el, index) => {
+        if (index + 1 < currentStep) {
+          el.style.background = 'var(--status-success)'; // completed
+          el.classList.remove('active');
+        } else if (index + 1 === currentStep) {
+          el.style.background = 'var(--brand-orange)'; // active
+          el.classList.add('active');
+        } else {
+          el.style.background = 'var(--bg-input-border)'; // pending
+          el.classList.remove('active');
+        }
+      });
+      // Buttons
+      wizardPrevBtn.style.visibility = (currentStep === 1) ? 'hidden' : 'visible';
+      if (currentStep === totalSteps) {
+        wizardNextBtn.style.display = 'none';
+        wizardFinishBtn.style.display = 'block';
+        populateReviewStep();
+      } else {
+        wizardNextBtn.style.display = 'block';
+        wizardFinishBtn.style.display = 'none';
+      }
+      
+      // Update displays in step 4 dynamically if needed
+      document.getElementById('wizardTotalTrustees').addEventListener('input', (e) => {
+        document.getElementById('nValDisplay').textContent = e.target.value;
+      });
+      document.getElementById('wizardRequiredApprovals').addEventListener('input', (e) => {
+        document.getElementById('kValDisplay').textContent = e.target.value;
+      });
+    }
+
+    function populateReviewStep() {
+      document.getElementById('revName').textContent = document.getElementById('newVaultName').value || 'Unnamed Vault';
+      document.getElementById('revCategory').textContent = document.getElementById('newVaultCategory').value;
+      document.getElementById('revPriority').textContent = document.getElementById('newVaultPriority').value;
+      document.getElementById('revQuorum').textContent = `${document.getElementById('wizardRequiredApprovals').value} of ${document.getElementById('wizardTotalTrustees').value}`;
+      document.getElementById('revHeartbeat').textContent = `${document.getElementById('wizardHeartbeatFreq').value} days (+${document.getElementById('wizardGracePeriod').value} grace)`;
+    }
+
+    if (wizardNextBtn) {
+      wizardNextBtn.addEventListener('click', () => {
+        // Validation per step
+        if (currentStep === 1) {
+          const name = document.getElementById('newVaultName').value.trim();
+          if (!name) {
+            window.AegisOwner.showToast('Vault Name is required.', 'error');
+            return;
+          }
+          // Step 1: Create Draft Vault via API
+          if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+            if (!draftVaultId) {
+              window.AegisOwner.showToast('Creating Draft Vault...', 'info');
+              window.AegisAPI.post('/owner/vaults/', {
+                name: name,
+                vault_type: document.getElementById('newVaultCategory').value,
+                description: document.getElementById('newVaultDesc').value,
+                status: 'Draft',
+                purpose: document.getElementById('newVaultDesc').value,
+                priority: document.getElementById('newVaultPriority').value
+              }).then(v => {
+                draftVaultId = v.id;
+                currentStep++;
+                updateWizardUI();
+              }).catch(err => {
+                window.AegisOwner.showToast('Failed to create Draft: ' + err.message, 'error');
+              });
+              return; // Stop standard progression until async finishes
+            } else {
+              // Already created draft, just update it if they went back and forth
+              window.AegisAPI.put(`/owner/vaults/${draftVaultId}/`, {
+                name: name,
+                vault_type: document.getElementById('newVaultCategory').value,
+                description: document.getElementById('newVaultDesc').value,
+                priority: document.getElementById('newVaultPriority').value
+              });
+            }
+          }
+        }
+        
+        if (currentStep < totalSteps) {
+          currentStep++;
+          updateWizardUI();
+        }
+      });
+    }
+
+    if (wizardPrevBtn) {
+      wizardPrevBtn.addEventListener('click', () => {
+        if (currentStep > 1) {
+          currentStep--;
+          updateWizardUI();
+        }
+      });
+    }
+
+    if (wizardFinishBtn) {
+      wizardFinishBtn.addEventListener('click', () => {
+        if (!document.getElementById('wizardConfirm1').checked || 
+            !document.getElementById('wizardConfirm2').checked || 
+            !document.getElementById('wizardConfirm3').checked) {
+          window.AegisOwner.showToast('You must check all confirmations to proceed.', 'error');
+          return;
+        }
+        
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated() && draftVaultId) {
+          window.AegisOwner.showToast('Activating Vault and configuring parameters...', 'info');
+          // Update vault to Active with final parameters
+          window.AegisAPI.put(`/owner/vaults/${draftVaultId}/`, {
+            status: 'Active',
+            total_shares: document.getElementById('wizardTotalTrustees').value,
+            required_shares: document.getElementById('wizardRequiredApprovals').value,
+            inactivity_days: document.getElementById('wizardHeartbeatFreq').value,
+            release_condition: document.getElementById('wizardReleaseCondition').value
+          }).then(() => {
+            window.AegisOwner.showToast('Vault Successfully Activated!', 'success');
             window.AegisOwner.closeModal('createVaultModal');
-            formCreate.reset();
-            renderVaultsTable();
-            window.AegisOwner.showToast(`Vault "${name}" created successfully!`, 'success');
+            setTimeout(() => {
+              window.location.href = `../vault-details/vault-details.html?id=${draftVaultId}`;
+            }, 800);
           }).catch(err => {
-            window.AegisOwner.showToast(`Failed to create vault: ${err.message}`, 'error');
+             window.AegisOwner.showToast('Activation failed: ' + err.message, 'error');
           });
         } else {
-          const newVault = {
-            id: `vault-${Date.now()}`,
-            name: name,
-            desc: desc,
-            type: type,
-            typeBadgeClass: typeBadge,
-            typeIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
-            status: 'Active',
-            statusClass: 'status-active',
-            trustees: 1,
-            sharesRatio: '1 / 1',
-            sharesPercent: 100,
-            date: 'Just now',
-            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            thumbImg: '../assets/images/vault-thumb-1.png',
-            releaseCondition: '60 days heartbeat inactivity',
-            storageUsed: '10 MB'
-          };
-          mockVaults.unshift(newVault);
+          // Fake mock fallback
+          window.AegisOwner.showToast('Vault Successfully Activated!', 'success');
           window.AegisOwner.closeModal('createVaultModal');
-          formCreate.reset();
-          renderVaultsTable();
-          window.AegisOwner.showToast(`Vault "${name}" created successfully!`, 'success');
+          setTimeout(() => {
+            window.location.href = `../vault-details/vault-details.html?id=mock-${Date.now()}`;
+          }, 800);
         }
+      });
+    }
+    
+    // Reset wizard when modal opens
+    if (btnCreate) {
+      btnCreate.addEventListener('click', () => {
+        currentStep = 1; draftVaultId = null; 
+        document.querySelectorAll('input, textarea, select').forEach(el => {
+          if (el.type === 'checkbox') el.checked = false;
+          else if (el.tagName !== 'SELECT' && el.type !== 'number') el.value = '';
+        });
+        updateWizardUI();
+      });
+    }
+    if (btnQuickCreate) {
+      btnQuickCreate.addEventListener('click', () => {
+        currentStep = 1; draftVaultId = null;
+        updateWizardUI();
       });
     }
 
