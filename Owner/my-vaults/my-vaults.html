@@ -965,6 +965,30 @@
             <label for="editVaultDesc" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Description</label>
             <textarea id="editVaultDesc" rows="3" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary); resize: none;"></textarea>
           </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.15rem; margin-top: 1.15rem; margin-bottom: 1.15rem;">
+            <div>
+              <label for="editVaultTotalShares" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Total Shares (N)</label>
+              <input type="number" id="editVaultTotalShares" min="1" max="10" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
+            </div>
+            <div>
+              <label for="editVaultRequiredShares" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Required Shares (K)</label>
+              <input type="number" id="editVaultRequiredShares" min="1" max="10" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.15rem; margin-bottom: 1.15rem;">
+            <div>
+              <label for="editVaultInactivityDays" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Inactivity Days</label>
+              <input type="number" id="editVaultInactivityDays" min="1" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
+            </div>
+            <div>
+              <label for="editVaultReleaseCondition" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Release Condition</label>
+              <select id="editVaultReleaseCondition" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
+                <option value="inactivity">Inactivity Only</option>
+                <option value="death_certificate">Verified Death Certificate</option>
+                <option value="manual_approval">Manual Approval</option>
+              </select>
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>

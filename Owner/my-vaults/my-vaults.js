@@ -322,12 +322,20 @@
     const nameInput = document.getElementById('editVaultName');
     const catSelect = document.getElementById('editVaultCategory');
     const descInput = document.getElementById('editVaultDesc');
+    const totalSharesInput = document.getElementById('editVaultTotalShares');
+    const requiredSharesInput = document.getElementById('editVaultRequiredShares');
+    const inactivityDaysInput = document.getElementById('editVaultInactivityDays');
+    const releaseConditionSelect = document.getElementById('editVaultReleaseCondition');
 
     if (idInput && nameInput && catSelect && descInput) {
       idInput.value = vault.id;
       nameInput.value = vault.name;
       catSelect.value = vault.type;
       descInput.value = vault.desc;
+      if (totalSharesInput) totalSharesInput.value = vault.total_shares || 3;
+      if (requiredSharesInput) requiredSharesInput.value = vault.required_shares || 2;
+      if (inactivityDaysInput) inactivityDaysInput.value = vault.inactivity_days || 30;
+      if (releaseConditionSelect) releaseConditionSelect.value = vault.releaseCondition || 'inactivity';
       window.AegisOwner.openModal('editVaultModal');
     }
   }
@@ -378,6 +386,9 @@
           trustees: v.trustees_count || 0,
           sharesRatio: v.shares_ratio || '0 / 0',
           sharesPercent: v.shares_percent || 0,
+          total_shares: v.total_shares || 3,
+          required_shares: v.required_shares || 2,
+          inactivity_days: v.inactivity_days || 30,
           date: new Date(v.created_at).toLocaleDateString(),
           time: new Date(v.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           thumbImg: '../assets/images/vault-thumb-1.png',
@@ -752,19 +763,31 @@
         const name = document.getElementById('editVaultName')?.value.trim();
         const type = document.getElementById('editVaultCategory')?.value;
         const desc = document.getElementById('editVaultDesc')?.value.trim();
+        const totalShares = document.getElementById('editVaultTotalShares')?.value;
+        const requiredShares = document.getElementById('editVaultRequiredShares')?.value;
+        const inactivityDays = document.getElementById('editVaultInactivityDays')?.value;
+        const releaseCondition = document.getElementById('editVaultReleaseCondition')?.value;
 
         const target = mockVaults.find(v => v.id === id);
         if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
           window.AegisAPI.put(`/owner/vaults/${id}/`, {
             name: name || target.name,
             description: desc || target.desc,
-            vault_type: type || target.type
+            vault_type: type || target.type,
+            total_shares: totalShares || target.total_shares,
+            required_shares: requiredShares || target.required_shares,
+            inactivity_days: inactivityDays || target.inactivity_days,
+            release_condition: releaseCondition || target.releaseCondition
           }).then(() => {
             if (target) {
               target.name = name || target.name;
               target.type = type || target.type;
               target.typeBadgeClass = (type || target.type).toLowerCase();
               target.desc = desc || target.desc;
+              target.total_shares = totalShares || target.total_shares;
+              target.required_shares = requiredShares || target.required_shares;
+              target.inactivity_days = inactivityDays || target.inactivity_days;
+              target.releaseCondition = releaseCondition || target.releaseCondition;
               target.date = 'Just now';
               target.time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             }
