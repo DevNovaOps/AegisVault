@@ -47,8 +47,12 @@
         }
 
         // Update recent activity if data was returned
-        if (activity.status === 'fulfilled' && Array.isArray(activity.value) && activity.value.length > 0) {
-          const mapped = activity.value.map(log => ({
+        let actData = [];
+        if (activity.status === 'fulfilled' && activity.value) {
+          actData = Array.isArray(activity.value) ? activity.value : (activity.value.results || []);
+        }
+        if (actData.length > 0) {
+          const mapped = actData.map(log => ({
             id: log.id,
             date: log.timestamp ? new Date(log.timestamp).toLocaleString() : 'Recently',
             action: log.actionTitle || log.action_title || 'Activity',
@@ -61,8 +65,12 @@
         }
 
         // Update vault health if data was returned
-        if (health.status === 'fulfilled' && Array.isArray(health.value) && health.value.length > 0) {
-          const mapped = health.value.map(v => ({
+        let healthData = [];
+        if (health.status === 'fulfilled' && health.value) {
+          healthData = Array.isArray(health.value) ? health.value : (health.value.results || []);
+        }
+        if (healthData.length > 0) {
+          const mapped = healthData.map(v => ({
             name: v.name,
             mode: v.status || 'Active',
             avatarColor: mapTypeToColor(v.vault_type),
@@ -81,7 +89,7 @@
 
         // Release status donut data
         if (releaseData.status === 'fulfilled' && releaseData.value) {
-           const releases = releaseData.value;
+           const releases = Array.isArray(releaseData.value) ? releaseData.value : (releaseData.value.results || []);
            let completed = 0, in_progress = 0, scheduled = 0, not_started = 0;
            releases.forEach(r => {
               const st = (r.status || '').toLowerCase();
@@ -210,185 +218,21 @@
   }
 
   const mockChartData = {
-    '6m': [
-      { month: 'Apr', active: 2, shares: 1, trustees: 1 },
-      { month: 'May', active: 3, shares: 3, trustees: 2 },
-      { month: 'Jun', active: 4, shares: 3, trustees: 2 },
-      { month: 'Jul', active: 5, shares: 4, trustees: 3 },
-      { month: 'Aug', active: 6, shares: 5, trustees: 4 },
-      { month: 'Sep', active: 8, shares: 8, trustees: 6 }
-    ],
-    '30d': [
-      { month: 'W1', active: 5, shares: 5, trustees: 4 },
-      { month: 'W2', active: 6, shares: 6, trustees: 5 },
-      { month: 'W3', active: 7, shares: 7, trustees: 5 },
-      { month: 'W4', active: 8, shares: 8, trustees: 6 }
-    ],
-    'ytd': [
-      { month: 'Jan', active: 1, shares: 0, trustees: 0 },
-      { month: 'Mar', active: 2, shares: 1, trustees: 1 },
-      { month: 'May', active: 3, shares: 3, trustees: 2 },
-      { month: 'Jul', active: 5, shares: 4, trustees: 3 },
-      { month: 'Sep', active: 8, shares: 8, trustees: 6 }
-    ]
+    '6m': [],
+    '30d': [],
+    'ytd': []
   };
 
   const mockReleaseStatus = {
-    total: 6,
-    segments: [
-      { label: 'Completed', count: 2, color: '#10b981', key: 'completed' },
-      { label: 'In Progress', count: 1, color: '#0284c7', key: 'in_progress' },
-      { label: 'Scheduled', count: 2, color: '#f59e0b', key: 'scheduled' },
-      { label: 'Not Started', count: 1, color: '#ef4444', key: 'not_started' }
-    ]
+    total: 0,
+    segments: []
   };
 
-  const mockUpcomingEvents = [
-    {
-      id: 'evt-1',
-      day: '15',
-      month: 'Sep',
-      title: 'Health Check Reminder',
-      vault: 'Personal Vault',
-      dotColor: '#0284c7',
-      countdown: 'In 5 days',
-      pillType: 'blue',
-      isWarm: false,
-      description: 'Scheduled automated ping check-in. If unacknowledged within 14 days, pre-release notifications commence.'
-    },
-    {
-      id: 'evt-2',
-      day: '22',
-      month: 'Sep',
-      title: 'Release Review',
-      vault: 'Family Vault',
-      dotColor: '#ef4444',
-      countdown: 'In 12 days',
-      pillType: 'orange',
-      isWarm: true,
-      description: 'Family Vault grace period check. Confirm quorum verification status from designated trustees.'
-    },
-    {
-      id: 'evt-3',
-      day: '10',
-      month: 'Oct',
-      title: 'Trustee Re-verification',
-      vault: 'Business Vault',
-      dotColor: '#0284c7',
-      countdown: 'In 30 days',
-      pillType: 'blue',
-      isWarm: true,
-      description: 'Bi-annual cryptographic key rollover and KYC liveness re-verification for corporate trustees.'
-    },
-    {
-      id: 'evt-4',
-      day: '25',
-      month: 'Oct',
-      title: 'Scheduled Release Check',
-      vault: 'Legacy Vault',
-      dotColor: '#f59e0b',
-      countdown: 'In 45 days',
-      pillType: 'orange',
-      isWarm: true,
-      description: 'Estate planning distribution rehearsal. All Shamir shards verified for mathematical integrity.'
-    }
-  ];
+  const mockUpcomingEvents = [];
 
-  const mockRecentActivity = [
-    {
-      id: 'act-1',
-      date: '12 Sep 2025, 10:24 AM',
-      action: 'Trustee Invited',
-      actionColor: 'purple',
-      actionIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>',
-      vault: 'Family Vault',
-      details: 'Invitation sent to sneha.mehta@email.com'
-    },
-    {
-      id: 'act-2',
-      date: '11 Sep 2025, 04:18 PM',
-      action: 'Share Submitted',
-      actionColor: 'green',
-      actionIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>',
-      vault: 'Personal Vault',
-      details: 'Trustee share received from Amit Kumar'
-    },
-    {
-      id: 'act-3',
-      date: '10 Sep 2025, 09:12 AM',
-      action: 'Vault Updated',
-      actionColor: 'blue',
-      actionIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
-      vault: 'Business Vault',
-      details: 'Updated release conditions'
-    },
-    {
-      id: 'act-4',
-      date: '08 Sep 2025, 02:36 PM',
-      action: 'Trustee Verified',
-      actionColor: 'amber',
-      actionIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>',
-      vault: 'Legacy Vault',
-      details: 'Vikram Shah completed verification'
-    },
-    {
-      id: 'act-5',
-      date: '05 Sep 2025, 11:09 AM',
-      action: 'Release Request',
-      actionColor: 'red',
-      actionIcon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>',
-      vault: 'Personal Vault',
-      details: 'Release request initiated'
-    }
-  ];
+  const mockRecentActivity = [];
 
-  const mockVaultHealth = [
-    {
-      name: 'Personal Vault',
-      mode: 'Active',
-      avatarColor: 'blue',
-      avatarSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
-      status: 'Healthy',
-      badgeClass: 'badge-success',
-      details: 'Encryption: AES-256-GCM. Quorum: 3 of 3 shares active. Inactivity ping: 42 days remaining.'
-    },
-    {
-      name: 'Family Vault',
-      mode: 'Active',
-      avatarColor: 'amber',
-      avatarSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
-      status: 'Healthy',
-      badgeClass: 'badge-success',
-      details: 'Encryption: ChaCha20-Poly1305. Quorum: 2 of 2 shares verified. Beneficiaries configured: 3.'
-    },
-    {
-      name: 'Business Vault',
-      mode: 'Active',
-      avatarColor: 'purple',
-      avatarSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
-      status: 'Attention',
-      badgeClass: 'badge-warning',
-      details: 'One corporate trustee KYC certificate expires in 30 days. Action required to maintain full quorum.'
-    },
-    {
-      name: 'Legacy Vault',
-      mode: 'Scheduled',
-      avatarColor: 'blue',
-      avatarSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
-      status: 'Healthy',
-      badgeClass: 'badge-success',
-      details: 'Release scheduled upon legal milestone verification. Cryptographic test reconstructed successfully.'
-    },
-    {
-      name: 'Health Vault',
-      mode: 'Active',
-      avatarColor: 'teal',
-      avatarSvg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
-      status: 'Healthy',
-      badgeClass: 'badge-success',
-      details: 'Emergency medical directives accessible via 1-of-2 quick consensus protocol.'
-    }
-  ];
+  const mockVaultHealth = [];
 
   // =========================================================================
   // RENDER CONTROLLERS
