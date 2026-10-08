@@ -18,7 +18,7 @@ urlpatterns = [
     path('api/v1/owner/', include('trustees.urls')),
     path('api/v1/owner/', include('releases.urls')),
     path('api/v1/owner/', include('notifications.urls')),
-    path('api/v1/owner/', include('dashboard.urls')),
+    path('api/v1/owner/dashboard/', include('dashboard.urls')),
     path('api/v1/owner/', include('heartbeat.urls')),
     path('api/v1/owner/', include('support.urls')),
     path('api/v1/owner/', include('audit.urls_owner')),
