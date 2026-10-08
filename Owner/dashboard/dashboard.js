@@ -23,9 +23,9 @@
         }
 
         const [kpis, activity, chartData, releaseData, events, health, heartbeat] = await Promise.allSettled([
-          window.AegisAPI.get('/owner/dashboard/kpis'),
-          window.AegisAPI.get('/owner/dashboard/activity'),
-          window.AegisAPI.get('/owner/dashboard/chart-data'),
+          window.AegisAPI.get('/owner/dashboard/kpis/'),
+          window.AegisAPI.get('/owner/dashboard/activity/'),
+          window.AegisAPI.get('/owner/dashboard/chart-data/').catch(e => null),
           window.AegisAPI.get('/owner/releases/?status=all'),
           window.AegisAPI.get('/owner/notifications/?type=all'),
           window.AegisAPI.get('/owner/vaults/'),
