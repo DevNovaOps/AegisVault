@@ -146,6 +146,7 @@
         const vals = Object.values(errorData).flat();
         if (vals.length) msg = vals.join(' ');
       }
+      if (!msg && errorData.non_field_errors) msg = errorData.non_field_errors[0];
       const error = new Error(msg || `API Error: ${response.status}`);
       error.status = response.status;
       error.data = errorData;
