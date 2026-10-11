@@ -101,5 +101,5 @@ class VaultAssetSerializer(serializers.ModelSerializer):
             'file_size_bytes', 'mime_type', 'notes',
             'created_at', 'updated_at',
         ]
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'vault', 'created_at', 'updated_at']
         # encrypted_data, encryption_iv, encryption_tag intentionally excluded

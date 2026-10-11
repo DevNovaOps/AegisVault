@@ -977,17 +977,19 @@
           </div>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.15rem; margin-bottom: 1.15rem;">
             <div>
-              <label for="editVaultInactivityDays" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Inactivity Days</label>
-              <input type="number" id="editVaultInactivityDays" min="1" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
-            </div>
-            <div>
-              <label for="editVaultReleaseCondition" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Release Condition</label>
-              <select id="editVaultReleaseCondition" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
-                <option value="inactivity">Inactivity Only</option>
-                <option value="death_certificate">Verified Death Certificate</option>
-                <option value="manual_approval">Manual Approval</option>
+              <label for="editVaultInactivityDays" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Check-in Frequency (Days)</label>
+              <select id="editVaultInactivityDays" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
+                <option value="7">Every 7 Days</option>
+                <option value="14">Every 14 Days</option>
+                <option value="30">Every 30 Days</option>
+                <option value="60">Every 60 Days</option>
+                <option value="90">Every 90 Days</option>
               </select>
             </div>
+          </div>
+          <div>
+            <label for="editVaultReleaseCondition" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Release Condition Instructions</label>
+            <textarea id="editVaultReleaseCondition" rows="3" placeholder="e.g. Do not release unless trustees have verified with each other." style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary); resize: none;"></textarea>
           </div>
         </div>
         <div class="modal-footer">
