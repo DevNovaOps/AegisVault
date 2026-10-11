@@ -297,3 +297,6 @@ CORS_ALLOW_CREDENTIALS = True
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# Frame options for embedded PDF and modal viewers
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+

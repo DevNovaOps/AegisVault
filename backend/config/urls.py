@@ -41,8 +41,9 @@ urlpatterns = [
 ]
 
 from django.views.static import serve
+from django.views.decorators.clickjacking import xframe_options_exempt
 urlpatterns += [
-    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    re_path(r'^media/(?P<path>.*)$', xframe_options_exempt(serve), {'document_root': settings.MEDIA_ROOT}),
 ]
 
 # Serve all static files, HTML pages, CSS, JS, and assets from workspace root

@@ -1309,7 +1309,8 @@ input, select, textarea {
   box-sizing: border-box;
 }
 
-.modal-overlay.show {
+.modal-overlay.show,
+.modal-overlay.active {
   display: flex;
   animation: modalFadeIn 0.2s ease-out;
 }

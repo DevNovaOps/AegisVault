@@ -19,7 +19,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-modal-close]').forEach(btn => {
       btn.addEventListener('click', () => {
         const modal = btn.closest('.modal-overlay');
-        if (modal) modal.classList.remove('active');
+        if (modal) {
+          modal.classList.remove('show');
+          modal.classList.remove('active');
+        }
       });
     });
 
@@ -224,6 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!modal) return;
         bodyEl.innerHTML = `<div style="text-align:center; padding:3rem; color:var(--text-muted); font-size:0.95rem;">Decrypting & loading asset...</div>`;
+        modal.classList.add('show');
         modal.classList.add('active');
 
         // Fetch asset detail from backend

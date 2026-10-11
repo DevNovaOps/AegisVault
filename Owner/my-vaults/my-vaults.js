@@ -463,6 +463,7 @@
 
     if (!modal) return;
     bodyEl.innerHTML = `<div style="text-align:center; padding:3rem; color:var(--text-muted); font-size:0.95rem;">Decrypting & loading asset...</div>`;
+    modal.classList.add('show');
     modal.classList.add('active');
 
     window.AegisAPI.get(`/owner/vaults/${vaultId}/assets/${assetId}/`).then(data => {

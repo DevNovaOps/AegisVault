@@ -97,6 +97,7 @@
       const modal = document.getElementById(modalId);
       if (modal) {
         modal.classList.add('show');
+        modal.classList.add('active');
         document.body.style.overflow = 'hidden';
       }
     },
@@ -104,6 +105,7 @@
       const modal = document.getElementById(modalId);
       if (modal) {
         modal.classList.remove('show');
+        modal.classList.remove('active');
         document.body.style.overflow = '';
       }
     }
@@ -168,6 +170,7 @@
         const overlay = e.target.closest('.modal-overlay');
         if (overlay) {
           overlay.classList.remove('show');
+          overlay.classList.remove('active');
           document.body.style.overflow = '';
         }
       });
@@ -178,6 +181,7 @@
       overlay.addEventListener('click', (e) => {
         if (e.target === overlay) {
           overlay.classList.remove('show');
+          overlay.classList.remove('active');
           document.body.style.overflow = '';
         }
       });
