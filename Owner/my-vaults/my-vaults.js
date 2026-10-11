@@ -509,17 +509,7 @@
         `;
       } else if (isPdf && fileUrl) {
         if (iconEl) iconEl.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="var(--status-critical)" stroke-width="2" style="width:22px;height:22px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="14" y1="13" x2="8" y2="13"/></svg>';
-        bodyEl.innerHTML = `
-          <div style="display:flex; flex-direction:column; height:100%; gap:0.75rem;">
-            <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; color:var(--text-muted);">
-              <span>Viewing embedded PDF document: <strong>${escapeHtml(data.name)}</strong></span>
-              <a href="${fileUrl}" target="_blank" style="color:var(--brand-orange); text-decoration:none;">Open in separate window &rarr;</a>
-            </div>
-            <div style="width:100%; height:68vh; min-height:480px; border-radius:8px; overflow:hidden; border:1px solid var(--border-subtle); background:#333;">
-              <iframe src="${fileUrl}#toolbar=1" style="width:100%; height:100%; border:none; background:#fff;"></iframe>
-            </div>
-          </div>
-        `;
+        renderPdfViewer(fileUrl, data.name, bodyEl);
       } else if (isImage && fileUrl) {
         if (iconEl) iconEl.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="var(--status-info)" stroke-width="2" style="width:22px;height:22px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
         bodyEl.innerHTML = `
@@ -545,6 +535,146 @@
       bodyEl.innerHTML = `<div style="text-align:center; padding:3rem; color:var(--status-critical);">Failed to load asset details: ${err.message}</div>`;
     });
   };
+
+    function renderPdfViewer(fileUrl, filename, container) {
+      container.innerHTML = `
+        <div style="display:flex; flex-direction:column; height:74vh; background:#0b1320; border-radius:8px; overflow:hidden; border:1px solid var(--border-subtle);">
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 1rem; background:var(--bg-surface); border-bottom:1px solid var(--border-subtle); color:var(--text-primary); font-size:0.85rem; flex-wrap:wrap; gap:0.5rem;">
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <button type="button" class="btn btn-secondary" id="pdfPrevBtn" style="padding:0.25rem 0.6rem; font-size:0.75rem; cursor:pointer;">&larr; Prev</button>
+              <span>Page <strong id="pdfCurrentPage">1</strong> of <strong id="pdfTotalPages">1</strong></span>
+              <button type="button" class="btn btn-secondary" id="pdfNextBtn" style="padding:0.25rem 0.6rem; font-size:0.75rem; cursor:pointer;">Next &rarr;</button>
+            </div>
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+              <button type="button" class="btn btn-secondary" id="pdfZoomOutBtn" style="padding:0.25rem 0.55rem; font-size:0.75rem; cursor:pointer;" title="Zoom Out">&minus;</button>
+              <span id="pdfZoomVal" style="font-size:0.8rem; min-width:40px; text-align:center;">100%</span>
+              <button type="button" class="btn btn-secondary" id="pdfZoomInBtn" style="padding:0.25rem 0.55rem; font-size:0.75rem; cursor:pointer;" title="Zoom In">+</button>
+              <a href="${fileUrl}" target="_blank" class="btn btn-secondary" style="padding:0.25rem 0.65rem; font-size:0.75rem; text-decoration:none; display:inline-flex; align-items:center; gap:0.3rem;" title="Open in separate browser window">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                Open Tab &rarr;
+              </a>
+            </div>
+          </div>
+          <div id="pdfViewport" style="flex:1; overflow:auto; display:flex; justify-content:center; align-items:flex-start; padding:1.5rem; background:#0b1320;">
+            <div id="pdfLoadingState" style="color:var(--text-muted); text-align:center; padding:3rem;">
+              <div style="margin-bottom:0.75rem;">Rendering PDF pages with Canvas engine...</div>
+            </div>
+            <canvas id="pdfViewerCanvas" style="display:none; box-shadow:0 10px 40px rgba(0,0,0,0.6); border-radius:4px; max-width:100%;"></canvas>
+          </div>
+        </div>
+      `;
+
+      if (window.pdfjsLib) {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = '../../common/vendor/pdfjs/pdf.worker.min.js';
+        let pdfDoc = null;
+        let pageNum = 1;
+        let pageRendering = false;
+        let pageNumPending = null;
+        let scale = 1.35;
+
+        const canvas = container.querySelector('#pdfViewerCanvas');
+        const ctx = canvas ? canvas.getContext('2d') : null;
+        const curPageEl = container.querySelector('#pdfCurrentPage');
+        const totPagesEl = container.querySelector('#pdfTotalPages');
+        const zoomValEl = container.querySelector('#pdfZoomVal');
+        const loadingEl = container.querySelector('#pdfLoadingState');
+
+        function renderPage(num) {
+          pageRendering = true;
+          pdfDoc.getPage(num).then(page => {
+            const viewport = page.getViewport({ scale: scale });
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            const renderContext = {
+              canvasContext: ctx,
+              viewport: viewport
+            };
+            const renderTask = page.render(renderContext);
+            renderTask.promise.then(() => {
+              pageRendering = false;
+              if (loadingEl) loadingEl.style.display = 'none';
+              if (canvas) canvas.style.display = 'block';
+              if (curPageEl) curPageEl.textContent = num;
+              if (zoomValEl) zoomValEl.textContent = `${Math.round(scale * 100)}%`;
+              if (pageNumPending !== null) {
+                renderPage(pageNumPending);
+                pageNumPending = null;
+              }
+            }).catch(err => {
+              console.error('Render page error:', err);
+              pageRendering = false;
+            });
+          });
+        }
+
+        function queueRenderPage(num) {
+          if (pageRendering) {
+            pageNumPending = num;
+          } else {
+            renderPage(num);
+          }
+        }
+
+        pdfjsLib.getDocument({ url: fileUrl }).promise.then(doc => {
+          pdfDoc = doc;
+          if (totPagesEl) totPagesEl.textContent = doc.numPages;
+          renderPage(pageNum);
+
+          const prevBtn = container.querySelector('#pdfPrevBtn');
+          const nextBtn = container.querySelector('#pdfNextBtn');
+          const zoomInBtn = container.querySelector('#pdfZoomInBtn');
+          const zoomOutBtn = container.querySelector('#pdfZoomOutBtn');
+
+          if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+              if (pageNum <= 1) return;
+              pageNum--;
+              queueRenderPage(pageNum);
+            });
+          }
+          if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+              if (pageNum >= pdfDoc.numPages) return;
+              pageNum++;
+              queueRenderPage(pageNum);
+            });
+          }
+          if (zoomInBtn) {
+            zoomInBtn.addEventListener('click', () => {
+              scale = Math.min(3.0, scale + 0.25);
+              queueRenderPage(pageNum);
+            });
+          }
+          if (zoomOutBtn) {
+            zoomOutBtn.addEventListener('click', () => {
+              scale = Math.max(0.6, scale - 0.25);
+              queueRenderPage(pageNum);
+            });
+          }
+        }).catch(err => {
+          console.error('PDF.js loading failed:', err);
+          if (loadingEl) {
+            loadingEl.innerHTML = `
+              <div style="color:var(--status-critical); margin-bottom:1rem;">Could not render PDF via canvas: ${err.message}</div>
+              <a href="${fileUrl}" target="_blank" class="btn btn-primary" style="text-decoration:none;">Open in Browser Tab &rarr;</a>
+            `;
+          }
+        });
+      } else {
+        const viewport = container.querySelector('#pdfViewport');
+        if (viewport) {
+          viewport.innerHTML = `
+            <object data="${fileUrl}" type="application/pdf" style="width:100%; height:100%;">
+              <div style="text-align:center; padding:3rem; color:var(--text-muted);">
+                <p style="margin-bottom:1rem;">PDF viewer is not supported directly in this browser frame.</p>
+                <a href="${fileUrl}" target="_blank" class="btn btn-primary" style="text-decoration:none;">Open PDF in New Window</a>
+              </div>
+            </object>
+          `;
+        }
+      }
+    }
 
   function showGenericAssetCard(data, fileUrl, container) {
     container.innerHTML = `
