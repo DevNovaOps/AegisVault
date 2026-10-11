@@ -257,9 +257,10 @@
         if (user.email) el.textContent = user.email;
       });
 
-      // Update hero greeting banner (e.g. Welcome back, Rakesh! -> Welcome back, Admin!)
+      // Update hero greeting banner on welcome pages (e.g. Welcome back, Rakesh! -> Welcome back, Dev!)
+      const heroHeading = document.querySelector('.hero-heading');
       const heroAccent = document.querySelector('.hero-heading .hero-accent');
-      if (heroAccent) {
+      if (heroAccent && heroHeading && /welcome/i.test(heroHeading.textContent)) {
         heroAccent.textContent = firstName + '!';
       }
 

@@ -46,6 +46,8 @@ class TrusteeListCreateView(APIView):
                 trustees = trustees.filter(verification_status__iexact=status_filter)
             elif status_filter == 'invited':
                 trustees = trustees.filter(status='Invited')
+            elif status_filter == 'removed':
+                trustees = trustees.filter(status='Removed')
         if relationship_filter and relationship_filter != 'all':
             trustees = trustees.filter(relationship__iexact=relationship_filter)
 
@@ -71,6 +73,12 @@ class TrusteeListCreateView(APIView):
             }
         )
 
+        if not created:
+            trustee_profile.name = data['name']
+            trustee_profile.relationship = data['relationship']
+            trustee_profile.status = 'Invited'
+            trustee_profile.save()
+
         # Link to user account if one exists
         try:
             user = User.objects.get(email=data['email'])
@@ -87,6 +95,7 @@ class TrusteeListCreateView(APIView):
             invitee_email=data['email'],
             relationship=data['relationship'],
             vault=vault,
+            note=request.data.get('note', '') or '',
         )
 
         AuditService.log(
@@ -106,7 +115,8 @@ class TrusteeListCreateView(APIView):
 
 class TrusteeDetailView(APIView):
     """
-    PUT  /api/v1/owner/trustees/{id}     — Edit trustee
+    PUT    /api/v1/owner/trustees/{id}     — Edit trustee
+    DELETE /api/v1/owner/trustees/{id}     — Delete trustee
     """
     permission_classes = [IsAuthenticated, IsOwner]
 
@@ -130,6 +140,25 @@ class TrusteeDetailView(APIView):
         )
 
         return Response(TrusteeProfileSerializer(trustee).data)
+
+    def delete(self, request, pk):
+        trustee = get_object_or_404(
+            TrusteeProfile, pk=pk, owner=request.user
+        )
+        trustee_name = trustee.name
+        # Delete invitations and profile
+        trustee.invitations.all().delete()
+        trustee.delete()
+
+        AuditService.log(
+            user=request.user,
+            action_key='trustee_deleted',
+            action_title='Trustee Deleted',
+            details=f'Deleted trustee profile for {trustee_name}',
+            category='trustee',
+        )
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class TrusteeRemindView(APIView):

@@ -303,7 +303,7 @@
               </svg>
             </div>
             <div class="metric-content">
-              <span class="metric-value" id="statTotalTrustees">8</span>
+              <span class="metric-value" id="statTotalTrustees">0</span>
               <span class="metric-label">Total Trustees</span>
               <span class="metric-sub">Across all vaults</span>
             </div>
@@ -318,7 +318,7 @@
               </svg>
             </div>
             <div class="metric-content">
-              <span class="metric-value" id="statVerifiedTrustees">5</span>
+              <span class="metric-value" id="statVerifiedTrustees">0</span>
               <span class="metric-label">Verified Trustees</span>
               <span class="metric-sub">Identity verified</span>
             </div>
@@ -333,7 +333,7 @@
               </svg>
             </div>
             <div class="metric-content">
-              <span class="metric-value" id="statPendingTrustees">2</span>
+              <span class="metric-value" id="statPendingTrustees">0</span>
               <span class="metric-label">Pending Verification</span>
               <span class="metric-sub">In progress</span>
             </div>
@@ -350,7 +350,7 @@
               </svg>
             </div>
             <div class="metric-content">
-              <span class="metric-value" id="statInvitedTrustees">1</span>
+              <span class="metric-value" id="statInvitedTrustees">0</span>
               <span class="metric-label">Invitation Sent</span>
               <span class="metric-sub">Awaiting response</span>
             </div>
@@ -456,11 +456,11 @@
                 <table class="trustees-table">
                   <thead>
                     <tr>
-                      <th style="width: 48px;">Name</th>
-                      <th>Email</th>
+                      <th style="width: 42px;"></th>
+                      <th>Trustee Name</th>
                       <th>Relationship</th>
                       <th>Vaults Assigned</th>
-                      <th>Verification Status</th>
+                      <th>Verification</th>
                       <th>Status</th>
                       <th style="text-align: right;">Actions</th>
                     </tr>
@@ -577,40 +577,40 @@
               </div>
 
               <div class="trustee-donut-card-body">
-                <!-- SVG Donut Chart with center value 8 -->
+                <!-- SVG Donut Chart with center value -->
                 <div class="donut-chart-wrap">
                   <svg viewBox="0 0 120 120" class="donut-svg" aria-label="Trustee Overview Breakdown Chart">
                     <circle cx="60" cy="60" r="46" class="donut-bg-track"/>
-                    <!-- Green Segment: 5 / 8 = 62.5% -> 180.6px of 289px -->
-                    <circle cx="60" cy="60" r="46" class="donut-seg verified" stroke-dasharray="180.6 289" stroke-dashoffset="0"/>
-                    <!-- Orange Segment: 2 / 8 = 25% -> 72.25px -->
-                    <circle cx="60" cy="60" r="46" class="donut-seg pending" stroke-dasharray="72.25 289" stroke-dashoffset="-180.6"/>
-                    <!-- Blue Segment: 1 / 8 = 12.5% -> 36.1px -->
-                    <circle cx="60" cy="60" r="46" class="donut-seg invited" stroke-dasharray="36.1 289" stroke-dashoffset="-252.85"/>
+                    <!-- Green Segment: Verified -->
+                    <circle cx="60" cy="60" r="46" class="donut-seg verified" stroke-dasharray="0 289" stroke-dashoffset="0"/>
+                    <!-- Orange Segment: Pending -->
+                    <circle cx="60" cy="60" r="46" class="donut-seg pending" stroke-dasharray="0 289" stroke-dashoffset="0"/>
+                    <!-- Blue Segment: Invited -->
+                    <circle cx="60" cy="60" r="46" class="donut-seg invited" stroke-dasharray="0 289" stroke-dashoffset="0"/>
                   </svg>
                   <div class="donut-center-content">
-                    <span class="donut-center-num">8</span>
+                    <span class="donut-center-num">0</span>
                     <span class="donut-center-label">Total Trustees</span>
                   </div>
                 </div>
 
                 <!-- Donut Legend -->
                 <div class="donut-legend">
-                  <div class="legend-row">
+                  <div class="legend-row donut-legend-item" data-filter="verified" role="button" tabindex="0" title="Click to filter verified trustees">
                     <span class="legend-dot green"></span>
-                    <span class="legend-label">5 Verified</span>
+                    <span class="legend-label"><span id="legendVerifiedCount">0</span> Verified</span>
                   </div>
-                  <div class="legend-row">
+                  <div class="legend-row donut-legend-item" data-filter="pending" role="button" tabindex="0" title="Click to filter pending trustees">
                     <span class="legend-dot amber"></span>
-                    <span class="legend-label">2 Pending</span>
+                    <span class="legend-label"><span id="legendPendingCount">0</span> Pending</span>
                   </div>
-                  <div class="legend-row">
+                  <div class="legend-row donut-legend-item" data-filter="invited" role="button" tabindex="0" title="Click to filter invited trustees">
                     <span class="legend-dot blue"></span>
-                    <span class="legend-label">1 Invited</span>
+                    <span class="legend-label"><span id="legendInvitedCount">0</span> Invited</span>
                   </div>
-                  <div class="legend-row">
+                  <div class="legend-row donut-legend-item" data-filter="removed" role="button" tabindex="0" title="Click to filter removed trustees">
                     <span class="legend-dot red"></span>
-                    <span class="legend-label">0 Removed</span>
+                    <span class="legend-label"><span id="legendRemovedCount">0</span> Removed</span>
                   </div>
                 </div>
               </div>
@@ -630,11 +630,11 @@
 
               <div class="verification-card-body">
                 <div class="verification-labels-row">
-                  <span class="verification-title">5 of 8 trustees verified</span>
-                  <span class="verification-value">62%</span>
+                  <span class="verification-title" id="verifProgressTitle">0 of 0 trustees verified</span>
+                  <span class="verification-value" id="verifProgressPercent">0%</span>
                 </div>
                 <div class="verification-bar-track">
-                  <div class="verification-bar-fill" style="width: 62%;"></div>
+                  <div class="verification-bar-fill" id="verifProgressBar" style="width: 0%;"></div>
                 </div>
               </div>
             </article>

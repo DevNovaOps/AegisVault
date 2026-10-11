@@ -27,15 +27,16 @@ class TrusteeProfileSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'date_added', 'updated_at']
 
     def get_vaults(self, obj):
-        """Return list of vault names this trustee has shares to."""
-        if not obj.user:
-            return []
-        return list(
-            obj.user.received_shares
-            .filter(vault__owner=obj.owner, status='active')
-            .values_list('vault__name', flat=True)
-            .distinct()
-        )
+        """Return list of vault names this trustee has shares to or has invitations to."""
+        vaults = set()
+        if obj.user:
+            shared = obj.user.received_shares.filter(
+                vault__owner=obj.owner, status='active'
+            ).values_list('vault__name', flat=True)
+            vaults.update(shared)
+        invited = obj.invitations.values_list('vault__name', flat=True)
+        vaults.update(invited)
+        return sorted(list(vaults))
 
     def get_vaults_count(self, obj):
         return len(self.get_vaults(obj))
