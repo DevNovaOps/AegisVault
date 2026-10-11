@@ -183,6 +183,19 @@ class TrusteeRemindView(APIView):
             invitee_email=trustee.email
         ).order_by('-sent_at').first()
 
+        if not invitation:
+            vault = Vault.objects.filter(owner=request.user).first()
+            if vault:
+                invitation = Invitation.objects.create(
+                    owner=request.user,
+                    trustee_profile=trustee,
+                    invitee_name=trustee.name,
+                    invitee_email=trustee.email,
+                    relationship=trustee.relationship,
+                    vault=vault,
+                    note='Please complete verification.',
+                )
+
         email_sent = False
         email_msg = ''
         if invitation:
@@ -376,9 +389,13 @@ class InvitationRenewView(APIView):
             vault_name=invitation.vault.name,
         )
 
+        email_sent, email_msg = TrusteeEmailService.send_trustee_invitation_email(invitation, request)
+
         return Response({
             'detail': f'Invitation re-activated and sent to {invitation.invitee_email}.',
             'invitation': InvitationSerializer(invitation).data,
+            'email_sent': email_sent,
+            'email_status': email_msg,
         })
 
 

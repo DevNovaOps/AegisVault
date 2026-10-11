@@ -481,8 +481,12 @@
 
   function sendVerificationReminder(t) {
     if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-      window.AegisAPI.post(`/owner/trustees/${t.id}/remind/`).then(() => {
-        window.AegisOwner?.showToast(`Verification reminder sent to ${t.email}!`, 'success');
+      window.AegisAPI.post(`/owner/trustees/${t.id}/remind/`).then(res => {
+        if (res && res.email_sent) {
+          window.AegisOwner?.showToast(`Verification reminder email sent to ${t.email}!`, 'success');
+        } else {
+          window.AegisOwner?.showToast(`Reminder recorded! Add passkey in backend/.env for live inbox delivery.`, 'info');
+        }
       }).catch(err => {
         window.AegisOwner?.showToast(`Failed to send reminder: ${err.message}`, 'error');
       });

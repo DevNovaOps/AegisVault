@@ -183,7 +183,7 @@
 
                     <div class="form-group" id="group-signup-trustee-extra" style="display: none;">
                         <label for="signup-trustee-invite" class="form-label">Designated Vault Invitation Code</label>
-                        <input type="text" id="signup-trustee-invite" class="form-input form-input-trustee" placeholder="e.g. TRST-INV-2026-99" value="TRST-INV-2026-99">
+                        <input type="text" id="signup-trustee-invite" class="form-input form-input-trustee" placeholder="e.g. TRST-INV-2026-99">
                     </div>
 
                     <div class="form-group" id="group-signup-admin-extra" style="display: none;">
@@ -551,6 +551,8 @@
                 activeMode = 'signup';
                 const inputInvite = document.getElementById('signup-trustee-invite');
                 if (inputInvite) inputInvite.value = paramToken;
+                const inSignInvite = document.getElementById('signin-trustee-vault');
+                if (inSignInvite) inSignInvite.value = paramToken;
             }
             if (paramEmail) {
                 const inSign = document.getElementById('signin-email');
