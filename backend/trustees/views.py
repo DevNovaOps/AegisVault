@@ -19,6 +19,7 @@ from accounts.permissions import IsOwner
 from accounts.models import User
 from audit.services import AuditService
 from notifications.services import NotificationService
+from .services import TrusteeEmailService
 
 
 # ─── Trustee Management ──────────────────────────────────────────────────────
@@ -107,8 +108,15 @@ class TrusteeListCreateView(APIView):
             vault_name=vault.name,
         )
 
+        # Dispatch live invitation email to designated trustee
+        email_sent, email_msg = TrusteeEmailService.send_trustee_invitation_email(invitation, request)
+
+        response_data = TrusteeProfileSerializer(trustee_profile).data
+        response_data['email_sent'] = email_sent
+        response_data['email_status'] = email_msg
+
         return Response(
-            TrusteeProfileSerializer(trustee_profile).data,
+            response_data,
             status=status.HTTP_201_CREATED
         )
 
@@ -170,6 +178,16 @@ class TrusteeRemindView(APIView):
             TrusteeProfile, pk=pk, owner=request.user
         )
 
+        invitation = Invitation.objects.filter(
+            owner=request.user,
+            invitee_email=trustee.email
+        ).order_by('-sent_at').first()
+
+        email_sent = False
+        email_msg = ''
+        if invitation:
+            email_sent, email_msg = TrusteeEmailService.send_trustee_reminder_email(invitation, request)
+
         if trustee.user:
             NotificationService.create(
                 user=trustee.user,
@@ -179,7 +197,9 @@ class TrusteeRemindView(APIView):
             )
 
         return Response({
-            'detail': f'Verification reminder dispatched to {trustee.email}.'
+            'detail': f'Verification reminder dispatched to {trustee.email}.',
+            'email_sent': email_sent,
+            'email_status': email_msg
         })
 
 
@@ -275,8 +295,13 @@ class InvitationListCreateView(APIView):
             vault_name=vault.name,
         )
 
+        email_sent, email_msg = TrusteeEmailService.send_trustee_invitation_email(invitation, request)
+        res_data = InvitationSerializer(invitation).data
+        res_data['email_sent'] = email_sent
+        res_data['email_status'] = email_msg
+
         return Response(
-            InvitationSerializer(invitation).data,
+            res_data,
             status=status.HTTP_201_CREATED
         )
 
@@ -311,9 +336,13 @@ class InvitationResendView(APIView):
             vault_name=invitation.vault.name,
         )
 
+        email_sent, email_msg = TrusteeEmailService.send_trustee_invitation_email(invitation, request)
+
         return Response({
             'detail': f'Fresh invitation link sent to {invitation.invitee_email}.',
             'invitation': InvitationSerializer(invitation).data,
+            'email_sent': email_sent,
+            'email_status': email_msg
         })
 
 

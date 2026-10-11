@@ -886,7 +886,11 @@
           renderTrusteesTable();
           closeModal('addTrusteeModal');
           this.reset();
-          window.AegisOwner?.showToast(`Invitation successfully sent to ${name}!`, 'success');
+          if (res && res.email_sent) {
+            window.AegisOwner?.showToast(`Invitation email sent to ${email}!`, 'success');
+          } else {
+            window.AegisOwner?.showToast(`Trustee added! Add your passkey to backend/.env for live email delivery.`, 'info');
+          }
         }).catch(err => {
           window.AegisOwner?.showToast(`Failed to invite trustee: ${err.message || 'Error'}`, 'error');
         }).finally(() => {

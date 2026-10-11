@@ -533,6 +533,32 @@
                 completeAuthentication(roleConfig.admin.demoUser, null);
             });
 
+            // Parse URL Parameters (e.g. from Trustee Invitation Email link)
+            const urlParams = new URLSearchParams(window.location.search);
+            const paramRole = urlParams.get('role');
+            const paramMode = urlParams.get('mode');
+            const paramToken = urlParams.get('token') || urlParams.get('invite');
+            const paramEmail = urlParams.get('email');
+
+            if (paramRole && roleConfig[paramRole]) {
+                activeRole = paramRole;
+            }
+            if (paramMode === 'signup' || paramMode === 'signin') {
+                activeMode = paramMode;
+            }
+            if (paramToken) {
+                activeRole = 'trustee';
+                activeMode = 'signup';
+                const inputInvite = document.getElementById('signup-trustee-invite');
+                if (inputInvite) inputInvite.value = paramToken;
+            }
+            if (paramEmail) {
+                const inSign = document.getElementById('signin-email');
+                const upSign = document.getElementById('signup-email');
+                if (inSign) inSign.value = paramEmail;
+                if (upSign) upSign.value = paramEmail;
+            }
+
             setRole(activeRole);
             setMode(activeMode);
         })();
