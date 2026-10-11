@@ -32,3 +32,18 @@ venv/
 # IDEs
 .vscode/
 .idea/
+
+# User uploaded media & sensitive vault assets / private documents
+media/
+media/**
+backend/media/
+backend/media/**
+**/media/**
+media/vaults/
+backend/media/vaults/
+shares/
+uploads/
+*.pdf
+*.share
+*.pem
+*.key

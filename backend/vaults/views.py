@@ -355,7 +355,7 @@ class VaultAssetListCreateView(APIView):
     def get(self, request, vault_id):
         vault = get_object_or_404(Vault, pk=vault_id, owner=request.user)
         assets = VaultAsset.objects.filter(vault=vault)
-        serializer = VaultAssetSerializer(assets, many=True)
+        serializer = VaultAssetSerializer(assets, many=True, context={'request': request})
         return Response(serializer.data)
 
     def post(self, request, vault_id):

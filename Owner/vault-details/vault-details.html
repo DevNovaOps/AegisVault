@@ -403,7 +403,46 @@
   <!-- ====================================================================
        Modals
        ==================================================================== -->
-  <!-- View Note Modal -->
+  <!-- View Asset & Note Preview Modal -->
+  <div class="modal-overlay" id="viewAssetModal">
+    <div class="modal-content" style="max-width: 920px; width: 95%; max-height: 92vh; display: flex; flex-direction: column;">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; padding: 1.15rem 1.5rem; border-bottom: 1px solid var(--border-subtle);">
+        <div style="display: flex; align-items: center; gap: 0.75rem; overflow: hidden;">
+          <div id="assetPreviewIcon" style="display: flex; align-items: center;"></div>
+          <div>
+            <h3 class="modal-title" id="assetPreviewTitle" style="font-size: 1.1rem; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 480px;">Asset Preview</h3>
+            <div style="display: flex; gap: 0.5rem; align-items: center; margin-top: 0.25rem;">
+              <span id="assetPreviewCategory" style="font-size: 0.75rem; color: var(--text-muted);">Document</span>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">&bull;</span>
+              <span id="assetPreviewSize" style="font-size: 0.75rem; color: var(--text-muted);">0 KB</span>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">&bull;</span>
+              <span id="assetPreviewSensitivity" style="font-size: 0.7rem; padding: 0.15rem 0.45rem; border-radius: 4px; background: rgba(249,115,22,0.12); color: var(--brand-orange);">Sensitive</span>
+            </div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <a id="assetPreviewOpenTab" href="#" target="_blank" class="btn btn-secondary" style="padding: 0.4rem 0.75rem; font-size: 0.8rem; text-decoration: none; display: none; align-items: center; gap: 0.35rem;" title="Open in new tab">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Full View
+          </a>
+          <a id="assetPreviewDownload" href="#" download class="btn btn-secondary" style="padding: 0.4rem 0.75rem; font-size: 0.8rem; text-decoration: none; display: none; align-items: center; gap: 0.35rem;" title="Download file">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download
+          </a>
+          <button class="modal-close-btn" data-modal-close aria-label="Close modal">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body" id="assetPreviewBody" style="padding: 1.25rem; overflow-y: auto; flex: 1;">
+        <!-- Dynamic content: PDF iframe, Image, or formatted Secure Note -->
+      </div>
+      <div class="modal-footer" style="padding: 0.85rem 1.5rem; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+        <span id="assetPreviewDate" style="font-size: 0.8rem; color: var(--text-muted);">Uploaded recently</span>
+        <button type="button" class="btn btn-secondary" data-modal-close>Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- View Note Modal (kept for backward compatibility) -->
   <div class="modal-overlay" id="viewNoteModal">
     <div class="modal-content" style="max-width: 550px;">
       <div class="modal-header">

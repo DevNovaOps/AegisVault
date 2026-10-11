@@ -40,7 +40,10 @@ urlpatterns = [
     path('', include('web.urls')),
 ]
 
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+from django.views.static import serve
+urlpatterns += [
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+]
 
 # Serve all static files, HTML pages, CSS, JS, and assets from workspace root
 urlpatterns += [

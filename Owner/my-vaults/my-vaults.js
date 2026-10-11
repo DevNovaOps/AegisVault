@@ -379,6 +379,15 @@
 
   let activeEditVaultId = null;
 
+  function resolveAssetUrl(url) {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    const origin = (typeof window !== 'undefined' && window.location && window.location.port === '8000') 
+      ? window.location.origin 
+      : 'http://127.0.0.1:8000';
+    return `${origin}${url.startsWith('/') ? '' : '/'}${url}`;
+  }
+
   function loadEditVaultAssets(vaultId) {
     const tbody = document.getElementById('editVaultAssetsTbody');
     if (!tbody) return;
@@ -402,15 +411,33 @@
             : '<svg viewBox="0 0 24 24" fill="none" stroke="var(--status-info)" stroke-width="2" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>';
           
           const safeName = (asset.name || 'asset').replace(/'/g, "\\'");
+          const fileUrl = resolveAssetUrl(asset.download_url);
+
           tr.innerHTML = `
-            <td style="padding: 0.65rem 0.85rem; color: var(--text-primary); font-weight: 500;">${icon}${asset.name}</td>
+            <td style="padding: 0.65rem 0.85rem; color: var(--text-primary); font-weight: 500;">
+              <span style="cursor: pointer; text-decoration: underline; text-decoration-color: transparent; transition: text-decoration-color 0.2s;" onmouseover="this.style.textDecorationColor='var(--brand-orange)'" onmouseout="this.style.textDecorationColor='transparent'" onclick="previewVaultAsset('${vaultId}', '${asset.id}')" title="Click to view asset">
+                ${icon}${escapeHtml(asset.name)}
+              </span>
+            </td>
             <td style="padding: 0.65rem 0.85rem; color: var(--text-muted);">${asset.category || (isNote ? 'Secure Note' : 'Document')}</td>
             <td style="padding: 0.65rem 0.85rem; color: var(--text-muted);">${formatBytes(asset.file_size_bytes)}</td>
             <td style="padding: 0.65rem 0.85rem; color: var(--text-muted);">${new Date(asset.created_at).toLocaleDateString()}</td>
             <td style="padding: 0.65rem 0.85rem; text-align: right;">
-              <button type="button" class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: var(--status-critical); border-radius: 4px; cursor: pointer;" onclick="deleteVaultAssetFromEdit('${vaultId}', '${asset.id}', '${safeName}')">
-                Delete
-              </button>
+              <div style="display: inline-flex; gap: 0.35rem; align-items: center; justify-content: flex-end;">
+                <button type="button" class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 0.25rem;" onclick="previewVaultAsset('${vaultId}', '${asset.id}')" title="Preview asset">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  View
+                </button>
+                ${fileUrl ? `
+                  <a href="${fileUrl}" target="_blank" download class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; border-radius: 4px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem;" title="Download file">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download
+                  </a>
+                ` : ''}
+                <button type="button" class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: var(--status-critical); border-radius: 4px; cursor: pointer;" onclick="deleteVaultAssetFromEdit('${vaultId}', '${asset.id}', '${safeName}')">
+                  Delete
+                </button>
+              </div>
             </td>
           `;
           tbody.appendChild(tr);
@@ -419,6 +446,122 @@
         tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--status-critical); padding: 1.5rem;">Failed to load assets: ${err.message}</td></tr>`;
       });
     }
+  }
+
+  // Preview Vault Asset Modal Handler for my-vaults.html
+  window.previewVaultAsset = function(vaultId, assetId) {
+    const modal = document.getElementById('viewAssetModal');
+    const titleEl = document.getElementById('assetPreviewTitle');
+    const catEl = document.getElementById('assetPreviewCategory');
+    const sizeEl = document.getElementById('assetPreviewSize');
+    const sensEl = document.getElementById('assetPreviewSensitivity');
+    const dateEl = document.getElementById('assetPreviewDate');
+    const bodyEl = document.getElementById('assetPreviewBody');
+    const openTabBtn = document.getElementById('assetPreviewOpenTab');
+    const downloadBtn = document.getElementById('assetPreviewDownload');
+    const iconEl = document.getElementById('assetPreviewIcon');
+
+    if (!modal) return;
+    bodyEl.innerHTML = `<div style="text-align:center; padding:3rem; color:var(--text-muted); font-size:0.95rem;">Decrypting & loading asset...</div>`;
+    modal.classList.add('active');
+
+    window.AegisAPI.get(`/owner/vaults/${vaultId}/assets/${assetId}/`).then(data => {
+      titleEl.textContent = data.name || 'Protected Asset';
+      if (catEl) catEl.textContent = data.category || 'Asset';
+      if (sizeEl) sizeEl.textContent = formatBytes(data.file_size_bytes);
+      if (sensEl) sensEl.textContent = data.sensitivity || 'Sensitive';
+      if (dateEl) dateEl.textContent = `Uploaded on ${new Date(data.created_at).toLocaleString()}`;
+
+      const fileUrl = resolveAssetUrl(data.download_url);
+      const isNote = data.is_note || (!data.download_url && (data.decrypted_note || data.encrypted_data || data.notes));
+      const nameLower = (data.name || '').toLowerCase();
+      const isPdf = nameLower.endsWith('.pdf') || (data.mime_type === 'application/pdf');
+      const isImage = /\.(png|jpe?g|gif|webp|svg)$/i.test(nameLower) || (data.mime_type && data.mime_type.startsWith('image/'));
+      const isText = /\.(txt|md|json|csv|py|js|html)$/i.test(nameLower) || (data.mime_type && data.mime_type.startsWith('text/'));
+
+      if (fileUrl) {
+        if (openTabBtn) {
+          openTabBtn.href = fileUrl;
+          openTabBtn.style.display = 'inline-flex';
+        }
+        if (downloadBtn) {
+          downloadBtn.href = fileUrl;
+          downloadBtn.setAttribute('download', data.name || 'asset');
+          downloadBtn.style.display = 'inline-flex';
+        }
+      } else {
+        if (openTabBtn) openTabBtn.style.display = 'none';
+        if (downloadBtn) downloadBtn.style.display = 'none';
+      }
+
+      if (isNote) {
+        if (iconEl) iconEl.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="var(--brand-orange)" stroke-width="2" style="width:22px;height:22px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>';
+        const noteText = data.decrypted_note || data.description || data.notes || '(Empty secure note)';
+        bodyEl.innerHTML = `
+          <div style="background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-bottom:1px solid var(--border-subtle); padding-bottom:0.75rem;">
+              <span style="font-size:0.85rem; color:var(--brand-orange); font-weight:600;">ENCRYPTED SECURE NOTE</span>
+              <button type="button" class="btn btn-secondary" style="font-size:0.75rem; padding:0.25rem 0.5rem;" onclick="navigator.clipboard.writeText('${encodeURIComponent(noteText)}'); window.AegisOwner ? window.AegisOwner.showToast('Note copied to clipboard') : alert('Copied!');">Copy Note</button>
+            </div>
+            <div style="white-space:pre-wrap; line-height:1.7; color:var(--text-primary); font-size:0.95rem;">${escapeHtml(noteText)}</div>
+          </div>
+        `;
+      } else if (isPdf && fileUrl) {
+        if (iconEl) iconEl.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="var(--status-critical)" stroke-width="2" style="width:22px;height:22px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="14" y1="13" x2="8" y2="13"/></svg>';
+        bodyEl.innerHTML = `
+          <div style="display:flex; flex-direction:column; height:100%; gap:0.75rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; color:var(--text-muted);">
+              <span>Viewing embedded PDF document: <strong>${escapeHtml(data.name)}</strong></span>
+              <a href="${fileUrl}" target="_blank" style="color:var(--brand-orange); text-decoration:none;">Open in separate window &rarr;</a>
+            </div>
+            <div style="width:100%; height:68vh; min-height:480px; border-radius:8px; overflow:hidden; border:1px solid var(--border-subtle); background:#333;">
+              <iframe src="${fileUrl}#toolbar=1" style="width:100%; height:100%; border:none; background:#fff;"></iframe>
+            </div>
+          </div>
+        `;
+      } else if (isImage && fileUrl) {
+        if (iconEl) iconEl.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="var(--status-info)" stroke-width="2" style="width:22px;height:22px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
+        bodyEl.innerHTML = `
+          <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1rem; background:rgba(0,0,0,0.3); border-radius:8px; border:1px solid var(--border-subtle);">
+            <img src="${fileUrl}" alt="${escapeHtml(data.name)}" style="max-width:100%; max-height:68vh; object-fit:contain; border-radius:6px; box-shadow:0 8px 30px rgba(0,0,0,0.5);" />
+          </div>
+        `;
+      } else if (isText && fileUrl) {
+        if (iconEl) iconEl.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="var(--brand-orange)" stroke-width="2" style="width:22px;height:22px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>';
+        fetch(fileUrl).then(r => r.text()).then(text => {
+          bodyEl.innerHTML = `
+            <div style="padding:1rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:8px; max-height:65vh; overflow:auto;">
+              <pre style="margin:0; font-family:monospace; font-size:0.85rem; color:var(--text-primary); white-space:pre-wrap; line-height:1.5;">${escapeHtml(text)}</pre>
+            </div>
+          `;
+        }).catch(() => {
+          showGenericAssetCard(data, fileUrl, bodyEl);
+        });
+      } else {
+        showGenericAssetCard(data, fileUrl, bodyEl);
+      }
+    }).catch(err => {
+      bodyEl.innerHTML = `<div style="text-align:center; padding:3rem; color:var(--status-critical);">Failed to load asset details: ${err.message}</div>`;
+    });
+  };
+
+  function showGenericAssetCard(data, fileUrl, container) {
+    container.innerHTML = `
+      <div style="text-align:center; padding:3rem 1.5rem; background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:8px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--brand-orange)" stroke-width="1.5" style="width:64px;height:64px;margin-bottom:1rem;"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+        <h4 style="color:var(--text-primary); margin-bottom:0.5rem; font-size:1.1rem;">${escapeHtml(data.name)}</h4>
+        <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:1.5rem;">Protected Digital File &bull; ${formatBytes(data.file_size_bytes)} &bull; ${data.mime_type || 'Encrypted File'}</p>
+        <div style="display:flex; justify-content:center; gap:0.75rem;">
+          ${fileUrl ? `<a href="${fileUrl}" target="_blank" class="btn btn-secondary" style="padding:0.5rem 1rem; text-decoration:none;">Open in New Tab</a>` : ''}
+          ${fileUrl ? `<a href="${fileUrl}" download class="btn btn-primary" style="padding:0.5rem 1rem; text-decoration:none;">Download File</a>` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  function escapeHtml(text) {
+    if (!text) return '';
+    return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
   }
 
   window.deleteVaultAssetFromEdit = function(vaultId, assetId, assetName) {
@@ -837,14 +980,22 @@
         const formData = new FormData();
         formData.append('file', file);
         formData.append('name', file.name);
+        formData.append('category', 'document');
         formData.append('asset_category', 'document');
         formData.append('notes', '');
 
         window.AegisAPI.post(`/owner/vaults/${draftVaultId}/assets/`, formData)
           .then(res => {
             fileItem.querySelector('.upload-icon').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="var(--status-success)" stroke-width="2" style="width:20px;height:20px;"><polyline points="20 6 9 17 4 12"/></svg>`;
-            fileItem.querySelector('.upload-status').textContent = 'Uploaded';
-            fileItem.querySelector('.upload-status').style.color = 'var(--text-muted)';
+            if (res && res.id) {
+              fileItem.querySelector('.upload-status').innerHTML = `
+                <span style="color:var(--status-success);">Uploaded</span> &bull; 
+                <a href="#" style="color:var(--brand-orange); text-decoration:underline; font-size:0.75rem; cursor:pointer;" onclick="event.preventDefault(); previewVaultAsset('${draftVaultId}', '${res.id}')">Preview</a>
+              `;
+            } else {
+              fileItem.querySelector('.upload-status').textContent = 'Uploaded';
+              fileItem.querySelector('.upload-status').style.color = 'var(--text-muted)';
+            }
           })
           .catch(err => {
             fileItem.querySelector('.upload-icon').innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="var(--status-danger)" stroke-width="2" style="width:20px;height:20px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
