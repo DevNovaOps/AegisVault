@@ -126,10 +126,7 @@ class VaultDetailView(APIView):
             vault_name=vault_name,
         )
 
-        return Response(
-            {'detail': f'Vault "{vault_name}" deleted.'},
-            status=status.HTTP_204_NO_CONTENT
-        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class VaultLockView(APIView):
@@ -370,6 +367,9 @@ class VaultAssetListCreateView(APIView):
         # Calculate file size if file is provided
         file_obj = request.FILES.get('file')
         file_size = file_obj.size if file_obj else 0
+        encrypted_data = request.data.get('encrypted_data', '')
+        if not file_size and encrypted_data:
+            file_size = len(encrypted_data.encode('utf-8'))
         
         # Enforce Quota
         total_used = VaultAsset.objects.filter(vault__owner=request.user).aggregate(Sum('file_size_bytes'))['file_size_bytes__sum'] or 0
@@ -378,8 +378,10 @@ class VaultAssetListCreateView(APIView):
         
         asset = serializer.save(
             vault=vault,
+            file=file_obj,
+            encrypted_data=encrypted_data,
             file_size_bytes=file_size,
-            mime_type=file_obj.content_type if file_obj else ''
+            mime_type=file_obj.content_type if file_obj else ('text/plain' if encrypted_data else '')
         )
 
         # Update Vault storage used
@@ -395,7 +397,7 @@ class VaultAssetListCreateView(APIView):
             vault_name=vault.name,
         )
 
-        return Response(VaultAssetSerializer(asset).data, status=status.HTTP_201_CREATED)
+        return Response(VaultAssetSerializer(asset, context={'request': request}).data, status=status.HTTP_201_CREATED)
 
 
 class VaultAssetDetailView(APIView):
@@ -407,14 +409,11 @@ class VaultAssetDetailView(APIView):
 
     def get(self, request, vault_id, pk):
         asset = get_object_or_404(VaultAsset, pk=pk, vault__id=vault_id, vault__owner=request.user)
-        
-        # In a real app with object storage, this would generate a signed URL
-        # For now we just return metadata, or we could stream the file if requested.
-        data = VaultAssetSerializer(asset).data
+        data = VaultAssetSerializer(asset, context={'request': request}).data
         if asset.file:
             data['download_url'] = request.build_absolute_uri(asset.file.url)
         elif asset.encrypted_data:
-            data['decrypted_note'] = asset.encrypted_data # Fake decryption for now
+            data['decrypted_note'] = asset.encrypted_data
             
         return Response(data)
 
@@ -437,7 +436,7 @@ class VaultAssetDetailView(APIView):
             category='vault',
             vault_name=vault.name,
         )
-        return Response({'detail': 'Asset deleted.'}, status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class StorageOverviewView(APIView):

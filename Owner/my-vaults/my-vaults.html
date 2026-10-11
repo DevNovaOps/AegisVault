@@ -566,7 +566,7 @@
               </div>
 
               <div class="categories-list">
-                <div class="category-row" data-category="Personal">
+                <div class="category-row" data-category="Personal" style="cursor: pointer;" title="Filter by Personal Vaults">
                   <div class="category-row-left">
                     <div class="category-icon-box personal">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -575,9 +575,9 @@
                     </div>
                     <span>Personal Vaults</span>
                   </div>
-                  <span class="category-count">2</span>
+                  <span class="category-count" id="catCountPersonal">0</span>
                 </div>
-                <div class="category-row" data-category="Family">
+                <div class="category-row" data-category="Family" style="cursor: pointer;" title="Filter by Family Vaults">
                   <div class="category-row-left">
                     <div class="category-icon-box family">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -586,9 +586,9 @@
                     </div>
                     <span>Family Vaults</span>
                   </div>
-                  <span class="category-count">1</span>
+                  <span class="category-count" id="catCountFamily">0</span>
                 </div>
-                <div class="category-row" data-category="Business">
+                <div class="category-row" data-category="Business" style="cursor: pointer;" title="Filter by Business Vaults">
                   <div class="category-row-left">
                     <div class="category-icon-box business">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -597,9 +597,9 @@
                     </div>
                     <span>Business Vaults</span>
                   </div>
-                  <span class="category-count">1</span>
+                  <span class="category-count" id="catCountBusiness">0</span>
                 </div>
-                <div class="category-row" data-category="Health">
+                <div class="category-row" data-category="Health" style="cursor: pointer;" title="Filter by Health Vaults">
                   <div class="category-row-left">
                     <div class="category-icon-box health">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -608,9 +608,9 @@
                     </div>
                     <span>Health Vaults</span>
                   </div>
-                  <span class="category-count">1</span>
+                  <span class="category-count" id="catCountHealth">0</span>
                 </div>
-                <div class="category-row" data-category="Legacy">
+                <div class="category-row" data-category="Legacy" style="cursor: pointer;" title="Filter by Legacy Vaults">
                   <div class="category-row-left">
                     <div class="category-icon-box legacy">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -619,7 +619,7 @@
                     </div>
                     <span>Legacy Vaults</span>
                   </div>
-                  <span class="category-count">1</span>
+                  <span class="category-count" id="catCountLegacy">0</span>
                 </div>
               </div>
             </article>
@@ -640,19 +640,20 @@
               <div class="storage-card-body">
                 <div class="storage-labels-row">
                   <span class="storage-title">Used Storage</span>
-                  <span class="storage-value">3.2 GB of 10 GB</span>
+                  <span class="storage-value" id="storageOverviewValue">0 B of 10 GB</span>
                 </div>
                 <div class="storage-bar-row">
                   <div class="storage-bar-track">
-                    <div class="storage-bar-fill"></div>
+                    <div class="storage-bar-fill" id="storageOverviewFill" style="width: 0%;"></div>
                   </div>
-                  <span class="storage-percent">32%</span>
+                  <span class="storage-percent" id="storageOverviewPercent">0%</span>
                 </div>
-                <a href="javascript:void(0)" class="storage-link" onclick="window.AegisOwner.showToast('Storage management console opened (mock).')">
+                <a href="../vault-details/vault-details.html" class="storage-link" id="storageOverviewLink">
                   Manage Storage &rarr;
                 </a>
               </div>
             </article>
+
 
           </div>
         </div>
@@ -937,68 +938,259 @@
     </div>
   </div>
 
-  <!-- Modal 3: Edit Vault -->
+  <!-- Modal 3: Edit Vault (Comprehensive Feature-Complete Editor) -->
   <div class="modal-overlay" id="editVaultModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title">Edit Digital Vault</h3>
+    <div class="modal-content" style="max-width: 840px; width: 95%; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; padding: 0;">
+      <div class="modal-header" style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <h3 class="modal-title" style="margin: 0; font-size: 1.25rem;">Edit Digital Vault</h3>
+          <p style="margin: 0.25rem 0 0; font-size: 0.8rem; color: var(--text-muted);" id="editVaultSubtitle">Configure metadata, protected asset types, files &amp; notes, and release parameters.</p>
+        </div>
         <button class="modal-close-btn" data-modal-close aria-label="Close modal">&times;</button>
       </div>
-      <form id="formEditVault">
+
+      <!-- Edit Modal Tabs -->
+      <div class="edit-modal-tabs" style="display: flex; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--bg-surface); border-bottom: 1px solid var(--border-subtle); overflow-x: auto;">
+        <button type="button" class="edit-tab-btn active" data-tab="editTabGeneral" style="background: none; border: none; padding: 0.5rem 0.85rem; border-radius: var(--radius-md); font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--brand-orange); background: rgba(249, 115, 22, 0.1);">1. General</button>
+        <button type="button" class="edit-tab-btn" data-tab="editTabTypes" style="background: none; border: none; padding: 0.5rem 0.85rem; border-radius: var(--radius-md); font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--text-muted);">2. Asset Types</button>
+        <button type="button" class="edit-tab-btn" data-tab="editTabAssets" style="background: none; border: none; padding: 0.5rem 0.85rem; border-radius: var(--radius-md); font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--text-muted);">3. Files &amp; Notes</button>
+        <button type="button" class="edit-tab-btn" data-tab="editTabTrustees" style="background: none; border: none; padding: 0.5rem 0.85rem; border-radius: var(--radius-md); font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--text-muted);">4. Quorum (K-of-N)</button>
+        <button type="button" class="edit-tab-btn" data-tab="editTabRelease" style="background: none; border: none; padding: 0.5rem 0.85rem; border-radius: var(--radius-md); font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--text-muted);">5. Release &amp; Heartbeat</button>
+      </div>
+
+      <form id="formEditVault" style="display: flex; flex-direction: column; flex: 1; overflow: hidden; margin: 0;">
         <input type="hidden" id="editVaultId">
-        <div class="modal-body">
-          <div style="margin-bottom: 1.15rem;">
-            <label for="editVaultName" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Vault Name</label>
-            <input type="text" id="editVaultName" required style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
-          </div>
-          <div style="margin-bottom: 1.15rem;">
-            <label for="editVaultCategory" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Vault Category</label>
-            <select id="editVaultCategory" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
-              <option value="Personal">Personal Vault</option>
-              <option value="Family">Family Vault</option>
-              <option value="Business">Business Vault</option>
-              <option value="Legacy">Legacy Vault</option>
-              <option value="Health">Health Directives Vault</option>
-            </select>
-          </div>
-          <div>
-            <label for="editVaultDesc" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Description</label>
-            <textarea id="editVaultDesc" rows="3" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary); resize: none;"></textarea>
-          </div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.15rem; margin-top: 1.15rem; margin-bottom: 1.15rem;">
-            <div>
-              <label for="editVaultTotalShares" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Total Shares (N)</label>
-              <input type="number" id="editVaultTotalShares" min="1" max="10" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
+        
+        <div class="modal-body" style="flex: 1; overflow-y: auto; padding: 1.5rem;">
+          
+          <!-- Tab 1: General Details -->
+          <div class="edit-tab-content" id="editTabGeneral" style="display: block;">
+            <div style="margin-bottom: 1.15rem;">
+              <label for="editVaultName" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Vault Name <span style="color:var(--status-critical);">*</span></label>
+              <input type="text" id="editVaultName" required style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
             </div>
-            <div>
-              <label for="editVaultRequiredShares" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Required Shares (K)</label>
-              <input type="number" id="editVaultRequiredShares" min="1" max="10" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.15rem;">
+              <div>
+                <label for="editVaultCategory" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Vault Category</label>
+                <select id="editVaultCategory" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
+                  <option value="Personal">Personal</option>
+                  <option value="Family">Family</option>
+                  <option value="Financial">Financial</option>
+                  <option value="Business">Business</option>
+                  <option value="Property">Property</option>
+                  <option value="Health">Health</option>
+                  <option value="Digital Accounts">Digital Accounts</option>
+                  <option value="Emergency">Emergency</option>
+                  <option value="Legacy">Legacy</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label for="editVaultPriority" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Priority Level</label>
+                <select id="editVaultPriority" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
+                  <option value="Normal">Normal</option>
+                  <option value="Important">Important</option>
+                  <option value="Critical">Critical</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-bottom: 1.15rem;">
+              <label for="editVaultDesc" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Purpose / Intent</label>
+              <textarea id="editVaultDesc" rows="3" placeholder="e.g. Store important family documents and instructions" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary); resize: vertical;"></textarea>
+            </div>
+
+            <div style="margin-bottom: 1.15rem;">
+              <label for="editVaultTags" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Tags (Comma separated)</label>
+              <input type="text" id="editVaultTags" placeholder="e.g. personal, medical, wills" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
             </div>
           </div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.15rem; margin-bottom: 1.15rem;">
-            <div>
-              <label for="editVaultInactivityDays" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Check-in Frequency (Days)</label>
-              <select id="editVaultInactivityDays" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
-                <option value="7">Every 7 Days</option>
-                <option value="14">Every 14 Days</option>
-                <option value="30">Every 30 Days</option>
-                <option value="60">Every 60 Days</option>
-                <option value="90">Every 90 Days</option>
-              </select>
+
+          <!-- Tab 2: Protected Asset Types -->
+          <div class="edit-tab-content" id="editTabTypes" style="display: none;">
+            <h4 style="margin-bottom: 0.5rem; color: var(--text-primary);">Protected Asset Categories</h4>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.25rem;">Select the types of information this vault is intended to store.</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;" id="editAssetTypesGrid">
+              <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); cursor: pointer;">
+                <input type="checkbox" value="Documents" class="edit-asset-type-cb">
+                <span style="color: var(--text-primary); font-size: 0.9rem;">Documents</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); cursor: pointer;">
+                <input type="checkbox" value="Financial Information" class="edit-asset-type-cb">
+                <span style="color: var(--text-primary); font-size: 0.9rem;">Financial Information</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); cursor: pointer;">
+                <input type="checkbox" value="Property Records" class="edit-asset-type-cb">
+                <span style="color: var(--text-primary); font-size: 0.9rem;">Property Records</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); cursor: pointer;">
+                <input type="checkbox" value="Insurance Information" class="edit-asset-type-cb">
+                <span style="color: var(--text-primary); font-size: 0.9rem;">Insurance Information</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); cursor: pointer;">
+                <input type="checkbox" value="Digital Account Info" class="edit-asset-type-cb">
+                <span style="color: var(--text-primary); font-size: 0.9rem;">Digital Account Info</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); cursor: pointer;">
+                <input type="checkbox" value="Recovery Information" class="edit-asset-type-cb">
+                <span style="color: var(--text-primary); font-size: 0.9rem;">Recovery Information</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); cursor: pointer;">
+                <input type="checkbox" value="Personal Messages" class="edit-asset-type-cb">
+                <span style="color: var(--text-primary); font-size: 0.9rem;">Personal Messages</span>
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); cursor: pointer;">
+                <input type="checkbox" value="Photos / Media" class="edit-asset-type-cb">
+                <span style="color: var(--text-primary); font-size: 0.9rem;">Photos / Media</span>
+              </label>
             </div>
           </div>
-          <div>
-            <label for="editVaultReleaseCondition" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Release Condition Instructions</label>
-            <textarea id="editVaultReleaseCondition" rows="3" placeholder="e.g. Do not release unless trustees have verified with each other." style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary); resize: none;"></textarea>
+
+          <!-- Tab 3: Digital Assets (Files, PDFs & Secure Notes) -->
+          <div class="edit-tab-content" id="editTabAssets" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+              <div>
+                <h4 style="color: var(--text-primary); margin-bottom: 0.25rem;">Vault Digital Assets</h4>
+                <p style="color: var(--text-muted); font-size: 0.85rem;">Upload PDFs, documents, or store encrypted secure notes in this vault.</p>
+              </div>
+              <div style="display: flex; gap: 0.5rem;">
+                <button type="button" class="btn btn-secondary" id="btnToggleEditNoteForm" style="font-size: 0.85rem; padding: 0.45rem 0.85rem;">+ Add Secure Note</button>
+                <button type="button" class="btn btn-primary" id="btnTriggerAssetUpload" style="font-size: 0.85rem; padding: 0.45rem 0.85rem;">+ Upload PDF/File</button>
+                <input type="file" id="editAssetFileInput" style="display:none;">
+              </div>
+            </div>
+
+            <!-- Inline Note Form (collapsible) -->
+            <div id="editNoteFormCard" style="display: none; background: var(--bg-surface); border: 1px solid var(--brand-orange); padding: 1.25rem; border-radius: var(--radius-md); margin-bottom: 1.25rem;">
+              <h5 style="color: var(--text-primary); margin-bottom: 0.75rem; font-size: 0.95rem;">New Encrypted Secure Note</h5>
+              <div style="margin-bottom: 0.75rem;">
+                <input type="text" id="editNoteTitle" placeholder="Note Title (e.g. Master Recovery Password, Safe Combination)" style="width: 100%; padding: 0.6rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary); font-size: 0.85rem;">
+              </div>
+              <div style="margin-bottom: 0.75rem;">
+                <textarea id="editNoteContent" rows="4" placeholder="Enter sensitive instructions, passwords, or personal message..." style="width: 100%; padding: 0.6rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary); font-size: 0.85rem; resize: vertical;"></textarea>
+              </div>
+              <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+                <button type="button" class="btn btn-secondary" id="btnCancelEditNote" style="font-size: 0.8rem; padding: 0.35rem 0.75rem;">Cancel</button>
+                <button type="button" class="btn btn-primary" id="btnSaveEditNote" style="font-size: 0.8rem; padding: 0.35rem 0.75rem;">Save Note to Vault</button>
+              </div>
+            </div>
+
+            <!-- Upload Progress Bar -->
+            <div id="editUploadProgressContainer" style="display: none; margin-bottom: 1rem; background: var(--bg-surface); padding: 0.75rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                <span id="editUploadFilename" style="font-size: 0.8rem; color: var(--text-primary);">Uploading file...</span>
+                <span id="editUploadPercent" style="font-size: 0.8rem; color: var(--brand-orange);">0%</span>
+              </div>
+              <div style="width: 100%; height: 4px; background: var(--bg-input-border); border-radius: 2px; overflow: hidden;">
+                <div id="editUploadProgressBar" style="width: 0%; height: 100%; background: var(--brand-orange); transition: width 0.2s;"></div>
+              </div>
+            </div>
+
+            <!-- Dropzone Area -->
+            <div id="editAssetDropzone" style="text-align: center; padding: 2rem; border: 2px dashed var(--bg-input-border); border-radius: var(--radius-md); margin-bottom: 1.25rem; cursor: pointer; transition: background 0.2s; background: rgba(255, 255, 255, 0.02);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--brand-orange)" stroke-width="2" style="width: 36px; height: 36px; margin-bottom: 0.5rem;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <h5 style="color: var(--text-primary); margin-bottom: 0.25rem; font-size: 0.95rem;">Drag &amp; drop PDFs or files here, or click to browse</h5>
+              <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0;">Files are encrypted before storing into this vault.</p>
+            </div>
+
+            <!-- Assets Table / List -->
+            <h5 style="color: var(--text-primary); margin-bottom: 0.75rem; font-size: 0.9rem;">Existing Vault Assets</h5>
+            <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); overflow: hidden;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                <thead>
+                  <tr style="border-bottom: 1px solid var(--border-subtle); background: var(--bg-input);">
+                    <th style="padding: 0.65rem 0.85rem; text-align: left; color: var(--text-muted);">Asset Name</th>
+                    <th style="padding: 0.65rem 0.85rem; text-align: left; color: var(--text-muted);">Category</th>
+                    <th style="padding: 0.65rem 0.85rem; text-align: left; color: var(--text-muted);">Size</th>
+                    <th style="padding: 0.65rem 0.85rem; text-align: left; color: var(--text-muted);">Date</th>
+                    <th style="padding: 0.65rem 0.85rem; text-align: right; color: var(--text-muted);">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="editVaultAssetsTbody">
+                  <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">Loading assets...</td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
+
+          <!-- Tab 4: Trustees & Quorum (K-of-N) -->
+          <div class="edit-tab-content" id="editTabTrustees" style="display: none;">
+            <h4 style="margin-bottom: 0.5rem; color: var(--text-primary);">Quorum Consensus Configuration</h4>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.25rem;">Define how many trustee key shares are required to reconstruct the vault master key upon release.</p>
+            
+            <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 1.25rem; border-radius: var(--radius-md); margin-bottom: 1.25rem;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                <div>
+                  <label for="editVaultTotalShares" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Total Trustees / Shares (N)</label>
+                  <input type="number" id="editVaultTotalShares" min="1" max="10" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
+                </div>
+                <div>
+                  <label for="editVaultRequiredShares" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Required Approvals (K)</label>
+                  <input type="number" id="editVaultRequiredShares" min="1" max="10" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
+                </div>
+              </div>
+              <p style="margin-top: 1rem; margin-bottom: 0; font-size: 0.85rem; color: var(--status-warning);" id="editQuorumExplainer">
+                This means <strong><span id="editKValDisplay">2</span> out of <span id="editNValDisplay">3</span></strong> trustees must approve a release request before decryption.
+              </p>
+            </div>
+          </div>
+
+          <!-- Tab 5: Release & Heartbeat -->
+          <div class="edit-tab-content" id="editTabRelease" style="display: none;">
+            <h4 style="margin-bottom: 0.5rem; color: var(--text-primary);">Dead Man's Switch &amp; Release Protocol</h4>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.25rem;">Set up check-in frequency and release terms.</p>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem;">
+              <div>
+                <label for="editVaultInactivityDays" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Heartbeat Check-in Frequency</label>
+                <select id="editVaultInactivityDays" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
+                  <option value="7">Every 7 Days</option>
+                  <option value="14">Every 14 Days</option>
+                  <option value="30">Every 30 Days</option>
+                  <option value="60">Every 60 Days</option>
+                  <option value="90">Every 90 Days</option>
+                </select>
+              </div>
+              <div>
+                <label for="editVaultGracePeriod" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Grace Period (Before Trigger)</label>
+                <select id="editVaultGracePeriod" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
+                  <option value="3">3 Days</option>
+                  <option value="7">7 Days</option>
+                  <option value="14">14 Days</option>
+                  <option value="30">30 Days</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+              <label for="editVaultReleaseCondition" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Release Condition Instructions</label>
+              <textarea id="editVaultReleaseCondition" rows="3" placeholder="e.g. Do not release unless trustees have verified with each other." style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary); resize: vertical;"></textarea>
+            </div>
+
+            <label style="display: flex; align-items: flex-start; gap: 0.75rem; padding: 1rem; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); cursor: pointer;">
+              <input type="checkbox" id="editVaultEmergencyClaim" style="margin-top: 0.25rem;">
+              <div>
+                <span style="color: var(--text-primary); font-weight: 600; display: block; margin-bottom: 0.25rem;">Allow Emergency Claim</span>
+                <span style="color: var(--text-muted); font-size: 0.8rem;">Trustees can initiate immediate consensus claims if quorum is met without waiting for heartbeat timer.</span>
+              </div>
+            </label>
+          </div>
+
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
-          <button type="submit" class="btn btn-primary">Save Changes</button>
+
+        <div class="modal-footer" style="padding: 1rem 1.5rem; border-top: 1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center; background:var(--bg-surface);">
+          <span id="editModalStatus" style="font-size:0.8rem; color:var(--text-muted);">All changes will update this vault immediately.</span>
+          <div style="display:flex; gap:0.75rem;">
+            <button type="button" class="btn btn-secondary" data-modal-close>Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btnSaveEditVault">Save Changes</button>
+          </div>
         </div>
       </form>
     </div>
   </div>
+
 
   <!-- Scripts -->
   <script src="../../common/api.js"></script>

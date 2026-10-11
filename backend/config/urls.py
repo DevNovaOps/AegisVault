@@ -4,6 +4,7 @@ All API routes are versioned under /api/v1/
 Frontend routes and static assets served from workspace root.
 """
 from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include, re_path
 from web.views import frontend_serve
@@ -37,7 +38,12 @@ urlpatterns = [
 
     # Web routes (Landing, Auth, Portals)
     path('', include('web.urls')),
+]
 
-    # Serve all static files, HTML pages, CSS, JS, and assets from workspace root
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Serve all static files, HTML pages, CSS, JS, and assets from workspace root
+urlpatterns += [
     re_path(r'^(?P<path>.*)$', frontend_serve),
 ]
+

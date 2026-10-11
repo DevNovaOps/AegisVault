@@ -140,6 +140,64 @@
     });
 
     bindRowActions();
+    updateStatCounts();
+    updateSidebarWidgets();
+  }
+
+  function formatBytes(bytes) {
+    if (!bytes || bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  }
+
+  function updateSidebarWidgets() {
+    const cats = {
+      Personal: 0,
+      Family: 0,
+      Business: 0,
+      Health: 0,
+      Legacy: 0
+    };
+
+    mockVaults.forEach(v => {
+      const type = (v.type || '').toLowerCase();
+      if (type === 'personal') cats.Personal++;
+      else if (type === 'family') cats.Family++;
+      else if (type === 'business') cats.Business++;
+      else if (type === 'health') cats.Health++;
+      else if (type === 'legacy') cats.Legacy++;
+    });
+
+    const elPersonal = document.getElementById('catCountPersonal');
+    const elFamily = document.getElementById('catCountFamily');
+    const elBusiness = document.getElementById('catCountBusiness');
+    const elHealth = document.getElementById('catCountHealth');
+    const elLegacy = document.getElementById('catCountLegacy');
+
+    if (elPersonal) elPersonal.textContent = cats.Personal;
+    if (elFamily) elFamily.textContent = cats.Family;
+    if (elBusiness) elBusiness.textContent = cats.Business;
+    if (elHealth) elHealth.textContent = cats.Health;
+    if (elLegacy) elLegacy.textContent = cats.Legacy;
+
+    // Storage Overview from real API
+    if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+      window.AegisAPI.get('/owner/storage/overview/').then(data => {
+        const valEl = document.getElementById('storageOverviewValue');
+        const fillEl = document.getElementById('storageOverviewFill');
+        const pctEl = document.getElementById('storageOverviewPercent');
+
+        const usedStr = formatBytes(data.used_bytes || 0);
+        const totalStr = formatBytes(data.total_bytes || 10737418240);
+        const pct = Math.min(100, Math.max(0, data.usage_percentage || 0));
+
+        if (valEl) valEl.textContent = `${usedStr} of ${totalStr}`;
+        if (fillEl) fillEl.style.width = `${pct}%`;
+        if (pctEl) pctEl.textContent = `${pct}%`;
+      }).catch(() => {});
+    }
   }
 
   function updateStatCounts() {
@@ -161,6 +219,7 @@
     if (elLocked) elLocked.textContent = locked;
     if (elTrustees) elTrustees.textContent = trustees;
   }
+
 
   function bindRowActions() {
     document.querySelectorAll('.btn-table-action').forEach(btn => {
@@ -292,6 +351,7 @@
           window.AegisAPI.delete(`/owner/vaults/${vault.id}/`).then(() => {
             mockVaults = mockVaults.filter(v => v.id !== vault.id);
             renderVaultsTable();
+            updateSidebarWidgets();
             window.AegisOwner.showToast(`Vault "${vault.name}" deleted.`, 'info');
           }).catch(err => {
             window.AegisOwner.showToast(`Failed to delete vault: ${err.message}`, 'error');
@@ -299,6 +359,7 @@
         } else {
           mockVaults = mockVaults.filter(v => v.id !== vault.id);
           renderVaultsTable();
+          updateSidebarWidgets();
           window.AegisOwner.showToast(`Vault "${vault.name}" deleted.`, 'info');
         }
       }
@@ -316,29 +377,175 @@
     window.location.href = `../vault-details/vault-details.html?id=${vault.id}`;
   }
 
-  function openEditVaultModal(vault) {
-    const form = document.getElementById('formEditVault');
-    const idInput = document.getElementById('editVaultId');
-    const nameInput = document.getElementById('editVaultName');
-    const catSelect = document.getElementById('editVaultCategory');
-    const descInput = document.getElementById('editVaultDesc');
-    const totalSharesInput = document.getElementById('editVaultTotalShares');
-    const requiredSharesInput = document.getElementById('editVaultRequiredShares');
-    const inactivityDaysInput = document.getElementById('editVaultInactivityDays');
-    const releaseConditionSelect = document.getElementById('editVaultReleaseCondition');
+  let activeEditVaultId = null;
 
-    if (idInput && nameInput && catSelect && descInput) {
-      idInput.value = vault.id;
-      nameInput.value = vault.name;
-      catSelect.value = vault.type;
-      descInput.value = vault.desc;
-      if (totalSharesInput) totalSharesInput.value = vault.total_shares || 3;
-      if (requiredSharesInput) requiredSharesInput.value = vault.required_shares || 2;
-      if (inactivityDaysInput) inactivityDaysInput.value = vault.inactivity_days || 30;
-      if (releaseConditionSelect) releaseConditionSelect.value = vault.releaseCondition || 'inactivity';
-      window.AegisOwner.openModal('editVaultModal');
+  function loadEditVaultAssets(vaultId) {
+    const tbody = document.getElementById('editVaultAssetsTbody');
+    if (!tbody) return;
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">Loading assets...</td></tr>`;
+
+    if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+      window.AegisAPI.get(`/owner/vaults/${vaultId}/assets/`).then(assets => {
+        const list = Array.isArray(assets) ? assets : (assets.results || []);
+        tbody.innerHTML = '';
+        if (list.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">No assets in this vault yet. Drag & drop files or add a secure note above.</td></tr>`;
+          return;
+        }
+
+        list.forEach(asset => {
+          const tr = document.createElement('tr');
+          tr.style.borderBottom = '1px solid var(--border-subtle)';
+          const isNote = asset.is_note || (asset.category === 'custom' || (!asset.file && !asset.download_url));
+          const icon = isNote 
+            ? '<svg viewBox="0 0 24 24" fill="none" stroke="var(--brand-orange)" stroke-width="2" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>'
+            : '<svg viewBox="0 0 24 24" fill="none" stroke="var(--status-info)" stroke-width="2" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>';
+          
+          const safeName = (asset.name || 'asset').replace(/'/g, "\\'");
+          tr.innerHTML = `
+            <td style="padding: 0.65rem 0.85rem; color: var(--text-primary); font-weight: 500;">${icon}${asset.name}</td>
+            <td style="padding: 0.65rem 0.85rem; color: var(--text-muted);">${asset.category || (isNote ? 'Secure Note' : 'Document')}</td>
+            <td style="padding: 0.65rem 0.85rem; color: var(--text-muted);">${formatBytes(asset.file_size_bytes)}</td>
+            <td style="padding: 0.65rem 0.85rem; color: var(--text-muted);">${new Date(asset.created_at).toLocaleDateString()}</td>
+            <td style="padding: 0.65rem 0.85rem; text-align: right;">
+              <button type="button" class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: var(--status-critical); border-radius: 4px; cursor: pointer;" onclick="deleteVaultAssetFromEdit('${vaultId}', '${asset.id}', '${safeName}')">
+                Delete
+              </button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }).catch(err => {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--status-critical); padding: 1.5rem;">Failed to load assets: ${err.message}</td></tr>`;
+      });
     }
   }
+
+  window.deleteVaultAssetFromEdit = function(vaultId, assetId, assetName) {
+    if (!confirm(`Are you sure you want to permanently delete "${assetName || 'this asset'}" from this vault?`)) return;
+    if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+      window.AegisAPI.delete(`/owner/vaults/${vaultId}/assets/${assetId}/`).then(() => {
+        window.AegisOwner.showToast('Asset deleted successfully', 'success');
+        loadEditVaultAssets(vaultId);
+        updateSidebarWidgets();
+      }).catch(err => {
+        window.AegisOwner.showToast(`Failed to delete asset: ${err.message}`, 'error');
+      });
+    }
+  };
+
+  function uploadFileToEditVault(vaultId, file) {
+    if (!file) return;
+    const progressContainer = document.getElementById('editUploadProgressContainer');
+    const filenameEl = document.getElementById('editUploadFilename');
+    const percentEl = document.getElementById('editUploadPercent');
+    const barEl = document.getElementById('editUploadProgressBar');
+
+    if (progressContainer) progressContainer.style.display = 'block';
+    if (filenameEl) filenameEl.textContent = `Encrypting & uploading "${file.name}"...`;
+    if (percentEl) percentEl.textContent = '35%';
+    if (barEl) barEl.style.width = '35%';
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('name', file.name);
+    formData.append('category', 'document');
+    formData.append('sensitivity', 'Sensitive');
+
+    if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+      window.AegisAPI.post(`/owner/vaults/${vaultId}/assets/`, formData).then(() => {
+        if (percentEl) percentEl.textContent = '100%';
+        if (barEl) barEl.style.width = '100%';
+        window.AegisOwner.showToast(`File "${file.name}" uploaded & encrypted!`, 'success');
+        setTimeout(() => {
+          if (progressContainer) progressContainer.style.display = 'none';
+          loadEditVaultAssets(vaultId);
+          updateSidebarWidgets();
+        }, 600);
+      }).catch(err => {
+        if (progressContainer) progressContainer.style.display = 'none';
+        window.AegisOwner.showToast(`Upload failed: ${err.message}`, 'error');
+      });
+    }
+  }
+
+  function openEditVaultModal(vault) {
+    activeEditVaultId = vault.id;
+
+    // Reset tabs to Tab 1
+    document.querySelectorAll('.edit-tab-btn').forEach(b => {
+      b.classList.remove('active');
+      b.style.color = 'var(--text-muted)';
+      b.style.background = 'none';
+    });
+    const firstTabBtn = document.querySelector('.edit-tab-btn[data-tab="editTabGeneral"]');
+    if (firstTabBtn) {
+      firstTabBtn.classList.add('active');
+      firstTabBtn.style.color = 'var(--brand-orange)';
+      firstTabBtn.style.background = 'rgba(249, 115, 22, 0.1)';
+    }
+    document.querySelectorAll('.edit-tab-content').forEach(c => c.style.display = 'none');
+    const firstTabContent = document.getElementById('editTabGeneral');
+    if (firstTabContent) firstTabContent.style.display = 'block';
+
+    const idInput = document.getElementById('editVaultId');
+    const subtitleEl = document.getElementById('editVaultSubtitle');
+    const nameInput = document.getElementById('editVaultName');
+    const catSelect = document.getElementById('editVaultCategory');
+    const priSelect = document.getElementById('editVaultPriority');
+    const descInput = document.getElementById('editVaultDesc');
+    const tagsInput = document.getElementById('editVaultTags');
+
+    if (idInput) idInput.value = vault.id;
+    if (subtitleEl) subtitleEl.textContent = `Editing "${vault.name}" • Status: ${vault.status}`;
+    if (nameInput) nameInput.value = vault.name;
+    if (catSelect) catSelect.value = vault.type || 'Personal';
+    if (priSelect) priSelect.value = vault.priority || 'Normal';
+    if (descInput) descInput.value = vault.desc || '';
+    if (tagsInput) tagsInput.value = Array.isArray(vault.tags) ? vault.tags.join(', ') : (vault.tags || '');
+
+    // Checkboxes
+    const tagsArr = Array.isArray(vault.tags) ? vault.tags.map(t => String(t).toLowerCase()) : [];
+    document.querySelectorAll('.edit-asset-type-cb').forEach(cb => {
+      const val = cb.value.toLowerCase();
+      cb.checked = tagsArr.includes(val) || (vault.desc && vault.desc.toLowerCase().includes(val));
+    });
+
+    // Quorum
+    const totalSharesInput = document.getElementById('editVaultTotalShares');
+    const reqSharesInput = document.getElementById('editVaultRequiredShares');
+    const nDisplay = document.getElementById('editNValDisplay');
+    const kDisplay = document.getElementById('editKValDisplay');
+
+    const totalVal = vault.total_shares || 3;
+    const reqVal = vault.required_shares || 2;
+    if (totalSharesInput) totalSharesInput.value = totalVal;
+    if (reqSharesInput) reqSharesInput.value = reqVal;
+    if (nDisplay) nDisplay.textContent = totalVal;
+    if (kDisplay) kDisplay.textContent = reqVal;
+
+    // Heartbeat & Release
+    const inactInput = document.getElementById('editVaultInactivityDays');
+    const graceInput = document.getElementById('editVaultGracePeriod');
+    const relCondInput = document.getElementById('editVaultReleaseCondition');
+    const emergInput = document.getElementById('editVaultEmergencyClaim');
+
+    if (inactInput) inactInput.value = vault.inactivity_days || 30;
+    if (graceInput) graceInput.value = vault.grace_period || 7;
+    if (relCondInput) relCondInput.value = vault.releaseCondition || '';
+    if (emergInput) emergInput.checked = Boolean(vault.emergency_claim);
+
+    // Hide note form if open
+    const noteCard = document.getElementById('editNoteFormCard');
+    if (noteCard) noteCard.style.display = 'none';
+
+    // Load assets in Tab 3
+    loadEditVaultAssets(vault.id);
+
+    // Open Modal
+    window.AegisOwner.openModal('editVaultModal');
+  }
+
 
   // =========================================================================
   // DOM EVENT BINDINGS
@@ -377,7 +584,7 @@
         mockVaults = vaultsData.map(v => ({
           id: v.id,
           name: v.name,
-          desc: v.description || '',
+          desc: v.description || v.purpose || '',
           type: v.vault_type,
           typeBadgeClass: (v.vault_type || '').toLowerCase(),
           typeIcon: TYPE_ICONS[v.vault_type] || TYPE_ICONS['Personal'],
@@ -389,6 +596,10 @@
           total_shares: v.total_shares || 3,
           required_shares: v.required_shares || 2,
           inactivity_days: v.inactivity_days || 30,
+          grace_period: v.grace_period || 7,
+          emergency_claim: v.emergency_claim || false,
+          priority: v.priority || 'Normal',
+          tags: v.tags || [],
           date: new Date(v.created_at).toLocaleDateString(),
           time: new Date(v.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           thumbImg: '../assets/images/vault-thumb-1.png',
@@ -396,6 +607,15 @@
           storageUsed: v.storage_used || '0 MB'
         }));
         renderVaultsTable();
+
+        // Check if navigated from view details or external link with ?edit=<id>
+        const editId = urlParams.get('edit');
+        if (editId) {
+          const editTarget = mockVaults.find(v => v.id === editId);
+          if (editTarget) {
+            setTimeout(() => openEditVaultModal(editTarget), 200);
+          }
+        }
       }).catch(err => {
         console.error('Failed to load vaults', err);
         renderVaultsTable();
@@ -403,6 +623,7 @@
     } else {
       renderVaultsTable();
     }
+
 
     // Search & Filter Listeners
     [searchInput, statusSelect, typeSelect, sortSelect].forEach(el => {
@@ -754,6 +975,150 @@
       });
     }
 
+    // Category Row Interactive Filtering
+    document.querySelectorAll('.categories-list .category-row').forEach(row => {
+      row.addEventListener('click', () => {
+        const cat = row.getAttribute('data-category');
+        if (typeSelect) {
+          if (typeSelect.value.toLowerCase() === cat.toLowerCase()) {
+            typeSelect.value = 'all';
+            window.AegisOwner.showToast('Cleared category filter');
+          } else {
+            typeSelect.value = cat;
+            window.AegisOwner.showToast(`Filtered by ${cat} Vaults`);
+          }
+          renderVaultsTable();
+        }
+      });
+    });
+
+    // Edit Modal Tab Navigation
+    document.querySelectorAll('.edit-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.edit-tab-btn').forEach(b => {
+          b.classList.remove('active');
+          b.style.color = 'var(--text-muted)';
+          b.style.background = 'none';
+        });
+        btn.classList.add('active');
+        btn.style.color = 'var(--brand-orange)';
+        btn.style.background = 'rgba(249, 115, 22, 0.1)';
+
+        document.querySelectorAll('.edit-tab-content').forEach(c => c.style.display = 'none');
+        const targetId = btn.getAttribute('data-tab');
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) targetEl.style.display = 'block';
+      });
+    });
+
+    // Quorum Real-time Display Update in Edit Modal
+    const editTotalShares = document.getElementById('editVaultTotalShares');
+    const editReqShares = document.getElementById('editVaultRequiredShares');
+    const editNDisplay = document.getElementById('editNValDisplay');
+    const editKDisplay = document.getElementById('editKValDisplay');
+
+    function updateEditQuorumText() {
+      const n = editTotalShares ? editTotalShares.value : 3;
+      const k = editReqShares ? editReqShares.value : 2;
+      if (editNDisplay) editNDisplay.textContent = n;
+      if (editKDisplay) editKDisplay.textContent = k;
+    }
+    if (editTotalShares) editTotalShares.addEventListener('input', updateEditQuorumText);
+    if (editReqShares) editReqShares.addEventListener('input', updateEditQuorumText);
+
+    // Edit Modal Asset Upload: Dropzone & File Browser
+    const editDropzone = document.getElementById('editAssetDropzone');
+    const editFileInput = document.getElementById('editAssetFileInput');
+    const btnTriggerUpload = document.getElementById('btnTriggerAssetUpload');
+
+    if (btnTriggerUpload && editFileInput) {
+      btnTriggerUpload.addEventListener('click', () => editFileInput.click());
+    }
+    if (editDropzone && editFileInput) {
+      editDropzone.addEventListener('click', () => editFileInput.click());
+      editDropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        editDropzone.style.borderColor = 'var(--brand-orange)';
+        editDropzone.style.background = 'rgba(249, 115, 22, 0.05)';
+      });
+      editDropzone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        editDropzone.style.borderColor = 'var(--bg-input-border)';
+        editDropzone.style.background = 'rgba(255, 255, 255, 0.02)';
+      });
+      editDropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        editDropzone.style.borderColor = 'var(--bg-input-border)';
+        editDropzone.style.background = 'rgba(255, 255, 255, 0.02)';
+        const files = e.dataTransfer.files;
+        if (files && files.length > 0 && activeEditVaultId) {
+          uploadFileToEditVault(activeEditVaultId, files[0]);
+        }
+      });
+      editFileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0 && activeEditVaultId) {
+          uploadFileToEditVault(activeEditVaultId, e.target.files[0]);
+          editFileInput.value = '';
+        }
+      });
+    }
+
+    // Edit Modal Secure Note Form
+    const btnToggleNote = document.getElementById('btnToggleEditNoteForm');
+    const noteCard = document.getElementById('editNoteFormCard');
+    const btnCancelNote = document.getElementById('btnCancelEditNote');
+    const btnSaveNote = document.getElementById('btnSaveEditNote');
+
+    if (btnToggleNote && noteCard) {
+      btnToggleNote.addEventListener('click', () => {
+        const isHidden = noteCard.style.display === 'none';
+        noteCard.style.display = isHidden ? 'block' : 'none';
+        if (isHidden) {
+          document.getElementById('editNoteTitle').focus();
+        }
+      });
+    }
+    if (btnCancelNote && noteCard) {
+      btnCancelNote.addEventListener('click', () => {
+        noteCard.style.display = 'none';
+        document.getElementById('editNoteTitle').value = '';
+        document.getElementById('editNoteContent').value = '';
+      });
+    }
+    if (btnSaveNote) {
+      btnSaveNote.addEventListener('click', () => {
+        const title = document.getElementById('editNoteTitle')?.value.trim();
+        const content = document.getElementById('editNoteContent')?.value.trim();
+        if (!title || !content) {
+          window.AegisOwner.showToast('Note title and content are required.', 'error');
+          return;
+        }
+        if (!activeEditVaultId) {
+          window.AegisOwner.showToast('No active vault selected.', 'error');
+          return;
+        }
+
+        window.AegisOwner.showToast('Encrypting secure note...', 'info');
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+          window.AegisAPI.post(`/owner/vaults/${activeEditVaultId}/assets/`, {
+            name: title,
+            encrypted_data: content,
+            category: 'custom',
+            sensitivity: 'Sensitive'
+          }).then(() => {
+            window.AegisOwner.showToast('Secure note added to vault!', 'success');
+            document.getElementById('editNoteTitle').value = '';
+            document.getElementById('editNoteContent').value = '';
+            if (noteCard) noteCard.style.display = 'none';
+            loadEditVaultAssets(activeEditVaultId);
+            updateSidebarWidgets();
+          }).catch(err => {
+            window.AegisOwner.showToast(`Failed to add note: ${err.message}`, 'error');
+          });
+        }
+      });
+    }
+
     // Edit Vault Form Submit
     const formEdit = document.getElementById('formEditVault');
     if (formEdit) {
@@ -762,56 +1127,90 @@
         const id = document.getElementById('editVaultId')?.value;
         const name = document.getElementById('editVaultName')?.value.trim();
         const type = document.getElementById('editVaultCategory')?.value;
+        const priority = document.getElementById('editVaultPriority')?.value;
         const desc = document.getElementById('editVaultDesc')?.value.trim();
-        const totalShares = document.getElementById('editVaultTotalShares')?.value;
-        const requiredShares = document.getElementById('editVaultRequiredShares')?.value;
-        const inactivityDays = document.getElementById('editVaultInactivityDays')?.value;
-        const releaseCondition = document.getElementById('editVaultReleaseCondition')?.value;
+        const tagsInputVal = document.getElementById('editVaultTags')?.value.trim();
+        const totalShares = parseInt(document.getElementById('editVaultTotalShares')?.value || '3', 10);
+        const requiredShares = parseInt(document.getElementById('editVaultRequiredShares')?.value || '2', 10);
+        const inactivityDays = parseInt(document.getElementById('editVaultInactivityDays')?.value || '30', 10);
+        const gracePeriod = parseInt(document.getElementById('editVaultGracePeriod')?.value || '7', 10);
+        const releaseCondition = document.getElementById('editVaultReleaseCondition')?.value.trim();
+        const emergencyClaim = document.getElementById('editVaultEmergencyClaim')?.checked;
+
+        // Gather checked asset types
+        const selectedTypes = [];
+        document.querySelectorAll('.edit-asset-type-cb:checked').forEach(cb => {
+          selectedTypes.push(cb.value);
+        });
+
+        const tagsList = tagsInputVal 
+          ? tagsInputVal.split(',').map(t => t.trim()).filter(Boolean)
+          : selectedTypes;
 
         const target = mockVaults.find(v => v.id === id);
+        const payload = {
+          name: name || (target ? target.name : 'Vault'),
+          description: desc,
+          purpose: desc,
+          vault_type: type,
+          category: type,
+          priority: priority || 'Normal',
+          tags: tagsList,
+          total_shares: totalShares,
+          required_shares: requiredShares,
+          inactivity_days: inactivityDays,
+          release_condition: releaseCondition
+        };
+
         if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-          window.AegisAPI.put(`/owner/vaults/${id}/`, {
-            name: name || target.name,
-            description: desc || target.desc,
-            vault_type: type || target.type,
-            total_shares: totalShares || target.total_shares,
-            required_shares: requiredShares || target.required_shares,
-            inactivity_days: inactivityDays || target.inactivity_days,
-            release_condition: releaseCondition || target.releaseCondition
-          }).then(() => {
+          window.AegisAPI.put(`/owner/vaults/${id}/`, payload).then(() => {
             if (target) {
-              target.name = name || target.name;
-              target.type = type || target.type;
-              target.typeBadgeClass = (type || target.type).toLowerCase();
-              target.desc = desc || target.desc;
-              target.total_shares = totalShares || target.total_shares;
-              target.required_shares = requiredShares || target.required_shares;
-              target.inactivity_days = inactivityDays || target.inactivity_days;
-              target.releaseCondition = releaseCondition || target.releaseCondition;
+              target.name = payload.name;
+              target.type = payload.vault_type;
+              target.typeBadgeClass = payload.vault_type.toLowerCase();
+              target.desc = payload.description;
+              target.priority = payload.priority;
+              target.tags = payload.tags;
+              target.total_shares = payload.total_shares;
+              target.required_shares = payload.required_shares;
+              target.inactivity_days = payload.inactivity_days;
+              target.grace_period = gracePeriod;
+              target.releaseCondition = payload.release_condition;
+              target.emergency_claim = emergencyClaim;
               target.date = 'Just now';
               target.time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             }
             window.AegisOwner.closeModal('editVaultModal');
             renderVaultsTable();
-            window.AegisOwner.showToast(`Vault "${name}" updated successfully!`, 'success');
+            updateSidebarWidgets();
+            window.AegisOwner.showToast(`Vault "${payload.name}" updated successfully!`, 'success');
           }).catch(err => {
             window.AegisOwner.showToast(`Failed to update vault: ${err.message}`, 'error');
           });
         } else {
           if (target) {
-            target.name = name || target.name;
-            target.type = type || target.type;
-            target.typeBadgeClass = (type || target.type).toLowerCase();
-            target.desc = desc || target.desc;
+            target.name = payload.name;
+            target.type = payload.vault_type;
+            target.typeBadgeClass = payload.vault_type.toLowerCase();
+            target.desc = payload.description;
+            target.priority = payload.priority;
+            target.tags = payload.tags;
+            target.total_shares = payload.total_shares;
+            target.required_shares = payload.required_shares;
+            target.inactivity_days = payload.inactivity_days;
+            target.grace_period = gracePeriod;
+            target.releaseCondition = payload.release_condition;
             target.date = 'Just now';
             target.time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
           }
           window.AegisOwner.closeModal('editVaultModal');
           renderVaultsTable();
-          window.AegisOwner.showToast(`Vault "${name}" updated successfully!`, 'success');
+          updateSidebarWidgets();
+          window.AegisOwner.showToast(`Vault "${payload.name}" updated successfully!`, 'success');
         }
       });
     }
   });
 
 })();
+

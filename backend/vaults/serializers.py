@@ -45,13 +45,21 @@ class VaultSerializer(serializers.ModelSerializer):
 
 
 class VaultCreateSerializer(serializers.ModelSerializer):
-    """Create a new vault. Frontend form sends: name, category, description."""
+    """Create or update a vault."""
+    category = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = Vault
         fields = ['name', 'description', 'vault_type', 'release_condition',
                   'inactivity_days', 'required_shares', 'total_shares',
-                  'purpose', 'priority', 'tags', 'status']
+                  'purpose', 'priority', 'tags', 'status', 'category']
+
+    def validate(self, attrs):
+        if 'category' in attrs and 'vault_type' not in attrs:
+            attrs['vault_type'] = attrs.pop('category')
+        elif 'category' in attrs:
+            attrs.pop('category')
+        return attrs
 
     def create(self, validated_data):
         validated_data['owner'] = self.context['request'].user
@@ -92,14 +100,26 @@ class VaultShareCreateSerializer(serializers.Serializer):
 
 
 class VaultAssetSerializer(serializers.ModelSerializer):
-    """Vault asset serializer — never exposes decrypted content."""
+    """Vault asset serializer — exposes metadata, download URL, and note flag."""
+    download_url = serializers.SerializerMethodField()
+    is_note = serializers.SerializerMethodField()
 
     class Meta:
         model = VaultAsset
         fields = [
             'id', 'vault', 'name', 'category', 'sensitivity', 'description',
-            'file_size_bytes', 'mime_type', 'notes',
+            'file_size_bytes', 'mime_type', 'notes', 'download_url', 'is_note',
             'created_at', 'updated_at',
         ]
-        read_only_fields = ['id', 'vault', 'created_at', 'updated_at']
-        # encrypted_data, encryption_iv, encryption_tag intentionally excluded
+        read_only_fields = ['id', 'vault', 'created_at', 'updated_at', 'download_url', 'is_note']
+
+    def get_download_url(self, obj):
+        if obj.file:
+            request = self.context.get('request') if hasattr(self, 'context') else None
+            if request:
+                return request.build_absolute_uri(obj.file.url)
+            return obj.file.url
+        return None
+
+    def get_is_note(self, obj):
+        return bool(obj.encrypted_data and not obj.file)

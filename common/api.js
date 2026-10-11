@@ -12,7 +12,9 @@
 (function () {
   'use strict';
 
-  const API_BASE = 'http://127.0.0.1:8000/api/v1';
+  const API_BASE = (typeof window !== 'undefined' && window.location && window.location.protocol.startsWith('http') && window.location.port === '8000')
+    ? `${window.location.origin}/api/v1`
+    : 'http://127.0.0.1:8000/api/v1';
 
   // ─── Token Storage ──────────────────────────────────────────────────
   const TOKEN_KEY = 'aegis_access_token';
