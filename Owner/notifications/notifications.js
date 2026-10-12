@@ -13,96 +13,39 @@ document.addEventListener('DOMContentLoaded', () => {
   // --------------------------------------------------------------------------
   // 2. State & Mock Data
   // --------------------------------------------------------------------------
-  let notifications = [
-    {
-      id: 1,
-      type: 'invitation',
-      title: 'New trustee invitation sent',
-      desc: 'You invited Amit Kumar to your Family Vault.',
-      vault: 'Family Vault',
-      date: '12 Sep 2025',
-      time: '10:24 AM',
-      status: 'unread',
-      rawDate: '2025-09-12'
-    },
-    {
-      id: 2,
-      type: 'trustee',
-      title: 'Trustee accepted invitation',
-      desc: 'Sneha Mehta has accepted your invitation.',
-      vault: 'Personal Vault',
-      date: '05 Sep 2025',
-      time: '02:16 PM',
-      status: 'read',
-      rawDate: '2025-09-05'
-    },
-    {
-      id: 3,
-      type: 'release',
-      title: 'Release scheduled',
-      desc: 'A release for Medical Records is scheduled.',
-      vault: 'Health Vault',
-      date: '01 Sep 2025',
-      time: '04:38 PM',
-      status: 'unread',
-      rawDate: '2025-09-01'
-    },
-    {
-      id: 4,
-      type: 'security',
-      title: 'Login from new device',
-      desc: 'A new device was used to access your account.',
-      vault: 'Account Security',
-      date: '28 Aug 2025',
-      time: '11:05 AM',
-      status: 'read',
-      rawDate: '2025-08-28'
-    },
-    {
-      id: 5,
-      type: 'vault',
-      title: 'Vault updated',
-      desc: 'You updated documents in Business Vault.',
-      vault: 'Business Vault',
-      date: '22 Aug 2025',
-      time: '03:21 PM',
-      status: 'read',
-      rawDate: '2025-08-22'
-    },
-    {
-      id: 6,
-      type: 'release',
-      title: 'Release completed',
-      desc: 'Your Travel Itinerary has been released.',
-      vault: 'Travel Vault',
-      date: '18 Aug 2025',
-      time: '10:14 AM',
-      status: 'unread',
-      rawDate: '2025-08-18'
-    },
-    {
-      id: 7,
-      type: 'trustee',
-      title: 'Trustee declined invitation',
-      desc: 'Vikram Shah declined your invitation.',
-      vault: 'Legacy Vault',
-      date: '12 Aug 2025',
-      time: '01:45 PM',
-      status: 'read',
-      rawDate: '2025-08-12'
-    },
-    {
-      id: 8,
-      type: 'release',
-      title: 'Release action required',
-      desc: 'A manual release requires your approval.',
-      vault: 'Property Vault',
-      date: '10 Aug 2025',
-      time: '09:20 AM',
-      status: 'unread',
-      rawDate: '2025-08-10'
+  let notifications = [];
+
+  function getIconForType(type) {
+    type = (type || '').toLowerCase();
+    if (type === 'invitation') {
+      return {
+        color: 'icon-purple',
+        svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`
+      };
     }
-  ];
+    if (type === 'trustee') {
+      return {
+        color: 'icon-green',
+        svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`
+      };
+    }
+    if (type === 'release') {
+      return {
+        color: 'icon-orange',
+        svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`
+      };
+    }
+    if (type === 'security') {
+      return {
+        color: 'icon-red',
+        svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`
+      };
+    }
+    return {
+      color: 'icon-blue',
+      svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>`
+    };
+  }
 
   let selectedNotifIds = new Set();
   let activeContextNotifId = null;
@@ -664,6 +607,95 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 3200);
   }
 
-  // Initial count sync
-  updateCounts();
+  function renderTableRows() {
+    if (!notifTableBody) return;
+    if (notifications.length === 0) {
+      notifTableBody.innerHTML = `
+        <tr>
+          <td colspan="7" style="text-align: center; padding: 3.5rem 1rem; color: var(--text-muted);">
+            <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">🔔</div>
+            <div style="font-weight: 600; font-size: 1.05rem; color: var(--text-primary); margin-bottom: 0.35rem;">No Notifications</div>
+            <div style="font-size: 0.85rem; max-width: 420px; margin: 0 auto;">You're completely caught up! Real-time alerts for trustee invitations, releases, and vault activities will appear here.</div>
+          </td>
+        </tr>`;
+      updateCounts();
+      return;
+    }
+
+    notifTableBody.innerHTML = notifications.map(item => {
+      const icon = getIconForType(item.type);
+      return `
+        <tr class="notif-row ${item.status}" data-id="${item.id}" data-type="${item.type}" data-vault="${item.vault}" data-status="${item.status}" data-date="${item.rawDate}">
+          <td>
+            <input type="checkbox" class="row-checkbox custom-checkbox" aria-label="Select notification">
+          </td>
+          <td>
+            <div class="notif-icon-box ${icon.color}">
+              ${icon.svg}
+            </div>
+          </td>
+          <td>
+            <div class="notif-msg-cell">
+              <span class="notif-msg-title">${item.title}</span>
+              <span class="notif-msg-sub">${item.desc}</span>
+            </div>
+          </td>
+          <td>
+            <div class="related-badge badge-blue">
+              <span>${item.vault}</span>
+            </div>
+          </td>
+          <td>
+            <div class="notif-datetime">
+              <span class="date-text">${item.date}</span>
+              <span class="time-text">${item.time}</span>
+            </div>
+          </td>
+          <td>
+            <span class="status-pill status-${item.status}">
+              <span class="status-dot"></span>
+              <span>${item.status === 'unread' ? 'Unread' : 'Read'}</span>
+            </span>
+          </td>
+          <td style="text-align: right;">
+            <button class="btn-action-more" aria-label="More options" data-id="${item.id}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
+              </svg>
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    updateCounts();
+    applyFilters();
+  }
+
+  function loadLiveNotifications() {
+    if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+      window.AegisAPI.get('/owner/notifications/').then(data => {
+        notifications = data.map(n => ({
+          id: n.id,
+          type: n.type,
+          title: n.title,
+          desc: n.description,
+          vault: n.vault_name || 'System',
+          status: n.status ? n.status.toLowerCase() : 'unread',
+          date: new Date(n.created_at).toLocaleDateString(),
+          time: new Date(n.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          rawDate: n.created_at
+        }));
+        renderTableRows();
+      }).catch(err => {
+        console.error('Failed to load notifications', err);
+        renderTableRows();
+      });
+    } else {
+      renderTableRows();
+    }
+  }
+
+  // Initial load from backend
+  loadLiveNotifications();
 });

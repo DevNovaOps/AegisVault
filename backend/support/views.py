@@ -15,6 +15,21 @@ class SupportTicketCreateView(APIView):
     """POST /api/v1/owner/support/tickets"""
     permission_classes = [IsAuthenticated]
 
+    def get(self, request):
+        tickets = SupportTicket.objects.filter(user=request.user).order_by('-created_at')
+        return Response([
+            {
+                'id': str(t.id),
+                'subject': t.subject,
+                'description': t.description,
+                'category': t.category,
+                'priority': t.priority,
+                'status': t.status,
+                'created_at': t.created_at.isoformat(),
+            }
+            for t in tickets
+        ])
+
     def post(self, request):
         data = request.data
 

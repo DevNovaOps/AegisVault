@@ -7,209 +7,9 @@
   'use strict';
 
   // =========================================================================
-  // 1. Initial Mock Dataset (Exact match to Dark & Light mockups)
+  // 1. Live Dataset (Populated dynamically from Django backend API)
   // =========================================================================
-  let invitations = [
-    {
-      id: 'inv-1',
-      name: 'Amit Kumar',
-      email: 'amit.kumar@email.com',
-      rel: 'Brother',
-      relClass: 'brother',
-      vault: 'Family Vault',
-      status: 'pending',
-      sentDate: '12 Sep 2025',
-      sentTime: '10:24 AM',
-      avatar: '../assets/images/trustee-avatar-1.png',
-      avatarType: 'img',
-      expiryDays: 14,
-      isRecent: true,
-      note: 'Please accept this invitation to safeguard our family records and medical archives.'
-    },
-    {
-      id: 'inv-2',
-      name: 'Sneha Mehta',
-      email: 'sneha.mehta@email.com',
-      rel: 'Sister',
-      relClass: 'sister',
-      vault: 'Personal Vault',
-      status: 'accepted',
-      sentDate: '05 Sep 2025',
-      sentTime: '02:16 PM',
-      acceptedDate: '05 Sep 2025, 02:16 PM',
-      avatar: '../assets/images/trustee-avatar-2.png',
-      avatarType: 'img',
-      isRecent: true,
-      note: 'Emergency contact and healthcare directives.'
-    },
-    {
-      id: 'inv-3',
-      name: 'Rahul Kapoor',
-      email: 'rahul.kapoor@email.com',
-      rel: 'Friend',
-      relClass: 'friend',
-      vault: 'Business Vault',
-      status: 'pending',
-      sentDate: '10 Sep 2025',
-      sentTime: '09:12 AM',
-      initials: 'RK',
-      avatarType: 'initials',
-      avatarClass: 'avatar-gradient-rk',
-      expiryDays: 14,
-      isRecent: true,
-      note: 'Backup authorization for startup equity holdings.'
-    },
-    {
-      id: 'inv-4',
-      name: 'Priya Sharma',
-      email: 'priya.sharma@email.com',
-      rel: 'Spouse',
-      relClass: 'spouse',
-      vault: 'Health Vault',
-      status: 'accepted',
-      sentDate: '01 Sep 2025',
-      sentTime: '04:38 PM',
-      acceptedDate: '01 Sep 2025, 04:38 PM',
-      avatar: '../assets/images/trustee-avatar-4.png',
-      avatarType: 'img',
-      isRecent: true,
-      note: 'Primary healthcare proxy and emergency assets.'
-    },
-    {
-      id: 'inv-5',
-      name: 'Vikram Shah',
-      email: 'vikram.shah@email.com',
-      rel: 'Colleague',
-      relClass: 'colleague',
-      vault: 'Legacy Vault',
-      status: 'declined',
-      sentDate: '28 Aug 2025',
-      sentTime: '11:05 AM',
-      initials: 'VS',
-      avatarType: 'initials',
-      avatarClass: 'avatar-gradient-vs',
-      isRecent: true,
-      declineReason: 'Currently unable to fulfill legal responsibilities.',
-      note: 'Co-founder IP release authorization.'
-    },
-    {
-      id: 'inv-6',
-      name: 'Anita Desai',
-      email: 'anita.desai@email.com',
-      rel: 'Cousin',
-      relClass: 'cousin',
-      vault: 'Travel Vault',
-      status: 'pending',
-      sentDate: '22 Aug 2025',
-      sentTime: '03:21 PM',
-      avatar: '../assets/images/trustee-avatar-6.png',
-      avatarType: 'img',
-      expiryDays: 14,
-      isRecent: true,
-      note: 'Travel documents and property power-of-attorney.'
-    },
-    {
-      id: 'inv-7',
-      name: 'Neeraj Singh',
-      email: 'neeraj.singh@email.com',
-      rel: 'Friend',
-      relClass: 'friend',
-      vault: 'Family Vault',
-      status: 'expired',
-      sentDate: '18 Aug 2025',
-      sentTime: '10:14 AM',
-      initials: 'NS',
-      avatarType: 'initials',
-      avatarClass: 'avatar-gradient-ns',
-      isRecent: true,
-      note: 'Original token link expired after 30 days.'
-    },
-    {
-      id: 'inv-8',
-      name: 'Karan Malhotra',
-      email: 'karan.malhotra@email.com',
-      rel: 'Legal Advisor',
-      relClass: 'legal-advisor',
-      vault: 'Business Vault',
-      status: 'accepted',
-      sentDate: '12 Aug 2025',
-      sentTime: '01:45 PM',
-      acceptedDate: '12 Aug 2025, 01:45 PM',
-      avatar: '../assets/images/trustee-avatar-8.png',
-      avatarType: 'img',
-      isRecent: true,
-      note: 'Corporate bylaws and escrow governance.'
-    },
-    // Older invitations completing the 12 Total (5 Pending, 4 Accepted, 2 Declined, 1 Expired)
-    {
-      id: 'inv-9',
-      name: 'Pooja Verma',
-      email: 'pooja.verma@email.com',
-      rel: 'Sister',
-      relClass: 'sister',
-      vault: 'Personal Vault',
-      status: 'pending',
-      sentDate: '14 May 2025',
-      sentTime: '11:30 AM',
-      initials: 'PV',
-      avatarType: 'initials',
-      avatarClass: 'avatar-gradient-rk',
-      expiryDays: 14,
-      isRecent: false,
-      note: 'Family photo archives and trust deeds.'
-    },
-    {
-      id: 'inv-10',
-      name: 'Dev Patel',
-      email: 'dev.patel@email.com',
-      rel: 'Brother',
-      relClass: 'brother',
-      vault: 'Family Vault',
-      status: 'pending',
-      sentDate: '02 May 2025',
-      sentTime: '09:40 AM',
-      initials: 'DP',
-      avatarType: 'initials',
-      avatarClass: 'avatar-gradient-vs',
-      expiryDays: 14,
-      isRecent: false,
-      note: 'Ancestral land title deeds access.'
-    },
-    {
-      id: 'inv-11',
-      name: 'Ananya Roy',
-      email: 'ananya.roy@email.com',
-      rel: 'Friend',
-      relClass: 'friend',
-      vault: 'Legacy Vault',
-      status: 'accepted',
-      sentDate: '20 Apr 2025',
-      sentTime: '03:15 PM',
-      acceptedDate: '21 Apr 2025, 10:00 AM',
-      initials: 'AR',
-      avatarType: 'initials',
-      avatarClass: 'avatar-gradient-rk',
-      isRecent: false,
-      note: 'Digital creative portfolio rights.'
-    },
-    {
-      id: 'inv-12',
-      name: 'Arjun Kapoor',
-      email: 'arjun.kapoor@email.com',
-      rel: 'Colleague',
-      relClass: 'colleague',
-      vault: 'Business Vault',
-      status: 'declined',
-      sentDate: '15 Mar 2025',
-      sentTime: '04:50 PM',
-      initials: 'AK',
-      avatarType: 'initials',
-      avatarClass: 'avatar-gradient-ns',
-      isRecent: false,
-      declineReason: 'Relocating abroad.',
-      note: 'Patent disclosure signatory.'
-    }
-  ];
+  let invitations = [];
 
   // Currently active item for resend/renew dialog
   let activeCandidate = null;
@@ -678,9 +478,10 @@
 
     menu.querySelector('[data-action="copy"]').addEventListener('click', () => {
       closeInviteContextMenu();
-      const mockToken = `https://aegisvault.io/trustee-invite?token=aegis_inv_${item.id}_${Math.random().toString(36).substring(2, 9)}`;
-      navigator.clipboard?.writeText(mockToken);
-      window.AegisOwner?.showToast(`Copied secure invitation link to clipboard!`, 'success');
+      const baseUrl = window.location.origin;
+      const directLink = `${baseUrl}/auth.html?role=trustee&mode=signup&token=${item.token || item.id}&email=${encodeURIComponent(item.email)}`;
+      navigator.clipboard?.writeText(directLink);
+      window.AegisOwner?.showToast(`Copied live invitation link to clipboard!`, 'success');
     });
 
     menu.querySelector('[data-action="resend"]').addEventListener('click', () => {
@@ -694,11 +495,22 @@
 
     menu.querySelector('[data-action="cancel"]').addEventListener('click', () => {
       closeInviteContextMenu();
-      if (confirm(`Revoke pending invitation for "${item.name}"? The cryptographic authorization token will be invalidated.`)) {
-        item.status = 'declined';
-        updateKPIsAndDonut();
-        renderTable();
-        window.AegisOwner?.showToast(`Invitation for ${item.name} revoked.`, 'warning');
+      if (confirm(`Revoke invitation for "${item.name}"? The cryptographic authorization token will be invalidated.`)) {
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+          window.AegisAPI.post(`/owner/invitations/${item.id}/revoke/`).then(() => {
+            item.status = 'revoked';
+            updateKPIsAndDonut();
+            renderTable();
+            window.AegisOwner?.showToast(`Invitation for ${item.name} revoked.`, 'warning');
+          }).catch(err => {
+            window.AegisOwner?.showToast(`Failed to revoke invitation: ${err.message}`, 'error');
+          });
+        } else {
+          item.status = 'revoked';
+          updateKPIsAndDonut();
+          renderTable();
+          window.AegisOwner?.showToast(`Invitation for ${item.name} revoked.`, 'warning');
+        }
       }
     });
 
@@ -942,6 +754,10 @@
       window.AegisAPI.get('/owner/vaults/').then(vs => {
         const sel = document.getElementById('newInviteVault');
         if (sel) sel.innerHTML = vs.map(v => `<option value="${v.id}">${v.name}</option>`).join('');
+        const filterSel = document.getElementById('vaultFilterSelect');
+        if (filterSel && Array.isArray(vs) && vs.length > 0) {
+          filterSel.innerHTML = '<option value="all">All Vaults</option>' + vs.map(v => `<option value="${v.name}">${v.name}</option>`).join('');
+        }
       }).catch(e=>{});
 
       window.AegisAPI.get('/owner/invitations/').then(data => {
@@ -949,10 +765,11 @@
           id: inv.id,
           name: inv.invitee_name,
           email: inv.invitee_email,
-          rel: inv.relationship,
-          relClass: (inv.relationship || '').toLowerCase().replace(' ', '-'),
-          vault: inv.vault_name,
-          status: inv.status.toLowerCase(),
+          rel: inv.relationship || 'Guardian',
+          relClass: (inv.relationship || 'guardian').toLowerCase().replace(' ', '-'),
+          vault: inv.vault_name || 'Designated Vault',
+          status: (inv.status || 'pending').toLowerCase(),
+          token: inv.token,
           sentDate: new Date(inv.sent_at).toLocaleDateString(),
           sentTime: new Date(inv.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           avatar: '../assets/images/trustee-avatar-1.png',

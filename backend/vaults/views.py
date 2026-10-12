@@ -209,9 +209,22 @@ class ShareListCreateView(APIView):
         vault = get_object_or_404(
             Vault, pk=serializer.validated_data['vault_id'], owner=request.user
         )
-        trustee = get_object_or_404(
-            User, email=serializer.validated_data['trustee_email']
-        )
+        trustee_email = serializer.validated_data['trustee_email'].strip().lower()
+        trustee = User.objects.filter(email__iexact=trustee_email).first()
+        if not trustee:
+            from trustees.models import TrusteeProfile
+            import secrets
+            tp = TrusteeProfile.objects.filter(owner=request.user, email__iexact=trustee_email).first()
+            trustee_name = tp.name if tp else trustee_email.split('@')[0]
+            trustee = User.objects.create_user(
+                email=trustee_email,
+                name=trustee_name,
+                password=secrets.token_urlsafe(16),
+                role=User.Role.TRUSTEE
+            )
+            if tp:
+                tp.user = trustee
+                tp.save()
 
         share, created = VaultShare.objects.update_or_create(
             vault=vault,
@@ -248,7 +261,10 @@ class ShareListCreateView(APIView):
 
 
 class ShareDetailView(APIView):
-    """PUT /api/v1/owner/shares/{id}"""
+    """
+    PUT    /api/v1/owner/shares/{id} — Update share
+    DELETE /api/v1/owner/shares/{id} — Delete share
+    """
     permission_classes = [IsAuthenticated, IsOwner]
 
     def put(self, request, pk):
@@ -267,6 +283,23 @@ class ShareDetailView(APIView):
         )
 
         return Response(VaultShareSerializer(share).data)
+
+    def delete(self, request, pk):
+        share = get_object_or_404(VaultShare, pk=pk, vault__owner=request.user)
+        vault_name = share.vault.name
+        trustee_name = share.trustee.name if share.trustee else 'Trustee'
+        share.delete()
+
+        AuditService.log(
+            user=request.user,
+            action_key='share_deleted',
+            action_title='Share Access Removed',
+            details=f'Removed share access for {trustee_name} on {vault_name}',
+            category='share',
+            vault_name=vault_name,
+        )
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ShareRemindView(APIView):

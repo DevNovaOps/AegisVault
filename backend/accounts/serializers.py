@@ -167,19 +167,34 @@ class LoginSerializer(serializers.Serializer):
 
 
 class ChangePasswordSerializer(serializers.Serializer):
-    """Change password. Frontend profile-security.js sends current + new password."""
-    current_password = serializers.CharField(write_only=True)
+    """Change password. Supports both current_password and old_password field names."""
+    current_password = serializers.CharField(required=False, allow_blank=True, write_only=True)
+    old_password = serializers.CharField(required=False, allow_blank=True, write_only=True)
     new_password = serializers.CharField(min_length=8, write_only=True)
 
-    def validate_current_password(self, value):
+    def validate(self, attrs):
+        pwd = attrs.get('current_password') or attrs.get('old_password')
+        if not pwd:
+            raise serializers.ValidationError({'current_password': 'Current password is required.'})
         user = self.context['request'].user
-        if not user.check_password(value):
-            raise serializers.ValidationError('Current password is incorrect.')
-        return value
+        if not user.check_password(pwd):
+            raise serializers.ValidationError({'current_password': 'Current password is incorrect.'})
+        return attrs
 
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):
-    """Update profile. Frontend profile form sends name, phone, bio, timezone."""
+    """Update profile. Frontend profile form sends name, email, phone, bio, timezone."""
+    email = serializers.EmailField(required=False)
+
     class Meta:
         model = User
-        fields = ['name', 'phone', 'bio', 'timezone_preference', 'avatar']
+        fields = ['name', 'email', 'phone', 'bio', 'timezone_preference', 'avatar']
+
+    def validate_email(self, value):
+        if value:
+            norm = value.strip().lower()
+            user = self.instance
+            if User.objects.filter(email__iexact=norm).exclude(pk=user.pk).exists():
+                raise serializers.ValidationError('Email already in use by another account.')
+            return norm
+        return value

@@ -56,6 +56,35 @@ class NotificationMarkReadView(APIView):
         return Response(NotificationSerializer.to_dict(notification))
 
 
+class NotificationDeleteView(APIView):
+    """DELETE /api/v1/owner/notifications/{id}/"""
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, pk):
+        notification = get_object_or_404(
+            Notification, pk=pk, user=request.user
+        )
+        notification.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class NotificationBulkDeleteView(APIView):
+    """POST /api/v1/owner/notifications/bulk-delete/"""
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        ids = request.data.get('ids', [])
+        if not ids:
+            return Response(
+                {'detail': 'No IDs provided.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        deleted, _ = Notification.objects.filter(
+            id__in=ids, user=request.user
+        ).delete()
+        return Response({'detail': f'Deleted {deleted} notifications.'})
+
+
 class NotificationBulkReadView(APIView):
     """POST /api/v1/owner/notifications/bulk-read"""
     permission_classes = [IsAuthenticated]

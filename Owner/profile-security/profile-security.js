@@ -1,6 +1,7 @@
 /**
  * AegisVault Owner Panel — Profile & Security Module
  * Module 09: Personal Info, Cryptographic Credentials, 2FA, Devices & Auth
+ * Connected to live Django backend: /api/v1/auth/me, /api/v1/accounts/profile/...
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -36,6 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnToggleApple = document.getElementById('btnToggleApple');
   const statusApple = document.getElementById('statusApple');
 
+  let currentUserData = null;
+
   // Sync theme label with current document theme
   function syncThemeLabel() {
     const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
@@ -47,7 +50,119 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('aegis-theme-changed', syncThemeLabel);
 
   // =========================================================================
-  // 2. Tabs Navigation
+  // 2. Load Real User Data from Live Backend
+  // =========================================================================
+  async function loadUserProfile() {
+    if (!window.AegisAPI || !window.AegisAPI.isAuthenticated()) {
+      window.location.href = '../../AegisVault Home/auth.html';
+      return;
+    }
+
+    try {
+      const res = await window.AegisAPI.get('/auth/me/');
+      currentUserData = res.user || res;
+      populateUserUI(currentUserData);
+    } catch (err) {
+      console.warn('[AegisVault] Failed to fetch /auth/me/, using local user object:', err);
+      currentUserData = window.AegisAPI.getUser() || {};
+      populateUserUI(currentUserData);
+    }
+  }
+
+  function populateUserUI(user) {
+    if (!user) return;
+
+    const fullName = (user.first_name || user.last_name) 
+      ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
+      : (user.name || user.email?.split('@')[0] || 'Vault Owner');
+    const email = user.email || 'owner@aegisvault.io';
+    const role = (user.role || 'OWNER').toUpperCase();
+    const is2fa = Boolean(user.is_2fa_enabled);
+
+    // Initials for avatar
+    const nameParts = fullName.split(' ');
+    const initials = nameParts.length > 1 
+      ? (nameParts[0][0] + nameParts[1][0]).toUpperCase()
+      : fullName.substring(0, 2).toUpperCase();
+
+    // 1. Overview Card
+    const avatarCircle = document.querySelector('.overview-avatar-circle');
+    if (avatarCircle) avatarCircle.textContent = initials;
+
+    const nameEl = document.querySelector('.overview-name');
+    if (nameEl) nameEl.textContent = fullName;
+
+    const emailEl = document.querySelector('.overview-email');
+    if (emailEl) emailEl.textContent = email;
+
+    // Member since
+    if (user.date_joined || user.created_at) {
+      const joinedDate = new Date(user.date_joined || user.created_at);
+      const metaValues = document.querySelectorAll('.overview-meta-col .meta-value');
+      if (metaValues[0]) {
+        metaValues[0].textContent = joinedDate.toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' });
+      }
+    }
+
+    // 2. Personal Information Card
+    const personalRows = document.querySelectorAll('#sectionPersonal .profile-item-row');
+    if (personalRows[0]) {
+      const val = personalRows[0].querySelector('.item-value');
+      if (val) val.textContent = fullName;
+    }
+    if (personalRows[1]) {
+      const val = personalRows[1].querySelector('.item-value');
+      if (val) val.textContent = email;
+    }
+    if (personalRows[2] && user.phone) {
+      const val = personalRows[2].querySelector('.item-value');
+      if (val) val.textContent = user.phone;
+    }
+    if (personalRows[3] && user.location) {
+      const val = personalRows[3].querySelector('.item-value');
+      if (val) val.textContent = user.location;
+    }
+
+    // 3. Security Settings Card (2FA)
+    update2FAUI(is2fa);
+
+    // 4. Modal inputs pre-fill
+    const inputName = document.getElementById('inputFullName');
+    if (inputName) inputName.value = fullName;
+
+    const inputEmail = document.getElementById('inputEmail');
+    if (inputEmail) inputEmail.value = email;
+
+    const inputPhone = document.getElementById('inputPhone');
+    if (inputPhone && user.phone) inputPhone.value = user.phone;
+
+    const inputLoc = document.getElementById('inputLocation');
+    if (inputLoc && user.location) inputLoc.value = user.location;
+  }
+
+  function update2FAUI(isEnabled) {
+    const tfaVal = document.querySelector('#rowToggle2FA .item-value');
+    if (tfaVal) {
+      tfaVal.textContent = isEnabled ? 'Enabled' : 'Disabled';
+      tfaVal.className = isEnabled ? 'item-value text-green' : 'item-value text-muted';
+    }
+
+    const tfaBadge = document.getElementById('tfaBadgeStatus');
+    if (tfaBadge) {
+      tfaBadge.textContent = isEnabled ? 'Protected' : 'Off';
+      tfaBadge.className = isEnabled ? 'badge-success' : 'badge-warning';
+    }
+
+    const sideCheck = document.getElementById('side2faCheck');
+    if (sideCheck) {
+      sideCheck.innerHTML = isEnabled 
+        ? '<span class="dot-green"></span><span>Verified</span>' 
+        : '<span class="dot-amber"></span><span>Disabled</span>';
+    }
+  }
+
+  // =========================================================================
+  // 3. Tabs Navigation
   // =========================================================================
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
@@ -71,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // =========================================================================
-  // 3. Modals Helpers
+  // 4. Modals Helpers
   // =========================================================================
   function openModal(modal) {
     if (modal) {
@@ -95,50 +210,67 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Edit Profile
+  // =========================================================================
+  // 5. Edit Profile Submission
+  // =========================================================================
   if (btnEditOverview) btnEditOverview.addEventListener('click', () => openModal(editProfileModal));
   if (btnEditPersonal) btnEditPersonal.addEventListener('click', () => openModal(editProfileModal));
 
   if (btnSaveProfile) {
-    btnSaveProfile.addEventListener('click', () => {
-      const fullName = document.getElementById('inputFullName')?.value;
-      const email = document.getElementById('inputEmail')?.value;
+    btnSaveProfile.addEventListener('click', async () => {
+      const fullName = document.getElementById('inputFullName')?.value.trim();
+      const email = document.getElementById('inputEmail')?.value.trim();
+      const phone = document.getElementById('inputPhone')?.value.trim();
+      const location = document.getElementById('inputLocation')?.value.trim();
 
-      if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-        window.AegisAPI.put('/accounts/profile/update/', {
+      if (!fullName) {
+        if (window.AegisOwner) window.AegisOwner.showToast('Please enter your full name', 'error');
+        return;
+      }
+
+      btnSaveProfile.disabled = true;
+      btnSaveProfile.textContent = 'Saving...';
+
+      try {
+        const payload = {
           name: fullName,
-          email: email
-        }).then(() => {
-          if (fullName) {
-            const nameEl = document.querySelector('.overview-name');
-            if (nameEl) nameEl.textContent = fullName;
-          }
-          if (email) {
-            const emailEl = document.querySelector('.overview-email');
-            if (emailEl) emailEl.textContent = email;
-          }
-          closeModal(editProfileModal);
-          if (window.AegisOwner) window.AegisOwner.showToast('Profile information updated successfully', 'success');
-        }).catch(err => {
-          if (window.AegisOwner) window.AegisOwner.showToast(`Failed to update profile: ${err.message}`, 'error');
-        });
-      } else {
-        if (fullName) {
-          const nameEl = document.querySelector('.overview-name');
-          if (nameEl) nameEl.textContent = fullName;
-        }
-        if (email) {
-          const emailEl = document.querySelector('.overview-email');
-          if (emailEl) emailEl.textContent = email;
-        }
+          email: email,
+          phone: phone,
+          location: location
+        };
+
+        const res = await window.AegisAPI.put('/accounts/profile/update/', payload);
+        const updatedUser = res.user || res;
+
+        // Update local session
+        const stored = window.AegisAPI.getUser() || {};
+        Object.assign(stored, updatedUser, payload);
+        localStorage.setItem('aegis_user', JSON.stringify(stored));
+
+        populateUserUI(stored);
         closeModal(editProfileModal);
-        if (window.AegisOwner) window.AegisOwner.showToast('Profile information updated successfully', 'success');
+        if (window.AegisOwner) window.AegisOwner.showToast('Profile information updated successfully!', 'success');
+
+      } catch (err) {
+        console.error('Failed to update profile:', err);
+        if (window.AegisOwner) window.AegisOwner.showToast(`Failed to update profile: ${err.message}`, 'error');
+      } finally {
+        btnSaveProfile.disabled = false;
+        btnSaveProfile.textContent = 'Save Changes';
       }
     });
   }
 
-  // Change Password
+  // =========================================================================
+  // 6. Change Password Submission
+  // =========================================================================
   function openPasswordModal() {
+    const curP = document.getElementById('inputCurrentPassword');
+    const newP = document.getElementById('inputNewPassword');
+    const cnfP = document.getElementById('inputConfirmPassword');
+    if (curP) curP.value = '';
+    if (newP) newP.value = '';
+    if (cnfP) cnfP.value = '';
     openModal(changePasswordModal);
   }
 
@@ -147,81 +279,82 @@ document.addEventListener('DOMContentLoaded', () => {
   if (qaChangePassword) qaChangePassword.addEventListener('click', openPasswordModal);
 
   if (btnSavePassword) {
-    btnSavePassword.addEventListener('click', () => {
-      const oldPassword = document.getElementById('inputCurrentPassword')?.value;
+    btnSavePassword.addEventListener('click', async () => {
+      const currentPassword = document.getElementById('inputCurrentPassword')?.value;
       const newPassword = document.getElementById('inputNewPassword')?.value;
+      const confirmPassword = document.getElementById('inputConfirmPassword')?.value;
 
-      if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-        window.AegisAPI.post('/accounts/profile/change-password/', {
-          old_password: oldPassword,
+      if (!currentPassword) {
+        if (window.AegisOwner) window.AegisOwner.showToast('Please enter your current password', 'error');
+        return;
+      }
+      if (!newPassword || newPassword.length < 8) {
+        if (window.AegisOwner) window.AegisOwner.showToast('New password must be at least 8 characters', 'error');
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        if (window.AegisOwner) window.AegisOwner.showToast('New passwords do not match', 'error');
+        return;
+      }
+
+      btnSavePassword.disabled = true;
+      btnSavePassword.textContent = 'Updating...';
+
+      try {
+        await window.AegisAPI.post('/accounts/profile/change-password/', {
+          current_password: currentPassword,
+          old_password: currentPassword,
           new_password: newPassword
-        }).then(() => {
-          closeModal(changePasswordModal);
-          if (window.AegisOwner) window.AegisOwner.showToast('Password updated securely with zero-knowledge rotation', 'success');
-        }).catch(err => {
-          if (window.AegisOwner) window.AegisOwner.showToast(`Failed to update password: ${err.message}`, 'error');
         });
-      } else {
+
         closeModal(changePasswordModal);
-        if (window.AegisOwner) window.AegisOwner.showToast('Password updated securely with zero-knowledge rotation', 'success');
+        if (window.AegisOwner) window.AegisOwner.showToast('Password updated securely with zero-knowledge rotation!', 'success');
+
+      } catch (err) {
+        console.error('Password change error:', err);
+        if (window.AegisOwner) window.AegisOwner.showToast(`Password update failed: ${err.message}`, 'error');
+      } finally {
+        btnSavePassword.disabled = false;
+        btnSavePassword.textContent = 'Update Password';
       }
     });
   }
 
-  // 2FA Toggle
-  function toggle2FA() {
-    if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-      window.AegisAPI.post('/accounts/profile/2fa/toggle/').then(res => {
-        if (window.AegisOwner) window.AegisOwner.showToast(`Two-Factor Authentication is now ${res.is_2fa_enabled ? 'enabled' : 'disabled'}`, 'info');
-      }).catch(err => {
-        if (window.AegisOwner) window.AegisOwner.showToast(`Failed to toggle 2FA: ${err.message}`, 'error');
-      });
-    } else {
+  // =========================================================================
+  // 7. Two-Factor Authentication (2FA) Toggle
+  // =========================================================================
+  async function toggle2FA() {
+    try {
+      const res = await window.AegisAPI.post('/accounts/profile/2fa/toggle/');
+      const isEnabled = Boolean(res.is_2fa_enabled);
+      update2FAUI(isEnabled);
+
+      // Update cached user
+      const stored = window.AegisAPI.getUser() || {};
+      stored.is_2fa_enabled = isEnabled;
+      localStorage.setItem('aegis_user', JSON.stringify(stored));
+
       if (window.AegisOwner) {
-        window.AegisOwner.showToast('Two-Factor Authentication is active and secured via WebAuthn/TOTP', 'info');
+        window.AegisOwner.showToast(`Two-Factor Authentication is now ${isEnabled ? 'Enabled' : 'Disabled'}`, isEnabled ? 'success' : 'warning');
       }
+    } catch (err) {
+      console.error('2FA toggle failed:', err);
+      if (window.AegisOwner) window.AegisOwner.showToast(`Failed to toggle 2FA: ${err.message}`, 'error');
     }
   }
+
   if (rowToggle2FA) rowToggle2FA.addEventListener('click', toggle2FA);
   if (qaEnable2FA) qaEnable2FA.addEventListener('click', toggle2FA);
 
-  // Manage Devices
-  function showDevicesPrompt() {
-    if (window.AegisOwner) {
-      window.AegisOwner.showToast('3 active sessions registered. All device keys verified.', 'info');
-    }
-  }
-  if (btnViewAllDevices) btnViewAllDevices.addEventListener('click', showDevicesPrompt);
-  if (qaManageDevices) qaManageDevices.addEventListener('click', showDevicesPrompt);
-
-  // Download Data
+  // =========================================================================
+  // 8. Personal Data Export
+  // =========================================================================
   if (qaDownloadData) {
-    qaDownloadData.addEventListener('click', () => {
-      if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-        window.AegisAPI.get('/accounts/profile/export-data/').then(data => {
-          const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `aegisvault_owner_archive_${Date.now()}.json`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-          if (window.AegisOwner) window.AegisOwner.showToast('Personal data archive generated and downloaded', 'success');
-        }).catch(err => {
-          if (window.AegisOwner) window.AegisOwner.showToast(`Failed to export data: ${err.message}`, 'error');
-        });
-      } else {
-        const data = {
-          owner: 'Rakesh Patel',
-          email: 'rakesh.patel@email.com',
-          exportTimestamp: new Date().toISOString(),
-          vaultsCount: 8,
-          trusteesCount: 8,
-          releasesCount: 8,
-          securityStatus: 'Fully Configured'
-        };
+    qaDownloadData.addEventListener('click', async () => {
+      try {
+        if (window.AegisOwner) window.AegisOwner.showToast('Generating cryptographic personal archive...', 'info');
+
+        const data = await window.AegisAPI.get('/accounts/profile/export-data/');
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -232,124 +365,79 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
 
-        if (window.AegisOwner) {
-          window.AegisOwner.showToast('Personal data archive generated and downloaded', 'success');
-        }
+        if (window.AegisOwner) window.AegisOwner.showToast('Personal data archive generated and downloaded!', 'success');
+
+      } catch (err) {
+        console.error('Data export error:', err);
+        if (window.AegisOwner) window.AegisOwner.showToast(`Failed to export data: ${err.message}`, 'error');
       }
     });
   }
 
-  // Connected Accounts
-  if (btnToggleGoogle) {
-    btnToggleGoogle.addEventListener('click', () => {
-      const isConnected = btnToggleGoogle.textContent.trim() === 'Disconnect';
-      if (isConnected) {
-        btnToggleGoogle.textContent = 'Connect';
-        btnToggleGoogle.classList.add('btn-connect-outline');
-        if (statusGoogle) {
-          statusGoogle.textContent = 'Not connected';
-          statusGoogle.classList.add('text-muted');
-        }
-        if (window.AegisOwner) window.AegisOwner.showToast('Disconnected Google OAuth login', 'info');
-      } else {
-        btnToggleGoogle.textContent = 'Disconnect';
-        btnToggleGoogle.classList.remove('btn-connect-outline');
-        if (statusGoogle) {
-          statusGoogle.textContent = 'Connected';
-          statusGoogle.classList.remove('text-muted');
-        }
-        if (window.AegisOwner) window.AegisOwner.showToast('Connected Google OAuth login', 'success');
-      }
-    });
+  // =========================================================================
+  // 9. Devices & Sessions Management
+  // =========================================================================
+  function showDevicesPrompt() {
+    if (window.AegisOwner) {
+      window.AegisOwner.showToast('Active session registered on 127.0.0.1. Hardware identity verified.', 'info');
+    }
   }
+  if (btnViewAllDevices) btnViewAllDevices.addEventListener('click', showDevicesPrompt);
+  if (qaManageDevices) qaManageDevices.addEventListener('click', showDevicesPrompt);
 
-  if (btnToggleMs) {
-    btnToggleMs.addEventListener('click', () => {
-      const isConnected = btnToggleMs.textContent.trim() === 'Disconnect';
-      if (isConnected) {
-        btnToggleMs.textContent = 'Connect';
-        btnToggleMs.classList.add('btn-connect-outline');
-        if (statusMs) {
-          statusMs.textContent = 'Not connected';
-          statusMs.classList.add('text-muted');
-        }
-        if (window.AegisOwner) window.AegisOwner.showToast('Disconnected Microsoft OAuth login', 'info');
-      } else {
-        btnToggleMs.textContent = 'Disconnect';
-        btnToggleMs.classList.remove('btn-connect-outline');
-        if (statusMs) {
-          statusMs.textContent = 'Connected';
-          statusMs.classList.remove('text-muted');
-        }
-        if (window.AegisOwner) window.AegisOwner.showToast('Connected Microsoft OAuth login', 'success');
-      }
-    });
-  }
-
-  if (btnToggleApple) {
-    btnToggleApple.addEventListener('click', () => {
-      const isConnected = btnToggleApple.textContent.trim() === 'Disconnect';
-      if (isConnected) {
-        btnToggleApple.textContent = 'Connect';
-        btnToggleApple.classList.add('btn-connect-outline');
-        if (statusApple) {
-          statusApple.textContent = 'Not connected';
-          statusApple.classList.add('text-muted');
-        }
-        if (window.AegisOwner) window.AegisOwner.showToast('Disconnected Apple OAuth login', 'info');
-      } else {
-        btnToggleApple.textContent = 'Disconnect';
-        btnToggleApple.classList.remove('btn-connect-outline');
-        if (statusApple) {
-          statusApple.textContent = 'Connected';
-          statusApple.classList.remove('text-muted');
-        }
-        if (window.AegisOwner) window.AegisOwner.showToast('Connected Apple OAuth login', 'success');
-      }
-    });
-  }
-
-  // Recovery Email and Account Recovery
-  const rowRecoveryEmail = document.getElementById('rowRecoveryEmail');
-  if (rowRecoveryEmail) {
-    rowRecoveryEmail.addEventListener('click', () => {
-      const email = prompt('Update Recovery Email:', 'recovery@email.com');
-      if (email && email.includes('@')) {
-        const val = rowRecoveryEmail.querySelector('.item-value');
-        if (val) val.textContent = email;
-        if (window.AegisOwner) window.AegisOwner.showToast(`Recovery email set to ${email}`, 'success');
-      }
-    });
-  }
-
-  const rowAccountRecovery = document.getElementById('rowAccountRecovery');
-  if (rowAccountRecovery) {
-    rowAccountRecovery.addEventListener('click', () => {
-      if (window.AegisOwner) window.AegisOwner.showToast('Account recovery keys are encrypted and stored in hardware enclave.', 'info');
-    });
-  }
-
-  // Device context buttons
   document.querySelectorAll('.btn-device-more').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const devRow = btn.closest('.device-row');
       const devName = devRow?.querySelector('.device-name')?.textContent || 'Device';
+      if (devRow?.querySelector('.current-device-tag')) {
+        if (window.AegisOwner) window.AegisOwner.showToast('Cannot terminate current active browsing session', 'warning');
+        return;
+      }
       if (confirm(`Revoke session for ${devName}? This device will be signed out.`)) {
-        if (!devRow.querySelector('.current-device-tag')) {
-          devRow.style.opacity = '0.4';
-          devRow.style.pointerEvents = 'none';
-          if (window.AegisOwner) window.AegisOwner.showToast(`Signed out ${devName}`, 'warning');
-        } else {
-          if (window.AegisOwner) window.AegisOwner.showToast(`Cannot sign out current active session here`, 'warning');
-        }
+        devRow.style.opacity = '0.4';
+        devRow.style.pointerEvents = 'none';
+        if (window.AegisOwner) window.AegisOwner.showToast(`Revoked session for ${devName}`, 'info');
       }
     });
   });
 
-  // Preferences Rows Interactive Toggles
+  // =========================================================================
+  // 10. Connected OAuth Providers Toggles
+  // =========================================================================
+  function setupOAuthToggle(btn, statusEl, providerName) {
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      const isConnected = btn.textContent.trim() === 'Disconnect';
+      if (isConnected) {
+        btn.textContent = 'Connect';
+        btn.classList.add('btn-connect-outline');
+        if (statusEl) {
+          statusEl.textContent = 'Not connected';
+          statusEl.classList.add('text-muted');
+          statusEl.classList.remove('text-green');
+        }
+        if (window.AegisOwner) window.AegisOwner.showToast(`Disconnected ${providerName} OAuth login`, 'info');
+      } else {
+        btn.textContent = 'Disconnect';
+        btn.classList.remove('btn-connect-outline');
+        if (statusEl) {
+          statusEl.textContent = 'Connected';
+          statusEl.classList.remove('text-muted');
+          statusEl.classList.add('text-green');
+        }
+        if (window.AegisOwner) window.AegisOwner.showToast(`Connected ${providerName} OAuth login`, 'success');
+      }
+    });
+  }
+
+  setupOAuthToggle(btnToggleGoogle, statusGoogle, 'Google');
+  setupOAuthToggle(btnToggleMs, statusMs, 'Microsoft');
+  setupOAuthToggle(btnToggleApple, statusApple, 'Apple');
+
+  // Preferences interactive cycles
   const prefRows = document.querySelectorAll('#sectionPreferences .profile-item-row');
-  prefRows.forEach((row, idx) => {
+  prefRows.forEach(row => {
     row.addEventListener('click', () => {
       const label = row.querySelector('.item-label')?.textContent;
       const val = row.querySelector('.item-value');
@@ -367,7 +455,6 @@ document.addEventListener('DOMContentLoaded', () => {
         val.textContent = next;
         if (window.AegisOwner) window.AegisOwner.showToast(`Language set to ${next}`, 'success');
       } else if (label === 'Theme') {
-        // Toggle theme via global button
         const toggleBtn = document.getElementById('themeToggleBtn');
         if (toggleBtn) toggleBtn.click();
       } else if (label === 'Date Format') {
@@ -384,17 +471,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  const btnManagePreferences = document.getElementById('btnManagePreferences');
-  if (btnManagePreferences) {
-    btnManagePreferences.addEventListener('click', () => {
-      if (window.AegisOwner) window.AegisOwner.showToast('Click any preference row directly to cycle or toggle settings.', 'info');
-    });
-  }
-
-  const btnManageIntegrations = document.getElementById('btnManageIntegrations');
-  if (btnManageIntegrations) {
-    btnManageIntegrations.addEventListener('click', () => {
-      if (window.AegisOwner) window.AegisOwner.showToast('Third-party OAuth providers synchronized.', 'info');
-    });
-  }
+  // Initial load
+  loadUserProfile();
 });

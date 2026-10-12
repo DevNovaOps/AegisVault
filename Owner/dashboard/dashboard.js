@@ -430,8 +430,8 @@
     if (filtered.length === 0) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-muted);">
-            No activity matches "${filterQuery}"
+          <td colspan="4" style="text-align: center; padding: 2.5rem 1rem; color: var(--text-muted);">
+            ${filterQuery ? `No activity matches "${escapeHtml ? escapeHtml(filterQuery) : filterQuery}"` : 'No recent activities recorded yet.'}
           </td>
         </tr>
       `;
@@ -505,8 +505,8 @@
 
     if (filtered.length === 0) {
       list.innerHTML = `
-        <div style="padding: 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
-          No vaults match "${filterQuery}"
+        <div style="padding: 2rem 1rem; text-align: center; color: var(--text-muted); font-size: 0.88rem;">
+          ${filterQuery ? `No vaults match "${filterQuery}"` : 'No vaults created yet. Click "+ Create Vault" above to get started.'}
         </div>
       `;
       return;

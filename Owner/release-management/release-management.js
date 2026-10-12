@@ -7,167 +7,9 @@
   'use strict';
 
   // =========================================================================
-  // 1. Initial Mock Dataset (Exact match to Dark & Light mockups)
+  // 1. Live Dataset (Populated dynamically from Django backend API)
   // =========================================================================
-  let releases = [
-    {
-      id: 'rel-1',
-      title: 'Family Memories',
-      subtext: 'Photos & Videos',
-      iconTheme: 'brown',
-      iconType: 'camera',
-      vault: 'Personal Vault',
-      recipientType: 'single',
-      recipientName: 'Sneha Mehta',
-      recipientEmail: 'sneha.mehta@email.com',
-      avatarType: 'img',
-      avatar: '../assets/images/trustee-avatar-2.png',
-      trigger: 'Upon Inactivity',
-      triggerDetail: '(12 months)',
-      status: 'scheduled',
-      scheduledDate: '15 Sep 2025',
-      scheduledTime: '10:00 AM',
-      note: 'Releases childhood photo archive and family vacation recordings.'
-    },
-    {
-      id: 'rel-2',
-      title: 'Business Documents',
-      subtext: 'Contracts & Files',
-      iconTheme: 'blue',
-      iconType: 'file-text',
-      vault: 'Business Vault',
-      recipientType: 'single',
-      recipientName: 'Amit Kumar',
-      recipientEmail: 'amit.kumar@email.com',
-      avatarType: 'img',
-      avatar: '../assets/images/trustee-avatar-1.png',
-      trigger: 'Specific Date',
-      triggerDetail: '(01 Jan 2026)',
-      status: 'scheduled',
-      scheduledDate: '01 Jan 2026',
-      scheduledTime: '09:00 AM',
-      note: 'Releases partnership deeds, cap table, and IP escrow keys.'
-    },
-    {
-      id: 'rel-3',
-      title: 'Medical Records',
-      subtext: 'Health Documents',
-      iconTheme: 'emerald',
-      iconType: 'activity',
-      vault: 'Health Vault',
-      recipientType: 'single',
-      recipientName: 'Priya Sharma',
-      recipientEmail: 'priya.sharma@email.com',
-      avatarType: 'img',
-      avatar: '../assets/images/trustee-avatar-4.png',
-      trigger: 'On Event',
-      triggerDetail: '(Death Certificate)',
-      status: 'in progress',
-      scheduledDate: '-',
-      scheduledTime: '',
-      note: 'Pending verification of official health registry certificate.'
-    },
-    {
-      id: 'rel-4',
-      title: 'Travel Itinerary',
-      subtext: 'Trips & Bookings',
-      iconTheme: 'cyan',
-      iconType: 'send',
-      vault: 'Travel Vault',
-      recipientType: 'single',
-      recipientName: 'Vikram Shah',
-      recipientEmail: 'vikram.shah@email.com',
-      avatarType: 'initials',
-      initials: 'VS',
-      avatarClass: 'avatar-gradient-vs',
-      trigger: 'Manual Release',
-      triggerDetail: '',
-      status: 'completed',
-      scheduledDate: '20 Aug 2025',
-      scheduledTime: '02:30 PM',
-      note: 'Manual authorization executed by vault owner.'
-    },
-    {
-      id: 'rel-5',
-      title: 'Property Deeds',
-      subtext: 'Legal Documents',
-      iconTheme: 'slate',
-      iconType: 'home',
-      vault: 'Property Vault',
-      recipientType: 'single',
-      recipientName: 'Anita Desai',
-      recipientEmail: 'anita.desai@email.com',
-      avatarType: 'img',
-      avatar: '../assets/images/trustee-avatar-6.png',
-      trigger: 'Upon Inactivity',
-      triggerDetail: '(6 months)',
-      status: 'scheduled',
-      scheduledDate: '10 Oct 2025',
-      scheduledTime: '11:00 AM',
-      note: 'Real estate registry copies and mortgage discharge certificates.'
-    },
-    {
-      id: 'rel-6',
-      title: 'Tax Records',
-      subtext: 'Financial Files',
-      iconTheme: 'orange',
-      iconType: 'dollar-sign',
-      vault: 'Financial Vault',
-      recipientType: 'single',
-      recipientName: 'Neeraj Singh',
-      recipientEmail: 'neeraj.singh@email.com',
-      avatarType: 'initials',
-      initials: 'NS',
-      avatarClass: 'avatar-gradient-ns',
-      trigger: 'Specific Date',
-      triggerDetail: '(31 Dec 2025)',
-      status: 'cancelled',
-      scheduledDate: '31 Dec 2025',
-      scheduledTime: '09:00 AM',
-      note: 'Cancelled by owner due to filing reorganization.'
-    },
-    {
-      id: 'rel-7',
-      title: 'Personal Notes',
-      subtext: 'Letters & Notes',
-      iconTheme: 'blue',
-      iconType: 'edit-3',
-      vault: 'Personal Vault',
-      recipientType: 'single',
-      recipientName: 'Karan Malhotra',
-      recipientEmail: 'karan.malhotra@email.com',
-      avatarType: 'img',
-      avatar: '../assets/images/trustee-avatar-8.png',
-      trigger: 'Manual Release',
-      triggerDetail: '',
-      status: 'completed',
-      scheduledDate: '12 Aug 2025',
-      scheduledTime: '05:15 PM',
-      note: 'Private journal entries and confidential letters.'
-    },
-    {
-      id: 'rel-8',
-      title: 'Memories for Kids',
-      subtext: 'Special Messages',
-      iconTheme: 'crimson',
-      iconType: 'gift',
-      vault: 'Memories Vault',
-      recipientType: 'multi',
-      recipientName: '3 Recipients',
-      recipientEmail: 'Sneha, Priya, Anita',
-      multiAvatars: [
-        '../assets/images/trustee-avatar-2.png',
-        '../assets/images/trustee-avatar-4.png',
-        '../assets/images/trustee-avatar-6.png'
-      ],
-      trigger: 'On Event',
-      triggerDetail: '(Death Certificate)',
-      status: 'in progress',
-      scheduledDate: '-',
-      scheduledTime: '',
-      note: 'Time-capsule voice recordings and educational endowment directives.'
-    }
-  ];
+  let releases = [];
 
   let activeReleaseItem = null;
 
@@ -939,7 +781,18 @@
     if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
       window.AegisAPI.get('/owner/vaults/').then(vs => {
         const sel = document.getElementById('newReleaseVault');
-        if (sel) sel.innerHTML = vs.map(v => `<option value="${v.id}">${v.name}</option>`).join('');
+        if (sel && Array.isArray(vs)) sel.innerHTML = vs.map(v => `<option value="${v.id}">${v.name}</option>`).join('');
+        const filterSel = document.getElementById('vaultFilterSelect');
+        if (filterSel && Array.isArray(vs) && vs.length > 0) {
+          filterSel.innerHTML = '<option value="all">All Vaults</option>' + vs.map(v => `<option value="${v.name}">${v.name}</option>`).join('');
+        }
+      }).catch(e=>{});
+
+      window.AegisAPI.get('/owner/trustees/').then(ts => {
+        const sel = document.getElementById('newReleaseRecipient');
+        if (sel && Array.isArray(ts) && ts.length > 0) {
+          sel.innerHTML = ts.map(t => `<option value="${t.email}">${t.name} (${t.email})</option>`).join('');
+        }
       }).catch(e=>{});
 
       window.AegisAPI.get('/owner/releases/').then(data => {

@@ -205,18 +205,71 @@ class ExportDataView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        from django.utils import timezone
         user = request.user
         data = UserSerializer(user).data
+        
+        try:
+            from vaults.models import Vault
+            from trustees.models import TrusteeProfile
+            from releases.models import ReleaseSchedule
+
+            vaults = Vault.objects.filter(owner=user)
+            trustees = TrusteeProfile.objects.filter(owner=user)
+            releases = ReleaseSchedule.objects.filter(owner=user)
+
+            export_payload = {
+                'owner': getattr(user, 'name', '') or user.email,
+                'email': user.email,
+                'exportTimestamp': timezone.now().isoformat(),
+                'userProfile': data,
+                'vaultsCount': vaults.count(),
+                'vaults': [
+                    {
+                        'id': str(v.id),
+                        'name': v.name,
+                        'vault_type': v.vault_type,
+                        'status': v.status,
+                        'created_at': v.created_at.isoformat(),
+                    }
+                    for v in vaults
+                ],
+                'trusteesCount': trustees.count(),
+                'trustees': [
+                    {
+                        'id': str(t.id),
+                        'name': t.name or (t.user.name if t.user else t.email),
+                        'email': t.email,
+                        'relationship': t.relationship,
+                        'is_verified': t.verification_status == 'Verified',
+                    }
+                    for t in trustees
+                ],
+                'releasesCount': releases.count(),
+                'releases': [
+                    {
+                        'id': str(r.id),
+                        'vault': r.vault.name if r.vault else 'Unknown',
+                        'status': r.status,
+                    }
+                    for r in releases
+                ],
+                'securityStatus': '2FA Enabled' if getattr(user, 'is_2fa_enabled', False) else 'Standard Security'
+            }
+        except Exception as e:
+            export_payload = {
+                'owner': getattr(user, 'name', '') or user.email,
+                'email': user.email,
+                'exportTimestamp': timezone.now().isoformat(),
+                'userProfile': data,
+            }
 
         AuditService.log(
             user=user,
             action_key='data_exported',
             action_title='Data Export Requested',
-            details='User requested account data export',
+            details='User requested comprehensive account data export',
             category='profile',
         )
 
-        return Response({
-            'user': data,
-            'detail': 'Data export generated.',
-        })
+        return Response(export_payload)

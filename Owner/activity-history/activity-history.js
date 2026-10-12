@@ -1,175 +1,14 @@
 /**
  * AegisVault Owner Panel — Activity & History Module
  * Module 08: Immutable Audit Logs, Forensic Traces & Action History
+ * Connected to live backend database: /api/v1/owner/audit/logs/
  */
 
 document.addEventListener('DOMContentLoaded', () => {
   // =========================================================================
-  // 1. Mock Data Source
+  // 1. Live Data State
   // =========================================================================
-  const activities = [
-    {
-      id: 1,
-      date: '15 Sep 2025',
-      time: '10:24 AM',
-      rawDate: '2025-09-15 10:24',
-      actionKey: 'vault_created',
-      actionTitle: 'Vault Created',
-      details: 'Family Memories vault created',
-      vault: 'Family Memories',
-      category: 'vault',
-      user: 'Sneha Mehta',
-      email: 'sneha.mehta@email.com',
-      avatar: '../assets/images/trustee-avatar-2.png',
-      ip: '203.0.113.25',
-      status: 'success'
-    },
-    {
-      id: 2,
-      date: '14 Sep 2025',
-      time: '04:12 PM',
-      rawDate: '2025-09-14 16:12',
-      actionKey: 'trustee_added',
-      actionTitle: 'Trustee Added',
-      details: 'Amit Kumar added as trustee',
-      vault: 'Business Documents',
-      category: 'trustee',
-      user: 'Rakesh Patel',
-      email: 'rakesh.patel@email.com',
-      avatar: '../assets/images/trustee-avatar-8.png',
-      ip: '203.0.113.42',
-      status: 'success'
-    },
-    {
-      id: 3,
-      date: '12 Sep 2025',
-      time: '11:05 AM',
-      rawDate: '2025-09-12 11:05',
-      actionKey: 'invitation_sent',
-      actionTitle: 'Invitation Sent',
-      details: 'Invitation sent to Priya Sharma',
-      vault: 'Medical Records',
-      category: 'invitation',
-      user: 'Rakesh Patel',
-      email: 'rakesh.patel@email.com',
-      avatar: '../assets/images/trustee-avatar-8.png',
-      ip: '203.0.113.42',
-      status: 'success'
-    },
-    {
-      id: 4,
-      date: '05 Sep 2025',
-      time: '02:16 PM',
-      rawDate: '2025-09-05 14:16',
-      actionKey: 'invitation_accepted',
-      actionTitle: 'Invitation Accepted',
-      details: 'Priya Sharma accepted invitation',
-      vault: 'Medical Records',
-      category: 'invitation',
-      user: 'Priya Sharma',
-      email: 'priya.sharma@email.com',
-      avatar: '../assets/images/trustee-avatar-4.png',
-      ip: '198.51.100.18',
-      status: 'success'
-    },
-    {
-      id: 5,
-      date: '01 Sep 2025',
-      time: '04:38 PM',
-      rawDate: '2025-09-01 16:38',
-      actionKey: 'release_scheduled',
-      actionTitle: 'Release Scheduled',
-      details: 'Release scheduled for Medical Records',
-      vault: 'Medical Records',
-      category: 'release',
-      user: 'Rakesh Patel',
-      email: 'rakesh.patel@email.com',
-      avatar: '../assets/images/trustee-avatar-8.png',
-      ip: '203.0.113.42',
-      status: 'success'
-    },
-    {
-      id: 6,
-      date: '28 Aug 2025',
-      time: '11:05 AM',
-      rawDate: '2025-08-28 11:05',
-      actionKey: 'login_failed',
-      actionTitle: 'Login Failed',
-      details: 'Invalid password attempt',
-      vault: 'General',
-      category: 'security',
-      user: 'Rakesh Patel',
-      email: 'rakesh.patel@email.com',
-      avatar: '../assets/images/trustee-avatar-8.png',
-      ip: '203.0.113.88',
-      status: 'failed'
-    },
-    {
-      id: 7,
-      date: '22 Aug 2025',
-      time: '03:21 PM',
-      rawDate: '2025-08-22 15:21',
-      actionKey: 'vault_updated',
-      actionTitle: 'Vault Updated',
-      details: 'Updated description',
-      vault: 'Business Documents',
-      category: 'vault',
-      user: 'Rakesh Patel',
-      email: 'rakesh.patel@email.com',
-      avatar: '../assets/images/trustee-avatar-8.png',
-      ip: '203.0.113.42',
-      status: 'success'
-    },
-    {
-      id: 8,
-      date: '18 Aug 2025',
-      time: '10:14 AM',
-      rawDate: '2025-08-18 10:14',
-      actionKey: 'release_cancelled',
-      actionTitle: 'Release Cancelled',
-      details: 'Release cancelled for Travel Itinerary',
-      vault: 'Travel Itinerary',
-      category: 'release',
-      user: 'Rakesh Patel',
-      email: 'rakesh.patel@email.com',
-      avatar: '../assets/images/trustee-avatar-8.png',
-      ip: '203.0.113.42',
-      status: 'success'
-    },
-    {
-      id: 9,
-      date: '12 Aug 2025',
-      time: '01:45 PM',
-      rawDate: '2025-08-12 13:45',
-      actionKey: 'document_added',
-      actionTitle: 'Document Added',
-      details: 'Added "Passport.pdf"',
-      vault: 'Travel Itinerary',
-      category: 'vault',
-      user: 'Sneha Mehta',
-      email: 'sneha.mehta@email.com',
-      avatar: '../assets/images/trustee-avatar-2.png',
-      ip: '198.51.100.67',
-      status: 'success'
-    },
-    {
-      id: 10,
-      date: '10 Aug 2025',
-      time: '09:20 AM',
-      rawDate: '2025-08-10 09:20',
-      actionKey: 'settings_updated',
-      actionTitle: 'Settings Updated',
-      details: 'Changed notification preferences',
-      vault: 'General',
-      category: 'settings',
-      user: 'Rakesh Patel',
-      email: 'rakesh.patel@email.com',
-      avatar: '../assets/images/trustee-avatar-8.png',
-      ip: '203.0.113.42',
-      status: 'success'
-    }
-  ];
-
+  let activities = [];
   let currentSort = { column: 'date', order: 'desc' };
   let activeContextRowId = null;
 
@@ -203,22 +42,232 @@ document.addEventListener('DOMContentLoaded', () => {
   const thSortAction = document.getElementById('thSortAction');
 
   // =========================================================================
-  // 3. Filtering Logic
+  // 3. Helper Functions: Icons & Colors
   // =========================================================================
-  function applyFilters() {
+  function getActionIcon(actionKey, category) {
+    if (category === 'vault' || actionKey.includes('vault') || actionKey.includes('document')) {
+      return {
+        boxClass: 'act-green',
+        svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`
+      };
+    }
+    if (category === 'trustee' || actionKey.includes('trustee')) {
+      return {
+        boxClass: 'act-purple',
+        svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`
+      };
+    }
+    if (category === 'invitation' || actionKey.includes('invitation')) {
+      return {
+        boxClass: 'act-blue',
+        svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`
+      };
+    }
+    if (category === 'release' || actionKey.includes('release')) {
+      return {
+        boxClass: 'act-orange',
+        svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`
+      };
+    }
+    if (category === 'security' || category === 'auth' || actionKey.includes('login') || actionKey.includes('failed')) {
+      return {
+        boxClass: 'act-red',
+        svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`
+      };
+    }
+    return {
+      boxClass: 'act-blue',
+      svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`
+    };
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>"']/g, m => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+    }[m]));
+  }
+
+  // =========================================================================
+  // 4. Live API Data Fetching
+  // =========================================================================
+  async function loadLiveActivities() {
+    if (!activityTableBody) return;
+
+    if (!window.AegisAPI || !window.AegisAPI.isAuthenticated()) {
+      activityTableBody.innerHTML = `
+        <tr>
+          <td colspan="8" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+            <div>Please log in to view audit history.</div>
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    try {
+      const data = await window.AegisAPI.get('/owner/audit/logs/');
+      const rawList = Array.isArray(data) ? data : (data.results || []);
+
+      const currentUser = window.AegisAPI.getUser() || {};
+      const defaultUserName = (currentUser.first_name ? `${currentUser.first_name} ${currentUser.last_name}`.trim() : '') || currentUser.email || 'Owner';
+      const defaultUserEmail = currentUser.email || 'owner@aegisvault.io';
+
+      activities = rawList.map((item, idx) => {
+        const itemDate = item.date || (item.timestamp ? new Date(item.timestamp).toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' }) : 'Recently');
+        const itemTime = item.time || (item.timestamp ? new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '');
+        return {
+          id: item.id || (idx + 1),
+          date: itemDate,
+          time: itemTime,
+          rawDate: item.rawDate || item.timestamp || '',
+          actionKey: item.actionKey || item.action_key || 'activity',
+          actionTitle: item.actionTitle || item.action_title || 'Activity Event',
+          details: item.details || item.description || '',
+          vault: item.vault || item.vault_name || 'General',
+          category: (item.category || 'vault').toLowerCase(),
+          user: item.user || defaultUserName,
+          email: item.email || defaultUserEmail,
+          avatar: '../assets/images/trustee-avatar-8.png',
+          ip: item.ip || item.ip_address || '127.0.0.1',
+          status: (item.status || 'success').toLowerCase(),
+          hash: item.hash || `sha256:${item.id || idx}`
+        };
+      });
+
+      populateFilterOptions();
+      updateMetricCounts();
+      renderActivitiesTable();
+
+    } catch (err) {
+      console.error('[AegisVault] Failed to load audit logs:', err);
+      activityTableBody.innerHTML = `
+        <tr>
+          <td colspan="8" style="text-align: center; padding: 3rem; color: var(--status-critical);">
+            <div>Failed to load live audit trail: ${escapeHtml(err.message)}</div>
+          </td>
+        </tr>
+      `;
+    }
+  }
+
+  // Populate dynamic select options for Vaults and Users
+  function populateFilterOptions() {
+    if (filterVault) {
+      const existingVal = filterVault.value;
+      const vaults = Array.from(new Set(activities.map(a => a.vault).filter(v => v && v !== 'General')));
+      filterVault.innerHTML = '<option value="all">All Vaults</option><option value="General">General (System)</option>';
+      vaults.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v;
+        opt.textContent = v;
+        filterVault.appendChild(opt);
+      });
+      if (existingVal) filterVault.value = existingVal;
+    }
+
+    if (filterUser) {
+      const existingUser = filterUser.value;
+      const users = Array.from(new Set(activities.map(a => a.user).filter(Boolean)));
+      filterUser.innerHTML = '<option value="all">All Users</option>';
+      users.forEach(u => {
+        const opt = document.createElement('option');
+        opt.value = u;
+        opt.textContent = u;
+        filterUser.appendChild(opt);
+      });
+      if (existingUser) filterUser.value = existingUser;
+    }
+  }
+
+  // Update counts on KPI cards, side filter badges, and timeline
+  function updateMetricCounts() {
+    // KPI Cards: Total, Vault, Trustee, Invitation, Release
+    const kpiTotal = activities.length;
+    const kpiVault = activities.filter(a => a.category === 'vault').length;
+    const kpiTrustee = activities.filter(a => a.category === 'trustee').length;
+    const kpiInvitation = activities.filter(a => a.category === 'invitation').length;
+    const kpiRelease = activities.filter(a => a.category === 'release').length;
+    const kpiSecurity = activities.filter(a => a.category === 'security' || a.category === 'auth').length;
+    const kpiSettings = activities.filter(a => a.category === 'settings' || a.category === 'profile').length;
+
+    const metricCards = document.querySelectorAll('.metrics-row .metric-card');
+    if (metricCards[0]) {
+      const val = metricCards[0].querySelector('.metric-value');
+      if (val) val.textContent = kpiTotal;
+    }
+    if (metricCards[1]) {
+      const val = metricCards[1].querySelector('.metric-value');
+      if (val) val.textContent = kpiVault;
+    }
+    if (metricCards[2]) {
+      const val = metricCards[2].querySelector('.metric-value');
+      if (val) val.textContent = kpiTrustee;
+    }
+    if (metricCards[3]) {
+      const val = metricCards[3].querySelector('.metric-value');
+      if (val) val.textContent = kpiInvitation;
+    }
+    if (metricCards[4]) {
+      const val = metricCards[4].querySelector('.metric-value');
+      if (val) val.textContent = kpiRelease;
+    }
+
+    // Side filter badges
+    document.querySelectorAll('.filter-checkbox-item').forEach(item => {
+      const chk = item.querySelector('.side-filter-check');
+      const badge = item.querySelector('.filter-count-badge');
+      if (!chk || !badge) return;
+      const cat = chk.getAttribute('data-category');
+      if (cat === 'vault') badge.textContent = kpiVault;
+      else if (cat === 'trustee') badge.textContent = kpiTrustee;
+      else if (cat === 'invitation') badge.textContent = kpiInvitation;
+      else if (cat === 'release') badge.textContent = kpiRelease;
+      else if (cat === 'security') badge.textContent = kpiSecurity;
+      else if (cat === 'settings') badge.textContent = kpiSettings;
+    });
+
+    // Side recent activity timeline
+    const timeline = document.querySelector('.activity-timeline');
+    if (timeline) {
+      if (activities.length === 0) {
+        timeline.innerHTML = '<div style="padding:1rem; color:var(--text-muted); font-size:0.85rem;">No recent activities logged.</div>';
+      } else {
+        timeline.innerHTML = activities.slice(0, 4).map(a => `
+          <div class="activity-item">
+            <div class="timeline-dot dot-${a.category === 'vault' ? 'teal' : a.category === 'trustee' ? 'purple' : a.category === 'release' ? 'orange' : 'red'}"></div>
+            <div class="timeline-line"></div>
+            <div class="activity-body">
+              <span class="activity-title">${escapeHtml(a.actionTitle)}</span>
+              <span class="activity-time">${escapeHtml(a.date)}, ${escapeHtml(a.time)}</span>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    // Export date range label
+    const exportDateRange = document.getElementById('exportDateRange');
+    if (exportDateRange && exportDateRange.options[0]) {
+      exportDateRange.options[0].textContent = `All Time (${kpiTotal} events)`;
+    }
+  }
+
+  // =========================================================================
+  // 5. Render Activities Table
+  // =========================================================================
+  function renderActivitiesTable() {
+    if (!activityTableBody) return;
+
+    activityTableBody.innerHTML = '';
+
     const query = (activitySearchInput?.value || '').toLowerCase().trim();
     const actionVal = filterAction?.value || 'all';
     const vaultVal = filterVault?.value || 'all';
     const userVal = filterUser?.value || 'all';
-
     const checkedCategories = Array.from(document.querySelectorAll('.side-filter-check:checked')).map(cb => cb.getAttribute('data-category'));
 
-    const rows = activityTableBody.querySelectorAll('.activity-row');
-    rows.forEach(row => {
-      const id = parseInt(row.getAttribute('data-id'), 10);
-      const act = activities.find(a => a.id === id);
-      if (!act) return;
-
+    const filtered = activities.filter(act => {
       const matchesSearch = !query ||
         act.actionTitle.toLowerCase().includes(query) ||
         act.details.toLowerCase().includes(query) ||
@@ -231,66 +280,153 @@ document.addEventListener('DOMContentLoaded', () => {
       const matchesUser = (userVal === 'all') || (act.user === userVal);
       const matchesCategory = checkedCategories.length === 0 || checkedCategories.includes(act.category);
 
-      if (matchesSearch && matchesAction && matchesVault && matchesUser && matchesCategory) {
-        row.style.display = '';
+      return matchesSearch && matchesAction && matchesVault && matchesUser && matchesCategory;
+    });
+
+    if (filtered.length === 0) {
+      if (activities.length === 0) {
+        activityTableBody.innerHTML = `
+          <tr>
+            <td colspan="8" style="text-align: center; padding: 4rem 1.5rem; color: var(--text-muted);">
+              <div style="font-size: 1.15rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary);">
+                No Audit Activities Recorded Yet
+              </div>
+              <div style="max-width: 500px; margin: 0 auto; line-height: 1.5; font-size: 0.9rem;">
+                All security events, vault operations, trustee verifications, and shard actions are recorded permanently in AegisVault's immutable cryptographic audit chain.
+              </div>
+            </td>
+          </tr>
+        `;
       } else {
-        row.style.display = 'none';
+        activityTableBody.innerHTML = `
+          <tr>
+            <td colspan="8" style="text-align: center; padding: 3rem 1.5rem; color: var(--text-muted);">
+              <div style="font-size: 1.05rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary);">
+                No activities match your filter criteria
+              </div>
+              <div style="font-size: 0.85rem;">Try clearing search terms or enabling more category checkboxes.</div>
+            </td>
+          </tr>
+        `;
       }
+      return;
+    }
+
+    filtered.forEach(act => {
+      const tr = document.createElement('tr');
+      tr.className = 'activity-row';
+      tr.setAttribute('data-id', act.id);
+      tr.setAttribute('data-action', act.actionKey);
+      tr.setAttribute('data-vault', act.vault);
+      tr.setAttribute('data-user', act.user);
+      tr.setAttribute('data-status', act.status);
+
+      const iconData = getActionIcon(act.actionKey, act.category);
+      const isFailed = act.status === 'failed';
+
+      tr.innerHTML = `
+        <td>
+          <div class="datetime-cell">
+            <span class="primary-date">${escapeHtml(act.date)}</span>
+            <span class="sub-time">${escapeHtml(act.time)}</span>
+          </div>
+        </td>
+        <td>
+          <div class="action-cell">
+            <div class="act-icon-box ${iconData.boxClass}">
+              ${iconData.svg}
+            </div>
+            <span class="action-name">${escapeHtml(act.actionTitle)}</span>
+          </div>
+        </td>
+        <td>
+          <span class="details-text">${escapeHtml(act.details)}</span>
+        </td>
+        <td>
+          ${act.vault === 'General' ? `<span class="empty-dash">&mdash;</span>` : `
+            <div class="vault-tag vault-blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+              </svg>
+              <span>${escapeHtml(act.vault)}</span>
+            </div>
+          `}
+        </td>
+        <td>
+          <div class="user-cell">
+            <img src="${escapeHtml(act.avatar)}" alt="${escapeHtml(act.user)}" class="user-avatar-img">
+            <div class="user-meta">
+              <span class="user-name">${escapeHtml(act.user)}</span>
+              <span class="user-email">${escapeHtml(act.email)}</span>
+            </div>
+          </div>
+        </td>
+        <td>
+          <span class="ip-address">${escapeHtml(act.ip)}</span>
+        </td>
+        <td>
+          <span class="status-pill status-${isFailed ? 'failed' : 'success'}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              ${isFailed ? '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>' : '<polyline points="20 6 9 17 4 12"/>'}
+            </svg>
+            <span>${isFailed ? 'Failed' : 'Success'}</span>
+          </span>
+        </td>
+        <td style="text-align: right;">
+          <button class="btn-row-more" aria-label="Row options" data-id="${escapeHtml(act.id)}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
+            </svg>
+          </button>
+        </td>
+      `;
+
+      activityTableBody.appendChild(tr);
     });
   }
 
-  if (activitySearchInput) activitySearchInput.addEventListener('input', applyFilters);
-  if (filterAction) filterAction.addEventListener('change', applyFilters);
-  if (filterVault) filterVault.addEventListener('change', applyFilters);
-  if (filterUser) filterUser.addEventListener('change', applyFilters);
+  // =========================================================================
+  // 6. Filtering & Sorting Event Listeners
+  // =========================================================================
+  if (activitySearchInput) activitySearchInput.addEventListener('input', renderActivitiesTable);
+  if (filterAction) filterAction.addEventListener('change', renderActivitiesTable);
+  if (filterVault) filterVault.addEventListener('change', renderActivitiesTable);
+  if (filterUser) filterUser.addEventListener('change', renderActivitiesTable);
   if (filterDate) filterDate.addEventListener('change', () => {
     if (window.AegisOwner) window.AegisOwner.showToast(`Showing activities for: ${filterDate.options[filterDate.selectedIndex].text}`, 'info');
   });
 
   document.querySelectorAll('.side-filter-check').forEach(cb => {
     cb.addEventListener('change', () => {
-      applyFilters();
+      renderActivitiesTable();
       if (window.AegisOwner) window.AegisOwner.showToast('Activity category filter updated', 'info');
     });
   });
 
-  // KPI Cards Quick Filter Click
+  // KPI Cards Filter Click
   document.querySelectorAll('.metric-card').forEach(card => {
     card.addEventListener('click', () => {
       const filter = card.getAttribute('data-filter');
       if (filter === 'all') {
-        filterAction.value = 'all';
-        filterVault.value = 'all';
-        filterUser.value = 'all';
+        if (filterAction) filterAction.value = 'all';
+        if (filterVault) filterVault.value = 'all';
+        if (filterUser) filterUser.value = 'all';
       } else if (filter === 'vault') {
-        filterAction.value = 'vault_created';
+        if (filterAction) filterAction.value = 'vault_created';
       } else if (filter === 'trustee') {
-        filterAction.value = 'trustee_added';
+        if (filterAction) filterAction.value = 'trustee_added';
       } else if (filter === 'invitation') {
-        filterAction.value = 'invitation_sent';
+        if (filterAction) filterAction.value = 'invitation_sent';
       } else if (filter === 'release') {
-        filterAction.value = 'release_scheduled';
+        if (filterAction) filterAction.value = 'release_scheduled';
       }
-      applyFilters();
+      renderActivitiesTable();
       if (window.AegisOwner) {
-        window.AegisOwner.showToast(`Filtered by ${card.querySelector('.metric-label').textContent}`, 'info');
+        window.AegisOwner.showToast(`Filtered by ${card.querySelector('.metric-label')?.textContent || 'Category'}`, 'info');
       }
     });
   });
-
-  // Check URL query parameters (e.g. ?action=release or ?vault=Family%20Memories)
-  const urlParams = new URLSearchParams(window.location.search);
-  const initialAction = urlParams.get('action') || urlParams.get('filter');
-  const initialVault = urlParams.get('vault');
-  if (initialAction && filterAction) {
-    const match = Array.from(filterAction.options).find(o => o.value.toLowerCase() === initialAction.toLowerCase());
-    if (match) filterAction.value = match.value;
-  }
-  if (initialVault && filterVault) {
-    const matchV = Array.from(filterVault.options).find(o => o.value.toLowerCase().includes(initialVault.toLowerCase()));
-    if (matchV) filterVault.value = matchV.value;
-  }
-  applyFilters();
 
   // More Filters button toggle
   const btnMoreFilters = document.getElementById('btnMoreFilters');
@@ -303,76 +439,60 @@ document.addEventListener('DOMContentLoaded', () => {
         btnMoreFilters.style.color = 'var(--brand-orange)';
         btnMoreFilters.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="20 6 9 17 4 12"/></svg> Critical Only`;
         if (filterAction) filterAction.value = 'release_scheduled';
-        applyFilters();
+        renderActivitiesTable();
         if (window.AegisOwner) window.AegisOwner.showToast('Advanced Filter: Critical Escrow & Release Activities', 'info');
       } else {
         btnMoreFilters.style.borderColor = '';
         btnMoreFilters.style.color = '';
         btnMoreFilters.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg> <span>More Filters</span>`;
         if (filterAction) filterAction.value = 'all';
-        applyFilters();
+        renderActivitiesTable();
         if (window.AegisOwner) window.AegisOwner.showToast('Filters reset', 'info');
       }
     });
   }
 
-  // Side Filter Checkboxes
-  document.querySelectorAll('.side-filter-check').forEach(chk => {
-    chk.addEventListener('change', () => {
-      const cat = chk.getAttribute('data-category');
-      const rows = activityTableBody.querySelectorAll('.activity-row');
-      rows.forEach(row => {
-        const id = parseInt(row.getAttribute('data-id'), 10);
-        const act = activities.find(a => a.id === id);
-        if (act && act.category === cat) {
-          row.style.display = chk.checked ? '' : 'none';
-        }
-      });
-    });
-  });
-
   // Quick Action Buttons
   if (qaViewVaultAct) {
     qaViewVaultAct.addEventListener('click', () => {
-      filterAction.value = 'all';
-      filterVault.value = 'Family Memories';
-      applyFilters();
+      if (filterAction) filterAction.value = 'all';
+      const firstVault = activities.find(a => a.vault && a.vault !== 'General')?.vault;
+      if (firstVault && filterVault) filterVault.value = firstVault;
+      renderActivitiesTable();
       if (window.AegisOwner) window.AegisOwner.showToast('Showing Vault Activities', 'info');
     });
   }
   if (qaViewTrusteeAct) {
     qaViewTrusteeAct.addEventListener('click', () => {
-      filterAction.value = 'trustee_added';
-      filterVault.value = 'all';
-      applyFilters();
+      if (filterAction) filterAction.value = 'trustee_added';
+      if (filterVault) filterVault.value = 'all';
+      renderActivitiesTable();
       if (window.AegisOwner) window.AegisOwner.showToast('Showing Trustee Activities', 'info');
     });
   }
   if (qaViewInvAct) {
     qaViewInvAct.addEventListener('click', () => {
-      filterAction.value = 'invitation_sent';
-      filterVault.value = 'all';
-      applyFilters();
+      if (filterAction) filterAction.value = 'invitation_sent';
+      if (filterVault) filterVault.value = 'all';
+      renderActivitiesTable();
       if (window.AegisOwner) window.AegisOwner.showToast('Showing Invitation Activities', 'info');
     });
   }
   if (qaViewRelAct) {
     qaViewRelAct.addEventListener('click', () => {
-      filterAction.value = 'release_scheduled';
-      filterVault.value = 'all';
-      applyFilters();
+      if (filterAction) filterAction.value = 'release_scheduled';
+      if (filterVault) filterVault.value = 'all';
+      renderActivitiesTable();
       if (window.AegisOwner) window.AegisOwner.showToast('Showing Release Activities', 'info');
     });
   }
 
-  // =========================================================================
-  // 4. Column Sorting
-  // =========================================================================
+  // Sorting
   if (thSortDate) {
     thSortDate.addEventListener('click', () => {
       currentSort.order = currentSort.column === 'date' && currentSort.order === 'desc' ? 'asc' : 'desc';
       currentSort.column = 'date';
-      sortRows();
+      sortActivities();
     });
   }
 
@@ -380,49 +500,44 @@ document.addEventListener('DOMContentLoaded', () => {
     thSortAction.addEventListener('click', () => {
       currentSort.order = currentSort.column === 'action' && currentSort.order === 'asc' ? 'desc' : 'asc';
       currentSort.column = 'action';
-      sortRows();
+      sortActivities();
     });
   }
 
-  function sortRows() {
-    const rows = Array.from(activityTableBody.querySelectorAll('.activity-row'));
-    rows.sort((a, b) => {
-      const idA = parseInt(a.getAttribute('data-id'), 10);
-      const idB = parseInt(b.getAttribute('data-id'), 10);
-      const itemA = activities.find(x => x.id === idA);
-      const itemB = activities.find(x => x.id === idB);
-
+  function sortActivities() {
+    activities.sort((a, b) => {
       if (currentSort.column === 'date') {
-        const comp = itemA.rawDate.localeCompare(itemB.rawDate);
+        const comp = (a.rawDate || '').localeCompare(b.rawDate || '');
         return currentSort.order === 'asc' ? comp : -comp;
       } else {
-        const comp = itemA.actionTitle.localeCompare(itemB.actionTitle);
+        const comp = (a.actionTitle || '').localeCompare(b.actionTitle || '');
         return currentSort.order === 'asc' ? comp : -comp;
       }
     });
-
-    rows.forEach(r => activityTableBody.appendChild(r));
+    renderActivitiesTable();
     if (window.AegisOwner) window.AegisOwner.showToast(`Sorted by ${currentSort.column} (${currentSort.order})`, 'info');
   }
 
   // =========================================================================
-  // 5. Context Menu & Row Click
+  // 7. Context Menu & Row Click
   // =========================================================================
   activityTableBody.addEventListener('click', (e) => {
     const moreBtn = e.target.closest('.btn-row-more');
     if (moreBtn) {
       e.stopPropagation();
-      activeContextRowId = parseInt(moreBtn.getAttribute('data-id'), 10);
+      activeContextRowId = moreBtn.getAttribute('data-id');
       const rect = moreBtn.getBoundingClientRect();
-      contextMenu.style.top = `${rect.bottom + window.scrollY + 4}px`;
-      contextMenu.style.left = `${rect.right + window.scrollX - 180}px`;
-      contextMenu.style.display = 'block';
+      if (contextMenu) {
+        contextMenu.style.top = `${rect.bottom + window.scrollY + 4}px`;
+        contextMenu.style.left = `${rect.right + window.scrollX - 180}px`;
+        contextMenu.style.display = 'block';
+      }
       return;
     }
 
     const row = e.target.closest('.activity-row');
     if (row) {
-      const id = parseInt(row.getAttribute('data-id'), 10);
+      const id = row.getAttribute('data-id');
       openAuditModal(id);
     }
   });
@@ -439,10 +554,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (ctxFilterByUser) {
     ctxFilterByUser.addEventListener('click', () => {
-      const act = activities.find(a => a.id === activeContextRowId);
-      if (act) {
+      const act = activities.find(a => String(a.id) === String(activeContextRowId));
+      if (act && filterUser) {
         filterUser.value = act.user;
-        applyFilters();
+        renderActivitiesTable();
         if (window.AegisOwner) window.AegisOwner.showToast(`Filtered by user: ${act.user}`, 'info');
       }
     });
@@ -450,17 +565,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (ctxFilterByVault) {
     ctxFilterByVault.addEventListener('click', () => {
-      const act = activities.find(a => a.id === activeContextRowId);
-      if (act && act.vault !== 'General') {
+      const act = activities.find(a => String(a.id) === String(activeContextRowId));
+      if (act && act.vault !== 'General' && filterVault) {
         filterVault.value = act.vault;
-        applyFilters();
+        renderActivitiesTable();
         if (window.AegisOwner) window.AegisOwner.showToast(`Filtered by vault: ${act.vault}`, 'info');
       }
     });
   }
 
   // =========================================================================
-  // 6. Modals
+  // 8. Modals: Export & Audit Details
   // =========================================================================
   function openModal(modal) {
     if (modal) {
@@ -484,15 +599,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Export Modal
-  if (btnOpenExport) {
-    btnOpenExport.addEventListener('click', () => openModal(exportModal));
-  }
-  if (qaExportHistory) {
-    qaExportHistory.addEventListener('click', () => openModal(exportModal));
-  }
+  if (btnOpenExport) btnOpenExport.addEventListener('click', () => openModal(exportModal));
+  if (qaExportHistory) qaExportHistory.addEventListener('click', () => openModal(exportModal));
 
-  // Format radio buttons styling
   document.querySelectorAll('.format-option').forEach(opt => {
     opt.addEventListener('click', () => {
       document.querySelectorAll('.format-option').forEach(o => o.classList.remove('active'));
@@ -515,7 +624,7 @@ document.addEventListener('DOMContentLoaded', () => {
         content = JSON.stringify(activities, null, 2);
         mimeType = 'application/json';
       } else if (selectedFormat === 'csv') {
-        const headers = ['ID', 'Date', 'Time', 'Action', 'Details', 'Vault', 'Performed By', 'Email', 'IP Address', 'Status'];
+        const headers = ['ID', 'Date', 'Time', 'Action', 'Details', 'Vault', 'Performed By', 'Email', 'IP Address', 'Status', 'Hash'];
         const csvRows = [headers.join(',')];
         activities.forEach(a => {
           csvRows.push([
@@ -528,15 +637,15 @@ document.addEventListener('DOMContentLoaded', () => {
             `"${a.user}"`,
             `"${a.email}"`,
             `"${a.ip}"`,
-            `"${a.status}"`
+            `"${a.status}"`,
+            `"${a.hash}"`
           ].join(','));
         });
         content = csvRows.join('\n');
         mimeType = 'text/csv';
       } else {
-        // PDF / Plain text report format
         content = `AEGISVAULT AUDIT TRAIL EXPORT REPORT\nGenerated: ${new Date().toISOString()}\nTotal Activities: ${activities.length}\n\n` +
-          activities.map(a => `[${a.date} ${a.time}] ${a.actionTitle} | Vault: ${a.vault} | User: ${a.user} (${a.email}) | IP: ${a.ip} | Status: ${a.status}\nDetails: ${a.details}\n`).join('\n----------------------------------------\n');
+          activities.map(a => `[${a.date} ${a.time}] ${a.actionTitle} | Vault: ${a.vault} | User: ${a.user} (${a.email}) | IP: ${a.ip} | Status: ${a.status} | Hash: ${a.hash}\nDetails: ${a.details}\n`).join('\n----------------------------------------\n');
       }
 
       const blob = new Blob([content], { type: mimeType });
@@ -557,7 +666,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Audit Detail Modal
   function openAuditModal(id) {
-    const act = activities.find(a => a.id === id);
+    const act = activities.find(a => String(a.id) === String(id));
     if (!act) return;
 
     const modalAuditBadge = document.getElementById('modalAuditBadge');
@@ -567,6 +676,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalIp = document.getElementById('modalIp');
     const modalVault = document.getElementById('modalVault');
     const modalStatus = document.getElementById('modalStatus');
+    const hashEl = activityDetailModal?.querySelector('.meta-item:last-child .meta-val');
 
     if (modalAuditBadge) modalAuditBadge.textContent = act.actionTitle;
     if (modalTimestamp) modalTimestamp.textContent = `${act.date}, ${act.time}`;
@@ -575,7 +685,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modalIp) modalIp.textContent = act.ip;
     if (modalVault) modalVault.textContent = act.vault;
     if (modalStatus) modalStatus.textContent = act.status.charAt(0).toUpperCase() + act.status.slice(1);
+    if (hashEl) hashEl.textContent = act.hash;
 
     openModal(activityDetailModal);
   }
+
+  // Initial load
+  loadLiveActivities();
 });

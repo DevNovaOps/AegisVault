@@ -78,16 +78,22 @@ class ReleaseListCreateView(APIView):
         return Response(data)
 
     def post(self, request):
-        vault = get_object_or_404(
-            Vault,
-            pk=request.data.get('vault_id'),
-            owner=request.user
-        )
+        vault_id = request.data.get('vault_id')
+        vault = None
+        if vault_id:
+            vault = Vault.objects.filter(pk=vault_id, owner=request.user).first()
+        if not vault:
+            vault = Vault.objects.filter(owner=request.user).first()
+        if not vault:
+            return Response(
+                {'detail': 'Please create a vault first before scheduling a release.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         release = ReleaseRequest.objects.create(
             vault=vault,
             owner=request.user,
-            title=request.data.get('title', ''),
+            title=request.data.get('title', '') or f"Release for {vault.name}",
             description=request.data.get('description', ''),
             trigger_type=request.data.get('trigger_type', 'Upon Inactivity'),
             trigger_detail=request.data.get('trigger_detail', ''),
@@ -95,7 +101,7 @@ class ReleaseListCreateView(APIView):
             note=request.data.get('note', ''),
             required_shares=request.data.get('required_shares', vault.required_shares),
             total_shares=request.data.get('total_shares', vault.total_shares),
-            scheduled_at=request.data.get('scheduled_at'),
+            scheduled_at=request.data.get('scheduled_at') or None,
         )
 
         # Add participants from trustee emails if provided
@@ -126,8 +132,9 @@ class ReleaseListCreateView(APIView):
 
 class ReleaseDetailView(APIView):
     """
-    GET /api/v1/owner/releases/{id}
-    PUT /api/v1/owner/releases/{id}
+    GET    /api/v1/owner/releases/{id}
+    PUT    /api/v1/owner/releases/{id}
+    DELETE /api/v1/owner/releases/{id}
     """
     permission_classes = [IsAuthenticated, IsOwner]
 
@@ -155,6 +162,21 @@ class ReleaseDetailView(APIView):
         )
 
         return Response(ReleaseSerializer.to_dict(release))
+
+    def delete(self, request, pk):
+        release = get_object_or_404(ReleaseRequest, pk=pk, owner=request.user)
+        title = release.title
+        release.delete()
+
+        AuditService.log(
+            user=request.user,
+            action_key='release_deleted',
+            action_title='Release Deleted',
+            details=f'Deleted release "{title}"',
+            category='release',
+        )
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ReleaseCancelView(APIView):

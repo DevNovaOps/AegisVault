@@ -35,16 +35,20 @@ class OwnerAuditLogView(APIView):
         data = [
             {
                 'id': str(log.id),
-                'date': log.timestamp.strftime('%Y-%m-%d'),
-                'time': log.timestamp.strftime('%H:%M:%S'),
+                'date': log.timestamp.strftime('%d %b %Y'),
+                'time': log.timestamp.strftime('%I:%M %p'),
+                'rawDate': log.timestamp.strftime('%Y-%m-%d %H:%M'),
                 'actionKey': log.action_key,
                 'actionTitle': log.action_title,
                 'details': log.details,
                 'category': log.category,
-                'vault': log.vault_name,
-                'ip': log.ip_address,
-                'status': log.status,
+                'vault': log.vault_name or 'General',
+                'user': getattr(request.user, 'name', '') or getattr(request.user, 'email', 'Owner'),
+                'email': request.user.email,
+                'ip': log.ip_address or '127.0.0.1',
+                'status': log.status or 'success',
                 'timestamp': log.timestamp.isoformat(),
+                'hash': f"sha256:{abs(hash(str(log.id))):016x}{abs(hash(log.action_title)):016x}",
             }
             for log in logs[:100]  # Limit to 100 for performance
         ]

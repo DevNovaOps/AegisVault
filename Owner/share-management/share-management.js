@@ -7,141 +7,9 @@
   'use strict';
 
   // =========================================================================
-  // 1. Initial Mock Dataset (Exact match to Dark & Light mockups)
+  // 1. Live Dataset (Populated dynamically from Django backend API)
   // =========================================================================
-  let shares = [
-    {
-      id: 'share-1',
-      vault: 'Personal Vault',
-      vaultDesc: 'Personal documents...',
-      vaultThumb: '../assets/images/vault-thumb-1.png',
-      trusteeName: 'Sneha Mehta',
-      trusteeEmail: 'sneha.mehta@email.com',
-      avatarType: 'img',
-      avatar: '../assets/images/trustee-avatar-2.png',
-      accessLevel: 'View Only',
-      status: 'active',
-      sharedDate: '12 Sep 2025',
-      sharedTime: '10:24 AM',
-      expiresOn: 'Never',
-      note: 'Personal identification and financial statements access.'
-    },
-    {
-      id: 'share-2',
-      vault: 'Family Vault',
-      vaultDesc: 'Family photos and rec...',
-      vaultThumb: '../assets/images/vault-thumb-2.png',
-      trusteeName: 'Amit Kumar',
-      trusteeEmail: 'amit.kumar@email.com',
-      avatarType: 'img',
-      avatar: '../assets/images/trustee-avatar-1.png',
-      accessLevel: 'View & Download',
-      status: 'active',
-      sharedDate: '05 Sep 2025',
-      sharedTime: '02:16 PM',
-      expiresOn: 'Never',
-      note: 'Family heritage albums and vital certificates.'
-    },
-    {
-      id: 'share-3',
-      vault: 'Business Vault',
-      vaultDesc: 'Business and professi...',
-      vaultThumb: '../assets/images/vault-thumb-3.png',
-      trusteeName: 'Rahul Kapoor',
-      trusteeEmail: 'rahul.kapoor@email.com',
-      avatarType: 'initials',
-      initials: 'RK',
-      avatarClass: 'avatar-gradient-rk',
-      accessLevel: 'View Only',
-      status: 'pending',
-      sharedDate: '10 Sep 2025',
-      sharedTime: '09:12 AM',
-      expiresOn: '20 Oct 2025',
-      note: 'Enterprise shareholder agreements and cap table.'
-    },
-    {
-      id: 'share-4',
-      vault: 'Health Vault',
-      vaultDesc: 'Medical records and h...',
-      vaultThumb: '../assets/images/vault-thumb-4.png',
-      trusteeName: 'Priya Sharma',
-      trusteeEmail: 'priya.sharma@email.com',
-      avatarType: 'img',
-      avatar: '../assets/images/trustee-avatar-4.png',
-      accessLevel: 'View & Download',
-      status: 'active',
-      sharedDate: '01 Sep 2025',
-      sharedTime: '04:38 PM',
-      expiresOn: 'Never',
-      note: 'Healthcare power of attorney and hospital policy.'
-    },
-    {
-      id: 'share-5',
-      vault: 'Travel Vault',
-      vaultDesc: 'Travel documents and ...',
-      vaultThumb: '../assets/images/vault-thumb-5.png',
-      trusteeName: 'Vikram Shah',
-      trusteeEmail: 'vikram.shah@email.com',
-      avatarType: 'initials',
-      initials: 'VS',
-      avatarClass: 'avatar-gradient-vs',
-      accessLevel: 'View Only',
-      status: 'revoked',
-      sharedDate: '28 Aug 2025',
-      sharedTime: '11:05 AM',
-      expiresOn: '15 Sep 2025',
-      note: 'Passports, foreign visas, and flight contingencies.'
-    },
-    {
-      id: 'share-6',
-      vault: 'Property Vault',
-      vaultDesc: 'Property deeds and le...',
-      vaultThumb: '../assets/images/vault-thumb-6.png',
-      trusteeName: 'Anita Desai',
-      trusteeEmail: 'anita.desai@email.com',
-      avatarType: 'img',
-      avatar: '../assets/images/trustee-avatar-6.png',
-      accessLevel: 'View & Download',
-      status: 'active',
-      sharedDate: '15 Aug 2025',
-      sharedTime: '08:40 AM',
-      expiresOn: 'Never',
-      note: 'Real estate registry papers and mortgage releases.'
-    },
-    {
-      id: 'share-7',
-      vault: 'Legal Vault',
-      vaultDesc: 'Legal documents and ...',
-      vaultThumb: '../assets/images/vault-thumb-7.png',
-      trusteeName: 'Neeraj Singh',
-      trusteeEmail: 'neeraj.singh@email.com',
-      avatarType: 'initials',
-      initials: 'NS',
-      avatarClass: 'avatar-gradient-ns',
-      accessLevel: 'View Only',
-      status: 'active',
-      sharedDate: '02 Aug 2025',
-      sharedTime: '03:18 PM',
-      expiresOn: '30 Dec 2025',
-      note: 'Last Will and Testament execution copies.'
-    },
-    {
-      id: 'share-8',
-      vault: 'Memories Vault',
-      vaultDesc: 'Special moments and ...',
-      vaultThumb: '../assets/images/vault-thumb-8.png',
-      trusteeName: 'Karan Malhotra',
-      trusteeEmail: 'karan.malhotra@email.com',
-      avatarType: 'img',
-      avatar: '../assets/images/trustee-avatar-8.png',
-      accessLevel: 'View & Download',
-      status: 'active',
-      sharedDate: '25 Jul 2025',
-      sharedTime: '06:21 PM',
-      expiresOn: 'Never',
-      note: 'Personal memoirs, legacy voice notes, and videos.'
-    }
-  ];
+  let shares = [];
 
   let activeShareItem = null;
 
@@ -559,9 +427,9 @@
         <span>${isRevoked ? 'Reactivate Share' : 'Revoke Access'}</span>
       </button>
       <div class="dropdown-divider"></div>
-      <button class="dropdown-item" data-action="copy" style="width:100%; border:none; background:none; text-align:left; cursor:pointer;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        <span>Copy Audit Token</span>
+      <button class="dropdown-item" data-action="delete" style="width:100%; border:none; background:none; text-align:left; cursor:pointer; color:var(--status-danger);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        <span>Remove Share</span>
       </button>
     `;
 
@@ -581,14 +449,40 @@
 
     menu.querySelector('[data-action="toggle-status"]').addEventListener('click', () => {
       closeShareMenu();
-      if (item.status === 'revoked') {
-        item.status = 'active';
-        window.AegisOwner?.showToast(`Share reactivated for ${item.trusteeName}!`, 'success');
+      const endpoint = item.status === 'revoked' ? 'restore' : 'revoke';
+      if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+        window.AegisAPI.post(`/owner/shares/${item.id}/${endpoint}/`).then(res => {
+          item.status = res.status;
+          updateKPIs();
+          renderTable();
+          window.AegisOwner?.showToast(endpoint === 'restore' ? `Share reactivated for ${item.trusteeName}!` : `Share access revoked for ${item.trusteeName}.`, 'success');
+        }).catch(err => {
+          window.AegisOwner?.showToast(`Failed to update share: ${err.message}`, 'error');
+        });
       } else {
-        item.status = 'revoked';
-        window.AegisOwner?.showToast(`Share access revoked for ${item.trusteeName}.`, 'warning');
+        item.status = item.status === 'revoked' ? 'active' : 'revoked';
+        updateKPIs();
+        renderTable();
       }
-      renderTable();
+    });
+
+    menu.querySelector('[data-action="delete"]').addEventListener('click', () => {
+      closeShareMenu();
+      if (!confirm(`Permanently remove share access for "${item.trusteeName}" on ${item.vault}?`)) return;
+      if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+        window.AegisAPI.delete(`/owner/shares/${item.id}/`).then(() => {
+          shares = shares.filter(s => s.id !== item.id);
+          updateKPIs();
+          renderTable();
+          window.AegisOwner?.showToast(`Share removed successfully.`, 'info');
+        }).catch(err => {
+          window.AegisOwner?.showToast(`Failed to delete share: ${err.message}`, 'error');
+        });
+      } else {
+        shares = shares.filter(s => s.id !== item.id);
+        updateKPIs();
+        renderTable();
+      }
     });
 
     menu.querySelector('[data-action="copy"]').addEventListener('click', () => {

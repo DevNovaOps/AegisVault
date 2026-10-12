@@ -1086,15 +1086,15 @@
       <div class="modal-body">
         <div class="form-group">
           <label class="form-label">Current Password</label>
-          <input type="password" class="form-input" placeholder="Enter current master password">
+          <input type="password" class="form-input" id="inputCurrentPassword" placeholder="Enter current master password">
         </div>
         <div class="form-group">
           <label class="form-label">New Password</label>
-          <input type="password" class="form-input" placeholder="Minimum 12 characters">
+          <input type="password" class="form-input" id="inputNewPassword" placeholder="Minimum 8 characters">
         </div>
         <div class="form-group">
           <label class="form-label">Confirm New Password</label>
-          <input type="password" class="form-input" placeholder="Repeat new password">
+          <input type="password" class="form-input" id="inputConfirmPassword" placeholder="Repeat new password">
         </div>
       </div>
       <div class="modal-footer">
@@ -1108,6 +1108,7 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- Scripts -->
+  <script src="../../common/api.js"></script>
   <script src="../common/common.js"></script>
   <script src="profile-security.js"></script>
 </body>

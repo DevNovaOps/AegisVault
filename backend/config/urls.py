@@ -15,6 +15,8 @@ urlpatterns = [
 
     # ─── API v1 ──────────────────────────────────────────────────────────
     path('api/v1/auth/', include('accounts.urls')),
+    path('api/v1/accounts/', include('accounts.urls')),
+    path('api/v1/owner/profile/', include('accounts.urls')),
     path('api/v1/owner/', include('vaults.urls')),
     path('api/v1/owner/', include('trustees.urls')),
     path('api/v1/owner/', include('releases.urls')),
@@ -22,7 +24,9 @@ urlpatterns = [
     path('api/v1/owner/dashboard/', include('dashboard.urls')),
     path('api/v1/owner/', include('heartbeat.urls')),
     path('api/v1/owner/', include('support.urls')),
+    path('api/v1/owner/support/', include('support.urls')),
     path('api/v1/owner/', include('audit.urls_owner')),
+    path('api/v1/owner/audit/', include('audit.urls_owner')),
 
     # Admin panel APIs
     path('api/v1/admin/dashboard/', include('dashboard.urls_admin')),
