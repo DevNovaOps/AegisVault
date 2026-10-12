@@ -53,6 +53,31 @@ function syncTrusteeUserProfile() {
   if (profLegalName && user.name) {
     profLegalName.value = user.name;
   }
+
+  // Populate sidebar badges from live API data
+  fetchSidebarBadgeCounts();
+}
+
+function fetchSidebarBadgeCounts() {
+  if (!window.AegisAPI || !window.AegisAPI.isAuthenticated()) return;
+
+  window.AegisAPI.get('/trustee/dashboard/').then(data => {
+    const sidebarInvBadge = document.getElementById('sidebarInvBadge');
+    if (sidebarInvBadge) {
+      const pending = data.pending_invitations || 0;
+      sidebarInvBadge.textContent = pending;
+      sidebarInvBadge.style.display = pending > 0 ? 'inline-flex' : 'none';
+    }
+
+    const sidebarNotifBadge = document.getElementById('sidebarNotifBadge');
+    if (sidebarNotifBadge) {
+      const unread = data.unread_notifications || 0;
+      sidebarNotifBadge.textContent = unread;
+      sidebarNotifBadge.style.display = unread > 0 ? 'inline-flex' : 'none';
+    }
+  }).catch(() => {
+    // Silent — don't block page load for badge counts
+  });
 }
 
 // Mobile Sidebar Toggle

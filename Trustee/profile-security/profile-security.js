@@ -1,25 +1,136 @@
 /**
  * AegisVault Trustee Panel - Profile & Security Module Controller
+ * Connected to live Django backend: /api/v1/trustee/profile/
+ * All data flows from the database — zero mock data.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  loadTrusteeProfile();
   initProfileForm();
   initPasswordForm();
 });
 
-/**
- * Profile Form Submission
- */
+// ═══════════════════════════════════════════════════════════════════════════════
+//  Load Live Profile Data from Backend
+// ═══════════════════════════════════════════════════════════════════════════════
+
+async function loadTrusteeProfile() {
+  if (!window.AegisAPI || !window.AegisAPI.isAuthenticated()) return;
+
+  try {
+    const res = await window.AegisAPI.get('/trustee/profile/');
+    const user = res.user || res;
+    populateTrusteeProfileUI(user, res.trustee_profiles || []);
+  } catch (err) {
+    console.warn('[AegisVault] Failed to load trustee profile, using cached user:', err);
+    const user = window.AegisAPI.getUser() || {};
+    populateTrusteeProfileUI(user, []);
+  }
+}
+
+function populateTrusteeProfileUI(user, trusteeProfiles) {
+  if (!user) return;
+
+  const fullName = user.name || user.email?.split('@')[0] || 'Trustee';
+  const email = user.email || 'trustee@aegisvault.io';
+  const phone = user.phone || '';
+  const is2fa = Boolean(user.is_2fa_enabled);
+  const dateJoined = user.date_joined ? new Date(user.date_joined).toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A';
+
+  // Header name / email
+  const userNameHeader = document.querySelector('.profile-user-fullname');
+  const userEmailHeader = document.querySelector('.profile-user-email');
+  if (userNameHeader) userNameHeader.textContent = fullName;
+  if (userEmailHeader) userEmailHeader.textContent = email;
+
+  // Form pre-fill
+  const inputName = document.getElementById('profLegalName');
+  if (inputName) inputName.value = fullName;
+
+  const inputEmail = document.getElementById('profEmail');
+  if (inputEmail) inputEmail.value = email;
+
+  const inputPhone = document.getElementById('profPhone');
+  if (inputPhone) inputPhone.value = phone;
+
+  // Trustee ID
+  const inputId = document.getElementById('profTrusteeId');
+  if (inputId) inputId.value = user.id || 'N/A';
+
+  // Member since
+  const memberSince = document.getElementById('profMemberSince');
+  if (memberSince) memberSince.textContent = dateJoined;
+
+  // 2FA Status
+  update2FAUI(is2fa);
+
+  // Populate linked owner profiles in the sidebar or info card
+  const ownersList = document.getElementById('linkedOwnersList');
+  if (ownersList && trusteeProfiles.length > 0) {
+    ownersList.innerHTML = trusteeProfiles.map(tp => `
+      <div class="linked-owner-item">
+        <div class="linked-owner-name">${tp.owner_name}</div>
+        <div class="linked-owner-meta">${tp.relationship} · ${tp.verification_status}</div>
+      </div>
+    `).join('');
+  }
+}
+
+function update2FAUI(isEnabled) {
+  const tfaStatus = document.getElementById('tfa-status');
+  if (tfaStatus) {
+    tfaStatus.textContent = isEnabled ? 'Enabled' : 'Disabled';
+    tfaStatus.className = isEnabled ? 'status-badge status-active' : 'status-badge status-inactive';
+  }
+
+  const tfaBtn = document.getElementById('btnToggle2FA');
+  if (tfaBtn) {
+    tfaBtn.textContent = isEnabled ? 'Disable 2FA' : 'Enable 2FA';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  Profile Form — Live API Submission
+// ═══════════════════════════════════════════════════════════════════════════════
+
 function initProfileForm() {
   const form = document.getElementById('profileForm');
   const btnSave = document.getElementById('btnSaveProfile');
   const legalNameInput = document.getElementById('profLegalName');
+  const phoneInput = document.getElementById('profPhone');
+
+  // 2FA toggle
+  const btnToggle2FA = document.getElementById('btnToggle2FA');
+  if (btnToggle2FA) {
+    btnToggle2FA.addEventListener('click', async () => {
+      try {
+        const res = await window.AegisAPI.post('/trustee/profile/2fa/toggle/');
+        const isEnabled = Boolean(res.is_2fa_enabled);
+        update2FAUI(isEnabled);
+
+        // Update cached user
+        const stored = window.AegisAPI.getUser() || {};
+        stored.is_2fa_enabled = isEnabled;
+        localStorage.setItem('aegis_user', JSON.stringify(stored));
+
+        showToast(`Two-Factor Authentication ${isEnabled ? 'enabled' : 'disabled'} successfully.`);
+      } catch (err) {
+        showToast(`Failed to toggle 2FA: ${err.message}`, 'error');
+      }
+    });
+  }
 
   if (!form) return;
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const newName = legalNameInput?.value.trim() || 'Rakesh Patel';
+    const newName = legalNameInput?.value.trim() || '';
+    const newPhone = phoneInput?.value.trim() || '';
+
+    if (!newName) {
+      showToast('Please enter your legal name.', 'error');
+      return;
+    }
 
     if (btnSave) {
       btnSave.disabled = true;
@@ -31,14 +142,19 @@ function initProfileForm() {
       `;
     }
 
-    setTimeout(() => {
-      if (btnSave) {
-        btnSave.disabled = false;
-        btnSave.innerHTML = `
-          <span>Save Profile Changes</span>
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-        `;
-      }
+    try {
+      const res = await window.AegisAPI.put('/trustee/profile/update/', {
+        name: newName,
+        phone: newPhone
+      });
+
+      const updatedUser = res.user || res;
+
+      // Update local session
+      const stored = window.AegisAPI.getUser() || {};
+      Object.assign(stored, updatedUser);
+      localStorage.setItem('aegis_user', JSON.stringify(stored));
+      window.AegisAPI.syncUserProfileUI();
 
       // Update name on page & topbar
       const userNameHeader = document.querySelector('.profile-user-fullname');
@@ -47,24 +163,25 @@ function initProfileForm() {
       if (topbarName) topbarName.textContent = newName;
 
       showToast('Trustee profile information saved successfully.');
-    }, 600);
+    } catch (err) {
+      console.error('Profile save failed:', err);
+      showToast(`Failed to save profile: ${err.message}`, 'error');
+    } finally {
+      if (btnSave) {
+        btnSave.disabled = false;
+        btnSave.innerHTML = `
+          <span>Save Profile Changes</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        `;
+      }
+    }
   });
 }
 
-/**
- * Copy Trustee ID
- */
-window.copyTrusteeId = function() {
-  const input = document.getElementById('profTrusteeId');
-  if (input) {
-    navigator.clipboard?.writeText(input.value);
-    showToast(`Trustee ID "${input.value}" copied to clipboard.`);
-  }
-};
+// ═══════════════════════════════════════════════════════════════════════════════
+//  Password Update — Live API Submission
+// ═══════════════════════════════════════════════════════════════════════════════
 
-/**
- * Password Update Form
- */
 function initPasswordForm() {
   const form = document.getElementById('passwordForm');
   const currPw = document.getElementById('currPw');
@@ -73,7 +190,7 @@ function initPasswordForm() {
 
   if (!form) return;
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     if (!currPw.value) {
@@ -91,12 +208,33 @@ function initPasswordForm() {
       return;
     }
 
-    currPw.value = '';
-    newPw.value = '';
-    confirmPw.value = '';
-    showToast('Master password updated and encrypted successfully.');
+    try {
+      await window.AegisAPI.post('/trustee/profile/change-password/', {
+        current_password: currPw.value,
+        new_password: newPw.value
+      });
+
+      currPw.value = '';
+      newPw.value = '';
+      confirmPw.value = '';
+      showToast('Master password updated and encrypted successfully.');
+    } catch (err) {
+      console.error('Password change error:', err);
+      showToast(`Password update failed: ${err.message}`, 'error');
+    }
   });
 }
+
+/**
+ * Copy Trustee ID
+ */
+window.copyTrusteeId = function() {
+  const input = document.getElementById('profTrusteeId');
+  if (input) {
+    navigator.clipboard?.writeText(input.value);
+    showToast(`Trustee ID "${input.value}" copied to clipboard.`);
+  }
+};
 
 /**
  * Revoke Other Remote Sessions

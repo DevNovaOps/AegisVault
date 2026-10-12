@@ -24,10 +24,94 @@ function fetchTrusteeDashboardData() {
         metricValues[2].textContent = (data.pending_invitations + data.pending_releases) || '0';
         metricValues[3].textContent = data.completed_releases || '0';
       }
+
+      // Update sidebar notification badge
+      const sidebarNotifBadge = document.getElementById('sidebarNotifBadge');
+      if (sidebarNotifBadge) {
+        const unread = data.unread_notifications || 0;
+        sidebarNotifBadge.textContent = unread;
+        sidebarNotifBadge.style.display = unread > 0 ? 'inline-flex' : 'none';
+      }
+
+      // Update sidebar invitation badge
+      const sidebarInvBadge = document.getElementById('sidebarInvBadge');
+      if (sidebarInvBadge) {
+        const pending = data.pending_invitations || 0;
+        sidebarInvBadge.textContent = pending;
+        sidebarInvBadge.style.display = pending > 0 ? 'inline-flex' : 'none';
+      }
+
+      // Populate recent activity timeline from live data
+      if (data.recent_activity && data.recent_activity.length > 0) {
+        populateActivityTimeline(data.recent_activity);
+      }
     }).catch(err => {
       console.warn('Failed to load trustee dashboard data', err);
     });
   }
+}
+
+function populateActivityTimeline(activities) {
+  const timeline = document.querySelector('.activity-timeline');
+  if (!timeline) return;
+
+  // Clear existing static rows
+  const existingRows = timeline.querySelectorAll('.activity-timeline-row');
+  existingRows.forEach(row => row.remove());
+
+  if (activities.length === 0) {
+    const emptyRow = document.createElement('div');
+    emptyRow.className = 'activity-timeline-row';
+    emptyRow.style.cssText = 'text-align: center; padding: 2rem; color: var(--text-muted);';
+    emptyRow.innerHTML = '<span>No recent activity. Actions will appear here as you interact with vaults.</span>';
+    timeline.appendChild(emptyRow);
+    return;
+  }
+
+  activities.forEach(act => {
+    const row = document.createElement('div');
+    row.className = 'activity-timeline-row';
+
+    const ts = new Date(act.timestamp);
+    const timeStr = ts.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const dateStr = ts.toLocaleDateString([], { day: '2-digit', month: 'short' });
+
+    // Icon based on category
+    let iconEmoji = '📋';
+    if (act.category === 'trustee') iconEmoji = '👥';
+    else if (act.category === 'release') iconEmoji = '🔓';
+    else if (act.category === 'security' || act.category === 'auth') iconEmoji = '🛡️';
+    else if (act.category === 'vault') iconEmoji = '🔒';
+    else if (act.category === 'profile') iconEmoji = '👤';
+
+    row.innerHTML = `
+      <div class="activity-time-col">${dateStr}, ${timeStr}</div>
+      <div class="activity-dot-col"><span class="timeline-dot"></span></div>
+      <div class="activity-event-col">
+        <span class="activity-event-title">${iconEmoji} ${escapeHtmlDash(act.action_title)}</span>
+        <span class="activity-event-details">${escapeHtmlDash(act.details || act.vault_name || '')}</span>
+      </div>
+    `;
+
+    row.addEventListener('click', () => {
+      const modal = document.getElementById('activityDetailModal');
+      if (modal) {
+        document.getElementById('modalActivityTitle').textContent = act.action_title;
+        document.getElementById('modalActivityDetails').textContent = act.details || '';
+        document.getElementById('modalActivityTime').textContent = `${dateStr}, ${timeStr}`;
+        window.openModal('activityDetailModal');
+      } else {
+        window.showToast(`${act.action_title}: ${act.details || ''}`);
+      }
+    });
+
+    timeline.appendChild(row);
+  });
+}
+
+function escapeHtmlDash(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 }
 
 // Animate the circular progress ring

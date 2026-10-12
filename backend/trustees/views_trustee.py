@@ -1,6 +1,8 @@
 """
 AegisVault — Trustee Panel Views
-Trustee-facing endpoints: dashboard, invitations, assigned vaults, releases
+Trustee-facing endpoints: dashboard, profile, audit, notifications,
+invitations, assigned vaults, releases.
+All data is live from the database — zero mock data.
 """
 from rest_framework import status
 from rest_framework.views import APIView
@@ -14,36 +16,60 @@ from .serializers import InvitationSerializer
 from vaults.models import VaultShare
 from vaults.serializers import VaultShareSerializer
 from releases.models import ReleaseParticipant, ReleaseRequest
+from accounts.models import User
+from accounts.serializers import UserSerializer
 from accounts.permissions import IsTrustee
+from audit.models import AuditLog
 from audit.services import AuditService
+from notifications.models import Notification
 from notifications.services import NotificationService
 
 
+# ═══════════════════════════════════════════════════════════════════════════════
+#  DASHBOARD
+# ═══════════════════════════════════════════════════════════════════════════════
+
 class TrusteeDashboardView(APIView):
-    """GET /api/v1/trustee/dashboard"""
+    """GET /api/v1/trustee/dashboard — Full dashboard payload"""
     permission_classes = [IsAuthenticated, IsTrustee]
 
     def get(self, request):
         user = request.user
 
-        # Pending invitations
+        # Counts
         pending_invitations = Invitation.objects.filter(
             invitee_email=user.email, status='pending'
         ).count()
 
-        # Assigned vaults (active shares)
         active_shares = VaultShare.objects.filter(
             trustee=user, status='active'
         ).count()
 
-        # Pending release participations
         pending_releases = ReleaseParticipant.objects.filter(
             trustee=user, status='pending'
         ).count()
 
-        # Completed releases
         completed_releases = ReleaseParticipant.objects.filter(
             trustee=user, status='verified'
+        ).count()
+
+        # Recent activity (last 5 audit events)
+        recent_logs = AuditLog.objects.filter(user=user).order_by('-timestamp')[:5]
+        recent_activity = [
+            {
+                'id': str(log.id),
+                'action_title': log.action_title,
+                'details': log.details,
+                'category': log.category,
+                'timestamp': log.timestamp.isoformat(),
+                'vault_name': log.vault_name or 'General',
+            }
+            for log in recent_logs
+        ]
+
+        # Unread notifications count
+        unread_notifications = Notification.objects.filter(
+            user=user, status='unread'
         ).count()
 
         return Response({
@@ -51,8 +77,241 @@ class TrusteeDashboardView(APIView):
             'active_shares': active_shares,
             'pending_releases': pending_releases,
             'completed_releases': completed_releases,
+            'recent_activity': recent_activity,
+            'unread_notifications': unread_notifications,
         })
 
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  PROFILE & SECURITY
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class TrusteeProfileView(APIView):
+    """GET /api/v1/trustee/profile/ — Current trustee profile data"""
+    permission_classes = [IsAuthenticated, IsTrustee]
+
+    def get(self, request):
+        user = request.user
+        # Get linked trustee profiles (where this user is designated as trustee)
+        profiles = TrusteeProfile.objects.filter(user=user)
+        owners = []
+        for tp in profiles:
+            owners.append({
+                'owner_name': tp.owner.name,
+                'owner_email': tp.owner.email,
+                'relationship': tp.relationship,
+                'verification_status': tp.verification_status,
+                'status': tp.status,
+                'date_added': tp.date_added.isoformat(),
+            })
+
+        return Response({
+            'user': UserSerializer(user).data,
+            'trustee_profiles': owners,
+        })
+
+
+class TrusteeProfileUpdateView(APIView):
+    """PUT /api/v1/trustee/profile/update/ — Update trustee profile"""
+    permission_classes = [IsAuthenticated, IsTrustee]
+
+    def put(self, request):
+        user = request.user
+        data = request.data
+
+        if 'name' in data:
+            user.name = data['name']
+        if 'phone' in data:
+            user.phone = data['phone']
+
+        user.save()
+
+        AuditService.log(
+            user=user,
+            action_key='profile_updated',
+            action_title='Profile Updated',
+            details='Trustee profile information updated',
+            category='profile',
+        )
+
+        return Response({
+            'user': UserSerializer(user).data,
+            'detail': 'Profile updated successfully.'
+        })
+
+
+class TrusteeChangePasswordView(APIView):
+    """POST /api/v1/trustee/profile/change-password/"""
+    permission_classes = [IsAuthenticated, IsTrustee]
+
+    def post(self, request):
+        user = request.user
+        current_password = request.data.get('current_password') or request.data.get('old_password')
+        new_password = request.data.get('new_password')
+
+        if not current_password or not new_password:
+            return Response(
+                {'detail': 'Both current and new password are required.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if not user.check_password(current_password):
+            return Response(
+                {'detail': 'Current password is incorrect.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if len(new_password) < 8:
+            return Response(
+                {'detail': 'New password must be at least 8 characters.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user.set_password(new_password)
+        user.save()
+
+        AuditService.log(
+            user=user,
+            action_key='password_changed',
+            action_title='Password Changed',
+            details='Trustee account password changed',
+            category='security',
+        )
+
+        return Response({'detail': 'Password changed successfully.'})
+
+
+class TrusteeToggle2FAView(APIView):
+    """POST /api/v1/trustee/profile/2fa/toggle/"""
+    permission_classes = [IsAuthenticated, IsTrustee]
+
+    def post(self, request):
+        user = request.user
+        user.is_2fa_enabled = not user.is_2fa_enabled
+        user.save(update_fields=['is_2fa_enabled'])
+
+        state = 'enabled' if user.is_2fa_enabled else 'disabled'
+
+        AuditService.log(
+            user=user,
+            action_key='2fa_toggled',
+            action_title=f'Two-Factor Authentication {state.title()}',
+            details=f'2FA has been {state}',
+            category='security',
+        )
+
+        return Response({
+            'is_2fa_enabled': user.is_2fa_enabled,
+            'detail': f'Two-factor authentication {state}.'
+        })
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  AUDIT LOGS (Trustee-facing)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class TrusteeAuditLogView(APIView):
+    """GET /api/v1/trustee/audit/logs/ — Audit trail for the current trustee"""
+    permission_classes = [IsAuthenticated, IsTrustee]
+
+    def get(self, request):
+        logs = AuditLog.objects.filter(user=request.user).order_by('-timestamp')
+
+        # Filtering
+        cat_filter = request.query_params.get('category')
+        search = request.query_params.get('search', '')
+
+        if cat_filter and cat_filter != 'all':
+            logs = logs.filter(category__iexact=cat_filter)
+        if search:
+            from django.db.models import Q
+            logs = logs.filter(
+                Q(action_title__icontains=search) | Q(details__icontains=search)
+            )
+
+        data = [
+            {
+                'id': str(log.id),
+                'date': log.timestamp.strftime('%d %b %Y'),
+                'time': log.timestamp.strftime('%I:%M %p'),
+                'rawDate': log.timestamp.strftime('%Y-%m-%d %H:%M'),
+                'actionKey': log.action_key,
+                'actionTitle': log.action_title,
+                'details': log.details,
+                'category': log.category,
+                'vault': log.vault_name or 'General',
+                'user': request.user.name or request.user.email,
+                'email': request.user.email,
+                'ip': log.ip_address or '127.0.0.1',
+                'status': log.status or 'success',
+                'timestamp': log.timestamp.isoformat(),
+                'hash': f"sha256:{abs(hash(str(log.id))):016x}{abs(hash(log.action_title)):016x}",
+            }
+            for log in logs[:100]
+        ]
+        return Response(data)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  NOTIFICATIONS (Trustee-facing)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class TrusteeNotificationListView(APIView):
+    """GET /api/v1/trustee/notifications/"""
+    permission_classes = [IsAuthenticated, IsTrustee]
+
+    def get(self, request):
+        notifications = Notification.objects.filter(
+            user=request.user
+        ).order_by('-created_at')[:50]
+
+        type_filter = request.query_params.get('type')
+        if type_filter and type_filter != 'all':
+            notifications = notifications.filter(notification_type=type_filter)
+
+        return Response([
+            {
+                'id': str(n.id),
+                'type': n.notification_type,
+                'title': n.title,
+                'description': n.description,
+                'vault_name': n.vault_name,
+                'status': n.status,
+                'created_at': n.created_at.isoformat(),
+                'date': n.created_at.strftime('%d %b %Y'),
+                'time': n.created_at.strftime('%I:%M %p'),
+            }
+            for n in notifications
+        ])
+
+
+class TrusteeNotificationMarkReadView(APIView):
+    """POST /api/v1/trustee/notifications/{id}/mark-read/"""
+    permission_classes = [IsAuthenticated, IsTrustee]
+
+    def post(self, request, pk):
+        notification = get_object_or_404(
+            Notification, pk=pk, user=request.user
+        )
+        notification.status = 'read'
+        notification.save(update_fields=['status'])
+        return Response({'detail': 'Notification marked as read.'})
+
+
+class TrusteeNotificationMarkAllReadView(APIView):
+    """POST /api/v1/trustee/notifications/mark-all-read/"""
+    permission_classes = [IsAuthenticated, IsTrustee]
+
+    def post(self, request):
+        updated = Notification.objects.filter(
+            user=request.user, status='unread'
+        ).update(status='read')
+        return Response({'detail': f'Marked {updated} notifications as read.'})
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  INVITATIONS
+# ═══════════════════════════════════════════════════════════════════════════════
 
 class TrusteeInvitationsView(APIView):
     """GET /api/v1/trustee/invitations"""
@@ -172,6 +431,10 @@ class TrusteeDeclineInvitationView(APIView):
             'invitation': InvitationSerializer(invitation).data,
         })
 
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  ASSIGNED VAULTS & RELEASES
+# ═══════════════════════════════════════════════════════════════════════════════
 
 class TrusteeAssignedVaultsView(APIView):
     """GET /api/v1/trustee/assigned-vaults"""

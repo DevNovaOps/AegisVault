@@ -212,11 +212,11 @@ class ExportDataView(APIView):
         try:
             from vaults.models import Vault
             from trustees.models import TrusteeProfile
-            from releases.models import ReleaseSchedule
+            from releases.models import ReleaseRequest
 
             vaults = Vault.objects.filter(owner=user)
             trustees = TrusteeProfile.objects.filter(owner=user)
-            releases = ReleaseSchedule.objects.filter(owner=user)
+            releases = ReleaseRequest.objects.filter(owner=user)
 
             export_payload = {
                 'owner': getattr(user, 'name', '') or user.email,

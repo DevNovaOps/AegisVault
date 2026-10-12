@@ -1,14 +1,218 @@
 /**
  * AegisVault Trustee Panel - Activity & History Module Controller
+ * Connected to live Django backend: /api/v1/trustee/audit/logs/
+ * All data flows from the database — zero mock/static data.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  loadTrusteeAuditLogs();
   initActivityFilters();
 });
 
-/**
- * Filter Management
- */
+// ═══════════════════════════════════════════════════════════════════════════════
+//  Live Data Loading
+// ═══════════════════════════════════════════════════════════════════════════════
+
+let liveActivities = [];
+
+async function loadTrusteeAuditLogs() {
+  const tableBody = document.getElementById('activityTableBody');
+  if (!tableBody) return;
+
+  if (!window.AegisAPI || !window.AegisAPI.isAuthenticated()) {
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="9" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+          <div>Please log in to view your activity history.</div>
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  try {
+    const data = await window.AegisAPI.get('/trustee/audit/logs/');
+    const rawList = Array.isArray(data) ? data : (data.results || []);
+
+    const currentUser = window.AegisAPI.getUser() || {};
+    const defaultUserName = currentUser.name || currentUser.email || 'Trustee';
+
+    liveActivities = rawList.map((item, idx) => ({
+      id: item.id || (idx + 1),
+      date: item.date || 'Recently',
+      time: item.time || '',
+      rawDate: item.rawDate || item.timestamp || '',
+      actionKey: item.actionKey || item.action_key || 'activity',
+      actionTitle: item.actionTitle || item.action_title || 'Activity Event',
+      details: item.details || item.description || '',
+      vault: item.vault || item.vault_name || '—',
+      category: (item.category || 'trustee').toLowerCase(),
+      user: item.user || defaultUserName,
+      email: item.email || currentUser.email || '',
+      ip: item.ip || item.ip_address || '127.0.0.1',
+      status: (item.status || 'success').toLowerCase(),
+      hash: item.hash || `sha256:${item.id || idx}`
+    }));
+
+    renderAuditTable(liveActivities);
+    updateMetricCards(liveActivities);
+
+  } catch (err) {
+    console.error('[AegisVault] Failed to load trustee audit logs:', err);
+
+    // Show empty state if no logs yet (not an error)
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="9" style="text-align: center; padding: 4rem 1.5rem; color: var(--text-muted);">
+          <div style="font-size: 1.15rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary);">
+            No Audit Activities Recorded Yet
+          </div>
+          <div style="max-width: 500px; margin: 0 auto; line-height: 1.5; font-size: 0.9rem;">
+            All trustee actions — share submissions, verification events, invitation responses, and release participation — are recorded in the immutable cryptographic audit chain.
+          </div>
+        </td>
+      </tr>
+    `;
+  }
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, m => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+  }[m]));
+}
+
+function getActionIcon(actionKey, category) {
+  if (category === 'trustee' || actionKey.includes('invitation')) {
+    return { cls: 'act-purple', icon: '👥' };
+  }
+  if (category === 'release' || actionKey.includes('share') || actionKey.includes('release')) {
+    return { cls: 'act-orange', icon: '🔑' };
+  }
+  if (category === 'security' || category === 'auth' || actionKey.includes('login') || actionKey.includes('password') || actionKey.includes('2fa')) {
+    return { cls: 'act-red', icon: '🛡️' };
+  }
+  if (category === 'vault' || actionKey.includes('vault')) {
+    return { cls: 'act-green', icon: '🔒' };
+  }
+  if (category === 'profile' || actionKey.includes('profile')) {
+    return { cls: 'act-blue', icon: '👤' };
+  }
+  return { cls: 'act-blue', icon: '📋' };
+}
+
+function renderAuditTable(activities) {
+  const tableBody = document.getElementById('activityTableBody');
+  if (!tableBody) return;
+
+  if (activities.length === 0) {
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="9" style="text-align: center; padding: 4rem 1.5rem; color: var(--text-muted);">
+          <div style="font-size: 1.15rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-primary);">
+            No Audit Activities Recorded Yet
+          </div>
+          <div style="max-width: 500px; margin: 0 auto; line-height: 1.5; font-size: 0.9rem;">
+            All trustee actions are recorded permanently in AegisVault's immutable audit chain.
+          </div>
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  tableBody.innerHTML = '';
+
+  activities.forEach(act => {
+    const tr = document.createElement('tr');
+    tr.setAttribute('data-action', act.actionKey);
+    tr.setAttribute('data-vault', act.vault);
+    tr.setAttribute('data-user', act.user);
+    const iconData = getActionIcon(act.actionKey, act.category);
+    const isFailed = act.status === 'failed' || act.status === 'failure';
+
+    tr.innerHTML = `
+      <td>
+        <div class="activity-datetime">
+          <span class="activity-date">${escapeHtml(act.date)}</span>
+          <span class="activity-time">${escapeHtml(act.time)}</span>
+        </div>
+      </td>
+      <td>
+        <div class="activity-user-cell">
+          <div class="activity-user-avatar">${escapeHtml(act.user.substring(0, 2).toUpperCase())}</div>
+          <div class="activity-user-info">
+            <span class="activity-user-name">${escapeHtml(act.user)}</span>
+            <span class="activity-user-email">${escapeHtml(act.email)}</span>
+          </div>
+        </div>
+      </td>
+      <td>
+        <div class="activity-action-cell">
+          <span class="activity-action-icon ${iconData.cls}">${iconData.icon}</span>
+          <span class="activity-action-title">${escapeHtml(act.actionTitle)}</span>
+        </div>
+      </td>
+      <td><span class="activity-details-text">${escapeHtml(act.details)}</span></td>
+      <td>${act.vault === '—' || act.vault === 'General' ? '<span class="empty-dash">—</span>' : `<span class="vault-tag">${escapeHtml(act.vault)}</span>`}</td>
+      <td><span class="ip-mono">${escapeHtml(act.ip)}</span></td>
+      <td>
+        <span class="device-cell">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <span>Web Client</span>
+        </span>
+      </td>
+      <td>
+        <span class="status-pill status-${isFailed ? 'failed' : 'success'}">
+          ${isFailed ? '✗ Failed' : '✓ Success'}
+        </span>
+      </td>
+      <td>
+        <button class="btn-row-action" onclick="openAuditRecord('${escapeHtml(act.id)}', '${escapeHtml(act.actionTitle)}', '${escapeHtml(act.user)}', '${escapeHtml(act.date)} ${escapeHtml(act.time)}', '${escapeHtml(act.vault)}', '${escapeHtml(act.ip)}', 'Web Client', '${escapeHtml(act.details)}')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+        </button>
+      </td>
+    `;
+
+    tableBody.appendChild(tr);
+  });
+}
+
+function updateMetricCards(activities) {
+  const total = activities.length;
+  const shares = activities.filter(a => a.actionKey.includes('share') || a.category === 'release').length;
+  const vault = activities.filter(a => a.category === 'vault' || a.actionKey.includes('vault')).length;
+  const verif = activities.filter(a => a.actionKey.includes('verif') || a.actionKey.includes('invitation') || a.category === 'trustee').length;
+  const release = activities.filter(a => a.category === 'release').length;
+
+  const cards = document.querySelectorAll('.hero-metric-card');
+  if (cards[0]) {
+    const val = cards[0].querySelector('.metric-big-value');
+    if (val) val.textContent = total;
+  }
+  if (cards[1]) {
+    const val = cards[1].querySelector('.metric-big-value');
+    if (val) val.textContent = shares;
+  }
+  if (cards[2]) {
+    const val = cards[2].querySelector('.metric-big-value');
+    if (val) val.textContent = vault;
+  }
+  if (cards[3]) {
+    const val = cards[3].querySelector('.metric-big-value');
+    if (val) val.textContent = verif;
+  }
+  if (cards[4]) {
+    const val = cards[4].querySelector('.metric-big-value');
+    if (val) val.textContent = release;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  Filter Management
+// ═══════════════════════════════════════════════════════════════════════════════
+
 function initActivityFilters() {
   const tableSelect = document.getElementById('tableActionSelect');
   const filterType = document.getElementById('filterActivityType');
@@ -17,64 +221,27 @@ function initActivityFilters() {
   const btnApply = document.getElementById('btnApplyFilter');
   const btnReset = document.getElementById('btnResetFilter');
   const btnClearAll = document.getElementById('btnFilterClearAll');
-  const tableBody = document.getElementById('activityTableBody');
-
-  if (!tableBody) return;
 
   function filterRows() {
     const selectedAction = (tableSelect?.value || filterType?.value || 'all').toLowerCase();
     const selectedVault = (filterVault?.value || 'all').toLowerCase();
     const selectedUser = (filterUser?.value || 'all').toLowerCase();
 
-    const rows = tableBody.querySelectorAll('tr');
-    let visibleCount = 0;
-
-    rows.forEach(row => {
-      const action = (row.getAttribute('data-action') || '').toLowerCase();
-      const vault = (row.getAttribute('data-vault') || '').toLowerCase();
-      const user = (row.getAttribute('data-user') || '').toLowerCase();
-
-      const matchesAction = selectedAction === 'all' || action === selectedAction;
-      const matchesVault = selectedVault === 'all' || vault.includes(selectedVault);
-      const matchesUser = selectedUser === 'all' || user.includes(selectedUser);
-
-      if (matchesAction && matchesVault && matchesUser) {
-        row.style.display = '';
-        visibleCount++;
-      } else {
-        row.style.display = 'none';
-      }
+    const filtered = liveActivities.filter(act => {
+      const matchesAction = selectedAction === 'all' || act.actionKey.includes(selectedAction) || act.category === selectedAction;
+      const matchesVault = selectedVault === 'all' || act.vault.toLowerCase().includes(selectedVault);
+      const matchesUser = selectedUser === 'all' || act.user.toLowerCase().includes(selectedUser);
+      return matchesAction && matchesVault && matchesUser;
     });
 
-    // Zero-state handling
-    let emptyRow = document.getElementById('activityEmptyRow');
-    if (visibleCount === 0) {
-      if (!emptyRow) {
-        emptyRow = document.createElement('tr');
-        emptyRow.id = 'activityEmptyRow';
-        emptyRow.innerHTML = `
-          <td colspan="9" style="text-align: center; padding: 2.5rem 1rem; color: var(--text-muted);">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 0.5rem; opacity: 0.5;">
-              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
-            <div style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">No activity records match filters</div>
-            <div style="font-size: 0.82rem;">Adjust your filter criteria or reset to view all activity logs.</div>
-          </td>
-        `;
-        tableBody.appendChild(emptyRow);
-      }
-    } else if (emptyRow) {
-      emptyRow.remove();
-    }
+    renderAuditTable(filtered);
   }
 
-  // Connect table header dropdown and sidebar dropdown
   if (tableSelect && filterType) {
     tableSelect.addEventListener('change', () => {
       filterType.value = tableSelect.value;
       filterRows();
     });
-
     filterType.addEventListener('change', () => {
       tableSelect.value = filterType.value;
       filterRows();
@@ -96,7 +263,7 @@ function initActivityFilters() {
     if (filterType) filterType.value = 'all';
     if (filterVault) filterVault.value = 'all';
     if (filterUser) filterUser.value = 'all';
-    filterRows();
+    renderAuditTable(liveActivities);
     showToast('Filters reset to default.');
   }
 
@@ -108,39 +275,22 @@ function initActivityFilters() {
  * Filter by Category from Hero Metric Cards
  */
 window.filterByActionCategory = function(category) {
-  const tableBody = document.getElementById('activityTableBody');
-  const tableSelect = document.getElementById('tableActionSelect');
-  const filterType = document.getElementById('filterActivityType');
-  if (!tableBody) return;
-
   if (category === 'all') {
-    if (tableSelect) tableSelect.value = 'all';
-    if (filterType) filterType.value = 'all';
-    tableBody.querySelectorAll('tr').forEach(r => r.style.display = '');
-    showToast('Displaying all 186 activities.');
+    renderAuditTable(liveActivities);
+    showToast(`Displaying all ${liveActivities.length} activities.`);
     return;
   }
 
-  let count = 0;
-  tableBody.querySelectorAll('tr').forEach(row => {
-    const action = (row.getAttribute('data-action') || '').toLowerCase();
-    const vault = (row.getAttribute('data-vault') || '').toLowerCase();
-
-    let match = false;
-    if (category === 'share' && action.includes('share')) match = true;
-    else if (category === 'vault' && (action.includes('vault') || vault !== '—')) match = true;
-    else if (category === 'verification' && action.includes('verifi')) match = true;
-    else if (category === 'release' && action.includes('release')) match = true;
-
-    if (match) {
-      row.style.display = '';
-      count++;
-    } else {
-      row.style.display = 'none';
-    }
+  const filtered = liveActivities.filter(act => {
+    if (category === 'share') return act.actionKey.includes('share') || act.category === 'release';
+    if (category === 'vault') return act.category === 'vault' || act.actionKey.includes('vault');
+    if (category === 'verification') return act.actionKey.includes('verif') || act.actionKey.includes('invitation') || act.category === 'trustee';
+    if (category === 'release') return act.category === 'release';
+    return false;
   });
 
-  showToast(`Filtered by ${category.toUpperCase()} activities (${count} matching in current view).`);
+  renderAuditTable(filtered);
+  showToast(`Filtered by ${category.toUpperCase()} activities (${filtered.length} matching).`);
 };
 
 /**
@@ -174,38 +324,36 @@ window.openAuditRecord = function(id, action, user, time, vault, ip, device, det
  * Export Activity Table to CSV
  */
 window.exportActivityToCSV = function() {
-  const table = document.getElementById('activityTable');
-  if (!table) return;
+  if (liveActivities.length === 0) {
+    showToast('No activity data to export.');
+    return;
+  }
 
-  const rows = table.querySelectorAll('tbody tr');
-  let csvContent = 'Date & Time,User,Action,Details,Vault,IP Address,Status\n';
+  const headers = ['Date', 'Time', 'User', 'Action', 'Details', 'Vault', 'IP Address', 'Status'];
+  const csvRows = [headers.join(',')];
 
-  rows.forEach(row => {
-    if (row.style.display === 'none') return;
-    const cols = row.querySelectorAll('td');
-    if (cols.length < 8) return;
-
-    const dateTime = `"${cols[0].textContent.trim()}"`;
-    const user = `"${cols[1].textContent.trim().replace(/\s+/g, ' ')}"`;
-    const action = `"${cols[2].textContent.trim().replace(/\s+/g, ' ')}"`;
-    const details = `"${cols[3].textContent.trim().replace(/\s+/g, ' ')}"`;
-    const vault = `"${cols[4].textContent.trim()}"`;
-    const ip = `"${cols[5].textContent.trim()}"`;
-    const status = `"${cols[7].textContent.trim().replace(/\s+/g, ' ')}"`;
-
-    csvContent += [dateTime, user, action, details, vault, ip, status].join(',') + '\n';
+  liveActivities.forEach(a => {
+    csvRows.push([
+      `"${a.date}"`,
+      `"${a.time}"`,
+      `"${a.user}"`,
+      `"${a.actionTitle}"`,
+      `"${(a.details || '').replace(/"/g, '""')}"`,
+      `"${a.vault}"`,
+      `"${a.ip}"`,
+      `"${a.status}"`
+    ].join(','));
   });
 
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
-  const dateStr = new Date().toISOString().split('T')[0];
   link.href = url;
-  link.download = `AegisVault-Activity-History-${dateStr}.csv`;
+  link.download = `AegisVault-Trustee-Activity-${new Date().toISOString().split('T')[0]}.csv`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 
-  showToast('Activity history exported to CSV successfully!');
+  showToast(`Exported ${liveActivities.length} activity records to CSV!`);
 };

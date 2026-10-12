@@ -1,6 +1,7 @@
 """
 AegisVault — Trustee Panel URL Configuration
 Endpoints under /api/v1/trustee/
+Complete trustee API: dashboard, profile, audit, notifications, invitations, releases.
 """
 from django.urls import path
 from .views_trustee import (
@@ -8,14 +9,40 @@ from .views_trustee import (
     TrusteeAcceptInvitationView, TrusteeDeclineInvitationView,
     TrusteeAssignedVaultsView, TrusteeReleasesView,
     TrusteeShareSubmitView,
+    TrusteeProfileView, TrusteeProfileUpdateView,
+    TrusteeChangePasswordView, TrusteeToggle2FAView,
+    TrusteeAuditLogView,
+    TrusteeNotificationListView, TrusteeNotificationMarkReadView,
+    TrusteeNotificationMarkAllReadView,
 )
 
 urlpatterns = [
+    # Dashboard
     path('dashboard/', TrusteeDashboardView.as_view(), name='trustee-dashboard'),
+
+    # Profile & Security
+    path('profile/', TrusteeProfileView.as_view(), name='trustee-profile'),
+    path('profile/update/', TrusteeProfileUpdateView.as_view(), name='trustee-profile-update'),
+    path('profile/change-password/', TrusteeChangePasswordView.as_view(), name='trustee-change-password'),
+    path('profile/2fa/toggle/', TrusteeToggle2FAView.as_view(), name='trustee-toggle-2fa'),
+
+    # Audit Logs
+    path('audit/logs/', TrusteeAuditLogView.as_view(), name='trustee-audit-logs'),
+
+    # Notifications
+    path('notifications/', TrusteeNotificationListView.as_view(), name='trustee-notifications'),
+    path('notifications/mark-all-read/', TrusteeNotificationMarkAllReadView.as_view(), name='trustee-mark-all-read'),
+    path('notifications/<uuid:pk>/mark-read/', TrusteeNotificationMarkReadView.as_view(), name='trustee-mark-read'),
+
+    # Invitations
     path('invitations/', TrusteeInvitationsView.as_view(), name='trustee-invitations'),
     path('invitations/<uuid:pk>/accept/', TrusteeAcceptInvitationView.as_view(), name='trustee-accept'),
     path('invitations/<uuid:pk>/decline/', TrusteeDeclineInvitationView.as_view(), name='trustee-decline'),
+
+    # Assigned Vaults
     path('assigned-vaults/', TrusteeAssignedVaultsView.as_view(), name='trustee-assigned-vaults'),
+
+    # Releases
     path('releases/', TrusteeReleasesView.as_view(), name='trustee-releases'),
     path('shares/<uuid:pk>/submit/', TrusteeShareSubmitView.as_view(), name='trustee-share-submit'),
 ]
