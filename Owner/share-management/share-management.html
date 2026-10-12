@@ -97,7 +97,7 @@
             </svg>
           </span>
           <span class="nav-label">Invitations</span>
-          <span class="nav-badge">2</span>
+          <span class="nav-badge" id="sidebarInviteBadge" style="display: none;">0</span>
         </a>
 
         <!-- 5. Share Management (Active) -->
@@ -134,7 +134,7 @@
             </svg>
           </span>
           <span class="nav-label">Notifications</span>
-          <span class="nav-badge">3</span>
+          <span class="nav-badge" id="sidebarNotifBadge" style="display: none;">0</span>
         </a>
 
         <!-- 8. Activity & History -->
@@ -240,8 +240,8 @@
           <!-- Profile Menu Chip -->
           <div class="profile-menu-wrapper">
             <button class="profile-chip" id="profileBtn" aria-label="Owner Profile Menu">
-              <div class="profile-avatar-circle">RP</div>
-              <span class="profile-name">Rakesh Patel</span>
+              <div class="profile-avatar-circle">DY</div>
+              <span class="profile-name">Dev Yagnik</span>
               <svg class="profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <polyline points="6 9 12 15 18 9"/>
               </svg>
@@ -304,7 +304,7 @@
               </svg>
             </div>
             <div class="metric-content">
-              <span class="metric-value" id="statTotalShares">8</span>
+              <span class="metric-value" id="statTotalShares">0</span>
               <span class="metric-label">Total Shares</span>
               <span class="metric-sub">Across all vaults</span>
             </div>
@@ -321,7 +321,7 @@
               </svg>
             </div>
             <div class="metric-content">
-              <span class="metric-value" id="statActiveShares">6</span>
+              <span class="metric-value" id="statActiveShares">0</span>
               <span class="metric-label">Active Shares</span>
               <span class="metric-sub">Currently accessible</span>
             </div>
@@ -336,7 +336,7 @@
               </svg>
             </div>
             <div class="metric-content">
-              <span class="metric-value" id="statPendingShares">1</span>
+              <span class="metric-value" id="statPendingShares">0</span>
               <span class="metric-label">Pending Share</span>
               <span class="metric-sub">Awaiting acceptance</span>
             </div>
@@ -352,7 +352,7 @@
               </svg>
             </div>
             <div class="metric-content">
-              <span class="metric-value" id="statRevokedShares">1</span>
+              <span class="metric-value" id="statRevokedShares">0</span>
               <span class="metric-label">Revoked Share</span>
               <span class="metric-sub">Access removed</span>
             </div>
@@ -625,34 +625,9 @@
                 </div>
               </div>
 
-              <div class="shares-activity-list">
-                <div class="activity-timeline-item">
-                  <span class="activity-dot green"></span>
-                  <div class="activity-info">
-                    <span class="activity-title">Sneha Mehta accepted access</span>
-                    <span class="activity-time">12 Sep 2025, 10:24 AM</span>
-                  </div>
-                </div>
-                <div class="activity-timeline-item">
-                  <span class="activity-dot amber"></span>
-                  <div class="activity-info">
-                    <span class="activity-title">Amit Kumar pending acceptance</span>
-                    <span class="activity-time">05 Sep 2025, 02:16 PM</span>
-                  </div>
-                </div>
-                <div class="activity-timeline-item">
-                  <span class="activity-dot red"></span>
-                  <div class="activity-info">
-                    <span class="activity-title">Vikram Shah access revoked</span>
-                    <span class="activity-time">28 Aug 2025, 11:05 AM</span>
-                  </div>
-                </div>
-                <div class="activity-timeline-item">
-                  <span class="activity-dot green"></span>
-                  <div class="activity-info">
-                    <span class="activity-title">Anita Desai shared new vault</span>
-                    <span class="activity-time">15 Aug 2025, 08:40 AM</span>
-                  </div>
+              <div class="shares-activity-list" id="sharesActivityList">
+                <div style="padding: 1.5rem 0.5rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+                  No recent share activity recorded.
                 </div>
               </div>
             </article>
@@ -705,27 +680,14 @@
           <div style="margin-bottom: 1.15rem;">
             <label for="shareTargetVault" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Select Vault</label>
             <select id="shareTargetVault" required style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
-              <option value="Personal Vault">Personal Vault</option>
-              <option value="Family Vault">Family Vault</option>
-              <option value="Business Vault">Business Vault</option>
-              <option value="Health Vault">Health Vault</option>
-              <option value="Travel Vault">Travel Vault</option>
-              <option value="Property Vault">Property Vault</option>
-              <option value="Legal Vault">Legal Vault</option>
-              <option value="Memories Vault">Memories Vault</option>
+              <option value="">Select a vault...</option>
             </select>
           </div>
 
           <div style="margin-bottom: 1.15rem;">
             <label for="shareTargetTrustee" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Select Trustee</label>
             <select id="shareTargetTrustee" required style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
-              <option value="Sneha Mehta">Sneha Mehta (sneha.mehta@email.com)</option>
-              <option value="Amit Kumar">Amit Kumar (amit.kumar@email.com)</option>
-              <option value="Rahul Kapoor">Rahul Kapoor (rahul.kapoor@email.com)</option>
-              <option value="Priya Sharma">Priya Sharma (priya.sharma@email.com)</option>
-              <option value="Anita Desai">Anita Desai (anita.desai@email.com)</option>
-              <option value="Neeraj Singh">Neeraj Singh (neeraj.singh@email.com)</option>
-              <option value="Karan Malhotra">Karan Malhotra (karan.malhotra@email.com)</option>
+              <option value="">Select a trustee...</option>
             </select>
           </div>
 

@@ -235,6 +235,37 @@
     if (statActive) statActive.textContent = active;
     if (statPending) statPending.textContent = pending;
     if (statRevoked) statRevoked.textContent = revoked;
+
+    const activityContainer = document.getElementById('sharesActivityList');
+    if (activityContainer) {
+      if (shares.length === 0) {
+        activityContainer.innerHTML = `
+          <div style="padding: 1.5rem 0.5rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+            No recent share activity recorded.
+          </div>`;
+      } else {
+        const sorted = [...shares].slice(0, 5);
+        activityContainer.innerHTML = sorted.map(s => {
+          let dotClass = 'green';
+          let actionText = `${s.trusteeName} active share`;
+          if (s.status === 'pending') {
+            dotClass = 'amber';
+            actionText = `${s.trusteeName} pending acceptance`;
+          } else if (s.status === 'revoked') {
+            dotClass = 'red';
+            actionText = `${s.trusteeName} access revoked`;
+          }
+          return `
+            <div class="activity-timeline-item">
+              <span class="activity-dot ${dotClass}"></span>
+              <div class="activity-info">
+                <span class="activity-title">${actionText}</span>
+                <span class="activity-time">${s.sharedDate}, ${s.sharedTime}</span>
+              </div>
+            </div>`;
+        }).join('');
+      }
+    }
   }
 
   // =========================================================================
@@ -280,9 +311,9 @@
           <label style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Expiration Policy</label>
           <select id="editExpirySelect" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
             <option value="Never" ${item.expiresOn === 'Never' ? 'selected' : ''}>Never (Permanent)</option>
-            <option value="20 Oct 2025" ${item.expiresOn === '20 Oct 2025' ? 'selected' : ''}>20 Oct 2025</option>
-            <option value="30 Dec 2025" ${item.expiresOn === '30 Dec 2025' ? 'selected' : ''}>30 Dec 2025</option>
-            <option value="30 Days Extension">Extend by 30 Days</option>
+            <option value="30 Days">30 Days</option>
+            <option value="90 Days">90 Days</option>
+            <option value="1 Year">1 Year</option>
           </select>
         </div>
 
@@ -605,7 +636,7 @@
         
         const trusteeText = trusteeSelect ? trusteeSelect.options[trusteeSelect.selectedIndex].text : '';
         const trusteeOpt = trusteeSelect ? trusteeSelect.options[trusteeSelect.selectedIndex] : null;
-        const trusteeName = trusteeOpt && trusteeOpt.dataset.name ? trusteeOpt.dataset.name : (trusteeSelect ? trusteeSelect.value : 'Sneha Mehta');
+        const trusteeName = trusteeOpt && trusteeOpt.dataset.name ? trusteeOpt.dataset.name : (trusteeSelect ? trusteeSelect.value : 'Designated Trustee');
         
         const access = accessSelect ? accessSelect.value : 'View & Download';
         const expiry = expirySelect ? expirySelect.value : 'Never';

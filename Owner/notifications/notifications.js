@@ -113,6 +113,34 @@ document.addEventListener('DOMContentLoaded', () => {
       headerNotifBadge.textContent = unreadCount;
       headerNotifBadge.style.display = unreadCount > 0 ? 'inline-block' : 'none';
     }
+
+    const recentActivityEl = document.getElementById('notifRecentActivity');
+    if (recentActivityEl) {
+      if (notifications.length === 0) {
+        recentActivityEl.innerHTML = `
+          <div style="padding: 1.5rem 0.5rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+            No recent notification activity.
+          </div>`;
+      } else {
+        const sorted = [...notifications].slice(0, 5);
+        recentActivityEl.innerHTML = sorted.map(item => {
+          let dotColor = 'dot-teal';
+          if (item.type === 'trustee') dotColor = 'dot-purple';
+          else if (item.type === 'release') dotColor = 'dot-orange';
+          else if (item.type === 'security') dotColor = 'dot-red';
+
+          return `
+            <div class="activity-item">
+              <div class="timeline-dot ${dotColor}"></div>
+              <div class="timeline-line"></div>
+              <div class="activity-body">
+                <span class="activity-title">${item.title}</span>
+                <span class="activity-time">${item.date}, ${item.time}</span>
+              </div>
+            </div>`;
+        }).join('');
+      }
+    }
   }
 
   // --------------------------------------------------------------------------

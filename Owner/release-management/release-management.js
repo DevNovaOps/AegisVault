@@ -271,6 +271,15 @@
     const donutCenterNum = document.querySelector('.donut-center-num');
     if (donutCenterNum) donutCenterNum.textContent = total;
 
+    const legSched = document.getElementById('legSched');
+    const legProg = document.getElementById('legProg');
+    const legComp = document.getElementById('legComp');
+    const legCanc = document.getElementById('legCanc');
+    if (legSched) legSched.textContent = `${scheduled} Scheduled`;
+    if (legProg) legProg.textContent = `${inProgress} In Progress`;
+    if (legComp) legComp.textContent = `${completed} Completed`;
+    if (legCanc) legCanc.textContent = `${cancelled} Cancelled`;
+
     const segSched = document.querySelector('.donut-seg.scheduled');
     const segProg = document.querySelector('.donut-seg.in-progress');
     const segComp = document.querySelector('.donut-seg.completed');
@@ -295,6 +304,33 @@
       const offCanc = offComp + lenComp;
       segCanc.setAttribute('stroke-dasharray', `${lenCanc.toFixed(1)} ${circumference.toFixed(1)}`);
       segCanc.setAttribute('stroke-dashoffset', `-${offCanc.toFixed(1)}`);
+    } else if (segSched && segProg && segComp && segCanc) {
+      segSched.setAttribute('stroke-dasharray', `0 ${circumference.toFixed(1)}`);
+      segProg.setAttribute('stroke-dasharray', `0 ${circumference.toFixed(1)}`);
+      segComp.setAttribute('stroke-dasharray', `0 ${circumference.toFixed(1)}`);
+      segCanc.setAttribute('stroke-dasharray', `0 ${circumference.toFixed(1)}`);
+    }
+
+    // Recent releases activity timeline
+    const actList = document.getElementById('releasesActivityList');
+    if (actList) {
+      if (releases.length === 0) {
+        actList.innerHTML = `
+          <div style="padding: 1.5rem 0.5rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+            No release executions recorded.
+          </div>
+        `;
+      } else {
+        actList.innerHTML = releases.slice(0, 5).map(r => `
+          <div class="activity-timeline-item">
+            <span class="activity-dot ${r.status === 'scheduled' ? 'blue' : r.status === 'in progress' ? 'amber' : r.status === 'completed' ? 'green' : 'red'}"></span>
+            <div class="activity-info">
+              <span class="activity-title">${r.vault} ${r.status}</span>
+              <span class="activity-time">${r.scheduledDate} ${r.scheduledTime}</span>
+            </div>
+          </div>
+        `).join('');
+      }
     }
   }
 
@@ -631,16 +667,16 @@
         const noteInput = document.getElementById('releaseNote');
 
         const title = titleInput ? titleInput.value.trim() : 'Digital Legacy Release';
-        const vault = vaultSelect ? vaultSelect.value : 'Personal Vault';
-        const recipient = recipientSelect ? recipientSelect.value : 'Sneha Mehta';
+        const vault = vaultSelect ? vaultSelect.value : 'Designated Vault';
+        const recipient = recipientSelect ? recipientSelect.value : 'Designated Trustee';
         const trigger = triggerSelect ? triggerSelect.value : 'Upon Inactivity (12 months)';
-        const sched = schedInput ? schedInput.value.trim() : '15 Sep 2025 10:00 AM';
+        const sched = schedInput ? schedInput.value.trim() : new Date().toLocaleDateString();
         const note = noteInput ? noteInput.value.trim() : '';
 
         const newId = 'rel-' + Date.now();
         const schedParts = sched.split(' ');
-        const sDate = schedParts.slice(0, 3).join(' ') || '15 Sep 2025';
-        const sTime = schedParts.slice(3).join(' ') || '10:00 AM';
+        const sDate = schedParts.slice(0, 3).join(' ') || new Date().toLocaleDateString();
+        const sTime = schedParts.slice(3).join(' ') || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
         const vaultName = vaultSelect && vaultSelect.options ? vaultSelect.options[vaultSelect.selectedIndex]?.text : vault;
         const triggerType = trigger.split('(')[0].trim();
@@ -780,18 +816,27 @@
     initEvents();
     if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
       window.AegisAPI.get('/owner/vaults/').then(vs => {
-        const sel = document.getElementById('newReleaseVault');
-        if (sel && Array.isArray(vs)) sel.innerHTML = vs.map(v => `<option value="${v.id}">${v.name}</option>`).join('');
+        const vaultsList = Array.isArray(vs) ? vs : (vs.results || []);
+        const protStatus = document.getElementById('heartbeatProtocolStatus');
+        if (protStatus) {
+          protStatus.textContent = vaultsList.length > 0 ? `All ${vaultsList.length} Vaults Sealed` : 'No Vaults Sealed';
+        }
+        const sel = document.getElementById('releaseVaultSelect') || document.getElementById('newReleaseVault');
+        if (sel && vaultsList.length > 0) sel.innerHTML = vaultsList.map(v => `<option value="${v.name}">${v.name}</option>`).join('');
         const filterSel = document.getElementById('vaultFilterSelect');
-        if (filterSel && Array.isArray(vs) && vs.length > 0) {
-          filterSel.innerHTML = '<option value="all">All Vaults</option>' + vs.map(v => `<option value="${v.name}">${v.name}</option>`).join('');
+        if (filterSel && vaultsList.length > 0) {
+          filterSel.innerHTML = '<option value="all">All Vaults</option>' + vaultsList.map(v => `<option value="${v.name}">${v.name}</option>`).join('');
         }
       }).catch(e=>{});
 
       window.AegisAPI.get('/owner/trustees/').then(ts => {
-        const sel = document.getElementById('newReleaseRecipient');
-        if (sel && Array.isArray(ts) && ts.length > 0) {
-          sel.innerHTML = ts.map(t => `<option value="${t.email}">${t.name} (${t.email})</option>`).join('');
+        const trusteesList = Array.isArray(ts) ? ts : (ts.results || []);
+        const recipOptions = trusteesList.map(t => `<option value="${t.name}">${t.name} (${t.email})</option>`).join('');
+        const selRecip = document.getElementById('releaseRecipientSelect') || document.getElementById('newReleaseRecipient');
+        if (selRecip && trusteesList.length > 0) selRecip.innerHTML = recipOptions;
+        const filterRecip = document.getElementById('recipientFilterSelect');
+        if (filterRecip && trusteesList.length > 0) {
+          filterRecip.innerHTML = '<option value="all">All Recipients</option>' + trusteesList.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
         }
       }).catch(e=>{});
 

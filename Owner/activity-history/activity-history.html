@@ -97,7 +97,7 @@
             </svg>
           </span>
           <span class="nav-label">Invitations</span>
-          <span class="nav-badge">2</span>
+          <span class="nav-badge" id="sidebarInviteBadge" style="display: none;">0</span>
         </a>
 
         <!-- 5. Share Management -->
@@ -134,7 +134,7 @@
             </svg>
           </span>
           <span class="nav-label">Notifications</span>
-          <span class="nav-badge">3</span>
+          <span class="nav-badge" id="sidebarNotifBadge" style="display: none;">0</span>
         </a>
 
         <!-- 8. Activity & History (Active) -->
@@ -240,8 +240,8 @@
           <!-- Profile Menu Chip -->
           <div class="profile-menu-wrapper">
             <button class="profile-chip" id="profileBtn" aria-label="Owner Profile Menu">
-              <div class="profile-avatar-circle">RP</div>
-              <span class="profile-name">Rakesh Patel</span>
+              <div class="profile-avatar-circle">DY</div>
+              <span class="profile-name">Dev Yagnik</span>
               <svg class="profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <polyline points="6 9 12 15 18 9"/>
               </svg>
@@ -303,7 +303,7 @@
               </svg>
             </div>
             <div class="metric-content">
-              <span class="metric-value" id="kpiTotalActivities">142</span>
+              <span class="metric-value" id="kpiTotalActivities">0</span>
               <span class="metric-label">Total Activities</span>
               <span class="metric-sub">All time</span>
             </div>
@@ -319,7 +319,7 @@
               </svg>
             </div>
             <div class="metric-content">
-              <span class="metric-value" id="kpiVaultActivities">37</span>
+              <span class="metric-value" id="kpiVaultActivities">0</span>
               <span class="metric-label">Vault Activities</span>
               <span class="metric-sub">Created, updated, deleted</span>
             </div>
@@ -336,7 +336,7 @@
               </svg>
             </div>
             <div class="metric-content">
-              <span class="metric-value" id="kpiTrusteeActivities">26</span>
+              <span class="metric-value" id="kpiTrusteeActivities">0</span>
               <span class="metric-label">Trustee Activities</span>
               <span class="metric-sub">Added, removed, updated</span>
             </div>
@@ -351,7 +351,7 @@
               </svg>
             </div>
             <div class="metric-content">
-              <span class="metric-value" id="kpiInvitationActivities">18</span>
+              <span class="metric-value" id="kpiInvitationActivities">0</span>
               <span class="metric-label">Invitation Activities</span>
               <span class="metric-sub">Sent, accepted, declined</span>
             </div>
@@ -366,7 +366,7 @@
               </svg>
             </div>
             <div class="metric-content">
-              <span class="metric-value" id="kpiReleaseActivities">61</span>
+              <span class="metric-value" id="kpiReleaseActivities">0</span>
               <span class="metric-label">Release Activities</span>
               <span class="metric-sub">Scheduled, executed</span>
             </div>
@@ -434,18 +434,10 @@
 
                   <select id="filterVault" class="filter-select">
                     <option value="all">All Vaults</option>
-                    <option value="Family Memories">Family Memories</option>
-                    <option value="Business Documents">Business Documents</option>
-                    <option value="Medical Records">Medical Records</option>
-                    <option value="Travel Itinerary">Travel Itinerary</option>
-                    <option value="General">- None / System -</option>
                   </select>
 
                   <select id="filterUser" class="filter-select">
                     <option value="all">All Users</option>
-                    <option value="Rakesh Patel">Rakesh Patel</option>
-                    <option value="Sneha Mehta">Sneha Mehta</option>
-                    <option value="Priya Sharma">Priya Sharma</option>
                   </select>
 
                   <select id="filterDate" class="filter-select">
@@ -490,592 +482,7 @@
                     </tr>
                   </thead>
                   <tbody id="activityTableBody">
-                    <!-- Row 1: Vault Created -->
-                    <tr class="activity-row" data-id="1" data-action="vault_created" data-vault="Family Memories" data-user="Sneha Mehta" data-status="success">
-                      <td>
-                        <div class="datetime-cell">
-                          <span class="primary-date">15 Sep 2025</span>
-                          <span class="sub-time">10:24 AM</span>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="action-cell">
-                          <div class="act-icon-box act-green">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                            </svg>
-                          </div>
-                          <span class="action-name">Vault Created</span>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="details-text">Family Memories vault created</span>
-                      </td>
-                      <td>
-                        <div class="vault-tag vault-blue">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                            <polyline points="9 22 9 12 15 12 15 22"/>
-                          </svg>
-                          <span>Family Memories</span>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="user-cell">
-                          <img src="../assets/images/trustee-avatar-2.png" alt="Sneha Mehta" class="user-avatar-img">
-                          <div class="user-meta">
-                            <span class="user-name">Sneha Mehta</span>
-                            <span class="user-email">sneha.mehta@email.com</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="ip-address">203.0.113.25</span>
-                      </td>
-                      <td>
-                        <span class="status-pill status-success">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                            <polyline points="20 6 9 17 4 12"/>
-                          </svg>
-                          <span>Success</span>
-                        </span>
-                      </td>
-                      <td style="text-align: right;">
-                        <button class="btn-row-more" aria-label="Row options" data-id="1">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
-                          </svg>
-                        </button>
-                      </td>
-                    </tr>
-
-                    <!-- Row 2: Trustee Added -->
-                    <tr class="activity-row" data-id="2" data-action="trustee_added" data-vault="Business Documents" data-user="Rakesh Patel" data-status="success">
-                      <td>
-                        <div class="datetime-cell">
-                          <span class="primary-date">14 Sep 2025</span>
-                          <span class="sub-time">04:12 PM</span>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="action-cell">
-                          <div class="act-icon-box act-purple">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                              <circle cx="9" cy="7" r="4"/>
-                              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                            </svg>
-                          </div>
-                          <span class="action-name">Trustee Added</span>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="details-text">Amit Kumar added as trustee</span>
-                      </td>
-                      <td>
-                        <div class="vault-tag vault-blue">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-                          </svg>
-                          <span>Business Documents</span>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="user-cell">
-                          <img src="../assets/images/trustee-avatar-8.png" alt="Rakesh Patel" class="user-avatar-img">
-                          <div class="user-meta">
-                            <span class="user-name">Rakesh Patel</span>
-                            <span class="user-email">rakesh.patel@email.com</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="ip-address">203.0.113.42</span>
-                      </td>
-                      <td>
-                        <span class="status-pill status-success">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                            <polyline points="20 6 9 17 4 12"/>
-                          </svg>
-                          <span>Success</span>
-                        </span>
-                      </td>
-                      <td style="text-align: right;">
-                        <button class="btn-row-more" aria-label="Row options" data-id="2">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
-                          </svg>
-                        </button>
-                      </td>
-                    </tr>
-
-                    <!-- Row 3: Invitation Sent -->
-                    <tr class="activity-row" data-id="3" data-action="invitation_sent" data-vault="Medical Records" data-user="Rakesh Patel" data-status="success">
-                      <td>
-                        <div class="datetime-cell">
-                          <span class="primary-date">12 Sep 2025</span>
-                          <span class="sub-time">11:05 AM</span>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="action-cell">
-                          <div class="act-icon-box act-blue">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                              <polyline points="22,6 12,13 2,6"/>
-                            </svg>
-                          </div>
-                          <span class="action-name">Invitation Sent</span>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="details-text">Invitation sent to Priya Sharma</span>
-                      </td>
-                      <td>
-                        <div class="vault-tag vault-green">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                          </svg>
-                          <span>Medical Records</span>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="user-cell">
-                          <img src="../assets/images/trustee-avatar-8.png" alt="Rakesh Patel" class="user-avatar-img">
-                          <div class="user-meta">
-                            <span class="user-name">Rakesh Patel</span>
-                            <span class="user-email">rakesh.patel@email.com</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="ip-address">203.0.113.42</span>
-                      </td>
-                      <td>
-                        <span class="status-pill status-success">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                            <polyline points="20 6 9 17 4 12"/>
-                          </svg>
-                          <span>Success</span>
-                        </span>
-                      </td>
-                      <td style="text-align: right;">
-                        <button class="btn-row-more" aria-label="Row options" data-id="3">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
-                          </svg>
-                        </button>
-                      </td>
-                    </tr>
-
-                    <!-- Row 4: Invitation Accepted -->
-                    <tr class="activity-row" data-id="4" data-action="invitation_accepted" data-vault="Medical Records" data-user="Priya Sharma" data-status="success">
-                      <td>
-                        <div class="datetime-cell">
-                          <span class="primary-date">05 Sep 2025</span>
-                          <span class="sub-time">02:16 PM</span>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="action-cell">
-                          <div class="act-icon-box act-purple">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                              <polyline points="22,6 12,13 2,6"/>
-                            </svg>
-                          </div>
-                          <span class="action-name">Invitation Accepted</span>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="details-text">Priya Sharma accepted invitation</span>
-                      </td>
-                      <td>
-                        <div class="vault-tag vault-green">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                          </svg>
-                          <span>Medical Records</span>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="user-cell">
-                          <img src="../assets/images/trustee-avatar-4.png" alt="Priya Sharma" class="user-avatar-img">
-                          <div class="user-meta">
-                            <span class="user-name">Priya Sharma</span>
-                            <span class="user-email">priya.sharma@email.com</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="ip-address">198.51.100.18</span>
-                      </td>
-                      <td>
-                        <span class="status-pill status-success">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                            <polyline points="20 6 9 17 4 12"/>
-                          </svg>
-                          <span>Success</span>
-                        </span>
-                      </td>
-                      <td style="text-align: right;">
-                        <button class="btn-row-more" aria-label="Row options" data-id="4">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
-                          </svg>
-                        </button>
-                      </td>
-                    </tr>
-
-                    <!-- Row 5: Release Scheduled -->
-                    <tr class="activity-row" data-id="5" data-action="release_scheduled" data-vault="Medical Records" data-user="Rakesh Patel" data-status="success">
-                      <td>
-                        <div class="datetime-cell">
-                          <span class="primary-date">01 Sep 2025</span>
-                          <span class="sub-time">04:38 PM</span>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="action-cell">
-                          <div class="act-icon-box act-orange">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                              <circle cx="12" cy="12" r="10"/>
-                              <polyline points="12 6 12 12 16 14"/>
-                            </svg>
-                          </div>
-                          <span class="action-name">Release Scheduled</span>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="details-text">Release scheduled for Medical Records</span>
-                      </td>
-                      <td>
-                        <div class="vault-tag vault-green">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                          </svg>
-                          <span>Medical Records</span>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="user-cell">
-                          <img src="../assets/images/trustee-avatar-8.png" alt="Rakesh Patel" class="user-avatar-img">
-                          <div class="user-meta">
-                            <span class="user-name">Rakesh Patel</span>
-                            <span class="user-email">rakesh.patel@email.com</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="ip-address">203.0.113.42</span>
-                      </td>
-                      <td>
-                        <span class="status-pill status-success">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                            <polyline points="20 6 9 17 4 12"/>
-                          </svg>
-                          <span>Success</span>
-                        </span>
-                      </td>
-                      <td style="text-align: right;">
-                        <button class="btn-row-more" aria-label="Row options" data-id="5">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
-                          </svg>
-                        </button>
-                      </td>
-                    </tr>
-
-                    <!-- Row 6: Login Failed -->
-                    <tr class="activity-row" data-id="6" data-action="login_failed" data-vault="General" data-user="Rakesh Patel" data-status="failed">
-                      <td>
-                        <div class="datetime-cell">
-                          <span class="primary-date">28 Aug 2025</span>
-                          <span class="sub-time">11:05 AM</span>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="action-cell">
-                          <div class="act-icon-box act-red">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                            </svg>
-                          </div>
-                          <span class="action-name">Login Failed</span>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="details-text">Invalid password attempt</span>
-                      </td>
-                      <td>
-                        <span class="empty-dash">&mdash;</span>
-                      </td>
-                      <td>
-                        <div class="user-cell">
-                          <img src="../assets/images/trustee-avatar-8.png" alt="Rakesh Patel" class="user-avatar-img">
-                          <div class="user-meta">
-                            <span class="user-name">Rakesh Patel</span>
-                            <span class="user-email">rakesh.patel@email.com</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="ip-address">203.0.113.88</span>
-                      </td>
-                      <td>
-                        <span class="status-pill status-danger">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                          </svg>
-                          <span>Failed</span>
-                        </span>
-                      </td>
-                      <td style="text-align: right;">
-                        <button class="btn-row-more" aria-label="Row options" data-id="6">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
-                          </svg>
-                        </button>
-                      </td>
-                    </tr>
-
-                    <!-- Row 7: Vault Updated -->
-                    <tr class="activity-row" data-id="7" data-action="vault_updated" data-vault="Business Documents" data-user="Rakesh Patel" data-status="success">
-                      <td>
-                        <div class="datetime-cell">
-                          <span class="primary-date">22 Aug 2025</span>
-                          <span class="sub-time">03:21 PM</span>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="action-cell">
-                          <div class="act-icon-box act-blue">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                              <path d="M12 20h9"/>
-                              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-                            </svg>
-                          </div>
-                          <span class="action-name">Vault Updated</span>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="details-text">Updated description</span>
-                      </td>
-                      <td>
-                        <div class="vault-tag vault-blue">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-                          </svg>
-                          <span>Business Documents</span>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="user-cell">
-                          <img src="../assets/images/trustee-avatar-8.png" alt="Rakesh Patel" class="user-avatar-img">
-                          <div class="user-meta">
-                            <span class="user-name">Rakesh Patel</span>
-                            <span class="user-email">rakesh.patel@email.com</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="ip-address">203.0.113.42</span>
-                      </td>
-                      <td>
-                        <span class="status-pill status-success">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                            <polyline points="20 6 9 17 4 12"/>
-                          </svg>
-                          <span>Success</span>
-                        </span>
-                      </td>
-                      <td style="text-align: right;">
-                        <button class="btn-row-more" aria-label="Row options" data-id="7">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
-                          </svg>
-                        </button>
-                      </td>
-                    </tr>
-
-                    <!-- Row 8: Release Cancelled -->
-                    <tr class="activity-row" data-id="8" data-action="release_cancelled" data-vault="Travel Itinerary" data-user="Rakesh Patel" data-status="success">
-                      <td>
-                        <div class="datetime-cell">
-                          <span class="primary-date">18 Aug 2025</span>
-                          <span class="sub-time">10:14 AM</span>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="action-cell">
-                          <div class="act-icon-box act-red">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                              <circle cx="12" cy="12" r="10"/>
-                              <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
-                            </svg>
-                          </div>
-                          <span class="action-name">Release Cancelled</span>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="details-text">Release cancelled for Travel Itinerary</span>
-                      </td>
-                      <td>
-                        <div class="vault-tag vault-blue">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="22" y1="2" x2="11" y2="13"/>
-                            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                          </svg>
-                          <span>Travel Itinerary</span>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="user-cell">
-                          <img src="../assets/images/trustee-avatar-8.png" alt="Rakesh Patel" class="user-avatar-img">
-                          <div class="user-meta">
-                            <span class="user-name">Rakesh Patel</span>
-                            <span class="user-email">rakesh.patel@email.com</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="ip-address">203.0.113.42</span>
-                      </td>
-                      <td>
-                        <span class="status-pill status-success">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                            <polyline points="20 6 9 17 4 12"/>
-                          </svg>
-                          <span>Success</span>
-                        </span>
-                      </td>
-                      <td style="text-align: right;">
-                        <button class="btn-row-more" aria-label="Row options" data-id="8">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
-                          </svg>
-                        </button>
-                      </td>
-                    </tr>
-
-                    <!-- Row 9: Document Added -->
-                    <tr class="activity-row" data-id="9" data-action="document_added" data-vault="Travel Itinerary" data-user="Sneha Mehta" data-status="success">
-                      <td>
-                        <div class="datetime-cell">
-                          <span class="primary-date">12 Aug 2025</span>
-                          <span class="sub-time">01:45 PM</span>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="action-cell">
-                          <div class="act-icon-box act-green">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                              <polyline points="14 2 14 8 20 8"/>
-                              <line x1="16" y1="13" x2="8" y2="13"/>
-                              <line x1="16" y1="17" x2="8" y2="17"/>
-                            </svg>
-                          </div>
-                          <span class="action-name">Document Added</span>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="details-text">Added &ldquo;Passport.pdf&rdquo;</span>
-                      </td>
-                      <td>
-                        <div class="vault-tag vault-blue">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                            <polyline points="9 22 9 12 15 12 15 22"/>
-                          </svg>
-                          <span>Travel Itinerary</span>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="user-cell">
-                          <img src="../assets/images/trustee-avatar-2.png" alt="Sneha Mehta" class="user-avatar-img">
-                          <div class="user-meta">
-                            <span class="user-name">Sneha Mehta</span>
-                            <span class="user-email">sneha.mehta@email.com</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="ip-address">198.51.100.67</span>
-                      </td>
-                      <td>
-                        <span class="status-pill status-success">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                            <polyline points="20 6 9 17 4 12"/>
-                          </svg>
-                          <span>Success</span>
-                        </span>
-                      </td>
-                      <td style="text-align: right;">
-                        <button class="btn-row-more" aria-label="Row options" data-id="9">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
-                          </svg>
-                        </button>
-                      </td>
-                    </tr>
-
-                    <!-- Row 10: Settings Updated -->
-                    <tr class="activity-row" data-id="10" data-action="settings_updated" data-vault="General" data-user="Rakesh Patel" data-status="success">
-                      <td>
-                        <div class="datetime-cell">
-                          <span class="primary-date">10 Aug 2025</span>
-                          <span class="sub-time">09:20 AM</span>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="action-cell">
-                          <div class="act-icon-box act-purple">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                              <circle cx="12" cy="12" r="3"/>
-                              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-                            </svg>
-                          </div>
-                          <span class="action-name">Settings Updated</span>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="details-text">Changed notification preferences</span>
-                      </td>
-                      <td>
-                        <span class="empty-dash">&mdash;</span>
-                      </td>
-                      <td>
-                        <div class="user-cell">
-                          <img src="../assets/images/trustee-avatar-8.png" alt="Rakesh Patel" class="user-avatar-img">
-                          <div class="user-meta">
-                            <span class="user-name">Rakesh Patel</span>
-                            <span class="user-email">rakesh.patel@email.com</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="ip-address">203.0.113.42</span>
-                      </td>
-                      <td>
-                        <span class="status-pill status-success">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                            <polyline points="20 6 9 17 4 12"/>
-                          </svg>
-                          <span>Success</span>
-                        </span>
-                      </td>
-                      <td style="text-align: right;">
-                        <button class="btn-row-more" aria-label="Row options" data-id="10">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
-                          </svg>
-                        </button>
-                      </td>
-                    </tr>
+                    <!-- Populated dynamically via activity-history.js -->
                   </tbody>
                 </table>
               </div>
@@ -1198,37 +605,37 @@
                 <label class="filter-checkbox-item">
                   <input type="checkbox" class="custom-checkbox side-filter-check" data-category="vault" checked>
                   <span class="filter-check-label">Vault Activities</span>
-                  <span class="filter-count-badge">37</span>
+                  <span class="filter-count-badge">0</span>
                 </label>
 
                 <label class="filter-checkbox-item">
                   <input type="checkbox" class="custom-checkbox side-filter-check" data-category="trustee" checked>
                   <span class="filter-check-label">Trustee Activities</span>
-                  <span class="filter-count-badge">26</span>
+                  <span class="filter-count-badge">0</span>
                 </label>
 
                 <label class="filter-checkbox-item">
                   <input type="checkbox" class="custom-checkbox side-filter-check" data-category="invitation" checked>
                   <span class="filter-check-label">Invitation Activities</span>
-                  <span class="filter-count-badge">18</span>
+                  <span class="filter-count-badge">0</span>
                 </label>
 
                 <label class="filter-checkbox-item">
                   <input type="checkbox" class="custom-checkbox side-filter-check" data-category="release" checked>
                   <span class="filter-check-label">Release Activities</span>
-                  <span class="filter-count-badge">61</span>
+                  <span class="filter-count-badge">0</span>
                 </label>
 
                 <label class="filter-checkbox-item">
                   <input type="checkbox" class="custom-checkbox side-filter-check" data-category="security">
                   <span class="filter-check-label">Security &amp; Login</span>
-                  <span class="filter-count-badge">22</span>
+                  <span class="filter-count-badge">0</span>
                 </label>
 
                 <label class="filter-checkbox-item">
                   <input type="checkbox" class="custom-checkbox side-filter-check" data-category="settings">
                   <span class="filter-check-label">Settings &amp; Profile</span>
-                  <span class="filter-count-badge">8</span>
+                  <span class="filter-count-badge">0</span>
                 </label>
               </div>
             </div>
@@ -1242,45 +649,8 @@
                 </svg>
                 <h3 class="side-card-title">Recent Activity</h3>
               </div>
-              <div class="activity-timeline">
-                <!-- Timeline item 1 -->
-                <div class="activity-item">
-                  <div class="timeline-dot dot-teal"></div>
-                  <div class="timeline-line"></div>
-                  <div class="activity-body">
-                    <span class="activity-title">Vault created</span>
-                    <span class="activity-time">15 Sep 2025, 10:24 AM</span>
-                  </div>
-                </div>
-
-                <!-- Timeline item 2 -->
-                <div class="activity-item">
-                  <div class="timeline-dot dot-purple"></div>
-                  <div class="timeline-line"></div>
-                  <div class="activity-body">
-                    <span class="activity-title">Invitation accepted</span>
-                    <span class="activity-time">05 Sep 2025, 02:16 PM</span>
-                  </div>
-                </div>
-
-                <!-- Timeline item 3 -->
-                <div class="activity-item">
-                  <div class="timeline-dot dot-orange"></div>
-                  <div class="timeline-line"></div>
-                  <div class="activity-body">
-                    <span class="activity-title">Release scheduled</span>
-                    <span class="activity-time">01 Sep 2025, 04:38 PM</span>
-                  </div>
-                </div>
-
-                <!-- Timeline item 4 -->
-                <div class="activity-item">
-                  <div class="timeline-dot dot-red"></div>
-                  <div class="activity-body">
-                    <span class="activity-title">Login failed</span>
-                    <span class="activity-time">28 Aug 2025, 11:05 AM</span>
-                  </div>
-                </div>
+              <div class="activity-timeline" id="recentActivityTimeline">
+                <div style="padding:1rem; text-align:center; color:var(--text-muted); font-size:0.85rem;">No recent activities logged.</div>
               </div>
             </div>
 
@@ -1385,22 +755,22 @@
       </div>
       <div class="modal-body">
         <div class="audit-summary-block">
-          <div class="audit-badge" id="modalAuditBadge">Vault Created</div>
-          <span class="audit-timestamp" id="modalTimestamp">15 Sep 2025, 10:24 AM</span>
+          <div class="audit-badge" id="modalAuditBadge">Activity Details</div>
+          <span class="audit-timestamp" id="modalTimestamp">-</span>
         </div>
-        <p class="audit-desc" id="modalAuditDesc">Family Memories vault created by Sneha Mehta.</p>
+        <p class="audit-desc" id="modalAuditDesc">-</p>
         <div class="detail-meta-grid">
           <div class="meta-item">
             <span class="meta-label">Performed By</span>
-            <span class="meta-val" id="modalUser">Sneha Mehta</span>
+            <span class="meta-val" id="modalUser">-</span>
           </div>
           <div class="meta-item">
             <span class="meta-label">IP Address</span>
-            <span class="meta-val" id="modalIp">203.0.113.25</span>
+            <span class="meta-val" id="modalIp">-</span>
           </div>
           <div class="meta-item">
             <span class="meta-label">Vault Impacted</span>
-            <span class="meta-val" id="modalVault">Family Memories</span>
+            <span class="meta-val" id="modalVault">-</span>
           </div>
           <div class="meta-item">
             <span class="meta-label">Execution Result</span>

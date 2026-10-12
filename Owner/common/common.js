@@ -271,9 +271,47 @@
       }
     }
 
-    // Run auth check and profile sync
+    function syncSidebarBadges() {
+      const invBadges = document.querySelectorAll('#sidebarInviteBadge');
+      const notifBadges = document.querySelectorAll('#sidebarNotifBadge');
+      invBadges.forEach(b => { b.style.display = 'none'; });
+      notifBadges.forEach(b => { b.style.display = 'none'; });
+
+      if (!window.AegisAPI || !window.AegisAPI.isAuthenticated()) return;
+
+      // 1. Pending invitations count
+      window.AegisAPI.get('/owner/invitations/').then(invs => {
+        if (!Array.isArray(invs)) return;
+        const pendingCount = invs.filter(i => (i.status || '').toLowerCase() === 'pending').length;
+        invBadges.forEach(b => {
+          if (pendingCount > 0) {
+            b.textContent = pendingCount;
+            b.style.display = '';
+          } else {
+            b.style.display = 'none';
+          }
+        });
+      }).catch(() => {});
+
+      // 2. Unread notifications count
+      window.AegisAPI.get('/owner/notifications/').then(notifs => {
+        if (!Array.isArray(notifs)) return;
+        const unreadCount = notifs.filter(n => !n.is_read && n.status !== 'read').length;
+        notifBadges.forEach(b => {
+          if (unreadCount > 0) {
+            b.textContent = unreadCount;
+            b.style.display = '';
+          } else {
+            b.style.display = 'none';
+          }
+        });
+      }).catch(() => {});
+    }
+
+    // Run auth check, profile sync and dynamic badge sync
     if (requireOwnerAuth()) {
       syncOwnerUserProfile();
+      syncSidebarBadges();
     }
 
     // Initialize Dead Man's Switch Heartbeat Controller

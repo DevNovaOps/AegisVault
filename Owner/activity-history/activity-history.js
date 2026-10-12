@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const rawList = Array.isArray(data) ? data : (data.results || []);
 
       const currentUser = window.AegisAPI.getUser() || {};
-      const defaultUserName = (currentUser.first_name ? `${currentUser.first_name} ${currentUser.last_name}`.trim() : '') || currentUser.email || 'Owner';
+      const defaultUserName = currentUser.name || currentUser.email || 'Owner';
       const defaultUserEmail = currentUser.email || 'owner@aegisvault.io';
 
       activities = rawList.map((item, idx) => {

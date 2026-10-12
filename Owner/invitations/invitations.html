@@ -97,7 +97,7 @@
             </svg>
           </span>
           <span class="nav-label">Invitations</span>
-          <span class="nav-badge">2</span>
+          <span class="nav-badge" id="sidebarInviteBadge" style="display: none;">0</span>
         </a>
 
         <!-- 5. Share Management -->
@@ -134,7 +134,7 @@
             </svg>
           </span>
           <span class="nav-label">Notifications</span>
-          <span class="nav-badge">3</span>
+          <span class="nav-badge" id="sidebarNotifBadge" style="display: none;">0</span>
         </a>
 
         <!-- 8. Activity & History -->
@@ -240,8 +240,8 @@
           <!-- Profile Menu Chip -->
           <div class="profile-menu-wrapper">
             <button class="profile-chip" id="profileBtn" aria-label="Owner Profile Menu">
-              <div class="profile-avatar-circle">RP</div>
-              <span class="profile-name">Rakesh Patel</span>
+              <div class="profile-avatar-circle">DY</div>
+              <span class="profile-name">Dev Yagnik</span>
               <svg class="profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <polyline points="6 9 12 15 18 9"/>
               </svg>
@@ -595,19 +595,19 @@
                 <div class="donut-legend">
                   <div class="legend-row">
                     <span class="legend-dot amber"></span>
-                    <span class="legend-label">5 Pending</span>
+                    <span class="legend-label" id="legInvPending">0 Pending</span>
                   </div>
                   <div class="legend-row">
                     <span class="legend-dot green"></span>
-                    <span class="legend-label">4 Accepted</span>
+                    <span class="legend-label" id="legInvAccepted">0 Accepted</span>
                   </div>
                   <div class="legend-row">
                     <span class="legend-dot red"></span>
-                    <span class="legend-label">2 Declined</span>
+                    <span class="legend-label" id="legInvDeclined">0 Declined</span>
                   </div>
                   <div class="legend-row">
                     <span class="legend-dot gray"></span>
-                    <span class="legend-label">1 Expired</span>
+                    <span class="legend-label" id="legInvExpired">0 Expired</span>
                   </div>
                 </div>
               </div>
@@ -625,27 +625,9 @@
                 </div>
               </div>
 
-              <div class="invite-activity-list">
-                <div class="activity-timeline-item">
-                  <span class="activity-dot amber"></span>
-                  <div class="activity-info">
-                    <span class="activity-title">Invitation sent to Amit Kumar</span>
-                    <span class="activity-time">12 Sep 2025, 10:24 AM</span>
-                  </div>
-                </div>
-                <div class="activity-timeline-item">
-                  <span class="activity-dot green"></span>
-                  <div class="activity-info">
-                    <span class="activity-title">Sneha Mehta accepted invitation</span>
-                    <span class="activity-time">05 Sep 2025, 02:16 PM</span>
-                  </div>
-                </div>
-                <div class="activity-timeline-item">
-                  <span class="activity-dot red"></span>
-                  <div class="activity-info">
-                    <span class="activity-title">Vikram Shah declined invitation</span>
-                    <span class="activity-time">28 Aug 2025, 11:05 AM</span>
-                  </div>
+              <div class="invite-activity-list" id="inviteActivityList">
+                <div style="padding: 1.5rem 0.5rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+                  No recent invitation activity recorded.
                 </div>
               </div>
             </article>

@@ -97,7 +97,7 @@
             </svg>
           </span>
           <span class="nav-label">Invitations</span>
-          <span class="nav-badge">2</span>
+          <span class="nav-badge" id="sidebarInviteBadge" style="display: none;">0</span>
         </a>
 
         <!-- 5. Share Management -->
@@ -134,7 +134,7 @@
             </svg>
           </span>
           <span class="nav-label">Notifications</span>
-          <span class="nav-badge">3</span>
+          <span class="nav-badge" id="sidebarNotifBadge" style="display: none;">0</span>
         </a>
 
         <!-- 8. Activity & History -->
@@ -240,8 +240,8 @@
           <!-- Profile Menu Chip -->
           <div class="profile-menu-wrapper">
             <button class="profile-chip" id="profileBtn" aria-label="Owner Profile Menu">
-              <div class="profile-avatar-circle">RP</div>
-              <span class="profile-name">Rakesh Patel</span>
+              <div class="profile-avatar-circle">DY</div>
+              <span class="profile-name">Dev Yagnik</span>
               <svg class="profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <polyline points="6 9 12 15 18 9"/>
               </svg>
@@ -376,10 +376,10 @@
               <div class="overview-body-grid">
                 <!-- User Avatar Block -->
                 <div class="overview-avatar-block">
-                  <div class="overview-avatar-circle">RP</div>
+                  <div class="overview-avatar-circle">DY</div>
                   <div class="overview-user-info">
-                    <h3 class="overview-name">Rakesh Patel</h3>
-                    <p class="overview-email">rakesh.patel@email.com</p>
+                    <h3 class="overview-name">Dev Yagnik</h3>
+                    <p class="overview-email">yagnikdev20@gmail.com</p>
                     <span class="active-account-badge">
                       <span class="dot-green"></span>
                       <span>Active Account</span>
@@ -400,7 +400,7 @@
                     </div>
                     <div class="meta-content">
                       <span class="meta-title">Member Since</span>
-                      <span class="meta-value">12 Aug 2025</span>
+                      <span class="meta-value">Active Member</span>
                     </div>
                   </div>
 
@@ -428,7 +428,7 @@
                     </div>
                     <div class="meta-content">
                       <span class="meta-title">Last Login</span>
-                      <span class="meta-value">15 Sep 2025, 10:24 AM</span>
+                      <span class="meta-value">Recent</span>
                     </div>
                   </div>
 
@@ -483,7 +483,7 @@
                       </svg>
                       <span class="item-label">Full Name</span>
                     </div>
-                    <span class="item-value">Rakesh Patel</span>
+                    <span class="item-value">Dev Yagnik</span>
                   </div>
 
                   <div class="profile-item-row">
@@ -493,7 +493,7 @@
                       </svg>
                       <span class="item-label">Email Address</span>
                     </div>
-                    <span class="item-value">rakesh.patel@email.com</span>
+                    <span class="item-value">yagnikdev20@gmail.com</span>
                   </div>
 
                   <div class="profile-item-row">
@@ -503,7 +503,7 @@
                       </svg>
                       <span class="item-label">Phone Number</span>
                     </div>
-                    <span class="item-value">+1 (415) 555-0123</span>
+                    <span class="item-value">Not specified</span>
                   </div>
 
                   <div class="profile-item-row">
@@ -513,7 +513,7 @@
                       </svg>
                       <span class="item-label">Location</span>
                     </div>
-                    <span class="item-value">San Francisco, CA, USA</span>
+                    <span class="item-value">Not specified</span>
                   </div>
 
                   <div class="profile-item-row">
@@ -636,7 +636,7 @@
                 </div>
 
                 <div class="devices-list">
-                  <!-- Device 1: Current -->
+                  <!-- Current Active Session -->
                   <div class="device-row">
                     <div class="device-icon-box">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -646,61 +646,19 @@
                     </div>
                     <div class="device-details">
                       <div class="device-name-row">
-                        <span class="device-name">Windows &bull; Chrome</span>
+                        <span class="device-name">Current Browser Session</span>
                         <span class="current-device-tag">
                           <span class="dot-green"></span>
-                          <span>Current Device</span>
+                          <span>Active Now</span>
                         </span>
                       </div>
-                      <span class="device-location">San Francisco, CA</span>
+                      <span class="device-location">Local Workstation</span>
                     </div>
                     <div class="device-time-col">
-                      <span class="device-date">15 Sep 2025</span>
-                      <span class="device-hour">10:24 AM</span>
+                      <span class="device-date">Live</span>
+                      <span class="device-hour">Encrypted</span>
                     </div>
-                    <button class="btn-device-more" aria-label="Device options">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-                    </button>
-                  </div>
-
-                  <!-- Device 2: iPhone -->
-                  <div class="device-row">
-                    <div class="device-icon-box">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
-                        <line x1="12" y1="18" x2="12.01" y2="18"/>
-                      </svg>
-                    </div>
-                    <div class="device-details">
-                      <span class="device-name">iPhone &bull; Safari</span>
-                      <span class="device-location">San Francisco, CA</span>
-                    </div>
-                    <div class="device-time-col">
-                      <span class="device-date">14 Sep 2025</span>
-                      <span class="device-hour">04:12 PM</span>
-                    </div>
-                    <button class="btn-device-more" aria-label="Device options">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-                    </button>
-                  </div>
-
-                  <!-- Device 3: Mac -->
-                  <div class="device-row">
-                    <div class="device-icon-box">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                        <line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
-                      </svg>
-                    </div>
-                    <div class="device-details">
-                      <span class="device-name">Mac &bull; Chrome</span>
-                      <span class="device-location">New York, NY</span>
-                    </div>
-                    <div class="device-time-col">
-                      <span class="device-date">12 Sep 2025</span>
-                      <span class="device-hour">09:18 AM</span>
-                    </div>
-                    <button class="btn-device-more" aria-label="Device options">
+                    <button class="btn-device-more" aria-label="Device options" onclick="window.AegisOwner.showToast('Current session is cryptographically validated.')">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
                     </button>
                   </div>
@@ -1054,19 +1012,19 @@
       <div class="modal-body">
         <div class="form-group">
           <label class="form-label">Full Name</label>
-          <input type="text" class="form-input" id="inputFullName" value="Rakesh Patel">
+          <input type="text" class="form-input" id="inputFullName" value="Dev Yagnik">
         </div>
         <div class="form-group">
           <label class="form-label">Email Address</label>
-          <input type="email" class="form-input" id="inputEmail" value="rakesh.patel@email.com">
+          <input type="email" class="form-input" id="inputEmail" value="yagnikdev20@gmail.com">
         </div>
         <div class="form-group">
           <label class="form-label">Phone Number</label>
-          <input type="tel" class="form-input" id="inputPhone" value="+1 (415) 555-0123">
+          <input type="tel" class="form-input" id="inputPhone" value="Not specified">
         </div>
         <div class="form-group">
           <label class="form-label">Location</label>
-          <input type="text" class="form-input" id="inputLocation" value="San Francisco, CA, USA">
+          <input type="text" class="form-input" id="inputLocation" value="Not specified">
         </div>
       </div>
       <div class="modal-footer">

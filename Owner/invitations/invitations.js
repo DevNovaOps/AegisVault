@@ -271,18 +271,51 @@
       const offsetExpired = offsetDeclined + lenDeclined;
       segExpired.setAttribute('stroke-dasharray', `${lenExpired.toFixed(1)} ${circumference.toFixed(1)}`);
       segExpired.setAttribute('stroke-dashoffset', `-${offsetExpired.toFixed(1)}`);
+    } else if (segPending && segAccepted && segDeclined && segExpired) {
+      segPending.setAttribute('stroke-dasharray', '0 289');
+      segAccepted.setAttribute('stroke-dasharray', '0 289');
+      segDeclined.setAttribute('stroke-dasharray', '0 289');
+      segExpired.setAttribute('stroke-dasharray', '0 289');
     }
 
     // Update legend values
-    const legendPending = document.querySelector('.donut-legend .legend-row:nth-child(1) .legend-label');
-    const legendAccepted = document.querySelector('.donut-legend .legend-row:nth-child(2) .legend-label');
-    const legendDeclined = document.querySelector('.donut-legend .legend-row:nth-child(3) .legend-label');
-    const legendExpired = document.querySelector('.donut-legend .legend-row:nth-child(4) .legend-label');
+    const legPending = document.getElementById('legInvPending');
+    const legAccepted = document.getElementById('legInvAccepted');
+    const legDeclined = document.getElementById('legInvDeclined');
+    const legExpired = document.getElementById('legInvExpired');
 
-    if (legendPending) legendPending.textContent = `${pending} Pending`;
-    if (legendAccepted) legendAccepted.textContent = `${accepted} Accepted`;
-    if (legendDeclined) legendDeclined.textContent = `${declined} Declined`;
-    if (legendExpired) legendExpired.textContent = `${expired} Expired`;
+    if (legPending) legPending.textContent = `${pending} Pending`;
+    if (legAccepted) legAccepted.textContent = `${accepted} Accepted`;
+    if (legDeclined) legDeclined.textContent = `${declined} Declined`;
+    if (legExpired) legExpired.textContent = `${expired} Expired`;
+
+    // Update dynamic Recent Activity sidebar
+    const activityContainer = document.getElementById('inviteActivityList');
+    if (activityContainer) {
+      if (invitations.length === 0) {
+        activityContainer.innerHTML = `
+          <div style="padding: 1.5rem 0.5rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+            No recent invitation activity recorded.
+          </div>`;
+      } else {
+        const sorted = [...invitations].slice(0, 5);
+        activityContainer.innerHTML = sorted.map(inv => {
+          let dotClass = 'amber';
+          let actionText = `Invitation sent to ${inv.name}`;
+          if (inv.status === 'accepted') { dotClass = 'green'; actionText = `${inv.name} accepted invitation`; }
+          else if (inv.status === 'declined') { dotClass = 'red'; actionText = `${inv.name} declined invitation`; }
+          else if (inv.status === 'expired') { dotClass = 'red'; actionText = `Invitation to ${inv.name} expired`; }
+          return `
+            <div class="activity-timeline-item">
+              <div class="activity-dot ${dotClass}"></div>
+              <div class="activity-info">
+                <span class="activity-title">${actionText}</span>
+                <span class="activity-time">${inv.sentDate} ${inv.sentTime || ''}</span>
+              </div>
+            </div>`;
+        }).join('');
+      }
+    }
   }
 
   // =========================================================================

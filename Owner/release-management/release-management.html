@@ -97,7 +97,7 @@
             </svg>
           </span>
           <span class="nav-label">Invitations</span>
-          <span class="nav-badge">2</span>
+          <span class="nav-badge" id="sidebarInviteBadge" style="display: none;">0</span>
         </a>
 
         <!-- 5. Share Management -->
@@ -134,7 +134,7 @@
             </svg>
           </span>
           <span class="nav-label">Notifications</span>
-          <span class="nav-badge">3</span>
+          <span class="nav-badge" id="sidebarNotifBadge" style="display: none;">0</span>
         </a>
 
         <!-- 8. Activity & History -->
@@ -240,8 +240,8 @@
           <!-- Profile Menu Chip -->
           <div class="profile-menu-wrapper">
             <button class="profile-chip" id="profileBtn" aria-label="Owner Profile Menu">
-              <div class="profile-avatar-circle">RP</div>
-              <span class="profile-name">Rakesh Patel</span>
+              <div class="profile-avatar-circle">DY</div>
+              <span class="profile-name">Dev Yagnik</span>
               <svg class="profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <polyline points="6 9 12 15 18 9"/>
               </svg>
@@ -315,7 +315,7 @@
                 <div class="meta-divider"></div>
                 <div class="meta-item">
                   <span class="meta-label">Protocol Status</span>
-                  <span class="meta-value text-green" id="heartbeatProtocolStatus">All 6 Vaults Sealed</span>
+                  <span class="meta-value text-green" id="heartbeatProtocolStatus">All Vaults Sealed</span>
                 </div>
                 <div class="meta-divider"></div>
                 <div class="meta-item">
@@ -383,7 +383,7 @@
               </svg>
             </div>
             <div class="metric-content">
-              <span class="metric-value" id="statTotalReleases">8</span>
+              <span class="metric-value" id="statTotalReleases">0</span>
               <span class="metric-label">Total Releases</span>
               <span class="metric-sub">All time</span>
             </div>
@@ -398,7 +398,7 @@
               </svg>
             </div>
             <div class="metric-content">
-              <span class="metric-value" id="statScheduledReleases">4</span>
+              <span class="metric-value" id="statScheduledReleases">0</span>
               <span class="metric-label">Scheduled</span>
               <span class="metric-sub">Pending execution</span>
             </div>
@@ -413,7 +413,7 @@
               </svg>
             </div>
             <div class="metric-content">
-              <span class="metric-value" id="statInProgressReleases">2</span>
+              <span class="metric-value" id="statInProgressReleases">0</span>
               <span class="metric-label">In Progress</span>
               <span class="metric-sub">Being processed</span>
             </div>
@@ -428,9 +428,9 @@
               </svg>
             </div>
             <div class="metric-content">
-              <span class="metric-value" id="statCompletedReleases">1</span>
+              <span class="metric-value" id="statCompletedReleases">0</span>
               <span class="metric-label">Completed</span>
-              <span class="metric-sub">Manually cancelled (1)</span>
+              <span class="metric-sub">Executed</span>
             </div>
           </div>
         </section>
@@ -482,26 +482,11 @@
                   <!-- Vault Filter -->
                   <select class="filter-select" id="vaultFilterSelect" aria-label="Filter by Vault">
                     <option value="all">All Vaults</option>
-                    <option value="Personal Vault">Personal Vault</option>
-                    <option value="Business Vault">Business Vault</option>
-                    <option value="Health Vault">Health Vault</option>
-                    <option value="Travel Vault">Travel Vault</option>
-                    <option value="Property Vault">Property Vault</option>
-                    <option value="Financial Vault">Financial Vault</option>
-                    <option value="Memories Vault">Memories Vault</option>
                   </select>
 
                   <!-- Recipient Filter -->
                   <select class="filter-select" id="recipientFilterSelect" aria-label="Filter by Recipient">
                     <option value="all">All Recipients</option>
-                    <option value="Sneha Mehta">Sneha Mehta</option>
-                    <option value="Amit Kumar">Amit Kumar</option>
-                    <option value="Priya Sharma">Priya Sharma</option>
-                    <option value="Vikram Shah">Vikram Shah</option>
-                    <option value="Anita Desai">Anita Desai</option>
-                    <option value="Neeraj Singh">Neeraj Singh</option>
-                    <option value="Karan Malhotra">Karan Malhotra</option>
-                    <option value="3 Recipients">3 Recipients</option>
                   </select>
 
                   <button class="btn-filter" id="btnMoreFilters">
@@ -665,17 +650,13 @@
                 <div class="donut-chart-wrap">
                   <svg viewBox="0 0 120 120" class="donut-svg" aria-label="Release Status Breakdown Chart">
                     <circle cx="60" cy="60" r="46" class="donut-bg-track"/>
-                    <!-- Blue: 4 Scheduled = 50% -> 144.5px -->
-                    <circle cx="60" cy="60" r="46" class="donut-seg scheduled" stroke-dasharray="144.5 289" stroke-dashoffset="0"/>
-                    <!-- Amber: 2 In Progress = 25% -> 72.3px -->
-                    <circle cx="60" cy="60" r="46" class="donut-seg in-progress" stroke-dasharray="72.3 289" stroke-dashoffset="-144.5"/>
-                    <!-- Green: 1 Completed = 12.5% -> 36.1px -->
-                    <circle cx="60" cy="60" r="46" class="donut-seg completed" stroke-dasharray="36.1 289" stroke-dashoffset="-216.8"/>
-                    <!-- Red: 1 Cancelled = 12.5% -> 36.1px -->
-                    <circle cx="60" cy="60" r="46" class="donut-seg cancelled" stroke-dasharray="36.1 289" stroke-dashoffset="-252.9"/>
+                    <circle cx="60" cy="60" r="46" class="donut-seg scheduled" stroke-dasharray="0 289" stroke-dashoffset="0"/>
+                    <circle cx="60" cy="60" r="46" class="donut-seg in-progress" stroke-dasharray="0 289" stroke-dashoffset="0"/>
+                    <circle cx="60" cy="60" r="46" class="donut-seg completed" stroke-dasharray="0 289" stroke-dashoffset="0"/>
+                    <circle cx="60" cy="60" r="46" class="donut-seg cancelled" stroke-dasharray="0 289" stroke-dashoffset="0"/>
                   </svg>
                   <div class="donut-center-content">
-                    <span class="donut-center-num">8</span>
+                    <span class="donut-center-num">0</span>
                     <span class="donut-center-label">Total</span>
                   </div>
                 </div>
@@ -683,19 +664,19 @@
                 <div class="donut-legend">
                   <div class="legend-row">
                     <span class="legend-dot blue"></span>
-                    <span class="legend-label">4 Scheduled</span>
+                    <span class="legend-label" id="legSched">0 Scheduled</span>
                   </div>
                   <div class="legend-row">
                     <span class="legend-dot amber"></span>
-                    <span class="legend-label">2 In Progress</span>
+                    <span class="legend-label" id="legProg">0 In Progress</span>
                   </div>
                   <div class="legend-row">
                     <span class="legend-dot green"></span>
-                    <span class="legend-label">1 Completed</span>
+                    <span class="legend-label" id="legComp">0 Completed</span>
                   </div>
                   <div class="legend-row">
                     <span class="legend-dot red"></span>
-                    <span class="legend-label">1 Cancelled</span>
+                    <span class="legend-label" id="legCanc">0 Cancelled</span>
                   </div>
                 </div>
               </div>
@@ -713,34 +694,9 @@
                 </div>
               </div>
 
-              <div class="releases-activity-list">
-                <div class="activity-timeline-item">
-                  <span class="activity-dot blue"></span>
-                  <div class="activity-info">
-                    <span class="activity-title">Family Memories scheduled</span>
-                    <span class="activity-time">15 Sep 2025, 10:00 AM</span>
-                  </div>
-                </div>
-                <div class="activity-timeline-item">
-                  <span class="activity-dot amber"></span>
-                  <div class="activity-info">
-                    <span class="activity-title">Medical Records in progress</span>
-                    <span class="activity-time">Started on 01 Sep 2025</span>
-                  </div>
-                </div>
-                <div class="activity-timeline-item">
-                  <span class="activity-dot green"></span>
-                  <div class="activity-info">
-                    <span class="activity-title">Personal Notes completed</span>
-                    <span class="activity-time">12 Aug 2025, 05:15 PM</span>
-                  </div>
-                </div>
-                <div class="activity-timeline-item">
-                  <span class="activity-dot red"></span>
-                  <div class="activity-info">
-                    <span class="activity-title">Tax Records cancelled</span>
-                    <span class="activity-time">31 Dec 2025, 09:00 AM</span>
-                  </div>
+              <div class="releases-activity-list" id="releasesActivityList">
+                <div style="padding: 1.5rem 0.5rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+                  No release executions recorded.
                 </div>
               </div>
             </article>
@@ -799,23 +755,13 @@
             <div>
               <label for="releaseVaultSelect" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Target Vault</label>
               <select id="releaseVaultSelect" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
-                <option value="Personal Vault">Personal Vault</option>
-                <option value="Business Vault">Business Vault</option>
-                <option value="Health Vault">Health Vault</option>
-                <option value="Travel Vault">Travel Vault</option>
-                <option value="Property Vault">Property Vault</option>
-                <option value="Financial Vault">Financial Vault</option>
-                <option value="Memories Vault">Memories Vault</option>
+                <option value="">Select a vault...</option>
               </select>
             </div>
             <div>
               <label for="releaseRecipientSelect" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Primary Recipient</label>
               <select id="releaseRecipientSelect" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
-                <option value="Sneha Mehta">Sneha Mehta</option>
-                <option value="Amit Kumar">Amit Kumar</option>
-                <option value="Priya Sharma">Priya Sharma</option>
-                <option value="Anita Desai">Anita Desai</option>
-                <option value="Karan Malhotra">Karan Malhotra</option>
+                <option value="">Select a recipient...</option>
               </select>
             </div>
           </div>
@@ -833,7 +779,7 @@
             </div>
             <div>
               <label for="releaseScheduledDate" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Execution Schedule</label>
-              <input type="text" id="releaseScheduledDate" value="15 Sep 2025 10:00 AM" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
+              <input type="text" id="releaseScheduledDate" placeholder="e.g. In 12 Months" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
             </div>
           </div>
 
