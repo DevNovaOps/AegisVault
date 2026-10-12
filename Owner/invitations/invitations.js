@@ -152,17 +152,35 @@
     });
 
     if (filtered.length === 0) {
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="7" style="text-align: center; padding: 2.5rem 1rem; color: var(--text-muted);">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width: 38px; height: 38px; margin: 0 auto 0.75rem; display: block; opacity: 0.6;">
-              <rect x="3" y="4" width="18" height="16" rx="2"/>
-              <path d="m22 7-10 7L2 7"/>
-            </svg>
-            <span style="font-size: 0.95rem; font-weight: 600; display: block; margin-bottom: 0.25rem; color: var(--text-primary);">No invitations match your filters</span>
-            <span style="font-size: 0.8rem;">Try clearing your search query or choosing another status.</span>
-          </td>
-        </tr>`;
+      if (invitations.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width: 44px; height: 44px; margin: 0 auto 0.75rem; display: block; opacity: 0.6;">
+                <rect x="3" y="4" width="18" height="16" rx="2"/>
+                <path d="m22 7-10 7L2 7"/>
+              </svg>
+              <span style="font-size: 1rem; font-weight: 600; display: block; margin-bottom: 0.25rem; color: var(--text-primary);">No Invitations Sent Yet</span>
+              <span style="font-size: 0.85rem; display: block; margin-bottom: 1rem;">Send cryptographic invitations to designate your trusted guardians and trustees.</span>
+              <button class="btn btn-primary" onclick="window.AegisInvitations.openSendModal()" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1.25rem; font-size: 0.85rem;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px; height:14px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Send Trustee Invitation
+              </button>
+            </td>
+          </tr>`;
+      } else {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 2.5rem 1rem; color: var(--text-muted);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width: 38px; height: 38px; margin: 0 auto 0.75rem; display: block; opacity: 0.6;">
+                <rect x="3" y="4" width="18" height="16" rx="2"/>
+                <path d="m22 7-10 7L2 7"/>
+              </svg>
+              <span style="font-size: 0.95rem; font-weight: 600; display: block; margin-bottom: 0.25rem; color: var(--text-primary);">No invitations match your filters</span>
+              <span style="font-size: 0.8rem;">Try clearing your search query or choosing another status.</span>
+            </td>
+          </tr>`;
+      }
       return;
     }
 
@@ -772,6 +790,7 @@
   // 8. Public API for In-Table Action Buttons
   // =========================================================================
   window.AegisInvitations = {
+    openSendModal: openSendModal,
     openResendModal: openResendModal,
     openRenewModal: openRenewModal,
     openDetailsModal: openDetailsModal,

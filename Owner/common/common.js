@@ -272,37 +272,51 @@
     }
 
     function syncSidebarBadges() {
-      const invBadges = document.querySelectorAll('#sidebarInviteBadge');
-      const notifBadges = document.querySelectorAll('#sidebarNotifBadge');
-      invBadges.forEach(b => { b.style.display = 'none'; });
-      notifBadges.forEach(b => { b.style.display = 'none'; });
+      // Find all badges across navigation items and explicitly hide them first
+      document.querySelectorAll('.nav-item').forEach(item => {
+        const text = item.textContent.trim().toLowerCase();
+        const badge = item.querySelector('.nav-badge');
+        if (!badge) return;
+
+        if (text.includes('invitations')) {
+          badge.id = 'sidebarInviteBadge';
+          badge.style.setProperty('display', 'none', 'important');
+        } else if (text.includes('notifications')) {
+          badge.id = 'sidebarNotifBadge';
+          badge.style.setProperty('display', 'none', 'important');
+        } else {
+          badge.style.setProperty('display', 'none', 'important');
+        }
+      });
 
       if (!window.AegisAPI || !window.AegisAPI.isAuthenticated()) return;
 
       // 1. Pending invitations count
       window.AegisAPI.get('/owner/invitations/').then(invs => {
-        if (!Array.isArray(invs)) return;
-        const pendingCount = invs.filter(i => (i.status || '').toLowerCase() === 'pending').length;
-        invBadges.forEach(b => {
+        const list = Array.isArray(invs) ? invs : (invs?.results || []);
+        const pendingCount = list.filter(i => (i.status || '').toLowerCase() === 'pending').length;
+        document.querySelectorAll('#sidebarInviteBadge').forEach(b => {
           if (pendingCount > 0) {
             b.textContent = pendingCount;
-            b.style.display = '';
+            b.style.removeProperty('display');
+            b.style.display = 'inline-flex';
           } else {
-            b.style.display = 'none';
+            b.style.setProperty('display', 'none', 'important');
           }
         });
       }).catch(() => {});
 
       // 2. Unread notifications count
       window.AegisAPI.get('/owner/notifications/').then(notifs => {
-        if (!Array.isArray(notifs)) return;
-        const unreadCount = notifs.filter(n => !n.is_read && n.status !== 'read').length;
-        notifBadges.forEach(b => {
+        const list = Array.isArray(notifs) ? notifs : (notifs?.results || []);
+        const unreadCount = list.filter(n => !n.is_read && (n.status || '').toLowerCase() !== 'read').length;
+        document.querySelectorAll('#sidebarNotifBadge').forEach(b => {
           if (unreadCount > 0) {
             b.textContent = unreadCount;
-            b.style.display = '';
+            b.style.removeProperty('display');
+            b.style.display = 'inline-flex';
           } else {
-            b.style.display = 'none';
+            b.style.setProperty('display', 'none', 'important');
           }
         });
       }).catch(() => {});
