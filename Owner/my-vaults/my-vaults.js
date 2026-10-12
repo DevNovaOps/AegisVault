@@ -1228,12 +1228,7 @@
              window.AegisOwner.showToast('Activation failed: ' + err.message, 'error');
           });
         } else {
-          // Fake mock fallback
-          window.AegisOwner.showToast('Vault Successfully Activated!', 'success');
-          window.AegisOwner.closeModal('createVaultModal');
-          setTimeout(() => {
-            window.location.href = `../vault-details/vault-details.html?id=mock-${Date.now()}`;
-          }, 800);
+          window.AegisOwner.showToast('Please sign in to activate this vault.', 'error');
         }
       });
     }

@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
           id: share.vault || 'vault-' + Math.random(),
           name: share.vault_name || 'Vault',
           owner: share.owner_name || 'Vault Owner',
-          email: share.owner_email || 'owner@example.com',
+          email: share.owner_email || 'Verified Owner',
           assignedOn: new Date(share.created_at || Date.now()).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
           verificationStatus: share.status === 'active' ? 'Verified' : 'Pending',
           verificationSub: '',

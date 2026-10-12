@@ -23,6 +23,8 @@ body {
   color: var(--text-primary);
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
+  width: 100%;
   overflow-x: hidden;
   transition: background-color var(--transition-normal), color var(--transition-normal);
 }
@@ -360,6 +362,8 @@ img, svg {
   display: flex;
   align-items: center;
   gap: 0.85rem;
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 /* Theme Toggle Sliding Pill Switch (Reference Style) */
@@ -558,6 +562,10 @@ img, svg {
   background-color: var(--bg-surface-hover);
   border: 1px solid var(--border-subtle);
   transition: all var(--transition-fast);
+  white-space: nowrap;
+  flex-shrink: 0;
+  height: 38px;
+  box-sizing: border-box;
 }
 
 .profile-chip:hover {
@@ -576,12 +584,17 @@ img, svg {
   align-items: center;
   justify-content: center;
   box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
 }
 
 .profile-name {
   font-size: 0.88rem;
   font-weight: 600;
   color: var(--text-primary);
+  white-space: nowrap;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .profile-chevron {
@@ -701,6 +714,9 @@ img, svg {
   color: var(--text-secondary);
   position: relative;
   padding-bottom: 0.35rem;
+  flex: 1 1 auto;
+  max-width: 600px;
+  min-width: 200px;
 }
 
 .footer-center-motto::after {

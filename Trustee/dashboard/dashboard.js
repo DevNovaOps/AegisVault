@@ -14,6 +14,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function fetchTrusteeDashboardData() {
+  const user = (window.AegisAPI && window.AegisAPI.getUser()) || {};
+  const firstName = user.first_name || (user.full_name ? user.full_name.split(' ')[0] : '') || user.username || 'Trustee';
+  const heroSubtext = document.querySelector('.hero-subtext');
+  if (heroSubtext) {
+    heroSubtext.textContent = `Welcome back, ${firstName}! You are a trusted person, helping protect what matters most.`;
+  }
+
   if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
     window.AegisAPI.get('/trustee/dashboard/').then(data => {
       const elAssigned = document.getElementById('kpiAssignedVaults');

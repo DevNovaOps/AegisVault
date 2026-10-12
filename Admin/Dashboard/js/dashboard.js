@@ -180,6 +180,41 @@ const AegisDashboard = {
             console.warn('Failed to load pending actions:', err);
             this.renderPendingActionsList();
         });
+
+        // 6. User Growth Chart
+        window.AegisAPI.get('/admin/analytics/user-growth/?period=' + this.userGrowthTimeframe).then(growth => {
+            if (growth && growth.labels && growth.labels.length > 0 && window.AegisMockData) {
+                const vals = growth.values || [];
+                const maxVal = Math.max(...vals, 10);
+                AegisMockData.userGrowth[this.userGrowthTimeframe] = {
+                    labels: growth.labels,
+                    values: vals,
+                    min: 0,
+                    max: Math.ceil(maxVal * 1.25),
+                    step: Math.ceil(maxVal / 4) || 1
+                };
+                this.renderUserGrowthChart();
+            }
+        }).catch(err => console.warn('Failed to load growth chart:', err));
+
+        // 7. Vault Activity Chart
+        window.AegisAPI.get('/admin/analytics/vault-activity/?period=' + this.vaultActivityTimeframe).then(act => {
+            if (act && act.labels && act.labels.length > 0 && window.AegisMockData) {
+                const created = act.created || [];
+                const accessed = act.accessed || [];
+                const released = act.released || [];
+                const maxVal = Math.max(...created, ...accessed, ...released, 5);
+                AegisMockData.vaultActivity[this.vaultActivityTimeframe] = {
+                    labels: act.labels,
+                    created: created,
+                    accessed: accessed,
+                    released: released,
+                    max: Math.ceil(maxVal * 1.3),
+                    step: Math.ceil(maxVal / 4) || 1
+                };
+                this.renderVaultActivityChart();
+            }
+        }).catch(err => console.warn('Failed to load vault activity chart:', err));
     },
 
     /* =========================================================================
@@ -567,8 +602,26 @@ const AegisDashboard = {
     bindChartFilterDropdowns() {
         const userGrowthSelect = document.getElementById('user-growth-timeframe');
         if (userGrowthSelect) {
-            userGrowthSelect.addEventListener('change', (e) => {
+            userGrowthSelect.addEventListener('change', async (e) => {
                 this.userGrowthTimeframe = e.target.value;
+                if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+                    try {
+                        const growth = await window.AegisAPI.get('/admin/analytics/user-growth/?period=' + this.userGrowthTimeframe);
+                        if (growth && growth.labels && growth.labels.length > 0 && window.AegisMockData) {
+                            const vals = growth.values || [];
+                            const maxVal = Math.max(...vals, 10);
+                            AegisMockData.userGrowth[this.userGrowthTimeframe] = {
+                                labels: growth.labels,
+                                values: vals,
+                                min: 0,
+                                max: Math.ceil(maxVal * 1.25),
+                                step: Math.ceil(maxVal / 4) || 1
+                            };
+                        }
+                    } catch (err) {
+                        console.warn('Live growth timeframe update error:', err);
+                    }
+                }
                 this.renderUserGrowthChart();
                 this.showToast(`User Growth filter set to ${e.target.options[e.target.selectedIndex].text}`, 'info');
             });
@@ -576,8 +629,29 @@ const AegisDashboard = {
 
         const vaultActSelect = document.getElementById('vault-activity-timeframe');
         if (vaultActSelect) {
-            vaultActSelect.addEventListener('change', (e) => {
+            vaultActSelect.addEventListener('change', async (e) => {
                 this.vaultActivityTimeframe = e.target.value;
+                if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+                    try {
+                        const act = await window.AegisAPI.get('/admin/analytics/vault-activity/?period=' + this.vaultActivityTimeframe);
+                        if (act && act.labels && act.labels.length > 0 && window.AegisMockData) {
+                            const created = act.created || [];
+                            const accessed = act.accessed || [];
+                            const released = act.released || [];
+                            const maxVal = Math.max(...created, ...accessed, ...released, 5);
+                            AegisMockData.vaultActivity[this.vaultActivityTimeframe] = {
+                                labels: act.labels,
+                                created: created,
+                                accessed: accessed,
+                                released: released,
+                                max: Math.ceil(maxVal * 1.3),
+                                step: Math.ceil(maxVal / 4) || 1
+                            };
+                        }
+                    } catch (err) {
+                        console.warn('Live vault activity timeframe update error:', err);
+                    }
+                }
                 this.renderVaultActivityChart();
                 this.showToast(`Vault Activity filter set to ${e.target.options[e.target.selectedIndex].text}`, 'info');
             });

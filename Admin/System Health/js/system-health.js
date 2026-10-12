@@ -34,7 +34,26 @@ const AegisSystemHealth = {
         this.renderSystemInfo();
         this.bindActionButtons();
 
-        // 4. Initialize Interactive Resource Charts
+        // 4. Fetch live system health from backend
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+            window.AegisAPI.get('/admin/system-health/services/').then(services => {
+                if (services && Array.isArray(services) && services.length > 0 && window.AegisHealthMockData) {
+                    window.AegisHealthMockData.services = services.map(s => ({
+                        id: s.id || s.name.toLowerCase().replace(/\s+/g, '-'),
+                        name: s.name,
+                        icon: s.name.toLowerCase().includes('database') ? 'database' : (s.name.toLowerCase().includes('crypto') ? 'key' : 'globe'),
+                        status: s.status === 'healthy' ? 'Operational' : (s.status === 'warning' ? 'Degraded' : 'Major Outage'),
+                        statusClass: s.status === 'healthy' ? 'badge-operational' : 'badge-degraded',
+                        uptime: (s.uptime_percent || 99.9) + '%',
+                        latency: (s.latency_ms || 2) + ' ms',
+                        lastIncident: 'None in past 30d'
+                    }));
+                    this.renderServicesTable();
+                }
+            }).catch(() => {});
+        }
+
+        // 5. Initialize Interactive Resource Charts
         this.initResourceCharts();
     },
 

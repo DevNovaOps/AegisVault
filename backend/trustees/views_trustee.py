@@ -534,23 +534,65 @@ class TrusteeShareSubmitView(APIView):
     permission_classes = [IsAuthenticated, IsTrustee]
 
     def post(self, request, pk):
-        participant = get_object_or_404(
-            ReleaseParticipant, pk=pk, trustee=request.user
-        )
+        # 1. Check if pk is a ReleaseParticipant id directly
+        participant = ReleaseParticipant.objects.filter(
+            pk=pk, trustee=request.user
+        ).first()
 
-        if participant.status != 'pending':
+        # 2. If not, check if pk is a VaultShare id or a Vault id
+        if not participant:
+            vshare = VaultShare.objects.filter(
+                pk=pk, trustee=request.user
+            ).select_related('vault', 'vault__owner').first()
+
+            if not vshare:
+                vshare = VaultShare.objects.filter(
+                    vault_id=pk, trustee=request.user
+                ).select_related('vault', 'vault__owner').first()
+
+            if vshare:
+                # Find or create a ReleaseRequest for this vault
+                release = ReleaseRequest.objects.filter(
+                    vault=vshare.vault, status__in=['pending', 'in_progress', 'scheduled']
+                ).first()
+
+                if not release:
+                    release = ReleaseRequest.objects.create(
+                        vault=vshare.vault,
+                        owner=vshare.vault.owner,
+                        title=f'Release Quorum for {vshare.vault.name}',
+                        trigger_type='Trustee Consensus',
+                        status='in_progress',
+                        required_shares=vshare.vault.required_shares or 2,
+                        total_shares=vshare.vault.total_shares or 3,
+                    )
+
+                participant, _ = ReleaseParticipant.objects.get_or_create(
+                    release=release,
+                    trustee=request.user,
+                    defaults={'status': 'pending'}
+                )
+
+        if not participant:
             return Response(
-                {'detail': 'Share already submitted or declined.'},
-                status=status.HTTP_409_CONFLICT
+                {'detail': 'Release participant or assigned vault not found.'},
+                status=status.HTTP_404_NOT_FOUND
             )
 
         participant.status = 'submitted'
         participant.submitted_at = timezone.now()
         participant.save()
 
-        # Increment collected shares on release
+        # Update VaultShare if exists
+        VaultShare.objects.filter(
+            vault=participant.release.vault, trustee=request.user
+        ).update(status='submitted')
+
+        # Recalculate collected shares on release
         release = participant.release
-        release.collected_shares += 1
+        release.collected_shares = ReleaseParticipant.objects.filter(
+            release=release, status='submitted'
+        ).count()
         release.save(update_fields=['collected_shares'])
 
         # Check K-of-N threshold
@@ -560,7 +602,7 @@ class TrusteeShareSubmitView(APIView):
             user=request.user,
             action_key='share_submitted',
             action_title='Share Submitted for Release',
-            details=f'{request.user.name} submitted shard for "{release.title}"',
+            details=f'{request.user.name} submitted cryptographic shard for "{release.vault.name}"',
             category='release',
             vault_name=release.vault.name,
         )
@@ -570,4 +612,5 @@ class TrusteeShareSubmitView(APIView):
             'release_status': release.status,
             'collected': release.collected_shares,
             'required': release.required_shares,
+            'vault_name': release.vault.name,
         })

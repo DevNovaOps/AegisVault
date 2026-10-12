@@ -5,6 +5,25 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  const user = (window.AegisAPI && window.AegisAPI.getUser()) || {};
+  const fullName = user.full_name || `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.username || 'Verified Trustee';
+  const firstName = user.first_name || (user.full_name ? user.full_name.split(' ')[0] : '') || user.username || 'Trustee';
+  const email = user.email || 'trustee@aegisvault.io';
+  const phone = user.phone || '+91 ••••••••••';
+
+  STEP_DETAILS['step-1'].fields = [
+    { label: 'Full Legal Name', value: fullName },
+    { label: 'Primary Email', value: email },
+    { label: 'Verified Phone', value: phone },
+    { label: 'Role', value: 'Designated Trustee' },
+    { label: 'Status', value: 'Active / Verified' }
+  ];
+
+  const titleHighlight = document.querySelector('.progress-title-highlight');
+  if (titleHighlight) {
+    titleHighlight.textContent = `Almost there, ${firstName}!`;
+  }
+
   animateGauge();
   initStepClicks();
   initFaqAccordion();
@@ -29,13 +48,10 @@ const STEP_DETAILS = {
     status: 'Completed',
     timestamp: '10 Sep 2025, 09:12 AM',
     fields: [
-      { label: 'Full Legal Name', value: 'Rakesh Arvind Patel' },
-      { label: 'Date of Birth', value: '14 May 1984' },
-      { label: 'Residential Jurisdiction', value: 'California, United States' },
-      { label: 'Verified Phone', value: '+1 (555) 382-9912' },
-      { label: 'Primary Email', value: 'rakesh.patel@example.com' }
+      { label: 'Full Legal Name', value: 'Verified Trustee' },
+      { label: 'Primary Email', value: 'trustee@aegisvault.io' }
     ],
-    note: 'Personal information has been cryptographically signed and matched against public records.'
+    note: 'Personal information has been cryptographically signed and matched against registered credentials.'
   },
   'step-2': {
     title: 'Identity Document',
@@ -150,7 +166,9 @@ function simulateFullVerification() {
   document.querySelector('.gauge-label').textContent = 'Verified';
   document.querySelector('.gauge-fill-circle').style.strokeDashoffset = '0';
 
-  document.querySelector('.progress-title-highlight').textContent = 'You are fully verified, Rakesh!';
+  const user = (window.AegisAPI && window.AegisAPI.getUser()) || {};
+  const firstName = user.first_name || (user.full_name ? user.full_name.split(' ')[0] : '') || user.username || 'Trustee';
+  document.querySelector('.progress-title-highlight').textContent = `You are fully verified, ${firstName}!`;
   document.querySelector('.progress-desc-text').textContent = 'All 4 required verification steps are complete. You now possess full trustee authorization.';
   document.querySelector('.step-segment-caption').textContent = '4 of 4 steps completed';
 

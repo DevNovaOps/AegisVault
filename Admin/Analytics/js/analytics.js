@@ -914,8 +914,35 @@
     function initPeriodFilters() {
         // User Growth Period
         if (elements.selectUserGrowthRange) {
-            elements.selectUserGrowthRange.addEventListener("change", (e) => {
+            elements.selectUserGrowthRange.addEventListener("change", async (e) => {
                 state.userGrowthPeriod = e.target.value;
+                if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+                    try {
+                        const growth = await window.AegisAPI.get(`/admin/analytics/user-growth/?period=${state.userGrowthPeriod}`);
+                        if (growth && growth.labels && growth.labels.length > 0 && window.AegisAnalyticsData) {
+                            const vals = growth.values || [];
+                            const maxVal = Math.max(...vals, 10);
+                            AegisAnalyticsData.userGrowth[state.userGrowthPeriod] = {
+                                labels: growth.labels,
+                                values: vals,
+                                min: 0,
+                                max: Math.ceil(maxVal * 1.25),
+                                step: Math.ceil(maxVal / 4) || 1,
+                                tooltipPoint: {
+                                    label: growth.labels[growth.labels.length - 1],
+                                    value: String(vals[vals.length - 1] || 0)
+                                },
+                                stats: [
+                                    { value: String(vals[vals.length - 1] || 0), label: "Total Users", color: "green" },
+                                    { value: "+" + String(vals.length > 1 ? vals[vals.length - 1] - vals[0] : 0), label: "Period Gain", color: "green" },
+                                    { value: "100%", label: "Active Ratio", color: "green" }
+                                ]
+                            };
+                        }
+                    } catch (err) {
+                        console.warn("Live growth update error:", err);
+                    }
+                }
                 renderUserGrowthChart(state.userGrowthPeriod);
                 showToast(`User Growth filtered for ${e.target.selectedOptions[0].text}`, "info");
             });
@@ -923,8 +950,36 @@
 
         // Vault Statistics Period
         if (elements.selectVaultPeriod) {
-            elements.selectVaultPeriod.addEventListener("change", (e) => {
+            elements.selectVaultPeriod.addEventListener("change", async (e) => {
                 state.vaultStatsPeriod = e.target.value;
+                if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+                    try {
+                        const vActivity = await window.AegisAPI.get(`/admin/analytics/vault-activity/?period=${state.vaultStatsPeriod}`);
+                        if (vActivity && vActivity.labels && vActivity.labels.length > 0 && window.AegisAnalyticsData) {
+                            const created = vActivity.created || [];
+                            const accessed = vActivity.accessed || [];
+                            const released = vActivity.released || [];
+                            const maxVal = Math.max(...created, ...accessed, ...released, 5);
+                            AegisAnalyticsData.vaultStatistics[state.vaultStatsPeriod] = {
+                                labels: vActivity.labels,
+                                series: {
+                                    personal: created,
+                                    family: accessed,
+                                    business: released
+                                },
+                                max: Math.ceil(maxVal * 1.3),
+                                step: Math.ceil(maxVal / 4) || 1,
+                                stats: [
+                                    { id: "stat-total", icon: "shield-purple", value: String(created.reduce((a, b) => a + b, 0)), label: "Created", trend: "Live" },
+                                    { id: "stat-active", icon: "lock-orange", value: String(accessed.reduce((a, b) => a + b, 0)), label: "Accessed", trend: "Live" },
+                                    { id: "stat-archived", icon: "hourglass-red", value: String(released.reduce((a, b) => a + b, 0)), label: "Released", trend: "Live" }
+                                ]
+                            };
+                        }
+                    } catch (err) {
+                        console.warn("Live vault activity update error:", err);
+                    }
+                }
                 renderVaultStatsChart(state.vaultStatsPeriod);
                 showToast(`Vault Statistics filtered for ${e.target.selectedOptions[0].text}`, "info");
             });
@@ -957,6 +1012,166 @@
     }
 
     /* ==========================================================================
+       17b. Live Backend Data Loader
+       ========================================================================== */
+    async function loadLiveAnalyticsData() {
+        if (!window.AegisAPI || !window.AegisAPI.isAuthenticated()) return;
+        try {
+            const [overview, userRoles, userGrowth, vaultActivity, auditLogs] = await Promise.all([
+                window.AegisAPI.get('/admin/analytics/overview/').catch(() => null),
+                window.AegisAPI.get('/admin/analytics/user-roles/').catch(() => null),
+                window.AegisAPI.get('/admin/analytics/user-growth/?period=30d').catch(() => null),
+                window.AegisAPI.get('/admin/analytics/vault-activity/?period=30d').catch(() => null),
+                window.AegisAPI.get('/admin/audit-logs/').catch(() => null)
+            ]);
+
+            if (overview && window.AegisAnalyticsData) {
+                AegisAnalyticsData.overviewMetrics = [
+                    {
+                        id: "metric-users",
+                        label: "Total Users",
+                        value: String(overview.total_users || 0),
+                        numericValue: overview.total_users || 0,
+                        trend: "Live",
+                        trendDirection: "up",
+                        trendColor: "green",
+                        subtext: "Platform Accounts",
+                        icon: "users",
+                        themeColor: "#3B82F6"
+                    },
+                    {
+                        id: "metric-active-users",
+                        label: "Active Vaults",
+                        value: String(overview.active_vaults || 0),
+                        numericValue: overview.active_vaults || 0,
+                        trend: "Active",
+                        trendDirection: "up",
+                        trendColor: "green",
+                        subtext: "Secured Vaults",
+                        icon: "shield",
+                        themeColor: "#10B981"
+                    },
+                    {
+                        id: "metric-trustees",
+                        label: "Total Trustees",
+                        value: String(overview.total_trustees || 0),
+                        numericValue: overview.total_trustees || 0,
+                        trend: "Verified",
+                        trendDirection: "up",
+                        trendColor: "green",
+                        subtext: "Designated Guardians",
+                        icon: "users-three",
+                        themeColor: "#F59E0B"
+                    },
+                    {
+                        id: "metric-pending",
+                        label: "Pending Quorum",
+                        value: String(overview.pending_requests || 0),
+                        numericValue: overview.pending_requests || 0,
+                        trend: overview.pending_requests > 0 ? "Pending" : "Clear",
+                        trendDirection: overview.pending_requests > 0 ? "up" : "down",
+                        trendColor: overview.pending_requests > 0 ? "orange" : "green",
+                        subtext: "Quorum In Progress",
+                        icon: "user-check",
+                        themeColor: "#8B5CF6"
+                    },
+                    {
+                        id: "metric-security",
+                        label: "Security Events",
+                        value: String(overview.security_events || 0),
+                        numericValue: overview.security_events || 0,
+                        trend: overview.security_events > 0 ? "Alert" : "Secure",
+                        trendDirection: overview.security_events > 0 ? "up" : "down",
+                        trendColor: overview.security_events > 0 ? "red" : "green",
+                        subtext: "Zero Open Breaches",
+                        icon: "alert-triangle",
+                        themeColor: "#EF4444"
+                    }
+                ];
+            }
+
+            if (userRoles && userRoles.segments && window.AegisAnalyticsData) {
+                const colorMap = {
+                    "Vault Owners": { color: "#3B82F6", darkColor: "#38BDF8" },
+                    "Trustees": { color: "#00D9A5", darkColor: "#00D9A5" },
+                    "Admins": { color: "#F59E0B", darkColor: "#F5A84B" },
+                    "Others": { color: "#8B5CF6", darkColor: "#A78BFA" }
+                };
+                AegisAnalyticsData.userDistribution = {
+                    total: userRoles.total || 0,
+                    totalLabel: "Users",
+                    segments: userRoles.segments.map(seg => ({
+                        label: seg.label,
+                        percent: seg.percent,
+                        count: seg.count,
+                        color: (colorMap[seg.label] && colorMap[seg.label].color) || "#3B82F6",
+                        darkColor: (colorMap[seg.label] && colorMap[seg.label].darkColor) || "#38BDF8"
+                    }))
+                };
+            }
+
+            if (userGrowth && userGrowth.labels && userGrowth.labels.length > 0 && window.AegisAnalyticsData) {
+                const vals = userGrowth.values || [];
+                const maxVal = Math.max(...vals, 10);
+                AegisAnalyticsData.userGrowth["30d"] = {
+                    labels: userGrowth.labels,
+                    values: vals,
+                    min: 0,
+                    max: Math.ceil(maxVal * 1.25),
+                    step: Math.ceil(maxVal / 4) || 1,
+                    tooltipPoint: {
+                        label: userGrowth.labels[userGrowth.labels.length - 1],
+                        value: String(vals[vals.length - 1] || 0)
+                    },
+                    stats: [
+                        { value: String(overview?.total_users || vals[vals.length - 1] || 0), label: "Total Users", color: "green" },
+                        { value: String(overview?.total_trustees || 0), label: "Trustees", color: "green" },
+                        { value: String(overview?.active_vaults || 0), label: "Active Vaults", color: "green" }
+                    ]
+                };
+            }
+
+            if (vaultActivity && vaultActivity.labels && vaultActivity.labels.length > 0 && window.AegisAnalyticsData) {
+                const created = vaultActivity.created || [];
+                const accessed = vaultActivity.accessed || [];
+                const released = vaultActivity.released || [];
+                const maxVal = Math.max(...created, ...accessed, ...released, 5);
+                AegisAnalyticsData.vaultStatistics["30d"] = {
+                    labels: vaultActivity.labels,
+                    series: {
+                        personal: created,
+                        family: accessed,
+                        business: released
+                    },
+                    max: Math.ceil(maxVal * 1.3),
+                    step: Math.ceil(maxVal / 4) || 1,
+                    stats: [
+                        { id: "stat-total", icon: "shield-purple", value: String(overview?.active_vaults || 0), label: "Active Vaults", trend: "Live" },
+                        { id: "stat-active", icon: "lock-orange", value: String(overview?.total_users || 0), label: "Total Users", trend: "Live" },
+                        { id: "stat-archived", icon: "hourglass-red", value: String(overview?.pending_requests || 0), label: "Pending Requests", trend: "Live" }
+                    ]
+                };
+            }
+
+            const logs = Array.isArray(auditLogs) ? auditLogs : (auditLogs?.results || []);
+            if (logs.length > 0 && window.AegisAnalyticsData) {
+                AegisAnalyticsData.recentActivity = logs.slice(0, 10).map((l, idx) => ({
+                    id: `act-${idx}`,
+                    time: l.timestamp ? new Date(l.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recent',
+                    user: l.user_email || l.user || 'System',
+                    role: l.role || (l.action && l.action.toLowerCase().includes('trustee') ? 'Trustee' : 'Owner'),
+                    action: l.action || 'System Audit Log',
+                    target: l.vault_name || (l.details && l.details.vault_name) || l.target || 'Vault System',
+                    status: (l.status || 'Success').toLowerCase() === 'success' ? 'Success' : 'Warning',
+                    ip: l.ip_address || '127.0.0.1'
+                }));
+            }
+        } catch (e) {
+            console.warn("Failed to load live analytics data:", e);
+        }
+    }
+
+    /* ==========================================================================
        18. Re-render All Charts (called on init & theme change)
        ========================================================================== */
     function renderAllCharts() {
@@ -969,7 +1184,9 @@
     /* ==========================================================================
        19. Initialization Routine
        ========================================================================== */
-    function init() {
+    async function init() {
+        await loadLiveAnalyticsData();
+
         // Render Static Content
         renderOverviewMetrics();
         renderGeographicDistribution();

@@ -4,12 +4,66 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   loadAssignedVaults();
+  loadRecentSubmissions();
   initFileUpload();
   initNotesCounter();
   initVaultSelectNotice();
   initFormSubmission();
   initFaqAccordion();
 });
+
+function loadRecentSubmissions() {
+  const tableBody = document.getElementById('submissionsTableBody');
+  if (!tableBody) return;
+
+  if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+    window.AegisAPI.get('/trustee/releases/').then(releases => {
+      const submitted = (releases || []).filter(r => r.participant_status === 'submitted');
+      if (submitted.length === 0) return;
+
+      const emptyRow = document.getElementById('emptySubmissionsRow');
+      if (emptyRow) emptyRow.remove();
+
+      submitted.forEach(r => {
+        const dateObj = r.submitted_at ? new Date(r.submitted_at) : (r.created_at ? new Date(r.created_at) : new Date());
+        const timeStr = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) + 
+                        ', ' + dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        const shortTx = (r.release_id || '0x4f8a...e12b').substring(0, 10) + '...';
+        const subId = 'SUB-' + (r.id ? r.id.substring(0, 6).toUpperCase() : '9021');
+        const fileName = (r.vault_name || 'vault').toLowerCase().replace(/\s+/g, '_') + '_shard.share';
+
+        const row = document.createElement('tr');
+        row.setAttribute('data-sub-id', subId);
+        row.innerHTML = `
+          <td>${timeStr}</td>
+          <td>
+            <div class="table-vault-cell">
+              <span class="table-lock-icon amber">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </span>
+              <span>${r.vault_name || 'Vault'}</span>
+            </div>
+          </td>
+          <td><span class="table-file-name">${fileName}</span></td>
+          <td>1.2 KB</td>
+          <td>
+            <span class="status-pill submitted">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Submitted</span>
+            </span>
+          </td>
+          <td style="text-align: right;">
+            <button type="button" class="btn-table-action" onclick="viewSubmissionDetails('${subId}', '${r.vault_name}', '${fileName}', '${timeStr}', 'Submitted', '${shortTx}')">
+              <span>View Receipt</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }).catch(err => console.warn('Could not load past submissions:', err));
+  }
+}
 
 function loadAssignedVaults() {
   const vaultSelect = document.getElementById('vaultSelect');
@@ -27,14 +81,20 @@ function loadAssignedVaults() {
         opt.value = v.id || v.vault;
         opt.setAttribute('data-owner', v.owner_name || 'Owner');
         opt.setAttribute('data-status', v.status || 'active');
-        opt.textContent = `${v.vault_name || 'Vault'} — ${v.owner_name || 'Owner'} (${v.status === 'active' ? 'Active' : 'Pending'})`;
+        opt.textContent = `${v.vault_name || 'Vault'} — ${v.owner_name || 'Owner'} (${v.status === 'active' ? 'Active' : (v.status === 'submitted' ? 'Submitted' : 'Pending')})`;
         if (idx === 0) opt.selected = true;
         vaultSelect.appendChild(opt);
       });
     }).catch(err => {
       console.warn('Failed to load vaults for share submission', err);
-      vaultSelect.innerHTML = '<option value="" disabled selected>Error loading vaults</option>';
+      if (err && err.status === 401) {
+        vaultSelect.innerHTML = '<option value="" disabled selected>Please log in as a trustee to view assigned vaults</option>';
+      } else {
+        vaultSelect.innerHTML = '<option value="" disabled selected>No active assigned vaults found</option>';
+      }
     });
+  } else {
+    vaultSelect.innerHTML = '<option value="" disabled selected>Please log in as a trustee to view assigned vaults</option>';
   }
 }
 
@@ -217,9 +277,10 @@ function initFormSubmission() {
       // Make actual API call if authenticated
       if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
         try {
-          // Fallback to random ID if not dynamically populated
-          const participantId = selectedOption.value || '12345678-1234-5678-1234-567812345678';
-          await window.AegisAPI.post(`/trustee/shares/${participantId}/submit/`);
+          const participantId = selectedOption.value;
+          if (participantId) {
+            await window.AegisAPI.post(`/trustee/shares/${participantId}/submit/`);
+          }
         } catch (err) {
           console.warn('API share submit failed:', err.message);
         }

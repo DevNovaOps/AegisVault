@@ -475,6 +475,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const ticketId = `#TKT-${randomNum}`;
         document.getElementById('modalTicketId').textContent = ticketId;
 
+        const user = (window.AegisAPI && window.AegisAPI.getUser()) || {};
+        const emailEl = document.getElementById('confirmationEmail');
+        if (emailEl && user.email) {
+          emailEl.textContent = user.email;
+        }
+
         // Reset form
         contactForm.reset();
 

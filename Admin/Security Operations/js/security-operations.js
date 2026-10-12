@@ -25,11 +25,11 @@
     const dom = {};
 
     // Initialization
-    function init() {
+    async function init() {
         cacheDom();
-        initData();
         initTheme();
         bindEvents();
+        await initData();
         renderKPIs();
         renderTrendChart();
         renderThreatMap();
@@ -83,13 +83,57 @@
         dom.modalIncidentDetails = document.getElementById('modal-incident-details');
     }
 
-    function initData() {
-        // Deep clone mock data so modifications are reactive during session
-        if (window.AegisSecurityData) {
-            state.events = JSON.parse(JSON.stringify(window.AegisSecurityData.securityEvents));
-            state.alerts = JSON.parse(JSON.stringify(window.AegisSecurityData.activeAlerts));
-            state.incidents = JSON.parse(JSON.stringify(window.AegisSecurityData.incidents));
-            state.access = JSON.parse(JSON.stringify(window.AegisSecurityData.accessActivity));
+    async function initData() {
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+            try {
+                const [overview, alerts, events] = await Promise.all([
+                    window.AegisAPI.get('/admin/security/overview/').catch(() => null),
+                    window.AegisAPI.get('/admin/security/alerts/').catch(() => null),
+                    window.AegisAPI.get('/admin/security/events/').catch(() => null)
+                ]);
+
+                if (events && Array.isArray(events) && events.length > 0) {
+                    state.events = events.map(e => ({
+                        id: e.id || e.event_id || 'EVT-01',
+                        timestamp: e.timestamp || e.created_at || new Date().toISOString(),
+                        type: e.event_type || e.action_title || 'Security Event',
+                        severity: (e.severity || 'medium').toLowerCase(),
+                        source: e.source_ip || e.ip_address || '127.0.0.1',
+                        user: e.user_name || e.user || 'System',
+                        status: e.is_resolved ? 'Resolved' : 'Active',
+                        details: e.details || e.description || ''
+                    }));
+                } else if (window.AegisSecurityData && window.AegisSecurityData.securityEvents) {
+                    state.events = JSON.parse(JSON.stringify(window.AegisSecurityData.securityEvents));
+                }
+
+                if (alerts && Array.isArray(alerts) && alerts.length > 0) {
+                    state.alerts = alerts.map(a => ({
+                        id: a.id || 'ALT-01',
+                        title: a.title || a.event_type || 'Security Alert',
+                        severity: a.severity || 'Critical',
+                        timestamp: a.timestamp || new Date().toISOString(),
+                        source: a.source_ip || 'Internal',
+                        status: a.is_resolved ? 'Resolved' : 'Active',
+                        description: a.description || a.details || ''
+                    }));
+                } else if (window.AegisSecurityData && window.AegisSecurityData.activeAlerts) {
+                    state.alerts = JSON.parse(JSON.stringify(window.AegisSecurityData.activeAlerts));
+                }
+
+                if (overview && window.AegisSecurityData && window.AegisSecurityData.kpis) {
+                    window.AegisSecurityData.kpis.securityEvents.displayValue = String(overview.events_24h || state.events.length || 0);
+                    window.AegisSecurityData.kpis.criticalAlerts.displayValue = String(overview.open_critical || 0);
+                    window.AegisSecurityData.kpis.activeThreats.displayValue = String(overview.total_open || 0);
+                }
+            } catch (err) {
+                console.warn('Live SecOps data loading error:', err);
+            }
+        } else if (window.AegisSecurityData) {
+            state.events = JSON.parse(JSON.stringify(window.AegisSecurityData.securityEvents || []));
+            state.alerts = JSON.parse(JSON.stringify(window.AegisSecurityData.activeAlerts || []));
+            state.incidents = JSON.parse(JSON.stringify(window.AegisSecurityData.incidents || []));
+            state.access = JSON.parse(JSON.stringify(window.AegisSecurityData.accessActivity || []));
         }
     }
 

@@ -237,11 +237,11 @@
   color: var(--text-secondary);
 }
 
-/* Two-column form fields */
+/* Form fields stack */
 .share-form-fields-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
 .form-field-group {
