@@ -110,10 +110,68 @@
     // =========================================================================
     // 2. Data Initialization
     // =========================================================================
+    function updateDynamicKPIs() {
+        const total = state.trustees ? state.trustees.length : 0;
+        const verified = state.trustees ? state.trustees.filter(t => t.status === 'Verified').length : 0;
+        const pending = state.trustees ? state.trustees.filter(t => t.status === 'Pending').length : 0;
+        const rejected = state.trustees ? state.trustees.filter(t => t.status === 'Rejected' || t.status === 'Inactive').length : 0;
+
+        const setTxt = (id, val) => { const elem = document.getElementById(id); if (elem) elem.textContent = val; };
+        setTxt('kpi-total-trustees', total.toLocaleString());
+        setTxt('kpi-verified-trustees', verified.toLocaleString());
+        setTxt('kpi-pending-trustees', pending.toLocaleString());
+        setTxt('kpi-rejected-trustees', rejected.toLocaleString());
+
+        setTxt('tab-count-all', total.toLocaleString());
+        setTxt('tab-count-pending', pending.toLocaleString());
+        setTxt('tab-count-verified', verified.toLocaleString());
+        setTxt('tab-count-rejected', rejected.toLocaleString());
+        setTxt('tab-count-inactive', '0');
+        setTxt('tab-count-invitations', (state.invitations ? state.invitations.length : 0).toLocaleString());
+
+        if (el.paginationInfo) {
+            el.paginationInfo.textContent = `Showing ${total === 0 ? 0 : 1}-${Math.min(state.pageSize, total)} of ${total} trustees`;
+        }
+    }
+
     function initData() {
-        if (window.AegisTrusteeMockData) {
-            state.trustees = JSON.parse(JSON.stringify(window.AegisTrusteeMockData.trustees));
-            state.invitations = JSON.parse(JSON.stringify(window.AegisTrusteeMockData.invitations));
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+            window.AegisAPI.get('/admin/trustees/').then(data => {
+                state.trustees = (data || []).map((t, i) => ({
+                    id: t.id,
+                    index: i + 1,
+                    name: t.name || 'Unnamed Trustee',
+                    email: t.email,
+                    phone: '+1 (555) 000-0000',
+                    trusteeType: 'Primary',
+                    status: t.status === 'Active' ? 'Verified' : (t.status === 'Suspended' ? 'Rejected' : (t.status || 'Verified')),
+                    linkedVaultsCount: t.vaults_assigned || 0,
+                    addedOn: t.joined || 'Recent',
+                    initials: (t.name || t.email || 'TR').split(' ').map(n=>n[0]).join('').substring(0, 2).toUpperCase(),
+                    avatarColor: '#1E40AF',
+                    documentsVerified: true
+                }));
+                state.invitations = [];
+                updateDynamicKPIs();
+                renderTrusteeTable();
+                renderDonutChart();
+                renderTrusteeTypesProgress();
+            }).catch(err => {
+                console.warn('Failed to fetch trustees:', err);
+                state.trustees = [];
+                state.invitations = [];
+                updateDynamicKPIs();
+                renderTrusteeTable();
+                renderDonutChart();
+                renderTrusteeTypesProgress();
+            });
+        } else {
+            state.trustees = [];
+            state.invitations = [];
+            updateDynamicKPIs();
+            renderTrusteeTable();
+            renderDonutChart();
+            renderTrusteeTypesProgress();
         }
     }
 
@@ -450,7 +508,17 @@
     function renderDonutChart() {
         if (!el.donutSvg) return;
 
-        const overview = window.AegisTrusteeMockData ? window.AegisTrusteeMockData.verificationOverview : [];
+        const total = state.trustees ? state.trustees.length : 0;
+        const verified = state.trustees ? state.trustees.filter(t => t.status === 'Verified').length : 0;
+        const pending = state.trustees ? state.trustees.filter(t => t.status === 'Pending').length : 0;
+        const rejected = state.trustees ? state.trustees.filter(t => t.status === 'Rejected' || t.status === 'Inactive').length : 0;
+
+        const overview = total === 0 ? [] : [
+            { label: 'Verified', count: verified, percent: Math.round((verified / total) * 100), color: '#10B981', darkColor: '#10B981' },
+            { label: 'Pending', count: pending, percent: Math.round((pending / total) * 100), color: '#F59E0B', darkColor: '#F59E0B' },
+            { label: 'Rejected', count: rejected, percent: Math.round((rejected / total) * 100), color: '#EF4444', darkColor: '#EF4444' }
+        ];
+
         const isDark = state.theme === 'dark';
 
         const cx = 60;
@@ -462,38 +530,46 @@
         let currentOffset = 0;
         let arcsHtml = '';
 
-        overview.forEach((seg, idx) => {
-            const arcLength = (seg.percent / 100) * circumference;
-            const color = isDark ? seg.darkColor : seg.color;
+        if (overview.length === 0) {
+            arcsHtml = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${isDark ? 'rgba(255,255,255,0.08)' : '#E2E8F0'}" stroke-width="${strokeWidth}" />`;
+        } else {
+            overview.forEach((seg) => {
+                const arcLength = (seg.percent / 100) * circumference;
+                const color = isDark ? seg.darkColor : seg.color;
 
-            arcsHtml += `
-                <circle cx="${cx}" cy="${cy}" r="${r}" fill="none"
-                        stroke="${color}" stroke-width="${strokeWidth}"
-                        stroke-dasharray="${arcLength} ${circumference - arcLength}"
-                        stroke-dashoffset="${-currentOffset}"
-                        class="donut-segment"
-                        data-label="${seg.label}" data-percent="${seg.percent}%" data-count="${seg.count}"
-                        style="transform-origin: center; transform: rotate(-90deg); cursor: pointer; transition: stroke-width 0.2s ease;" />
-            `;
-            currentOffset += arcLength;
-        });
+                arcsHtml += `
+                    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none"
+                            stroke="${color}" stroke-width="${strokeWidth}"
+                            stroke-dasharray="${arcLength} ${circumference - arcLength}"
+                            stroke-dashoffset="${-currentOffset}"
+                            class="donut-segment"
+                            data-label="${seg.label}" data-percent="${seg.percent}%" data-count="${seg.count}"
+                            style="transform-origin: center; transform: rotate(-90deg); cursor: pointer; transition: stroke-width 0.2s ease;" />
+                `;
+                currentOffset += arcLength;
+            });
+        }
 
         el.donutSvg.innerHTML = arcsHtml;
 
         // Render Legend Rows on the right of Donut
         if (el.donutLegend) {
-            el.donutLegend.innerHTML = overview.map(seg => {
-                const color = isDark ? seg.darkColor : seg.color;
-                return `
-                    <div class="legend-stat-row">
-                        <div class="legend-dot-label">
-                            <span class="legend-color-dot" style="background-color: ${color};"></span>
-                            <span>${seg.label}</span>
+            if (overview.length === 0) {
+                el.donutLegend.innerHTML = '<div style="font-size:0.75rem; color:var(--text-muted); padding:0.5rem 0;">No active trustees recorded.</div>';
+            } else {
+                el.donutLegend.innerHTML = overview.map(seg => {
+                    const color = isDark ? seg.darkColor : seg.color;
+                    return `
+                        <div class="legend-stat-row">
+                            <div class="legend-dot-label">
+                                <span class="legend-color-dot" style="background-color: ${color};"></span>
+                                <span>${seg.label}</span>
+                            </div>
+                            <span class="legend-stat-val">${seg.percent}% (${seg.count})</span>
                         </div>
-                        <span class="legend-stat-val">${seg.percent}% (${seg.count})</span>
-                    </div>
-                `;
-            }).join('');
+                    `;
+                }).join('');
+            }
         }
 
         // Attach hover tooltips
@@ -519,7 +595,22 @@
     function renderTrusteeTypesProgress() {
         if (!el.progressContainer) return;
 
-        const types = window.AegisTrusteeMockData ? window.AegisTrusteeMockData.trusteeTypes : [];
+        const total = state.trustees ? state.trustees.length : 0;
+        const primary = state.trustees ? state.trustees.filter(t => t.trusteeType === 'Primary').length : 0;
+        const co = state.trustees ? state.trustees.filter(t => t.trusteeType === 'Co-Trustee').length : 0;
+        const backup = state.trustees ? state.trustees.filter(t => t.trusteeType === 'Backup').length : 0;
+
+        const types = total === 0 ? [] : [
+            { type: 'Primary Trustee', count: primary, percent: Math.round((primary / total) * 100), class: 'blue' },
+            { type: 'Co-Trustee', count: co, percent: Math.round((co / total) * 100), class: 'teal' },
+            { type: 'Backup Trustee', count: backup, percent: Math.round((backup / total) * 100), class: 'orange' }
+        ];
+
+        if (types.length === 0) {
+            el.progressContainer.innerHTML = '<div style="font-size:0.75rem; color:var(--text-muted); padding:0.5rem 0;">No assigned trustee types.</div>';
+            return;
+        }
+
         el.progressContainer.innerHTML = types.map(item => `
             <div class="progress-item-block">
                 <div class="progress-labels-row">

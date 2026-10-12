@@ -63,16 +63,18 @@ class TrusteeEditSerializer(serializers.Serializer):
 class InvitationSerializer(serializers.ModelSerializer):
     """
     Frontend expects: id, name, email, rel, vault, status, sentDate, sentTime,
-                      expiryDays, note, acceptedDate, declineReason
+                      expiryDays, note, acceptedDate, declineReason, owner_name, owner_email
     """
     vault_name = serializers.CharField(source='vault.name', read_only=True)
+    owner_name = serializers.CharField(source='owner.name', read_only=True)
+    owner_email = serializers.CharField(source='owner.email', read_only=True)
     expiry_days = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Invitation
         fields = [
             'id', 'invitee_name', 'invitee_email', 'relationship',
-            'vault', 'vault_name', 'status', 'note',
+            'vault', 'vault_name', 'owner_name', 'owner_email', 'status', 'note',
             'sent_at', 'expires_at', 'expiry_days',
             'accepted_at', 'declined_at', 'decline_reason',
         ]

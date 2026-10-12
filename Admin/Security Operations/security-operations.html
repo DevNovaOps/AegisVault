@@ -896,8 +896,8 @@
         </div>
 
         <div class="footer-links">
-          <a href="javascript:void(0)" onclick="typeof showToast === 'function' ? showToast('Privacy Policy (mock).') : null;">Privacy</a>
-          <a href="javascript:void(0)" onclick="typeof showToast === 'function' ? showToast('Terms of Service (mock).') : null;">Terms</a>
+          <a href="javascript:void(0)" onclick="typeof showToast === 'function' ? showToast('Privacy Policy.') : null;">Privacy</a>
+          <a href="javascript:void(0)" onclick="typeof showToast === 'function' ? showToast('Terms of Service.') : null;">Terms</a>
           <a href="../Audit Logs/audit-logs.html">Audit</a>
         </div>
       </footer>
@@ -1079,9 +1079,9 @@
                 <div class="modal-input-group">
                     <label class="modal-input-label" for="revoke-target-select">TARGET SESSION / CREDENTIAL</label>
                     <select class="filter-select" id="revoke-target-select" style="width: 100%;">
-                        <option value="rahul@example.com (Vault Access)">rahul@example.com — Personal Archive Vault</option>
-                        <option value="user123@example.com (Auditor)">user123@example.com — Reports Engine</option>
-                        <option value="Anonymous 192.168.1.45">192.168.1.45 — Admin Portal</option>
+                        <option value="active_vault_session (Vault Access)">Active Vault Custody Session (Token #9842)</option>
+                        <option value="session_auditor (Auditor)">Reports Engine Auditor Session</option>
+                        <option value="gateway_session">Internal Gateway Session (192.168.1.45)</option>
                     </select>
                 </div>
             </div>
@@ -1182,6 +1182,7 @@
     <div class="toast-shelf" id="toast-shelf" role="status" aria-live="polite"></div>
 
     <!-- Script Imports -->
+    <script src="../../common/api.js"></script>
     <script src="../common/js/admin-common.js"></script>
     <script src="js/mockData.js"></script>
     <script src="js/security-operations.js"></script>

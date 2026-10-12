@@ -25,7 +25,7 @@ function requireTrusteeAuth() {
   const user = getStoredTrusteeUser();
   const token = localStorage.getItem('aegis_access_token');
   if (!user && !token) {
-    window.location.href = '/AegisVault%20Home/auth.html';
+    window.location.href = '/auth.html';
     return false;
   }
   return true;
@@ -74,6 +74,25 @@ function fetchSidebarBadgeCounts() {
       const unread = data.unread_notifications || 0;
       sidebarNotifBadge.textContent = unread;
       sidebarNotifBadge.style.display = unread > 0 ? 'inline-flex' : 'none';
+    }
+
+    // Dynamic header notification dropdown
+    const notificationDropdown = document.getElementById('notificationDropdown');
+    if (notificationDropdown) {
+      const unreadCount = data.unread_notifications || 0;
+      let html = `<div class="dropdown-header">Recent Alerts (${unreadCount})</div>`;
+      if (data.pending_actions && data.pending_actions.length > 0) {
+        data.pending_actions.slice(0, 3).forEach(act => {
+          html += `<a href="${act.link || '../notifications/notifications.html'}" class="dropdown-item">${act.title}</a>`;
+        });
+      } else {
+        html += `<div class="dropdown-item" style="color:var(--text-muted); cursor:default;">No new notifications</div>`;
+      }
+      html += `<div class="dropdown-divider"></div><a href="../notifications/notifications.html" class="dropdown-item" style="color:var(--brand-orange); font-weight:600;">View all notifications &rarr;</a>`;
+      notificationDropdown.innerHTML = html;
+
+      const dot = document.querySelector('.notification-badge-dot');
+      if (dot) dot.style.display = unreadCount > 0 ? 'block' : 'none';
     }
   }).catch(() => {
     // Silent — don't block page load for badge counts
@@ -265,7 +284,7 @@ window.signOutTrustee = function () {
   } catch (e) {}
 
   setTimeout(() => {
-    window.location.href = '/AegisVault%20Home/auth.html';
+    window.location.href = '/auth.html';
   }, 500);
 };
 

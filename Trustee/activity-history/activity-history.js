@@ -181,32 +181,21 @@ function renderAuditTable(activities) {
 
 function updateMetricCards(activities) {
   const total = activities.length;
-  const shares = activities.filter(a => a.actionKey.includes('share') || a.category === 'release').length;
   const vault = activities.filter(a => a.category === 'vault' || a.actionKey.includes('vault')).length;
+  const shares = activities.filter(a => a.actionKey.includes('share')).length;
   const verif = activities.filter(a => a.actionKey.includes('verif') || a.actionKey.includes('invitation') || a.category === 'trustee').length;
   const release = activities.filter(a => a.category === 'release').length;
 
-  const cards = document.querySelectorAll('.hero-metric-card');
-  if (cards[0]) {
-    const val = cards[0].querySelector('.metric-big-value');
-    if (val) val.textContent = total;
-  }
-  if (cards[1]) {
-    const val = cards[1].querySelector('.metric-big-value');
-    if (val) val.textContent = shares;
-  }
-  if (cards[2]) {
-    const val = cards[2].querySelector('.metric-big-value');
-    if (val) val.textContent = vault;
-  }
-  if (cards[3]) {
-    const val = cards[3].querySelector('.metric-big-value');
-    if (val) val.textContent = verif;
-  }
-  if (cards[4]) {
-    const val = cards[4].querySelector('.metric-big-value');
-    if (val) val.textContent = release;
-  }
+  const elTotal = document.getElementById('metricTotal');
+  if (elTotal) elTotal.textContent = total;
+  const elVault = document.getElementById('metricVault');
+  if (elVault) elVault.textContent = vault;
+  const elShare = document.getElementById('metricShare');
+  if (elShare) elShare.textContent = shares;
+  const elVerif = document.getElementById('metricVerif');
+  if (elVerif) elVerif.textContent = verif;
+  const elRelease = document.getElementById('metricRelease');
+  if (elRelease) elRelease.textContent = release;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════

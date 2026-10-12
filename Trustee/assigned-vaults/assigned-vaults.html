@@ -223,10 +223,8 @@
               <span class="notification-badge-dot"></span>
             </button>
             <div class="dropdown-panel" id="notificationDropdown">
-              <div class="dropdown-header">Recent Alerts (3)</div>
-              <a href="../invitations/invitations.html" class="dropdown-item">New vault invitation from Priya Shah</a>
-              <a href="../trustee-verification/trustee-verification.html" class="dropdown-item">Identity verification pending review</a>
-              <a href="../release-status/release-status.html" class="dropdown-item">Release process initiated for Family Vault</a>
+              <div class="dropdown-header">Recent Alerts (0)</div>
+              <div class="dropdown-item" style="color:var(--text-muted); cursor:default;">No new notifications</div>
               <div class="dropdown-divider"></div>
               <a href="../notifications/notifications.html" class="dropdown-item" style="color:var(--brand-orange); font-weight:600;">View all notifications &rarr;</a>
             </div>
@@ -235,8 +233,8 @@
           <!-- Profile Chip Menu -->
           <div class="profile-menu-wrapper">
             <button class="profile-chip" id="profileBtn" aria-label="User Profile Menu">
-              <div class="profile-avatar-circle">RP</div>
-              <span class="profile-name">Rakesh Patel</span>
+              <div class="profile-avatar-circle">--</div>
+              <span class="profile-name">Trustee</span>
               <svg class="profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <polyline points="6 9 12 15 18 9"/>
               </svg>
@@ -244,7 +242,7 @@
             <div class="dropdown-panel" id="profileDropdown">
               <div class="dropdown-header">Trustee Account</div>
               <a href="../profile-security/profile-security.html" class="dropdown-item">Profile & Security</a>
-              <a href="../trustee-verification/trustee-verification.html" class="dropdown-item">Verification Status (Verified)</a>
+              <a href="../trustee-verification/trustee-verification.html" class="dropdown-item">Verification Status</a>
               <a href="../help-support/help-support.html" class="dropdown-item">Help & Support</a>
               <div class="dropdown-divider"></div>
               <a href="javascript:void(0)" class="dropdown-item" onclick="signOutTrustee()">Sign Out</a>
@@ -338,10 +336,10 @@
             <!-- Filter Tabs & Search Bar -->
             <div class="vaults-toolbar-row">
               <div class="vaults-tabs-group" role="tablist">
-                <button class="vault-tab-btn active" data-filter="all" role="tab" aria-selected="true">All Vaults (2)</button>
-                <button class="vault-tab-btn" data-filter="active" role="tab" aria-selected="false">Active (1)</button>
-                <button class="vault-tab-btn" data-filter="pending_verification" role="tab" aria-selected="false">Pending Verification (1)</button>
-                <button class="vault-tab-btn" data-filter="release_in_progress" role="tab" aria-selected="false">Release In Progress (1)</button>
+                <button class="vault-tab-btn active" data-filter="all" role="tab" aria-selected="true">All Vaults (0)</button>
+                <button class="vault-tab-btn" data-filter="active" role="tab" aria-selected="false">Active (0)</button>
+                <button class="vault-tab-btn" data-filter="pending_verification" role="tab" aria-selected="false">Pending Verification (0)</button>
+                <button class="vault-tab-btn" data-filter="release_in_progress" role="tab" aria-selected="false">Release In Progress (0)</button>
                 <button class="vault-tab-btn" data-filter="completed" role="tab" aria-selected="false">Completed (0)</button>
               </div>
 
@@ -356,116 +354,7 @@
 
             <!-- Vault Cards Container -->
             <div class="vault-cards-list" id="vaultsListContainer">
-
-              <!-- Vault Card 1: Personal Vault -->
-              <div class="assigned-vault-card" data-vault-id="vault-personal" role="button" tabindex="0">
-                <div class="vault-col-primary">
-                  <div class="vault-big-lock blue">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                    </svg>
-                  </div>
-                  <div class="vault-meta-info">
-                    <span class="vault-card-title">Personal Vault</span>
-                    <span class="vault-card-owner">Owner: Aryan Patel</span>
-                    <span class="vault-card-email">aryan.patel@gmail.com</span>
-                    <div class="vault-card-tags">
-                      <span class="tag-badge family">Family</span>
-                      <span class="tag-badge primary">Primary</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Assigned On -->
-                <div class="vault-col-data">
-                  <span class="vault-data-label">Assigned On</span>
-                  <span class="vault-date-value">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                    10 Aug 2025
-                  </span>
-                </div>
-
-                <!-- Verification Status -->
-                <div class="vault-col-data">
-                  <span class="vault-data-label">Verification Status</span>
-                  <span class="status-badge verified"><span class="badge-dot"></span>Verified</span>
-                </div>
-
-                <!-- Share Status -->
-                <div class="vault-col-data">
-                  <span class="vault-data-label">Share Status</span>
-                  <span class="status-badge submitted"><span class="badge-dot"></span>Submitted</span>
-                  <span class="vault-status-subtext">on 12 Aug 2025</span>
-                </div>
-
-                <!-- Release Status -->
-                <div class="vault-col-data">
-                  <span class="vault-data-label">Release Status</span>
-                  <span class="status-badge no-release"><span class="badge-dot"></span>No Release</span>
-                  <span class="vault-status-subtext">Not initiated</span>
-                </div>
-
-                <!-- Chevron -->
-                <svg class="vault-chevron-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <polyline points="9 18 15 12 9 6"/>
-                </svg>
-              </div>
-
-              <!-- Vault Card 2: Family Vault -->
-              <div class="assigned-vault-card" data-vault-id="vault-family" role="button" tabindex="0">
-                <div class="vault-col-primary">
-                  <div class="vault-big-lock amber">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                    </svg>
-                  </div>
-                  <div class="vault-meta-info">
-                    <span class="vault-card-title">Family Vault</span>
-                    <span class="vault-card-owner">Owner: Priya Shah</span>
-                    <span class="vault-card-email">priya.shah@email.com</span>
-                    <div class="vault-card-tags">
-                      <span class="tag-badge family">Family</span>
-                      <span class="tag-badge secondary">Secondary</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Assigned On -->
-                <div class="vault-col-data">
-                  <span class="vault-data-label">Assigned On</span>
-                  <span class="vault-date-value">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                    18 Aug 2025
-                  </span>
-                </div>
-
-                <!-- Verification Status -->
-                <div class="vault-col-data">
-                  <span class="vault-data-label">Verification Status</span>
-                  <span class="status-badge pending"><span class="badge-dot"></span>Pending</span>
-                  <a href="../trustee-verification/trustee-verification.html" class="vault-status-subtext clickable">Complete verification</a>
-                </div>
-
-                <!-- Share Status -->
-                <div class="vault-col-data">
-                  <span class="vault-data-label">Share Status</span>
-                  <span class="status-badge not-submitted"><span class="badge-dot"></span>Not Submitted</span>
-                  <span class="vault-status-subtext">Awaiting release</span>
-                </div>
-
-                <!-- Release Status -->
-                <div class="vault-col-data">
-                  <span class="vault-data-label">Release Status</span>
-                  <span class="status-badge in-progress"><span class="badge-dot"></span>In Progress</span>
-                  <span class="vault-status-subtext">Grace period (12 days left)</span>
-                </div>
-
-                <!-- Chevron -->
-                <svg class="vault-chevron-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <polyline points="9 18 15 12 9 6"/>
-                </svg>
-              </div>
-
+              <!-- Dynamically populated from API via assigned-vaults.js -->
             </div>
 
             <!-- Empty State / Footer Reminder Box -->
@@ -506,7 +395,7 @@
                     </span>
                     <span>Total Assigned Vaults</span>
                   </div>
-                  <span class="summary-item-count">2</span>
+                  <span class="summary-item-count" id="sumTotalVaults">0</span>
                 </div>
 
                 <div class="summary-item-row">
@@ -516,7 +405,7 @@
                     </span>
                     <span>Verified Vaults</span>
                   </div>
-                  <span class="summary-item-count">1</span>
+                  <span class="summary-item-count" id="sumVerifiedVaults">0</span>
                 </div>
 
                 <div class="summary-item-row">
@@ -526,7 +415,7 @@
                     </span>
                     <span>Pending Verification</span>
                   </div>
-                  <span class="summary-item-count">1</span>
+                  <span class="summary-item-count" id="sumPendingVer">0</span>
                 </div>
 
                 <div class="summary-item-row">
@@ -536,7 +425,7 @@
                     </span>
                     <span>Shares Submitted</span>
                   </div>
-                  <span class="summary-item-count">1</span>
+                  <span class="summary-item-count" id="sumSharesSub">0</span>
                 </div>
 
                 <div class="summary-item-row">
@@ -546,13 +435,13 @@
                     </span>
                     <span>Active Released</span>
                   </div>
-                  <span class="summary-item-count">1</span>
+                  <span class="summary-item-count" id="sumActiveRel">0</span>
                 </div>
               </div>
             </div>
 
             <!-- Card 2: Need to Take Action? -->
-            <div class="action-alert-card">
+            <div class="action-alert-card" id="actionAlertCard" style="display: none;">
               <div class="action-alert-header">
                 <svg class="action-alert-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                   <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
@@ -560,7 +449,7 @@
                 </svg>
                 <span class="action-alert-title">Need to Take Action?</span>
               </div>
-              <p class="action-alert-desc">1 vault requires your attention.</p>
+              <p class="action-alert-desc" id="actionAlertDesc">0 vaults require your attention.</p>
               <button class="btn-action-primary" id="btnViewPendingActions">
                 <span>View Pending Actions</span>
                 <span>&rarr;</span>
@@ -627,8 +516,8 @@
         </div>
 
         <div class="footer-links">
-          <a href="javascript:void(0)" onclick="showToast('Privacy Policy (mock).')">Privacy</a>
-          <a href="javascript:void(0)" onclick="showToast('Terms of Service (mock).')">Terms</a>
+          <a href="javascript:void(0)" onclick="showToast('Privacy Policy.')">Privacy</a>
+          <a href="javascript:void(0)" onclick="showToast('Terms of Service.')">Terms</a>
           <a href="../help-support/help-support.html">Help</a>
         </div>
       </footer>
@@ -703,6 +592,7 @@
   </div>
 
   <!-- Shared & Page JavaScript -->
+  <script src="../../common/api.js"></script>
   <script src="../common/common.js"></script>
   <script src="./assigned-vaults.js"></script>
 </body>

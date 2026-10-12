@@ -61,7 +61,7 @@ When presenting this project to faculty, each file has a distinct and unambiguou
   - Admin Actions: `1,220`
 - **Dynamic Search & Multi-Field Filters**:
   - Filter by Action (`LOGIN`, `USER_UPDATE`, `VAULT_ACCESS`, etc.)
-  - Filter by User (`Aarav Sharma`, `Dr. Vikram Malhotra`, etc.)
+  - Filter by User (`Dev Yagnik`, `Alice Vance`, etc.)
   - Filter by Module (`Auth`, `User Mgmt`, `Vaults`, etc.)
   - Live query search across all fields simultaneously.
 - **Log Details Inspector**:

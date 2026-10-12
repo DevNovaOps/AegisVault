@@ -324,11 +324,11 @@
                         </div>
                         <div class="metric-content-col">
                             <div class="metric-number-row">
-                                <span class="metric-number-display" id="kpi-total-users">1,248</span>
-                                <span class="trend-badge positive">↑ 12%</span>
+                                <span class="metric-number-display" id="kpi-total-users">0</span>
+                                <span class="trend-badge positive">Live</span>
                             </div>
                             <span class="metric-title-text">Total Users</span>
-                            <span class="metric-subtext-label">+134 this month</span>
+                            <span class="metric-subtext-label">Registered platform users</span>
                         </div>
                     </div>
 
@@ -343,11 +343,11 @@
                         </div>
                         <div class="metric-content-col">
                             <div class="metric-number-row">
-                                <span class="metric-number-display" id="kpi-active-users">982</span>
-                                <span class="trend-badge positive">↑ 6%</span>
+                                <span class="metric-number-display" id="kpi-active-users">0</span>
+                                <span class="trend-badge positive">Active</span>
                             </div>
                             <span class="metric-title-text">Active Users</span>
-                            <span class="metric-subtext-label">78.7% of total</span>
+                            <span class="metric-subtext-label">Account status active</span>
                         </div>
                     </div>
 
@@ -363,11 +363,11 @@
                         </div>
                         <div class="metric-content-col">
                             <div class="metric-number-row">
-                                <span class="metric-number-display" id="kpi-suspended-users">173</span>
-                                <span class="trend-badge negative">↑ 28%</span>
+                                <span class="metric-number-display" id="kpi-suspended-users">0</span>
+                                <span class="trend-badge negative">Suspended</span>
                             </div>
                             <span class="metric-title-text">Suspended Users</span>
-                            <span class="metric-subtext-label">13.9% of total</span>
+                            <span class="metric-subtext-label">Restricted access</span>
                         </div>
                     </div>
 
@@ -381,11 +381,11 @@
                         </div>
                         <div class="metric-content-col">
                             <div class="metric-number-row">
-                                <span class="metric-number-display" id="kpi-pending-verifications">93</span>
-                                <span class="trend-badge negative">↓ 15%</span>
+                                <span class="metric-number-display" id="kpi-pending-verifications">0</span>
+                                <span class="trend-badge negative">Pending</span>
                             </div>
                             <span class="metric-title-text">Pending Verifications</span>
-                            <span class="metric-subtext-label">7.5% of total</span>
+                            <span class="metric-subtext-label">Awaiting 2FA confirmation</span>
                         </div>
                     </div>
                 </section>
@@ -431,8 +431,6 @@
                         <div class="filter-select-wrap">
                             <select id="filter-date" class="filter-select" aria-label="Filter by join date">
                                 <option value="all">All Join Dates</option>
-                                <option value="Sep 2025">Sep 2025</option>
-                                <option value="Aug 2025">Aug 2025</option>
                             </select>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                         </div>
@@ -489,17 +487,11 @@
 
                         <!-- Table Pagination Bar -->
                         <div class="table-pagination-row">
-                            <div id="pagination-info-text">Showing 1–10 of 1,248 users</div>
+                            <div id="pagination-info-text">Showing 0 users</div>
 
                             <div class="pagination-controls" aria-label="Pagination Navigation">
                                 <button class="page-btn" id="btn-page-prev" onclick="window.AegisUserManagement.goToPage(window.AegisUserManagement.currentPage - 1);" aria-label="Previous page">‹</button>
                                 <button class="page-btn active" onclick="window.AegisUserManagement.goToPage(1);">1</button>
-                                <button class="page-btn" onclick="window.AegisUserManagement.goToPage(2);">2</button>
-                                <button class="page-btn" onclick="window.AegisUserManagement.goToPage(3);">3</button>
-                                <button class="page-btn" onclick="window.AegisUserManagement.goToPage(4);">4</button>
-                                <button class="page-btn" onclick="window.AegisUserManagement.goToPage(5);">5</button>
-                                <span class="page-ellipsis">...</span>
-                                <button class="page-btn" onclick="window.AegisUserManagement.goToPage(125);">125</button>
                                 <button class="page-btn" id="btn-page-next" onclick="window.AegisUserManagement.goToPage(window.AegisUserManagement.currentPage + 1);" aria-label="Next page">›</button>
                             </div>
 
@@ -522,15 +514,15 @@
 
                         <!-- User Profile Header -->
                         <div class="inspector-user-box">
-                            <div class="inspector-avatar" id="details-user-avatar">RS</div>
+                            <div class="inspector-avatar" id="details-user-avatar">--</div>
                             <div class="inspector-meta">
-                                <h3 class="inspector-name" id="details-user-name">Rohit Sharma</h3>
-                                <div class="inspector-email" id="details-user-email">rohit@example.com</div>
+                                <h3 class="inspector-name" id="details-user-name">No user selected</h3>
+                                <div class="inspector-email" id="details-user-email">--</div>
                                 <div class="inspector-id-row">
-                                    <span class="inspector-user-id" id="details-user-id">User ID: USR001248</span>
+                                    <span class="inspector-user-id" id="details-user-id">User ID: --</span>
                                     <span class="badge-status active" id="details-user-status">
                                         <span class="status-dot"></span>
-                                        <span>Active</span>
+                                        <span>--</span>
                                     </span>
                                 </div>
                             </div>
@@ -551,7 +543,7 @@
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                                     <span>Role</span>
                                 </div>
-                                <span class="meta-info-value" id="meta-val-role">Vault Owner</span>
+                                <span class="meta-info-value" id="meta-val-role">--</span>
                             </div>
 
                             <div class="meta-info-row">
@@ -559,7 +551,7 @@
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                                     <span>Joined On</span>
                                 </div>
-                                <span class="meta-info-value" id="meta-val-joined">12 Sep 2025, 09:14 AM</span>
+                                <span class="meta-info-value" id="meta-val-joined">--</span>
                             </div>
 
                             <div class="meta-info-row">
@@ -567,7 +559,7 @@
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                                     <span>Last Login</span>
                                 </div>
-                                <span class="meta-info-value" id="meta-val-lastlogin">11 Sep 2025, 08:22 PM</span>
+                                <span class="meta-info-value" id="meta-val-lastlogin">--</span>
                             </div>
 
                             <div class="meta-info-row">
@@ -575,7 +567,7 @@
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
                                     <span>Email Verified</span>
                                 </div>
-                                <span class="meta-info-value" id="meta-val-emailver">Yes</span>
+                                <span class="meta-info-value" id="meta-val-emailver">--</span>
                             </div>
 
                             <div class="meta-info-row">
@@ -583,7 +575,7 @@
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
                                     <span>Phone Verified</span>
                                 </div>
-                                <span class="meta-info-value" id="meta-val-phonever">Yes</span>
+                                <span class="meta-info-value" id="meta-val-phonever">--</span>
                             </div>
 
                             <div class="meta-info-row">
@@ -591,7 +583,7 @@
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                                     <span>Total Vaults</span>
                                 </div>
-                                <span class="meta-info-value" id="meta-val-vaults">2</span>
+                                <span class="meta-info-value" id="meta-val-vaults">0</span>
                             </div>
 
                             <div class="meta-info-row">
@@ -599,7 +591,7 @@
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                                     <span>Total Trustees</span>
                                 </div>
-                                <span class="meta-info-value" id="meta-val-trustees">3</span>
+                                <span class="meta-info-value" id="meta-val-trustees">0</span>
                             </div>
                         </div>
 
@@ -677,8 +669,8 @@
         </div>
 
         <div class="footer-links">
-          <a href="javascript:void(0)" onclick="typeof showToast === 'function' ? showToast('Privacy Policy (mock).') : null;">Privacy</a>
-          <a href="javascript:void(0)" onclick="typeof showToast === 'function' ? showToast('Terms of Service (mock).') : null;">Terms</a>
+          <a href="javascript:void(0)" onclick="typeof showToast === 'function' ? showToast('Privacy Policy.') : null;">Privacy</a>
+          <a href="javascript:void(0)" onclick="typeof showToast === 'function' ? showToast('Terms of Service.') : null;">Terms</a>
           <a href="../Audit Logs/audit-logs.html">Audit</a>
         </div>
       </footer>
@@ -699,11 +691,11 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label class="form-label" for="add-user-name">Full Name</label>
-                        <input type="text" id="add-user-name" class="form-input" placeholder="e.g. Vikram Singhania" required>
+                        <input type="text" id="add-user-name" class="form-input" placeholder="e.g. User Full Name" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="add-user-email">Email Address</label>
-                        <input type="email" id="add-user-email" class="form-input" placeholder="e.g. vikram@example.com" required>
+                        <input type="email" id="add-user-email" class="form-input" placeholder="e.g. user@example.com" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="add-user-role">Platform Role</label>
@@ -763,6 +755,7 @@
     </div>
 
     <!-- Core Scripts: Admin Common Controller, Demo Mock Data & Complete User Management Functionality -->
+    <script src="../../common/api.js"></script>
     <script src="../common/js/admin-common.js"></script>
     <script src="js/mockData.js"></script>
     <script src="js/user-management.js"></script>

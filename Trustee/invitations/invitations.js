@@ -7,33 +7,47 @@
 document.addEventListener('DOMContentLoaded', () => {
   if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
     window.AegisAPI.get('/trustee/invitations/').then(data => {
-      INVITATIONS_DATA = data.map(inv => ({
-        id: inv.id,
-        vaultName: inv.vault?.name || 'Vault',
-        ownerName: inv.owner?.name || 'Owner',
-        ownerRole: 'Owner',
-        ownerEmail: inv.owner?.email || '',
-        message: inv.note || '',
-        invitedOn: new Date(inv.sent_at).toLocaleDateString() + ', ' + new Date(inv.sent_at).toLocaleTimeString(),
-        expiresIn: inv.expires_at ? new Date(inv.expires_at).toLocaleDateString() : null,
-        respondedOn: inv.accepted_at ? new Date(inv.accepted_at).toLocaleDateString() : (inv.declined_at ? new Date(inv.declined_at).toLocaleDateString() : null),
-        status: inv.status.charAt(0).toUpperCase() + inv.status.slice(1),
-        relationship: inv.relationship || 'Unknown',
-        avatarInitials: inv.owner?.name ? inv.owner.name.substring(0, 2).toUpperCase() : 'U',
-        iconType: inv.status === 'pending' ? 'shield' : (inv.status === 'accepted' ? 'check' : 'cross'),
-        iconColor: inv.status === 'pending' ? 'amber' : (inv.status === 'accepted' ? 'green' : 'red'),
-        rawDate: new Date(inv.sent_at),
-        expireDays: inv.expires_at ? Math.ceil((new Date(inv.expires_at) - new Date()) / (1000 * 60 * 60 * 24)) : 999
-      }));
+      const list = Array.isArray(data) ? data : (data.results || []);
+      INVITATIONS_DATA = list.map(inv => {
+        const ownerName = inv.owner_name || (inv.owner && inv.owner.name) || 'Owner';
+        const ownerEmail = inv.owner_email || (inv.owner && inv.owner.email) || '';
+        const vaultName = inv.vault_name || (inv.vault && inv.vault.name) || 'Vault';
+        const sentDate = inv.sent_at ? new Date(inv.sent_at) : new Date();
+
+        return {
+          id: String(inv.id),
+          vaultName: vaultName,
+          ownerName: ownerName,
+          ownerRole: 'Owner',
+          ownerEmail: ownerEmail,
+          message: inv.note || 'No special note attached.',
+          invitedOn: sentDate.toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' }) + ', ' + sentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          expiresIn: inv.expires_at ? new Date(inv.expires_at).toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' }) : null,
+          respondedOn: inv.accepted_at ? new Date(inv.accepted_at).toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' }) : (inv.declined_at ? new Date(inv.declined_at).toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' }) : null),
+          status: inv.status ? (inv.status.charAt(0).toUpperCase() + inv.status.slice(1)) : 'Pending',
+          relationship: inv.relationship || 'Designated Trustee',
+          avatarInitials: (ownerName.substring(0, 2)).toUpperCase(),
+          iconType: (inv.status || '').toLowerCase() === 'accepted' ? 'check' : ((inv.status || '').toLowerCase() === 'declined' ? 'cross' : 'shield'),
+          iconColor: (inv.status || '').toLowerCase() === 'accepted' ? 'green' : ((inv.status || '').toLowerCase() === 'declined' ? 'red' : 'amber'),
+          rawDate: sentDate,
+          expireDays: inv.expiry_days != null ? inv.expiry_days : (inv.expires_at ? Math.ceil((new Date(inv.expires_at) - new Date()) / (1000 * 60 * 60 * 24)) : 14)
+        };
+      });
       if (INVITATIONS_DATA.length > 0) {
         selectedInvitationId = INVITATIONS_DATA[0].id;
+      } else {
+        selectedInvitationId = null;
       }
       finishInit();
     }).catch(err => {
       console.warn('Failed to load invitations:', err);
+      INVITATIONS_DATA = [];
+      selectedInvitationId = null;
       finishInit();
     });
   } else {
+    INVITATIONS_DATA = [];
+    selectedInvitationId = null;
     finishInit();
   }
 });
@@ -49,7 +63,7 @@ function finishInit() {
 // Live Invitation Data (populated from /api/v1/trustee/invitations/)
 let INVITATIONS_DATA = [];
 
-let selectedInvitationId = 'inv-family';
+let selectedInvitationId = null;
 let activeFilter = 'pending';
 let activeSort = 'newest';
 let searchQuery = '';
@@ -271,16 +285,38 @@ function renderSelectedDetailsPanel() {
   if (!panel) return;
 
   const inv = INVITATIONS_DATA.find(i => i.id === selectedInvitationId) || INVITATIONS_DATA[0];
-  if (!inv) return;
+  const btnAccept = document.getElementById('panelBtnAccept');
+  const btnDecline = document.getElementById('panelBtnDecline');
+  const statusBadge = document.getElementById('panelStatusBadge');
+  const actionsGroup = document.getElementById('panelActionsGroup');
+
+  if (!inv) {
+    if (statusBadge) statusBadge.style.display = 'none';
+    if (actionsGroup) actionsGroup.style.display = 'none';
+    if (btnAccept) btnAccept.style.display = 'none';
+    if (btnDecline) btnDecline.style.display = 'none';
+
+    document.getElementById('panelVaultTitle').textContent = 'No Invitation Selected';
+    document.getElementById('panelInviterInitials').textContent = '--';
+    document.getElementById('panelInviterName').textContent = 'Select an invitation from the list to view its charter.';
+    document.getElementById('panelInviterEmail').textContent = '';
+    document.getElementById('panelInvitedOn').textContent = '—';
+    document.getElementById('panelExpiresIn').textContent = '—';
+    document.getElementById('panelRelationship').textContent = '—';
+    document.getElementById('panelOwnerMessage').textContent = 'Invitations sent to your email by vault owners will appear here.';
+    return;
+  }
 
   // Header Badge
-  const statusBadge = document.getElementById('panelStatusBadge');
   if (statusBadge) {
+    statusBadge.style.display = 'inline-flex';
     statusBadge.className = `status-badge ${inv.status.toLowerCase() === 'pending' ? 'pending' : (inv.status === 'Accepted' ? 'submitted' : 'failed')}`;
     statusBadge.textContent = inv.status;
   }
 
-  // Vault Title
+  if (actionsGroup) actionsGroup.style.display = 'flex';
+
+  // Vault Title & Details
   document.getElementById('panelVaultTitle').textContent = inv.vaultName;
   document.getElementById('panelInviterInitials').textContent = inv.avatarInitials;
   document.getElementById('panelInviterName').textContent = `Invited by ${inv.ownerName} (${inv.ownerRole})`;
@@ -291,8 +327,6 @@ function renderSelectedDetailsPanel() {
   document.getElementById('panelOwnerMessage').textContent = `“${inv.message}”`;
 
   // Action Buttons visibility
-  const btnAccept = document.getElementById('panelBtnAccept');
-  const btnDecline = document.getElementById('panelBtnDecline');
   if (btnAccept && btnDecline) {
     if (inv.status === 'Pending') {
       btnAccept.style.display = 'block';

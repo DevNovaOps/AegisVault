@@ -329,11 +329,11 @@
                         </div>
                         <div class="metric-content-col">
                             <div class="metric-number-row">
-                                <span class="metric-number-display" id="kpi-total-logs">12,482</span>
-                                <span class="trend-badge positive">↑ 18%</span>
+                                <span class="metric-number-display" id="kpi-total-logs">0</span>
+                                <span class="trend-badge positive">Live</span>
                             </div>
                             <span class="metric-title-text">Total Logs</span>
-                            <span class="metric-subtext-label">+1,902 this month</span>
+                            <span class="metric-subtext-label">Platform audit entries</span>
                         </div>
                     </div>
 
@@ -347,11 +347,11 @@
                         </div>
                         <div class="metric-content-col">
                             <div class="metric-number-row">
-                                <span class="metric-number-display" id="kpi-user-actions">6,214</span>
-                                <span class="trend-badge positive">↑ 12%</span>
+                                <span class="metric-number-display" id="kpi-user-actions">0</span>
+                                <span class="trend-badge positive">Live</span>
                             </div>
                             <span class="metric-title-text">User Actions</span>
-                            <span class="metric-subtext-label">49.8% of total</span>
+                            <span class="metric-subtext-label">Account and session logs</span>
                         </div>
                     </div>
 
@@ -365,11 +365,11 @@
                         </div>
                         <div class="metric-content-col">
                             <div class="metric-number-row">
-                                <span class="metric-number-display" id="kpi-vault-actions">3,156</span>
-                                <span class="trend-badge positive">↑ 25%</span>
+                                <span class="metric-number-display" id="kpi-vault-actions">0</span>
+                                <span class="trend-badge positive">Live</span>
                             </div>
                             <span class="metric-title-text">Vault Actions</span>
-                            <span class="metric-subtext-label">25.3% of total</span>
+                            <span class="metric-subtext-label">Encrypted custody events</span>
                         </div>
                     </div>
 
@@ -384,11 +384,11 @@
                         </div>
                         <div class="metric-content-col">
                             <div class="metric-number-row">
-                                <span class="metric-number-display" id="kpi-security-events">1,892</span>
-                                <span class="trend-badge positive">↑ 40%</span>
+                                <span class="metric-number-display" id="kpi-security-events">0</span>
+                                <span class="trend-badge positive">Live</span>
                             </div>
                             <span class="metric-title-text">Security Events</span>
-                            <span class="metric-subtext-label">15.2% of total</span>
+                            <span class="metric-subtext-label">Protocol security audits</span>
                         </div>
                     </div>
 
@@ -402,11 +402,11 @@
                         </div>
                         <div class="metric-content-col">
                             <div class="metric-number-row">
-                                <span class="metric-number-display" id="kpi-admin-actions">1,220</span>
-                                <span class="trend-badge positive">↑ 8%</span>
+                                <span class="metric-number-display" id="kpi-admin-actions">0</span>
+                                <span class="trend-badge positive">Live</span>
                             </div>
                             <span class="metric-title-text">Admin Actions</span>
-                            <span class="metric-subtext-label">9.7% of total</span>
+                            <span class="metric-subtext-label">Administrative actions</span>
                         </div>
                     </div>
                 </section>
@@ -451,15 +451,6 @@
                         <div class="filter-select-wrap">
                             <select id="filter-user" class="filter-select" aria-label="Filter by User">
                                 <option value="all">All Users</option>
-                                <option value="Aarav Sharma">Aarav Sharma</option>
-                                <option value="Dr. Vikram Malhotra">Dr. Vikram Malhotra</option>
-                                <option value="Ananya Iyer">Ananya Iyer</option>
-                                <option value="Kavita Reddy">Kavita Reddy</option>
-                                <option value="Rohan Kapoor">Rohan Kapoor</option>
-                                <option value="Siddharth Rao">Siddharth Rao</option>
-                                <option value="Rajesh Verma">Rajesh Verma</option>
-                                <option value="Pooja Joshi">Pooja Joshi</option>
-                                <option value="Admin">Admin AP</option>
                             </select>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="6 9 12 15 18 9"></polyline>
@@ -550,7 +541,7 @@
 
                         <!-- Table Pagination Bar -->
                         <div class="table-pagination-row">
-                            <span id="pagination-info-text">Showing 1–10 of 12,482 logs</span>
+                            <span id="pagination-info-text">Showing 0 logs</span>
 
                             <div class="pagination-controls">
                                 <button class="page-btn" id="btn-page-prev" onclick="window.AegisAuditLogs.goToPage(window.AegisAuditLogs.currentPage - 1);" aria-label="Previous Page">&lt;</button>
@@ -591,13 +582,13 @@
                             </div>
                             <div class="inspector-meta">
                                 <div class="inspector-title-row">
-                                    <span class="inspector-action-title" id="details-log-title">VAULT_ACCESS</span>
-                                    <span class="badge-status success" id="details-log-status">
+                                    <span class="inspector-action-title" id="details-log-title">--</span>
+                                    <span class="badge-status success" id="details-log-status" style="display: none;">
                                         <span class="status-dot"></span>
-                                        <span>Success</span>
+                                        <span>--</span>
                                     </span>
                                 </div>
-                                <span class="inspector-timestamp" id="details-log-time">Today, 14:32:10</span>
+                                <span class="inspector-timestamp" id="details-log-time">--</span>
                             </div>
                         </div>
 
@@ -614,7 +605,7 @@
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                                     <span>User</span>
                                 </div>
-                                <span class="meta-info-value" id="meta-log-user">Aarav Sharma</span>
+                                <span class="meta-info-value" id="meta-log-user">--</span>
                             </div>
 
                             <div class="meta-info-row">
@@ -622,7 +613,7 @@
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
                                     <span>Action</span>
                                 </div>
-                                <span class="meta-info-value" id="meta-log-action">VAULT_ACCESS</span>
+                                <span class="meta-info-value" id="meta-log-action">--</span>
                             </div>
 
                             <div class="meta-info-row">
@@ -630,7 +621,7 @@
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
                                     <span>Module</span>
                                 </div>
-                                <span class="meta-info-value" id="meta-log-module">Vault Management</span>
+                                <span class="meta-info-value" id="meta-log-module">--</span>
                             </div>
 
                             <div class="meta-info-row">
@@ -638,7 +629,7 @@
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
                                     <span>Description</span>
                                 </div>
-                                <span class="meta-info-value" id="meta-log-description">Accessed Primary Vault #VLT-001</span>
+                                <span class="meta-info-value" id="meta-log-description">--</span>
                             </div>
 
                             <div class="meta-info-row">
@@ -646,7 +637,7 @@
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
                                     <span>IP Address</span>
                                 </div>
-                                <span class="meta-info-value" id="meta-log-ip">192.168.1.42</span>
+                                <span class="meta-info-value" id="meta-log-ip">--</span>
                             </div>
 
                             <div class="meta-info-row">
@@ -654,7 +645,7 @@
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
                                     <span>Location</span>
                                 </div>
-                                <span class="meta-info-value" id="meta-log-location">🇮🇳 Mumbai, India</span>
+                                <span class="meta-info-value" id="meta-log-location">--</span>
                             </div>
 
                             <div class="meta-info-row">
@@ -662,7 +653,7 @@
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
                                     <span>Device</span>
                                 </div>
-                                <span class="meta-info-value" id="meta-log-device">Chrome 118 / macOS</span>
+                                <span class="meta-info-value" id="meta-log-device">--</span>
                             </div>
 
                             <div class="meta-info-row">
@@ -670,12 +661,7 @@
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                                     <span>Session ID</span>
                                 </div>
-                                <span class="meta-info-value" id="meta-log-session">
-                                    <span class="session-id-wrap" onclick="window.AegisInteractions.copyToClipboard('sess_9f8a2b3c4d5e6f7a8b9c0d1e2f3a4b', 'Session ID copied!')">
-                                        <span>sess_9f8a2b3c4d5e6f...</span>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                                    </span>
-                                </span>
+                                <span class="meta-info-value" id="meta-log-session">--</span>
                             </div>
 
                             <div class="meta-info-row">
@@ -683,27 +669,14 @@
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
                                     <span>Status</span>
                                 </div>
-                                <span class="meta-info-value" id="meta-log-status">
-                                    <span class="badge-status success">
-                                        <span class="status-dot"></span>
-                                        <span>Success</span>
-                                    </span>
-                                </span>
+                                <span class="meta-info-value" id="meta-log-status">--</span>
                             </div>
                         </div>
 
                         <!-- Raw Data Tab Panel -->
                         <div class="details-tab-panel" id="tab-panel-raw">
                             <pre class="raw-json-viewer"><code id="raw-json-code">{
-  "eventId": "LOG-012482",
-  "action": "VAULT_ACCESS",
-  "module": "Vault Management",
-  "actor": {
-    "userId": "USR-00412",
-    "name": "Aarav Sharma"
-  },
-  "ipAddress": "192.168.1.42",
-  "status": "Success"
+  "message": "Select an event to view payload"
 }</code></pre>
                         </div>
 
@@ -742,8 +715,8 @@
         </div>
 
         <div class="footer-links">
-          <a href="javascript:void(0)" onclick="typeof showToast === 'function' ? showToast('Privacy Policy (mock).') : null;">Privacy</a>
-          <a href="javascript:void(0)" onclick="typeof showToast === 'function' ? showToast('Terms of Service (mock).') : null;">Terms</a>
+          <a href="javascript:void(0)" onclick="typeof showToast === 'function' ? showToast('Privacy Policy.') : null;">Privacy</a>
+          <a href="javascript:void(0)" onclick="typeof showToast === 'function' ? showToast('Terms of Service.') : null;">Terms</a>
           <a href="../Audit Logs/audit-logs.html">Audit</a>
         </div>
       </footer>
@@ -751,6 +724,7 @@
   </div>
 
     <!-- Scripts: Admin Common Controller, Demo Mock Data and Audit Logs Functionality -->
+    <script src="../../common/api.js"></script>
     <script src="../common/js/admin-common.js"></script>
     <script src="js/mockData.js"></script>
     <script src="js/audit-logs.js"></script>

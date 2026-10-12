@@ -83,19 +83,29 @@ class RegisterSerializer(serializers.Serializer):
             except Exception:
                 pass
 
-        # 2. Trustee: Auto-link existing invitations or create profile
+        # 2. Trustee: Auto-link existing invitations and create vault shares
         elif user.role == User.Role.TRUSTEE:
             try:
                 from trustees.models import TrusteeProfile, Invitation
+                from vaults.models import VaultShare
                 from django.utils import timezone
 
-                inv = None
-                if invite_code:
-                    inv = Invitation.objects.filter(token=invite_code).first()
-                if not inv:
-                    inv = Invitation.objects.filter(invitee_email__iexact=user.email, status='pending').first()
+                # Link any existing unlinked TrusteeProfiles for this email
+                TrusteeProfile.objects.filter(email__iexact=user.email, user__isnull=True).update(user=user)
 
-                if inv:
+                invitations = []
+                if invite_code:
+                    inv_by_code = Invitation.objects.filter(token=invite_code).first()
+                    if inv_by_code:
+                        invitations.append(inv_by_code)
+
+                # Also find all pending invitations for this email
+                pending_invs = Invitation.objects.filter(invitee_email__iexact=user.email, status='pending')
+                for pi in pending_invs:
+                    if pi not in invitations:
+                        invitations.append(pi)
+
+                for inv in invitations:
                     inv.status = Invitation.InvitationStatus.ACCEPTED
                     inv.token_used = True
                     inv.accepted_at = timezone.now()
@@ -105,8 +115,19 @@ class RegisterSerializer(serializers.Serializer):
                         inv.trustee_profile.status = TrusteeProfile.TrusteeStatus.ACTIVE
                         inv.trustee_profile.verification_status = TrusteeProfile.VerificationStatus.VERIFIED
                         inv.trustee_profile.save()
-            except Exception:
-                pass
+
+                    # Create VaultShare so trustee immediately sees the vault
+                    VaultShare.objects.get_or_create(
+                        vault=inv.vault,
+                        trustee=user,
+                        defaults={
+                            'access_level': 'View Only',
+                            'status': 'active',
+                        }
+                    )
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).error(f"Error linking trustee user {user.email}: {e}")
 
         # 3. Admin: Grant staff status for backend platform access
         elif user.role == User.Role.ADMIN:

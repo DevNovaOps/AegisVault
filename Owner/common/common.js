@@ -231,7 +231,7 @@
       const user = getStoredUser();
       const token = localStorage.getItem('aegis_access_token');
       if (!user && !token) {
-        window.location.href = '/AegisVault%20Home/auth.html';
+        window.location.href = '/auth.html';
         return false;
       }
       return true;
@@ -772,7 +772,7 @@
     } catch (e) {}
 
     setTimeout(() => {
-      window.location.href = '/AegisVault%20Home/auth.html';
+      window.location.href = '/auth.html';
     }, 500);
   };
   window.AegisOwner.signOut = window.signOutOwner;

@@ -323,13 +323,11 @@
                     </div>
                     <div class="kpi-details-col">
                         <div class="kpi-top-row">
-                            <span class="kpi-number-value" id="kpi-total-vaults">892</span>
-                            <span class="kpi-trend-tag up" id="kpi-total-trend">
-                                <span>&uarr;</span> 15%
-                            </span>
+                            <span class="kpi-number-value" id="kpi-total-vaults">0</span>
+                            <span class="kpi-trend-tag up" id="kpi-total-trend">Live</span>
                         </div>
                         <div class="kpi-card-label">Total Vaults</div>
-                        <div class="kpi-subtext-note" id="kpi-total-subtext">+116 this month</div>
+                        <div class="kpi-subtext-note" id="kpi-total-subtext">All system vaults</div>
                     </div>
                 </div>
 
@@ -343,13 +341,11 @@
                     </div>
                     <div class="kpi-details-col">
                         <div class="kpi-top-row">
-                            <span class="kpi-number-value" id="kpi-active-vaults">624</span>
-                            <span class="kpi-trend-tag up" id="kpi-active-trend">
-                                <span>&uarr;</span> 10%
-                            </span>
+                            <span class="kpi-number-value" id="kpi-active-vaults">0</span>
+                            <span class="kpi-trend-tag up" id="kpi-active-trend">Live</span>
                         </div>
                         <div class="kpi-card-label">Active Vaults</div>
-                        <div class="kpi-subtext-note" id="kpi-active-subtext">70.0% of total</div>
+                        <div class="kpi-subtext-note" id="kpi-active-subtext">Active &amp; unlocked</div>
                     </div>
                 </div>
 
@@ -366,13 +362,11 @@
                     </div>
                     <div class="kpi-details-col">
                         <div class="kpi-top-row">
-                            <span class="kpi-number-value" id="kpi-archived-vaults">268</span>
-                            <span class="kpi-trend-tag up" id="kpi-archived-trend">
-                                <span>&uarr;</span> 8%
-                            </span>
+                            <span class="kpi-number-value" id="kpi-archived-vaults">0</span>
+                            <span class="kpi-trend-tag up" id="kpi-archived-trend">Live</span>
                         </div>
                         <div class="kpi-card-label">Archived Vaults</div>
-                        <div class="kpi-subtext-note" id="kpi-archived-subtext">30.0% of total</div>
+                        <div class="kpi-subtext-note" id="kpi-archived-subtext">Archived custody</div>
                     </div>
                 </div>
 
@@ -389,10 +383,8 @@
                     </div>
                     <div class="kpi-details-col">
                         <div class="kpi-top-row">
-                            <span class="kpi-number-value" id="kpi-pending-vaults">12</span>
-                            <span class="kpi-trend-tag down" id="kpi-pending-trend">
-                                <span>&darr;</span> 25%
-                            </span>
+                            <span class="kpi-number-value" id="kpi-pending-vaults">0</span>
+                            <span class="kpi-trend-tag up" id="kpi-pending-trend">Live</span>
                         </div>
                         <div class="kpi-card-label">Pending Access</div>
                         <div class="kpi-subtext-note" id="kpi-pending-subtext">Requires review</div>
@@ -508,7 +500,7 @@
                     <!-- Table Footer & Pagination -->
                     <div class="table-footer-bar">
                         <div class="table-showing-text" id="table-showing-counter">
-                            Showing 1-10 of 892 vaults
+                            Showing 0 vaults
                         </div>
                         <nav class="pagination-nav" id="pagination-controls" aria-label="Table pagination">
                             <!-- Populated dynamically -->
@@ -530,19 +522,19 @@
                         <div class="overview-stats-list">
                             <div class="overview-stat-row">
                                 <span class="stat-row-label">Total Vaults</span>
-                                <span class="stat-row-val" id="widget-total-vaults">892</span>
+                                <span class="stat-row-val" id="widget-total-vaults">0</span>
                             </div>
                             <div class="overview-stat-row">
                                 <span class="stat-row-label">Active Vaults</span>
-                                <span class="stat-row-val" id="widget-active-vaults">624</span>
+                                <span class="stat-row-val" id="widget-active-vaults">0</span>
                             </div>
                             <div class="overview-stat-row">
                                 <span class="stat-row-label">Archived Vaults</span>
-                                <span class="stat-row-val" id="widget-archived-vaults">268</span>
+                                <span class="stat-row-val" id="widget-archived-vaults">0</span>
                             </div>
                             <div class="overview-stat-row">
                                 <span class="stat-row-label">Pending Access</span>
-                                <span class="stat-row-val" id="widget-pending-vaults">12</span>
+                                <span class="stat-row-val" id="widget-pending-vaults">0</span>
                             </div>
                         </div>
                     </div>
@@ -664,8 +656,8 @@
         </div>
 
         <div class="footer-links">
-          <a href="javascript:void(0)" onclick="typeof showToast === 'function' ? showToast('Privacy Policy (mock).') : null;">Privacy</a>
-          <a href="javascript:void(0)" onclick="typeof showToast === 'function' ? showToast('Terms of Service (mock).') : null;">Terms</a>
+          <a href="javascript:void(0)" onclick="typeof showToast === 'function' ? showToast('Privacy Policy.') : null;">Privacy</a>
+          <a href="javascript:void(0)" onclick="typeof showToast === 'function' ? showToast('Terms of Service.') : null;">Terms</a>
           <a href="../Audit Logs/audit-logs.html">Audit</a>
         </div>
       </footer>
@@ -767,10 +759,7 @@
                     <div class="form-group-row">
                         <label class="form-label" for="new-vault-owner">Assign Owner</label>
                         <select id="new-vault-owner" class="form-input-select" required>
-                            <option value="Rahul Mehta">Rahul Mehta (rahul.mehta@aegisvault.io)</option>
-                            <option value="Sneha Patel">Sneha Patel (sneha.patel@horizon.tech)</option>
-                            <option value="Arjun Shah">Arjun Shah (arjun.shah@vortexcapital.in)</option>
-                            <option value="Ananya Iyer">Ananya Iyer (ananya.iyer@heritagecustody.in)</option>
+                            <option value="">Select Vault Owner...</option>
                         </select>
                     </div>
                     <div class="form-group-row">
@@ -869,6 +858,7 @@
     <!-- ==============================================================
          5. JAVASCRIPT CONTROLLERS
          ============================================================== -->
+    <script src="../../common/api.js"></script>
     <script src="../common/js/admin-common.js"></script>
     <script src="js/mockData.js"></script>
     <script src="js/vault-management.js"></script>

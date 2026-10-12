@@ -3,31 +3,37 @@
  * Handles filtering, live search, interactive vault detail modals, and action routes
  */
 
+// Vault data store - populated strictly from live backend API
+let VAULT_ITEMS = [];
+let currentFilter = 'all';
+let currentSearch = '';
+
 document.addEventListener('DOMContentLoaded', () => {
   if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
     window.AegisAPI.get('/trustee/assigned-vaults/').then(data => {
-      VAULT_ITEMS = data.map(share => {
+      VAULT_ITEMS = (data || []).map(share => {
         let categories = ['all'];
         if (share.status === 'active') categories.push('active');
+        if (share.status === 'pending') categories.push('pending_verification');
         return {
           id: share.vault || 'vault-' + Math.random(),
           name: share.vault_name || 'Vault',
-          owner: share.trustee_name || 'Unknown Owner',
-          email: share.trustee_email || 'unknown@example.com',
-          assignedOn: new Date(share.created_at || Date.now()).toLocaleDateString(),
-          verificationStatus: 'Verified',
+          owner: share.owner_name || 'Vault Owner',
+          email: share.owner_email || 'owner@example.com',
+          assignedOn: new Date(share.created_at || Date.now()).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+          verificationStatus: share.status === 'active' ? 'Verified' : 'Pending',
           verificationSub: '',
-          shareStatus: share.status || 'Active',
-          shareDate: 'N/A',
+          shareStatus: share.status === 'active' ? 'Active' : 'Pending',
+          shareDate: 'Active',
           releaseStatus: 'No Release',
           releaseSub: 'Not initiated',
           tags: ['Assigned'],
           categories: categories,
-          lockColor: 'blue',
-          requiresAction: false,
+          lockColor: share.status === 'active' ? 'blue' : 'amber',
+          requiresAction: share.status !== 'active',
           scheme: 'Shamir Secret Sharing (2-of-3)',
-          shareHash: 'sha256:...',
-          description: share.vault_description || ''
+          shareHash: share.id ? `sha256:${share.id.replace(/-/g, '')}` : 'Active Token',
+          description: share.vault_description || 'Secure personal legacy vault protected under AegisVault protocol.'
         };
       });
       finishInit();
@@ -41,58 +47,53 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function finishInit() {
+  updateSummaryMetrics();
   initTabs();
   initSearch();
   initActionAlertButton();
   renderFilteredVaults();
 }
 
-// Vault data store
-let VAULT_ITEMS = [
-  {
-    id: 'vault-personal',
-    name: 'Personal Vault',
-    owner: 'Aryan Patel',
-    email: 'aryan.patel@gmail.com',
-    assignedOn: '10 Aug 2025',
-    verificationStatus: 'Verified',
-    verificationSub: '',
-    shareStatus: 'Submitted',
-    shareDate: 'on 12 Aug 2025',
-    releaseStatus: 'No Release',
-    releaseSub: 'Not initiated',
-    tags: ['Family', 'Primary'],
-    categories: ['all', 'active'],
-    lockColor: 'blue',
-    requiresAction: false,
-    scheme: 'Shamir Secret Sharing (2-of-3)',
-    shareHash: 'sha256:7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069',
-    description: 'Contains financial accounts, property documents, and personal letters.'
-  },
-  {
-    id: 'vault-family',
-    name: 'Family Vault',
-    owner: 'Priya Shah',
-    email: 'priya.shah@email.com',
-    assignedOn: '18 Aug 2025',
-    verificationStatus: 'Pending',
-    verificationSub: 'Complete verification',
-    shareStatus: 'Not Submitted',
-    shareDate: 'Awaiting release',
-    releaseStatus: 'In Progress',
-    releaseSub: 'Grace period (12 days left)',
-    tags: ['Family', 'Secondary'],
-    categories: ['all', 'pending_verification', 'release_in_progress'],
-    lockColor: 'amber',
-    requiresAction: true,
-    scheme: 'Shamir Secret Sharing (3-of-5)',
-    shareHash: 'Pending offline trustee authorization',
-    description: 'Family legacy vault containing trusts, estate planning, and emergency medical directives.'
-  }
-];
+function updateSummaryMetrics() {
+  const total = VAULT_ITEMS.length;
+  const verified = VAULT_ITEMS.filter(v => v.verificationStatus === 'Verified').length;
+  const pending = VAULT_ITEMS.filter(v => v.verificationStatus === 'Pending').length;
+  const submitted = VAULT_ITEMS.filter(v => v.shareStatus === 'Active' || v.shareStatus === 'Submitted').length;
+  const released = VAULT_ITEMS.filter(v => v.categories.includes('release_in_progress')).length;
 
-let currentFilter = 'all';
-let currentSearch = '';
+  const elTotal = document.getElementById('sumTotalVaults');
+  if (elTotal) elTotal.textContent = total;
+  const elVer = document.getElementById('sumVerifiedVaults');
+  if (elVer) elVer.textContent = verified;
+  const elPen = document.getElementById('sumPendingVer');
+  if (elPen) elPen.textContent = pending;
+  const elSub = document.getElementById('sumSharesSub');
+  if (elSub) elSub.textContent = submitted;
+  const elRel = document.getElementById('sumActiveRel');
+  if (elRel) elRel.textContent = released;
+
+  // Update Tab Labels
+  document.querySelectorAll('.vault-tab-btn').forEach(btn => {
+    const f = btn.getAttribute('data-filter');
+    if (f === 'all') btn.textContent = `All Vaults (${total})`;
+    else if (f === 'active') btn.textContent = `Active (${verified})`;
+    else if (f === 'pending_verification') btn.textContent = `Pending Verification (${pending})`;
+    else if (f === 'release_in_progress') btn.textContent = `Release In Progress (${released})`;
+    else if (f === 'completed') btn.textContent = `Completed (0)`;
+  });
+
+  // Action Alert Card
+  const actionAlertCard = document.getElementById('actionAlertCard');
+  const actionAlertDesc = document.getElementById('actionAlertDesc');
+  if (actionAlertCard) {
+    if (pending > 0) {
+      actionAlertCard.style.display = 'block';
+      if (actionAlertDesc) actionAlertDesc.textContent = `${pending} vault${pending > 1 ? 's' : ''} require${pending === 1 ? 's' : ''} your attention.`;
+    } else {
+      actionAlertCard.style.display = 'none';
+    }
+  }
+}
 
 // Filter Tabs Logic
 function initTabs() {
@@ -217,9 +218,7 @@ function renderFilteredVaults() {
     }
   } else {
     if (emptyBox) {
-      emptyBox.style.display = (currentFilter === 'all' && !currentSearch) ? 'flex' : 'none';
-      if (emptyTitle) emptyTitle.textContent = 'No more vaults assigned (for now)';
-      if (emptySub) emptySub.textContent = 'When a vault owner assigns you to a new vault, it will appear here.';
+      emptyBox.style.display = 'none';
     }
   }
   

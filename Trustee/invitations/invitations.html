@@ -222,10 +222,8 @@
               <span class="notification-badge-dot"></span>
             </button>
             <div class="dropdown-panel" id="notificationDropdown">
-              <div class="dropdown-header">Recent Alerts (3)</div>
-              <a href="./invitations.html" class="dropdown-item">New vault invitation from Priya Shah</a>
-              <a href="../trustee-verification/trustee-verification.html" class="dropdown-item">Identity verification pending review</a>
-              <a href="../release-status/release-status.html" class="dropdown-item">Release process initiated for Family Vault</a>
+              <div class="dropdown-header">Recent Alerts (0)</div>
+              <div class="dropdown-item" style="color:var(--text-muted); cursor:default;">No new notifications</div>
               <div class="dropdown-divider"></div>
               <a href="../notifications/notifications.html" class="dropdown-item" style="color:var(--brand-orange); font-weight:600;">View all notifications &rarr;</a>
             </div>
@@ -234,8 +232,8 @@
           <!-- Profile Chip Menu -->
           <div class="profile-menu-wrapper">
             <button class="profile-chip" id="profileBtn" aria-label="User Profile Menu">
-              <div class="profile-avatar-circle">RP</div>
-              <span class="profile-name">Rakesh Patel</span>
+              <div class="profile-avatar-circle">--</div>
+              <span class="profile-name">Trustee</span>
               <svg class="profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <polyline points="6 9 12 15 18 9"/>
               </svg>
@@ -337,13 +335,14 @@
           <div class="invitations-list-col">
 
             <!-- Toolbar (Tabs + Sort + Search) -->
+            <!-- Toolbar (Tabs + Sort + Search) -->
             <div class="invitations-toolbar">
               <div class="invitations-tabs" role="tablist">
-                <button class="inv-tab-btn active" data-filter="pending" role="tab">Pending (2)</button>
-                <button class="inv-tab-btn" data-filter="accepted" role="tab">Accepted (3)</button>
-                <button class="inv-tab-btn" data-filter="declined" role="tab">Declined (1)</button>
+                <button class="inv-tab-btn active" data-filter="pending" role="tab">Pending (0)</button>
+                <button class="inv-tab-btn" data-filter="accepted" role="tab">Accepted (0)</button>
+                <button class="inv-tab-btn" data-filter="declined" role="tab">Declined (0)</button>
                 <button class="inv-tab-btn" data-filter="expired" role="tab">Expired (0)</button>
-                <button class="inv-tab-btn" data-filter="all" role="tab">All (6)</button>
+                <button class="inv-tab-btn" data-filter="all" role="tab">All (0)</button>
               </div>
 
               <div class="invitations-controls-right">
@@ -380,17 +379,17 @@
                 </svg>
                 <span>Invitation Details</span>
               </div>
-              <span class="status-badge pending" id="panelStatusBadge">Pending</span>
+              <span class="status-badge" id="panelStatusBadge" style="display:none">Status</span>
             </div>
 
-            <h2 class="panel-vault-heading" id="panelVaultTitle">Family Vault</h2>
+            <h2 class="panel-vault-heading" id="panelVaultTitle">No Invitation Selected</h2>
 
             <!-- Inviter Profile Chip -->
-            <div class="panel-inviter-chip">
-              <div class="panel-inviter-avatar" id="panelInviterInitials">PS</div>
+            <div class="panel-inviter-chip" id="panelInviterChip">
+              <div class="panel-inviter-avatar" id="panelInviterInitials">--</div>
               <div class="panel-inviter-info">
-                <span class="panel-inviter-name" id="panelInviterName">Invited by Priya Shah (Owner)</span>
-                <span class="panel-inviter-email" id="panelInviterEmail">priya.shah@example.com</span>
+                <span class="panel-inviter-name" id="panelInviterName">Select an invitation to view details</span>
+                <span class="panel-inviter-email" id="panelInviterEmail"></span>
               </div>
             </div>
 
@@ -398,28 +397,28 @@
             <div class="panel-details-list">
               <div class="panel-detail-row">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                <span>Invited On: <strong id="panelInvitedOn">12 Sep 2025, 10:24 AM</strong></span>
+                <span>Invited On: <strong id="panelInvitedOn">—</strong></span>
               </div>
 
               <div class="panel-detail-row">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                <span>Expires In: <strong id="panelExpiresIn">13 days (25 Sep 2025)</strong></span>
+                <span>Expires In: <strong id="panelExpiresIn">—</strong></span>
               </div>
 
               <div class="panel-detail-row">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                <span>Relationship: <strong id="panelRelationship">Family</strong></span>
+                <span>Relationship: <strong id="panelRelationship">—</strong></span>
               </div>
             </div>
 
             <!-- Message from Owner -->
             <div class="panel-message-box">
               <span class="panel-message-label">Message from Owner</span>
-              <p class="panel-message-content" id="panelOwnerMessage">&ldquo;I'm inviting you as a trustee to help protect my digital legacy. Your support means a lot.&rdquo;</p>
+              <p class="panel-message-content" id="panelOwnerMessage">Invitations sent to your email by vault owners will appear here.</p>
             </div>
 
             <!-- Action Buttons -->
-            <div class="panel-actions-group">
+            <div class="panel-actions-group" id="panelActionsGroup" style="display:none">
               <button class="btn-panel-accept" id="panelBtnAccept">Accept Invitation</button>
               <button class="btn-panel-decline" id="panelBtnDecline">Decline Invitation</button>
               <a class="panel-full-details-link" id="panelLinkDetails">View Full Details &rarr;</a>
@@ -540,8 +539,8 @@
         </div>
 
         <div class="footer-links">
-          <a href="javascript:void(0)" onclick="showToast('Privacy Policy (mock).')">Privacy</a>
-          <a href="javascript:void(0)" onclick="showToast('Terms of Service (mock).')">Terms</a>
+          <a href="javascript:void(0)" onclick="showToast('Privacy Policy.')">Privacy</a>
+          <a href="javascript:void(0)" onclick="showToast('Terms of Service.')">Terms</a>
           <a href="../help-support/help-support.html">Help</a>
         </div>
       </footer>
@@ -559,7 +558,7 @@
       </div>
       <div class="modal-body">
         <div style="margin-bottom: 1rem;">
-          <p style="margin-bottom: 0.35rem;"><strong>Vault Owner:</strong> <span id="modalFullOwner">Priya Shah</span></p>
+          <p style="margin-bottom: 0.35rem;"><strong>Vault Owner:</strong> <span id="modalFullOwner">—</span></p>
           <p style="margin-bottom: 0.35rem;"><strong>Relationship:</strong> <span id="modalFullRelation">Family</span></p>
           <p style="margin-bottom: 0.35rem;"><strong>Invitation Date:</strong> <span id="modalFullInvited">12 Sep 2025</span></p>
         </div>
@@ -581,6 +580,7 @@
   </div>
 
   <!-- Shared & Page JavaScript -->
+  <script src="../../common/api.js"></script>
   <script src="../common/common.js"></script>
   <script src="./invitations.js"></script>
 </body>

@@ -25,13 +25,10 @@ const AegisDashboard = {
 
         this.initSearch();
         this.initReportModal();
-        this.fetchAdminStats();
+        this.fetchDashboardData();
 
-        // 2. Initialize Data Tables & Sections
+        // 2. Initialize Infrastructure & Actions
         this.renderNotifications();
-        this.renderRecentUsersTable();
-        this.renderSecurityEventsTable();
-        this.renderPendingActionsList();
         this.renderSystemHealthList();
         this.bindActionButtons();
 
@@ -43,26 +40,146 @@ const AegisDashboard = {
         return window.AegisAdminCommon ? AegisAdminCommon.isDark() : document.body.classList.contains('dark-theme');
     },
 
-    fetchAdminStats() {
-        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-            window.AegisAPI.get('/admin/dashboard/stats/').then(data => {
-                const map = {
-                    'metric-card-users': data.total_users,
-                    'metric-card-trustees': data.active_trustees,
-                    'metric-card-vaults': data.active_vaults,
-                    'metric-card-health': data.system_health === 'Healthy' ? '100%' : 'Degraded'
-                };
-                for (const [id, value] of Object.entries(map)) {
-                    const card = document.getElementById(id);
-                    if (card) {
-                        const numDisplay = card.querySelector('.metric-number-display');
-                        if (numDisplay) numDisplay.textContent = value;
-                    }
-                }
-            }).catch(err => {
-                console.warn('Failed to fetch admin stats:', err);
-            });
+    fetchDashboardData() {
+        if (!window.AegisAPI || !window.AegisAPI.isAuthenticated()) {
+            this.renderRecentUsersTable();
+            this.renderSecurityEventsTable();
+            this.renderPendingActionsList();
+            return;
         }
+
+        // 1. KPI Stats
+        window.AegisAPI.get('/admin/dashboard/stats/').then(data => {
+            const map = {
+                'metric-card-users': data.total_users ?? 0,
+                'metric-card-trustees': data.active_trustees ?? 0,
+                'metric-card-vaults': data.active_vaults ?? 0,
+                'metric-card-requests': data.pending_requests ?? 0,
+                'metric-card-events': data.security_events ?? 0,
+                'metric-card-uptime': data.system_uptime || '100%'
+            };
+            for (const [id, value] of Object.entries(map)) {
+                const card = document.getElementById(id);
+                if (card) {
+                    const numDisplay = card.querySelector('.metric-number-display');
+                    if (numDisplay) numDisplay.textContent = typeof value === 'number' ? value.toLocaleString() : value;
+                }
+            }
+        }).catch(err => console.warn('Failed to fetch admin stats:', err));
+
+        // 2. Recent Users
+        window.AegisAPI.get('/admin/users/').then(users => {
+            const list = (users || []).slice(0, 5).map(u => ({
+                id: u.id,
+                name: u.name || 'Unnamed User',
+                avatar: (u.name || u.email || 'U').charAt(0).toUpperCase(),
+                avatarColor: 'avatar-blue',
+                email: u.email,
+                role: u.role ? (u.role.charAt(0).toUpperCase() + u.role.slice(1)) : 'Owner',
+                status: u.status || (u.statusType === 'active' ? 'Active' : 'Suspended'),
+                statusType: (u.statusType || (u.status === 'Active' ? 'active' : 'suspended')).toLowerCase(),
+                joined: u.joined || 'Recent',
+                vaultCount: u.vault_count || 0,
+                trusteesCount: 0,
+                lastHeartbeat: u.last_login ? new Date(u.last_login).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Never',
+                accountTier: u.role === 'admin' ? 'Administrator' : 'Standard Custody'
+            }));
+            if (window.AegisMockData) {
+                AegisMockData.recentUsers = list;
+
+                // Compute user role distribution dynamically
+                const roleCounts = {};
+                (users || []).forEach(u => {
+                    const r = u.role ? (u.role.charAt(0).toUpperCase() + u.role.slice(1)) : 'Owner';
+                    roleCounts[r] = (roleCounts[r] || 0) + 1;
+                });
+                const totalUsers = (users || []).length;
+                const roleColors = {
+                    'Owner': { color: '#2563EB', darkColor: '#3B82F6' },
+                    'Trustee': { color: '#0D9488', darkColor: '#14B8A6' },
+                    'Admin': { color: '#F59E0B', darkColor: '#FBBF24' }
+                };
+                AegisMockData.userRoleDistribution = Object.keys(roleCounts).map(role => {
+                    const count = roleCounts[role];
+                    const c = roleColors[role] || { color: '#8B5CF6', darkColor: '#A78BFA' };
+                    return {
+                        label: role,
+                        count: count,
+                        percent: totalUsers > 0 ? (count / totalUsers) * 100 : 0,
+                        color: c.color,
+                        darkColor: c.darkColor
+                    };
+                });
+            }
+            this.renderRecentUsersTable();
+            this.renderUserRoleDistributionDonut();
+        }).catch(err => {
+            console.warn('Failed to load recent users:', err);
+            this.renderRecentUsersTable();
+        });
+
+        // 3. Vault Categories
+        window.AegisAPI.get('/admin/vaults/').then(vaults => {
+            const catCounts = {};
+            (vaults || []).forEach(v => {
+                const t = v.vault_type ? (v.vault_type.charAt(0).toUpperCase() + v.vault_type.slice(1)) : 'Personal';
+                catCounts[t] = (catCounts[t] || 0) + 1;
+            });
+            const totalVaults = (vaults || []).length;
+            const catColors = {
+                'Personal': { color: '#2563EB', darkColor: '#3B82F6' },
+                'Financial': { color: '#0D9488', darkColor: '#14B8A6' },
+                'Business': { color: '#F59E0B', darkColor: '#FBBF24' },
+                'Legal': { color: '#8B5CF6', darkColor: '#A78BFA' }
+            };
+            if (window.AegisMockData) {
+                AegisMockData.vaultCategories = Object.keys(catCounts).map(cat => {
+                    const count = catCounts[cat];
+                    const c = catColors[cat] || { color: '#EF4444', darkColor: '#F87171' };
+                    return {
+                        label: cat,
+                        count: count,
+                        percent: totalVaults > 0 ? (count / totalVaults) * 100 : 0,
+                        color: c.color,
+                        darkColor: c.darkColor
+                    };
+                });
+            }
+            this.renderVaultCategoriesDonut();
+        }).catch(err => {
+            console.warn('Failed to load vaults for category chart:', err);
+            this.renderVaultCategoriesDonut();
+        });
+
+        // 4. Security Events
+        window.AegisAPI.get('/admin/security/events/').then(events => {
+            const list = (events || []).slice(0, 5).map(e => ({
+                id: e.id,
+                time: e.timestamp ? new Date(e.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recent',
+                event: e.title || e.event_type || 'Security Event',
+                severity: (e.severity || 'medium').toUpperCase(),
+                severityType: (e.severity || 'medium').toLowerCase(),
+                icon: 'shield-alert',
+                ip: e.source_ip || '127.0.0.1',
+                location: 'Internal',
+                user: e.user_email || 'System',
+                details: e.description || e.title || 'Security log recorded'
+            }));
+            if (window.AegisMockData) AegisMockData.recentSecurityEvents = list;
+            this.renderSecurityEventsTable();
+        }).catch(err => {
+            console.warn('Failed to load security events:', err);
+            this.renderSecurityEventsTable();
+        });
+
+        // 5. Pending Actions
+        window.AegisAPI.get('/admin/pending-actions/').then(actions => {
+            if (window.AegisMockData) AegisMockData.pendingActions = actions || [];
+            this.renderPendingActionsList();
+        }).catch(err => {
+            console.warn('Failed to load pending actions:', err);
+            this.renderPendingActionsList();
+        });
     },
 
     /* =========================================================================
@@ -299,13 +416,21 @@ const AegisDashboard = {
             const roleData = AegisMockData.userRoleDistribution || AegisMockData.userRoles;
             if (!roleData) return;
 
-            const segments = Array.isArray(roleData) ? roleData : roleData.segments;
-            if (!segments || segments.length === 0) return;
+            const segments = Array.isArray(roleData) ? roleData : (roleData.segments || []);
+            const isDark = this.isDark();
+            const radius = 48;
+
+            if (!segments || segments.length === 0) {
+                svgEl.innerHTML = `
+                    <svg class="donut-chart-svg" viewBox="0 0 140 140">
+                        <circle cx="70" cy="70" r="${radius}" fill="transparent" stroke="${isDark ? 'rgba(255, 255, 255, 0.06)' : '#F1F5F9'}" stroke-width="18" />
+                    </svg>
+                `;
+                legendEl.innerHTML = '<div style="font-size: 0.74rem; color: var(--text-muted); padding: 0.5rem 0;">No user records found</div>';
+                return;
+            }
 
             const total = (roleData && roleData.total) ? roleData.total : segments.reduce((acc, curr) => acc + (curr.count || curr.value || 0), 0);
-            const isDark = this.isDark();
-
-            const radius = 48;
             const circumference = 2 * Math.PI * radius;
             let cumulativePercent = 0;
 
@@ -370,13 +495,21 @@ const AegisDashboard = {
             const catData = AegisMockData.vaultCategories;
             if (!catData) return;
 
-            const segments = Array.isArray(catData) ? catData : catData.segments;
-            if (!segments || segments.length === 0) return;
+            const segments = Array.isArray(catData) ? catData : (catData.segments || []);
+            const isDark = this.isDark();
+            const radius = 48;
+
+            if (!segments || segments.length === 0) {
+                svgEl.innerHTML = `
+                    <svg class="donut-chart-svg" viewBox="0 0 140 140">
+                        <circle cx="70" cy="70" r="${radius}" fill="transparent" stroke="${isDark ? 'rgba(255, 255, 255, 0.06)' : '#F1F5F9'}" stroke-width="18" />
+                    </svg>
+                `;
+                legendEl.innerHTML = '<div style="font-size: 0.74rem; color: var(--text-muted); padding: 0.5rem 0;">No vault records found</div>';
+                return;
+            }
 
             const total = (catData && catData.total) ? catData.total : segments.reduce((acc, curr) => acc + (curr.count || curr.value || 0), 0);
-            const isDark = this.isDark();
-
-            const radius = 48;
             const circumference = 2 * Math.PI * radius;
             let cumulativePercent = 0;
 
@@ -683,9 +816,20 @@ const AegisDashboard = {
        ========================================================================= */
     renderRecentUsersTable() {
         const tbody = document.getElementById('recent-users-tbody');
-        if (!tbody || !window.AegisMockData || !AegisMockData.recentUsers) return;
+        if (!tbody) return;
 
-        const users = AegisMockData.recentUsers;
+        const users = (window.AegisMockData && AegisMockData.recentUsers) ? AegisMockData.recentUsers : [];
+        if (users.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+                        <div style="font-size: 0.9rem; font-weight: 600;">No recent user registrations</div>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
         tbody.innerHTML = users.map(u => {
             let statusIcon = '';
             if (u.statusType === 'active') {
@@ -728,9 +872,20 @@ const AegisDashboard = {
 
     renderSecurityEventsTable() {
         const tbody = document.getElementById('recent-security-events-tbody');
-        if (!tbody || !window.AegisMockData || !AegisMockData.recentSecurityEvents) return;
+        if (!tbody) return;
 
-        const events = AegisMockData.recentSecurityEvents;
+        const events = (window.AegisMockData && AegisMockData.recentSecurityEvents) ? AegisMockData.recentSecurityEvents : [];
+        if (events.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="3" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+                        <div style="font-size: 0.9rem; font-weight: 600;">No security events detected</div>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
         tbody.innerHTML = events.map(e => {
             let sevIcon = '';
             if (e.severityType === 'high') {
@@ -767,9 +922,20 @@ const AegisDashboard = {
     renderPendingActionsList() {
         try {
             const container = document.getElementById('pending-actions-list-container') || document.getElementById('pending-actions-list');
-            if (!container || !window.AegisMockData || !AegisMockData.pendingActions) return;
+            if (!container) return;
 
-            const actions = AegisMockData.pendingActions;
+            const actions = (window.AegisMockData && AegisMockData.pendingActions) ? AegisMockData.pendingActions : [];
+            if (actions.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 2rem 1rem; color: var(--text-muted); font-size: 0.85rem;">
+                        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 0.5rem; color: #10B981;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <div style="font-weight: 600; color: var(--text-heading);">All clear!</div>
+                        <p style="font-size: 0.76rem; margin: 0.2rem 0 0;">No pending administrative actions require review.</p>
+                    </div>
+                `;
+                return;
+            }
+
             container.innerHTML = actions.map(act => {
                 let iconSvg = '';
                 const iconKey = act.icon || act.iconType || '';
@@ -811,7 +977,6 @@ const AegisDashboard = {
                     const action = actions.find(a => a.id === id);
                     if (action) this.showToast(`Triaging: ${action.title} (${action.count} items)`, 'info');
                 });
-            });
         } catch (err) {
             console.error('Error rendering Pending Actions:', err);
         }

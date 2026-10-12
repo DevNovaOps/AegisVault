@@ -1,14 +1,6 @@
 /**
  * AegisVault — Audit Logs Controller & Interactions
- * 
- * Simple, self-contained JavaScript for the Audit Logs module:
- * - Dual theme switching (Light / Dark) with background switching & persistence
- * - Table rendering with color-coded action & status badges
- * - Multi-field filtering (Action, User, Module) & live search
- * - Timestamp sorting & pagination
- * - Synchronized right-hand Log Details inspector & Raw JSON data viewer
- * - CSV export download
- * - Session ID clipboard copying, dropdown menus, and toast notifications
+ * Connected directly to live Django backend /api/v1/admin/audit/logs/
  */
 
 window.AegisAuditLogs = {
@@ -17,22 +9,69 @@ window.AegisAuditLogs = {
     filteredLogs: [],
     currentPage: 1,
     pageSize: 10,
-    selectedLogId: "LOG-012482",
+    selectedLogId: null,
     sortOrder: "desc", // "desc" or "asc"
     activeTab: "details",
 
     init() {
-        this.logs = [...(window.AegisMockLogs || [])];
-        this.filteredLogs = [...this.logs];
-        // 1. Initialize Audit Table & Inspector
         this.initEventListeners();
-        this.renderTable();
-        this.selectLog(this.selectedLogId);
-        this.updateKPIs();
+
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+            window.AegisAPI.get('/admin/audit/logs/').then(data => {
+                this.logs = (data || []).map((l, index) => ({
+                    id: l.id || `LOG-${String(index + 1).padStart(6, '0')}`,
+                    rawId: l.raw_id || l.id,
+                    index: index + 1,
+                    timestamp: l.timestamp || `${l.date || ''} ${l.time || ''}`.trim() || 'Just now',
+                    dateSort: l.dateSort || l.timestamp || new Date().toISOString(),
+                    user: l.user || l.userName || 'System',
+                    userName: l.userName || l.user || 'System',
+                    email: l.email || '',
+                    action: (l.action || l.actionKey || 'SYSTEM_EVENT').toUpperCase(),
+                    actionLabel: l.actionLabel || l.actionTitle || (l.action || 'Event').replace(/_/g, ' '),
+                    actionType: (l.action || l.actionKey || 'event').toLowerCase(),
+                    module: l.module || (l.category ? (l.category.charAt(0).toUpperCase() + l.category.slice(1)) : 'System'),
+                    moduleFull: l.moduleFull || `${l.module || l.category || 'System'} Module`,
+                    details: l.details || l.description || l.actionTitle || 'Audit log event recorded',
+                    description: l.description || l.details || 'Audit log event recorded',
+                    ipAddress: l.ipAddress || l.ip || '127.0.0.1',
+                    location: l.location || 'Local / System',
+                    device: l.device || 'Desktop Client',
+                    sessionId: l.sessionId || l.id || 'sess_0000000000000000',
+                    status: (l.status || 'Success').charAt(0).toUpperCase() + (l.status || 'Success').slice(1).toLowerCase(),
+                    category: (l.category || 'system').toLowerCase(),
+                    vault: l.vault || '',
+                    relatedLogs: l.relatedLogs || [],
+                    rawData: l.rawData || l
+                }));
+                this.filteredLogs = [...this.logs];
+                this.populateUserFilter();
+                this.updateKPIs();
+                this.renderTable();
+                if (this.logs.length > 0) {
+                    this.selectLog(this.logs[0].id);
+                } else {
+                    this.clearInspector();
+                }
+            }).catch(err => {
+                console.warn('Failed to load audit logs from API:', err);
+                this.logs = [];
+                this.filteredLogs = [];
+                this.updateKPIs();
+                this.renderTable();
+                this.clearInspector();
+            });
+        } else {
+            this.logs = [];
+            this.filteredLogs = [];
+            this.updateKPIs();
+            this.renderTable();
+            this.clearInspector();
+        }
     },
 
     /* =========================================================================
-       3. Toast Notifications (Delegated to AegisAdminCommon)
+       Toast Notifications
        ========================================================================= */
     showToast(message, type = 'info') {
         if (window.AegisAdminCommon) {
@@ -42,11 +81,24 @@ window.AegisAuditLogs = {
         }
     },
 
+    copyToClipboard(text, msg = 'Copied to clipboard!') {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => this.showToast(msg, 'success'));
+        } else {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            this.showToast(msg, 'success');
+        }
+    },
+
     /* =========================================================================
-       5. Audit Table & Toolbar Event Listeners
+       Event Listeners
        ========================================================================= */
     initEventListeners() {
-        // Search Input
         const searchInput = document.getElementById('audit-table-search');
         if (searchInput) {
             searchInput.addEventListener('input', (e) => {
@@ -54,7 +106,6 @@ window.AegisAuditLogs = {
             });
         }
 
-        // Dropdown Filters
         const actionFilter = document.getElementById('filter-action');
         const userFilter = document.getElementById('filter-user');
         const moduleFilter = document.getElementById('filter-module');
@@ -63,31 +114,26 @@ window.AegisAuditLogs = {
         if (userFilter) userFilter.addEventListener('change', () => this.applyFilters());
         if (moduleFilter) moduleFilter.addEventListener('change', () => this.applyFilters());
 
-        // Reset Filter Button
         const btnReset = document.getElementById('btn-reset-filters');
         if (btnReset) {
             btnReset.addEventListener('click', () => this.resetFilters());
         }
 
-        // Apply Filter Button
         const btnApply = document.getElementById('btn-apply-filters');
         if (btnApply) {
             btnApply.addEventListener('click', () => this.applyFilters());
         }
 
-        // Export Logs Button
         const btnExport = document.getElementById('btn-export-logs');
         if (btnExport) {
             btnExport.addEventListener('click', () => this.exportCurrentLogsCSV());
         }
 
-        // Timestamp Column Sorting
         const thTimestamp = document.getElementById('th-timestamp');
         if (thTimestamp) {
             thTimestamp.addEventListener('click', () => this.toggleTimestampSort());
         }
 
-        // Select All Checkbox
         const selectAllCb = document.getElementById('checkbox-select-all');
         if (selectAllCb) {
             selectAllCb.addEventListener('change', (e) => {
@@ -96,7 +142,6 @@ window.AegisAuditLogs = {
             });
         }
 
-        // Details Panel Tabs (Details vs Raw Data)
         const tabBtns = document.querySelectorAll('.details-tab-btn');
         tabBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -105,7 +150,6 @@ window.AegisAuditLogs = {
             });
         });
 
-        // Close Details Panel Button
         const btnCloseDetails = document.getElementById('btn-close-details');
         if (btnCloseDetails) {
             btnCloseDetails.addEventListener('click', () => {
@@ -117,7 +161,6 @@ window.AegisAuditLogs = {
             });
         }
 
-        // Per Page Select
         const perPageSelect = document.getElementById('per-page-select');
         if (perPageSelect) {
             perPageSelect.addEventListener('change', (e) => {
@@ -129,11 +172,45 @@ window.AegisAuditLogs = {
     },
 
     /* =========================================================================
-       6. KPI Metric Numbers Update
+       Dynamic Dropdown Population
+       ========================================================================= */
+    populateUserFilter() {
+        const userFilter = document.getElementById('filter-user');
+        if (!userFilter) return;
+
+        const users = Array.from(new Set(this.logs.map(l => l.user).filter(Boolean))).sort();
+        userFilter.innerHTML = '<option value="all">All Users</option>' +
+            users.map(u => `<option value="${u}">${u}</option>`).join('');
+    },
+
+    /* =========================================================================
+       Dynamic KPI Metrics Calculation
        ========================================================================= */
     updateKPIs() {
-        if (!window.AegisAuditStats) return;
-        const s = window.AegisAuditStats;
+        const totalLogs = this.logs.length;
+        const userActions = this.logs.filter(l => 
+            l.category === 'auth' || l.category === 'profile' || 
+            l.module?.toLowerCase().includes('auth') || 
+            l.action?.toLowerCase().includes('user') || 
+            l.action?.toLowerCase().includes('login')
+        ).length;
+
+        const vaultActions = this.logs.filter(l => 
+            l.category === 'vault' || l.category === 'share' || l.category === 'release' || 
+            l.module?.toLowerCase().includes('vault')
+        ).length;
+
+        const securityEvents = this.logs.filter(l => 
+            l.category === 'security' || 
+            l.module?.toLowerCase().includes('security') || 
+            l.status?.toLowerCase() === 'failure' ||
+            l.action?.toLowerCase().includes('failed')
+        ).length;
+
+        const adminActions = this.logs.filter(l => 
+            l.category === 'admin' || l.category === 'system' || 
+            l.module?.toLowerCase().includes('admin')
+        ).length;
 
         const totalEl = document.getElementById('kpi-total-logs');
         const userEl = document.getElementById('kpi-user-actions');
@@ -141,15 +218,15 @@ window.AegisAuditLogs = {
         const secEl = document.getElementById('kpi-security-events');
         const adminEl = document.getElementById('kpi-admin-actions');
 
-        if (totalEl) totalEl.textContent = Number(s.totalLogs).toLocaleString();
-        if (userEl) userEl.textContent = Number(s.userActions).toLocaleString();
-        if (vaultEl) vaultEl.textContent = Number(s.vaultActions).toLocaleString();
-        if (secEl) secEl.textContent = Number(s.securityEvents).toLocaleString();
-        if (adminEl) adminEl.textContent = Number(s.adminActions).toLocaleString();
+        if (totalEl) totalEl.textContent = totalLogs.toLocaleString();
+        if (userEl) userEl.textContent = userActions.toLocaleString();
+        if (vaultEl) vaultEl.textContent = vaultActions.toLocaleString();
+        if (secEl) secEl.textContent = securityEvents.toLocaleString();
+        if (adminEl) adminEl.textContent = adminActions.toLocaleString();
     },
 
     /* =========================================================================
-       7. Real-time Search & Filter Engine
+       Real-time Search & Filter Engine
        ========================================================================= */
     handleSearch(query) {
         const q = query.trim().toLowerCase();
@@ -159,12 +236,12 @@ window.AegisAuditLogs = {
         }
 
         this.filteredLogs = this.logs.filter(l => 
-            l.user.toLowerCase().includes(q) ||
-            l.action.toLowerCase().includes(q) ||
-            l.details.toLowerCase().includes(q) ||
-            l.ipAddress.toLowerCase().includes(q) ||
-            l.module.toLowerCase().includes(q) ||
-            l.id.toLowerCase().includes(q)
+            (l.user && l.user.toLowerCase().includes(q)) ||
+            (l.action && l.action.toLowerCase().includes(q)) ||
+            (l.details && l.details.toLowerCase().includes(q)) ||
+            (l.ipAddress && l.ipAddress.toLowerCase().includes(q)) ||
+            (l.module && l.module.toLowerCase().includes(q)) ||
+            (l.id && l.id.toLowerCase().includes(q))
         );
 
         this.currentPage = 1;
@@ -179,13 +256,13 @@ window.AegisAuditLogs = {
 
         this.filteredLogs = this.logs.filter(l => {
             const matchAction = action === 'all' || l.action.toLowerCase() === action.toLowerCase();
-            const matchUser = user === 'all' || l.user.toLowerCase().includes(user.toLowerCase());
-            const matchModule = module === 'all' || l.module.toLowerCase() === module.toLowerCase();
+            const matchUser = user === 'all' || (l.user && l.user.toLowerCase().includes(user.toLowerCase()));
+            const matchModule = module === 'all' || (l.module && l.module.toLowerCase() === module.toLowerCase());
             const matchSearch = !search || (
-                l.user.toLowerCase().includes(search) ||
-                l.action.toLowerCase().includes(search) ||
-                l.details.toLowerCase().includes(search) ||
-                l.ipAddress.toLowerCase().includes(search)
+                (l.user && l.user.toLowerCase().includes(search)) ||
+                (l.action && l.action.toLowerCase().includes(search)) ||
+                (l.details && l.details.toLowerCase().includes(search)) ||
+                (l.ipAddress && l.ipAddress.toLowerCase().includes(search))
             );
 
             return matchAction && matchUser && matchModule && matchSearch;
@@ -225,7 +302,7 @@ window.AegisAuditLogs = {
     },
 
     /* =========================================================================
-       8. Table Rendering
+       Table Rendering
        ========================================================================= */
     renderTable() {
         const tbody = document.getElementById('audit-table-tbody');
@@ -329,12 +406,40 @@ window.AegisAuditLogs = {
     },
 
     /* =========================================================================
-       9. Log Details Inspector Panel Synchronization
+       Log Details Inspector Panel Synchronization
        ========================================================================= */
+    clearInspector() {
+        this.selectedLogId = null;
+        const titleEl = document.getElementById('details-log-title');
+        const timeEl = document.getElementById('details-log-time');
+        const statusEl = document.getElementById('details-log-status');
+        if (titleEl) titleEl.textContent = '--';
+        if (timeEl) timeEl.textContent = '--';
+        if (statusEl) statusEl.style.display = 'none';
+
+        ['meta-log-user', 'meta-log-action', 'meta-log-module', 'meta-log-description', 'meta-log-ip', 'meta-log-location', 'meta-log-device', 'meta-log-session', 'meta-log-status'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = '--';
+        });
+
+        const rawJsonEl = document.getElementById('raw-json-code');
+        if (rawJsonEl) {
+            rawJsonEl.textContent = JSON.stringify({ message: "Select an event to view payload" }, null, 2);
+        }
+
+        const container = document.getElementById('related-logs-container');
+        if (container) {
+            container.innerHTML = '<p style="font-size: 0.74rem; color: var(--text-muted); padding: 0.5rem 0;">No related sequential records.</p>';
+        }
+    },
+
     selectLog(id) {
         this.selectedLogId = id;
         const log = this.logs.find(l => l.id === id);
-        if (!log) return;
+        if (!log) {
+            this.clearInspector();
+            return;
+        }
 
         // Highlight selected table row
         document.querySelectorAll('#audit-table-tbody tr').forEach(r => {
@@ -357,6 +462,7 @@ window.AegisAuditLogs = {
         if (titleEl) titleEl.textContent = log.actionLabel || log.action;
         if (timeEl) timeEl.textContent = log.timestamp;
         if (statusEl) {
+            statusEl.style.display = 'inline-flex';
             statusEl.className = `badge-status ${log.status.toLowerCase()}`;
             statusEl.innerHTML = `<span class="status-dot"></span><span>${log.status}</span>`;
         }
@@ -377,12 +483,13 @@ window.AegisAuditLogs = {
         if (valModule) valModule.textContent = log.moduleFull || log.module;
         if (valDesc) valDesc.textContent = log.description || log.details;
         if (valIp) valIp.textContent = log.ipAddress;
-        if (valLoc) valLoc.innerHTML = `🇮🇳 ${log.location}`;
+        if (valLoc) valLoc.innerHTML = log.location;
         if (valDevice) valDevice.textContent = log.device;
         if (valSession) {
+            const sessStr = String(log.sessionId);
             valSession.innerHTML = `
-                <span class="session-id-wrap" onclick="window.AegisAuditLogs.copyToClipboard('${log.sessionId}', 'Session ID copied!')">
-                    <span>${log.sessionId.slice(0, 22)}...</span>
+                <span class="session-id-wrap" onclick="window.AegisAuditLogs.copyToClipboard('${sessStr}', 'Session ID copied!')">
+                    <span>${sessStr.length > 20 ? sessStr.slice(0, 18) + '...' : sessStr}</span>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                 </span>
             `;
@@ -443,7 +550,7 @@ window.AegisAuditLogs = {
     },
 
     /* =========================================================================
-       10. Pagination Controls
+       Pagination Controls
        ========================================================================= */
     updatePagination(totalCount) {
         const infoEl = document.getElementById('pagination-info-text');
@@ -469,7 +576,7 @@ window.AegisAuditLogs = {
     },
 
     /* =========================================================================
-       11. CSV Export
+       CSV Export
        ========================================================================= */
     exportCurrentLogsCSV() {
         const logsToExport = this.filteredLogs.length > 0 ? this.filteredLogs : this.logs;

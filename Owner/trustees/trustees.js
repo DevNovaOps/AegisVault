@@ -7,7 +7,7 @@
   'use strict';
 
   // Local state
-  let mockTrustees = [];
+  let liveTrustees = [];
   let ownerVaults = [];
 
   // Helper Modal Open/Close
@@ -51,7 +51,7 @@
     const relVal = (document.getElementById('relationshipFilterSelect')?.value || 'all').toLowerCase();
 
     // Filter
-    const filtered = mockTrustees.filter(t => {
+    const filtered = liveTrustees.filter(t => {
       const name = (t.name || '').toLowerCase();
       const email = (t.email || '').toLowerCase();
       const relationship = (t.relationship || '').toLowerCase();
@@ -86,7 +86,7 @@
     updateStatsAndDonut();
 
     if (filtered.length === 0) {
-      if (mockTrustees.length === 0) {
+      if (liveTrustees.length === 0) {
         // Zero trustees overall - Full premium empty state
         tbody.innerHTML = `
           <tr>
@@ -273,11 +273,11 @@
   // =========================================================================
 
   function updateStatsAndDonut() {
-    const total = mockTrustees.length;
-    const verified = mockTrustees.filter(t => (t.verifStatus || '').toLowerCase() === 'verified').length;
-    const pending = mockTrustees.filter(t => (t.verifStatus || '').toLowerCase() === 'pending').length;
-    const invited = mockTrustees.filter(t => (t.status || '').toLowerCase() === 'invited').length;
-    const removed = mockTrustees.filter(t => (t.status || '').toLowerCase() === 'removed').length;
+    const total = liveTrustees.length;
+    const verified = liveTrustees.filter(t => (t.verifStatus || '').toLowerCase() === 'verified').length;
+    const pending = liveTrustees.filter(t => (t.verifStatus || '').toLowerCase() === 'pending').length;
+    const invited = liveTrustees.filter(t => (t.status || '').toLowerCase() === 'invited').length;
+    const removed = liveTrustees.filter(t => (t.status || '').toLowerCase() === 'removed').length;
 
     // 1. Update KPI card DOM
     const elTotal = document.getElementById('statTotalTrustees');
@@ -370,7 +370,7 @@
     document.querySelectorAll('.btn-icon-action[data-action="remind"]').forEach(btn => {
       btn.addEventListener('click', function () {
         const id = this.getAttribute('data-id');
-        const t = mockTrustees.find(x => x.id === id);
+        const t = liveTrustees.find(x => x.id === id);
         if (t) sendVerificationReminder(t);
       });
     });
@@ -379,7 +379,7 @@
     document.querySelectorAll('.btn-icon-action[data-action="delete"]').forEach(btn => {
       btn.addEventListener('click', function () {
         const id = this.getAttribute('data-id');
-        const t = mockTrustees.find(x => x.id === id);
+        const t = liveTrustees.find(x => x.id === id);
         if (t) deleteTrustee(t);
       });
     });
@@ -389,7 +389,7 @@
       btn.addEventListener('click', function (e) {
         e.stopPropagation();
         const id = this.getAttribute('data-id');
-        const t = mockTrustees.find(x => x.id === id);
+        const t = liveTrustees.find(x => x.id === id);
         if (t) openTrusteeContextMenu(t, this);
       });
     });
@@ -524,14 +524,14 @@
 
     if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
       window.AegisAPI.delete(`/owner/trustees/${t.id}/`).then(() => {
-        mockTrustees = mockTrustees.filter(x => x.id !== t.id);
+        liveTrustees = liveTrustees.filter(x => x.id !== t.id);
         renderTrusteesTable();
         window.AegisOwner?.showToast(`Trustee "${t.name}" removed successfully.`, 'success');
       }).catch(err => {
         window.AegisOwner?.showToast(`Failed to delete trustee: ${err.message}`, 'error');
       });
     } else {
-      mockTrustees = mockTrustees.filter(x => x.id !== t.id);
+      liveTrustees = liveTrustees.filter(x => x.id !== t.id);
       renderTrusteesTable();
       window.AegisOwner?.showToast(`Trustee "${t.name}" removed successfully.`, 'success');
     }
@@ -542,7 +542,7 @@
   // =========================================================================
 
   function openTrusteeDetailsModal(id) {
-    const t = mockTrustees.find(x => x.id === id);
+    const t = liveTrustees.find(x => x.id === id);
     if (!t) return;
 
     const modal = document.getElementById('trusteeDetailsModal');
@@ -597,7 +597,7 @@
   }
 
   function openEditTrusteeModal(id) {
-    const t = mockTrustees.find(x => x.id === id);
+    const t = liveTrustees.find(x => x.id === id);
     if (!t) return;
 
     const modal = document.getElementById('editTrusteeModal');
@@ -720,11 +720,11 @@
     // 2. Fetch Owner Trustees
     window.AegisAPI.get('/owner/trustees/').then(res => {
       const data = Array.isArray(res) ? res : (res && res.results ? res.results : []);
-      mockTrustees = data.map(normalizeTrustee);
+      liveTrustees = data.map(normalizeTrustee);
       renderTrusteesTable();
     }).catch(err => {
       console.error('Failed to load trustees:', err);
-      mockTrustees = [];
+      liveTrustees = [];
       renderTrusteesTable();
     });
   }
@@ -880,11 +880,11 @@
           }
 
           // Unshift or replace if existing
-          const existingIdx = mockTrustees.findIndex(x => x.email.toLowerCase() === email.toLowerCase());
+          const existingIdx = liveTrustees.findIndex(x => x.email.toLowerCase() === email.toLowerCase());
           if (existingIdx >= 0) {
-            mockTrustees[existingIdx] = newTrustee;
+            liveTrustees[existingIdx] = newTrustee;
           } else {
-            mockTrustees.unshift(newTrustee);
+            liveTrustees.unshift(newTrustee);
           }
 
           renderTrusteesTable();
@@ -917,7 +917,7 @@
           date_added: new Date().toISOString()
         });
 
-        mockTrustees.unshift(newTrustee);
+        liveTrustees.unshift(newTrustee);
         renderTrusteesTable();
         closeModal('addTrusteeModal');
         this.reset();
@@ -934,7 +934,7 @@
       e.preventDefault();
 
       const id = document.getElementById('editTrusteeId').value;
-      const t = mockTrustees.find(x => x.id === id);
+      const t = liveTrustees.find(x => x.id === id);
       if (!t) return;
 
       const newName = document.getElementById('editTrusteeName').value.trim();

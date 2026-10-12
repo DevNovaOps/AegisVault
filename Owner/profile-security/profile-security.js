@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // =========================================================================
   async function loadUserProfile() {
     if (!window.AegisAPI || !window.AegisAPI.isAuthenticated()) {
-      window.location.href = '../../AegisVault Home/auth.html';
+      window.location.href = '/auth.html';
       return;
     }
 

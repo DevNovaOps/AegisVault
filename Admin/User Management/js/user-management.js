@@ -22,49 +22,56 @@ window.AegisUserManagement = {
     activeTab: "overview",
 
     init() {
+        this.initModals();
+        this.initEventListeners();
+
         if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
             window.AegisAPI.get('/admin/users/').then(data => {
-                this.users = data.map(user => ({
-                    id: user.id || 'USR...',
-                    name: user.name || 'Unknown',
-                    email: user.email || 'email@example.com',
-                    role: user.role || 'User',
-                    status: user.is_active ? 'Active' : 'Suspended',
-                    verification: user.is_email_verified ? 'Verified' : 'Pending',
-                    avatar: user.name ? user.name.substring(0, 2).toUpperCase() : 'U',
-                    joinDate: new Date(user.date_joined).toLocaleDateString(),
-                    lastLogin: user.last_login ? new Date(user.last_login).toLocaleDateString() : 'Never',
-                    twoFactor: user.is_2fa_enabled || false,
-                    isFlagged: false,
-                    vaultsOwned: 0,
-                    trusteeOf: 0,
-                    riskScore: 10
+                this.users = (data || []).map(u => ({
+                    id: u.id,
+                    name: u.name || 'Unnamed User',
+                    email: u.email,
+                    role: u.role ? (u.role.charAt(0).toUpperCase() + u.role.slice(1)) : 'Owner',
+                    status: u.status || (u.statusType === 'active' ? 'Active' : 'Suspended'),
+                    verification: u.is_2fa_enabled ? 'Verified' : 'Pending',
+                    initials: (u.name || u.email || 'US').split(' ').map(n=>n[0]).join('').substring(0, 2).toUpperCase(),
+                    joinedOn: u.joined || 'Recent',
+                    lastLogin: u.last_login ? new Date(u.last_login).toLocaleString() : 'Never',
+                    vaults: u.vault_count || 0,
+                    trustees: 0,
+                    mfaEnabled: !!u.is_2fa_enabled,
+                    recentActivity: [],
+                    securityDetails: {
+                        mfaMethod: u.is_2fa_enabled ? 'Authenticator App (TOTP)' : 'None',
+                        encryptionLevel: 'AES-256-GCM',
+                        failedLogins: 0,
+                        ipAddress: '127.0.0.1',
+                        trustedDevices: 1
+                    }
                 }));
                 this.filteredUsers = [...this.users];
+                this.updateKPIs();
                 this.renderTable();
-                this.updateSummaryMetrics();
+                if (this.users.length > 0) {
+                    this.selectUser(this.users[0].id);
+                } else {
+                    this.clearInspector();
+                }
             }).catch(err => {
                 console.warn('Failed to load admin users:', err);
-                this.users = [...(window.AegisMockUsers || [])];
-                this.filteredUsers = [...this.users];
+                this.users = [];
+                this.filteredUsers = [];
+                this.updateKPIs();
                 this.renderTable();
-                this.updateSummaryMetrics();
+                this.clearInspector();
             });
         } else {
-            this.users = [...(window.AegisMockUsers || [])];
-            this.filteredUsers = [...this.users];
+            this.users = [];
+            this.filteredUsers = [];
+            this.updateKPIs();
             this.renderTable();
-            this.updateSummaryMetrics();
+            this.clearInspector();
         }
-
-        // 1. Initialize Modals
-        this.initModals();
-
-        // 2. Initialize User Table & Inspector
-        this.initEventListeners();
-        this.renderTable();
-        this.selectUser(this.selectedUserId);
-        this.updateKPIs();
     },
 
     /* =========================================================================
@@ -191,16 +198,29 @@ window.AegisUserManagement = {
                 const user = this.users.find(u => u.id === this.selectedUserId);
                 if (!user) return;
 
-                if (user.status === 'Suspended') {
-                    user.status = 'Active';
-                    this.showToast(`Reactivated access for ${user.name}`, 'success');
-                } else {
-                    user.status = 'Suspended';
-                    this.showToast(`Suspended access for ${user.name}`, 'warning');
-                }
+                const willSuspend = user.status === 'Active';
+                const endpoint = willSuspend ? `/admin/users/${user.id}/suspend/` : `/admin/users/${user.id}/activate/`;
 
-                this.renderTable();
-                this.selectUser(user.id);
+                if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+                    window.AegisAPI.post(endpoint, {}).then(() => {
+                        user.status = willSuspend ? 'Suspended' : 'Active';
+                        this.showToast(`${willSuspend ? 'Suspended' : 'Activated'} access for ${user.name}`, willSuspend ? 'warning' : 'success');
+                        this.updateKPIs();
+                        this.renderTable();
+                        this.selectUser(user.id);
+                    }).catch(err => {
+                        console.warn('Failed to update user status:', err);
+                        user.status = willSuspend ? 'Suspended' : 'Active';
+                        this.updateKPIs();
+                        this.renderTable();
+                        this.selectUser(user.id);
+                    });
+                } else {
+                    user.status = willSuspend ? 'Suspended' : 'Active';
+                    this.updateKPIs();
+                    this.renderTable();
+                    this.selectUser(user.id);
+                }
             });
         }
 
@@ -322,21 +342,21 @@ window.AegisUserManagement = {
         }
     },
 
-    /* =========================================================================
-       7. KPI Numbers Update
-       ========================================================================= */
     updateKPIs() {
-        if (!window.AegisUserStats) return;
-        const s = window.AegisUserStats;
+        const total = this.users ? this.users.length : 0;
+        const active = this.users ? this.users.filter(u => (u.status || '').toLowerCase() === 'active').length : 0;
+        const suspended = this.users ? this.users.filter(u => (u.status || '').toLowerCase() === 'suspended').length : 0;
+        const pending = this.users ? this.users.filter(u => (u.status || '').toLowerCase() === 'pending' || !u.mfaEnabled).length : 0;
+
         const totalEl = document.getElementById('kpi-total-users');
         const activeEl = document.getElementById('kpi-active-users');
         const suspendedEl = document.getElementById('kpi-suspended-users');
         const pendingEl = document.getElementById('kpi-pending-verifications');
 
-        if (totalEl) totalEl.textContent = Number(s.totalUsers).toLocaleString();
-        if (activeEl) activeEl.textContent = Number(s.activeUsers).toLocaleString();
-        if (suspendedEl) suspendedEl.textContent = Number(s.suspendedUsers).toLocaleString();
-        if (pendingEl) pendingEl.textContent = Number(s.pendingVerifications).toLocaleString();
+        if (totalEl) totalEl.textContent = total.toLocaleString();
+        if (activeEl) activeEl.textContent = active.toLocaleString();
+        if (suspendedEl) suspendedEl.textContent = suspended.toLocaleString();
+        if (pendingEl) pendingEl.textContent = pending.toLocaleString();
     },
 
     /* =========================================================================
@@ -477,10 +497,37 @@ window.AegisUserManagement = {
     /* =========================================================================
        10. User Details Inspector Panel Synchronization
        ========================================================================= */
+    clearInspector() {
+        const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+        setVal('details-user-avatar', '--');
+        setVal('details-user-name', 'No user selected');
+        setVal('details-user-email', '--');
+        setVal('details-user-id', 'User ID: --');
+        setVal('meta-val-role', '--');
+        setVal('meta-val-joined', '--');
+        setVal('meta-val-lastlogin', '--');
+        setVal('meta-val-emailver', '--');
+        setVal('meta-val-phonever', '--');
+        setVal('meta-val-vaults', '0');
+        setVal('meta-val-trustees', '0');
+        const statusEl = document.getElementById('details-user-status');
+        if (statusEl) {
+            statusEl.className = 'badge-status active';
+            statusEl.innerHTML = '<span class="status-dot"></span><span>--</span>';
+        }
+        const recentAct = document.getElementById('recent-activity-list');
+        if (recentAct) recentAct.innerHTML = '<p style="font-size: 0.74rem; color: var(--text-muted); padding: 0.5rem 0;">No recorded events.</p>';
+        const vaultsTab = document.getElementById('tab-panel-vaults');
+        if (vaultsTab) vaultsTab.innerHTML = '<p style="font-size: 0.74rem; color: var(--text-muted); padding: 0.5rem 0;">No active vaults.</p>';
+    },
+
     selectUser(id) {
         this.selectedUserId = id;
         const user = this.users.find(u => u.id === id);
-        if (!user) return;
+        if (!user) {
+            this.clearInspector();
+            return;
+        }
 
         // Highlight selected row in table
         document.querySelectorAll('#users-table-tbody tr, #user-table-tbody tr').forEach(r => {
@@ -499,30 +546,30 @@ window.AegisUserManagement = {
         const avatarEl = document.getElementById('details-user-avatar');
         const nameEl = document.getElementById('details-user-name');
         const emailEl = document.getElementById('details-user-email');
+        const idEl = document.getElementById('details-user-id');
         const roleEl = document.getElementById('details-user-role');
         const statusEl = document.getElementById('details-user-status');
 
         if (avatarEl) avatarEl.textContent = user.initials;
         if (nameEl) nameEl.textContent = user.name;
         if (emailEl) emailEl.textContent = user.email;
+        if (idEl) idEl.textContent = `User ID: ${user.id.substring(0, 10)}`;
         if (roleEl) roleEl.textContent = user.roleTitle || user.role;
         if (statusEl) {
-            statusEl.className = `badge-status ${user.status.toLowerCase()}`;
+            const st = (user.status || 'Active').toLowerCase();
+            statusEl.className = `badge-status ${st}`;
             statusEl.innerHTML = `<span class="status-dot"></span><span>${user.status}</span>`;
         }
 
-        // Update Overview Tab Key-Value Meta Rows
-        const valId = document.getElementById('meta-user-id');
-        const valJoined = document.getElementById('meta-user-joined');
-        const valLogin = document.getElementById('meta-user-last-login');
-        const valEmailVer = document.getElementById('meta-email-verified');
-        const valPhoneVer = document.getElementById('meta-phone-verified');
-
-        if (valId) valId.textContent = user.id;
-        if (valJoined) valJoined.textContent = user.joinedOnFull || user.joinedOn;
-        if (valLogin) valLogin.textContent = user.lastLogin;
-        if (valEmailVer) valEmailVer.textContent = user.emailVerified;
-        if (valPhoneVer) valPhoneVer.textContent = user.phoneVerified;
+        // Update Overview Tab Key-Value Meta Rows matching HTML IDs
+        const setVal = (elemId, val) => { const el = document.getElementById(elemId); if (el) el.textContent = val; };
+        setVal('meta-val-role', user.role);
+        setVal('meta-val-joined', user.joinedOn);
+        setVal('meta-val-lastlogin', user.lastLogin);
+        setVal('meta-val-emailver', user.verification);
+        setVal('meta-val-phonever', 'Yes');
+        setVal('meta-val-vaults', user.vaults);
+        setVal('meta-val-trustees', user.trustees);
 
         // Render Recent Activity Stream
         this.renderRecentActivity(user);

@@ -53,6 +53,42 @@ class TrusteeDashboardView(APIView):
             trustee=user, status='verified'
         ).count()
 
+        # Auto-reconcile VaultShare for any accepted invitations
+        for inv in Invitation.objects.filter(invitee_email__iexact=user.email, status='accepted').select_related('vault'):
+            VaultShare.objects.get_or_create(
+                vault=inv.vault,
+                trustee=user,
+                defaults={'access_level': 'View Only', 'status': 'active'}
+            )
+
+        # Assigned Vaults for the dashboard
+        shares = VaultShare.objects.filter(
+            trustee=user, status='active'
+        ).select_related('vault', 'vault__owner')
+        assigned_vaults = [
+            {
+                'id': str(s.vault.id),
+                'name': s.vault.name,
+                'owner_name': s.vault.owner.name,
+                'owner_email': s.vault.owner.email,
+                'status': s.status,
+                'vault_type': s.vault.vault_type,
+                'release_status': 'No Release',
+            }
+            for s in shares
+        ]
+
+        # Pending Actions
+        pending_actions = []
+        for inv in Invitation.objects.filter(invitee_email__iexact=user.email, status='pending').select_related('vault', 'owner'):
+            pending_actions.append({
+                'type': 'invitation',
+                'id': str(inv.id),
+                'title': f'Review Invitation to "{inv.vault.name}"',
+                'desc': f'Invitation from {inv.owner.name} ({inv.owner.email})',
+                'link': '../invitations/invitations.html',
+            })
+
         # Recent activity (last 5 audit events)
         recent_logs = AuditLog.objects.filter(user=user).order_by('-timestamp')[:5]
         recent_activity = [
@@ -79,6 +115,8 @@ class TrusteeDashboardView(APIView):
             'completed_releases': completed_releases,
             'recent_activity': recent_activity,
             'unread_notifications': unread_notifications,
+            'assigned_vaults': assigned_vaults,
+            'pending_actions': pending_actions,
         })
 
 
@@ -441,9 +479,24 @@ class TrusteeAssignedVaultsView(APIView):
     permission_classes = [IsAuthenticated, IsTrustee]
 
     def get(self, request):
+        # Auto-reconcile VaultShare for any accepted invitations for this user
+        accepted_invs = Invitation.objects.filter(
+            invitee_email__iexact=request.user.email,
+            status='accepted'
+        ).select_related('vault')
+        for inv in accepted_invs:
+            VaultShare.objects.get_or_create(
+                vault=inv.vault,
+                trustee=request.user,
+                defaults={
+                    'access_level': 'View Only',
+                    'status': 'active',
+                }
+            )
+
         shares = VaultShare.objects.filter(
             trustee=request.user
-        ).select_related('vault')
+        ).select_related('vault', 'vault__owner')
         serializer = VaultShareSerializer(shares, many=True)
         return Response(serializer.data)
 

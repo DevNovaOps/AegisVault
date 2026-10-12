@@ -70,10 +70,12 @@ class VaultShareSerializer(serializers.ModelSerializer):
     """
     Share serializer.
     Frontend expects: vault, trusteeName, trusteeEmail, accessLevel, status,
-                      sharedDate, sharedTime, expiresOn, note
+                      sharedDate, sharedTime, expiresOn, note, owner_name, owner_email
     """
     vault_name = serializers.CharField(source='vault.name', read_only=True)
     vault_description = serializers.CharField(source='vault.description', read_only=True)
+    owner_name = serializers.CharField(source='vault.owner.name', read_only=True)
+    owner_email = serializers.CharField(source='vault.owner.email', read_only=True)
     trustee_name = serializers.CharField(source='trustee.name', read_only=True)
     trustee_email = serializers.CharField(source='trustee.email', read_only=True)
 
@@ -81,6 +83,7 @@ class VaultShareSerializer(serializers.ModelSerializer):
         model = VaultShare
         fields = [
             'id', 'vault', 'vault_name', 'vault_description',
+            'owner_name', 'owner_email',
             'trustee', 'trustee_name', 'trustee_email',
             'access_level', 'status', 'note', 'expires_at',
             'created_at', 'updated_at',

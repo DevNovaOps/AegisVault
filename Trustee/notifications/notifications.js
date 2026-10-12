@@ -244,11 +244,13 @@ function updateUnreadBadges() {
   const unreadCount = liveNotifications.filter(n => n.status === 'unread').length;
 
   const countTab = document.getElementById('countTabUnread');
+  const countTabAll = document.getElementById('countTabAll');
   const countHero = document.getElementById('unreadCountHero');
   const sidebarBadge = document.getElementById('sidebarNotifBadge');
   const headerDot = document.getElementById('headerNotifDot');
 
   if (countTab) countTab.textContent = unreadCount;
+  if (countTabAll) countTabAll.textContent = liveNotifications.length;
   if (countHero) countHero.textContent = unreadCount;
 
   if (sidebarBadge) {

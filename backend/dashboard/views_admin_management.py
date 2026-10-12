@@ -188,6 +188,63 @@ class AdminVaultListView(APIView):
 
         return Response(data)
 
+    def post(self, request):
+        name = request.data.get('name')
+        if not name:
+            return Response({'error': 'Vault name is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        owner_identifier = request.data.get('owner') or request.data.get('owner_email')
+        owner = None
+        if owner_identifier:
+            owner = User.objects.filter(email=owner_identifier).first() or \
+                    User.objects.filter(name=owner_identifier).first() or \
+                    User.objects.filter(id=owner_identifier).first()
+
+        if not owner:
+            owner = User.objects.filter(role='owner').first() or request.user
+
+        vault_type = (request.data.get('vault_type') or request.data.get('type') or 'personal').lower()
+        required_shares = int(request.data.get('required_shares', 2))
+        total_shares = int(request.data.get('total_shares', 3))
+
+        vault = Vault.objects.create(
+            name=name,
+            owner=owner,
+            vault_type=vault_type,
+            status='active',
+            required_shares=required_shares,
+            total_shares=total_shares,
+            encryption_algorithm='AES-256-GCM',
+            description=request.data.get('description', '')
+        )
+
+        AuditService.log(
+            user=request.user,
+            action_key='VAULT_CREATE',
+            action_title=f'Admin initialized vault: {vault.name}',
+            category='vault',
+            details=f'Created vault #{vault.id} assigned to {owner.name}',
+            vault_name=vault.name,
+            ip_address=request.META.get('REMOTE_ADDR')
+        )
+
+        return Response({
+            'id': str(vault.id),
+            'name': vault.name,
+            'description': vault.description,
+            'vault_type': vault.vault_type,
+            'status': vault.status,
+            'owner_name': vault.owner.name,
+            'owner_email': vault.owner.email,
+            'required_shares': vault.required_shares,
+            'total_shares': vault.total_shares,
+            'active_shares': 0,
+            'storage_used': vault.storage_used_display,
+            'encryption': vault.encryption_algorithm,
+            'created_at': vault.created_at.isoformat(),
+            'updated_at': vault.updated_at.isoformat(),
+        }, status=status.HTTP_201_CREATED)
+
 
 class AdminVaultDetailView(APIView):
     """GET /api/v1/admin/vaults/{id}/"""
@@ -335,20 +392,46 @@ class AdminAuditLogView(APIView):
 
         data = []
         for log in logs.order_by('-timestamp')[:200]:
+            action_code = (log.action_key or 'SYSTEM_EVENT').upper()
+            status_display = log.status.capitalize() if log.status else 'Success'
             data.append({
-                'id': str(log.id),
+                'id': f"LOG-{str(log.id)[:8].upper()}",
+                'raw_id': str(log.id),
                 'date': log.timestamp.strftime('%Y-%m-%d'),
                 'time': log.timestamp.strftime('%H:%M:%S'),
                 'actionKey': log.action_key,
                 'actionTitle': log.action_title,
-                'details': log.details,
+                'action': action_code,
+                'actionLabel': log.action_title or action_code.replace('_', ' ').title(),
+                'details': log.details or log.action_title,
+                'description': log.details or log.action_title,
                 'category': log.category,
+                'module': (log.category or 'system').capitalize(),
+                'moduleFull': f"{(log.category or 'system').capitalize()} Module",
                 'vault': log.vault_name,
                 'user': log.user.name if log.user else 'System',
+                'userName': log.user.name if log.user else 'System',
                 'email': log.user.email if log.user else '',
-                'ip': log.ip_address,
-                'status': log.status,
-                'timestamp': log.timestamp.isoformat(),
+                'ip': log.ip_address or '127.0.0.1',
+                'ipAddress': log.ip_address or '127.0.0.1',
+                'location': 'Local / System',
+                'device': log.user_agent or 'Desktop Browser',
+                'sessionId': str(log.id),
+                'status': status_display,
+                'timestamp': log.timestamp.strftime('%d %b %Y, %I:%M %p'),
+                'dateSort': log.timestamp.isoformat(),
+                'rawData': {
+                    'eventId': f"LOG-{str(log.id)[:8].upper()}",
+                    'action': action_code,
+                    'module': (log.category or 'system').capitalize(),
+                    'actor': {
+                        'name': log.user.name if log.user else 'System',
+                        'email': log.user.email if log.user else ''
+                    },
+                    'ipAddress': log.ip_address or '127.0.0.1',
+                    'status': status_display,
+                    'timestamp': log.timestamp.isoformat()
+                }
             })
 
         return Response(data)

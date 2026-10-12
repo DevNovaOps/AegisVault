@@ -31,6 +31,17 @@ function renderReleaseTable() {
   if (!tableBody || !window.RELEASE_DATA) return;
   tableBody.innerHTML = '';
   
+  if (window.RELEASE_DATA.length === 0) {
+    tableBody.innerHTML = `
+      <tr id="emptyReleaseRow">
+        <td colspan="7" style="text-align: center; padding: 3rem 1rem; color: var(--text-muted); font-size: 0.9rem;">
+          No release requests currently active or pending. Releases will appear here when initiated by a vault owner or automated trigger.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
   window.RELEASE_DATA.forEach((req, index) => {
     const tr = document.createElement('tr');
     tr.setAttribute('data-vault', req.vault_name || 'Vault');
@@ -285,8 +296,8 @@ function updateMetricCounts() {
   const countApprovedEl = document.getElementById('countApproved');
   const countReleasedEl = document.getElementById('countReleased');
 
-  if (countPendingEl) countPendingEl.textContent = pending || 6;
-  if (countInReviewEl) countInReviewEl.textContent = inReview || 2;
-  if (countApprovedEl) countApprovedEl.textContent = approved || 3;
-  if (countReleasedEl) countReleasedEl.textContent = released || 1;
+  if (countPendingEl) countPendingEl.textContent = pending;
+  if (countInReviewEl) countInReviewEl.textContent = inReview;
+  if (countApprovedEl) countApprovedEl.textContent = approved;
+  if (countReleasedEl) countReleasedEl.textContent = released;
 }

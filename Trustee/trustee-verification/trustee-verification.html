@@ -223,10 +223,8 @@
               <span class="notification-badge-dot"></span>
             </button>
             <div class="dropdown-panel" id="notificationDropdown">
-              <div class="dropdown-header">Recent Alerts (3)</div>
-              <a href="../invitations/invitations.html" class="dropdown-item">New vault invitation from Priya Shah</a>
-              <a href="./trustee-verification.html" class="dropdown-item">Identity verification pending review</a>
-              <a href="../release-status/release-status.html" class="dropdown-item">Release process initiated for Family Vault</a>
+              <div class="dropdown-header">Recent Alerts (0)</div>
+              <div class="dropdown-item" style="color:var(--text-muted); cursor:default;">No new notifications</div>
               <div class="dropdown-divider"></div>
               <a href="../notifications/notifications.html" class="dropdown-item" style="color:var(--brand-orange); font-weight:600;">View all notifications &rarr;</a>
             </div>
@@ -235,8 +233,8 @@
           <!-- Profile Chip Menu -->
           <div class="profile-menu-wrapper">
             <button class="profile-chip" id="profileBtn" aria-label="User Profile Menu">
-              <div class="profile-avatar-circle">RP</div>
-              <span class="profile-name">Rakesh Patel</span>
+              <div class="profile-avatar-circle">--</div>
+              <span class="profile-name">Trustee</span>
               <svg class="profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <polyline points="6 9 12 15 18 9"/>
               </svg>
@@ -247,7 +245,7 @@
               <a href="./trustee-verification.html" class="dropdown-item">Verification Status (In Review)</a>
               <a href="../help-support/help-support.html" class="dropdown-item">Help & Support</a>
               <div class="dropdown-divider"></div>
-              <a href="javascript:void(0)" class="dropdown-item" onclick="showToast('Signed out of trustee session (mock).')">Sign Out</a>
+              <a href="javascript:void(0)" class="dropdown-item" onclick="if(window.AegisAPI){window.AegisAPI.logout();}else{showToast('Signed out of trustee session.');}">Sign Out</a>
             </div>
           </div>
         </div>
@@ -486,7 +484,7 @@
                     <span class="step-status-pill in-review">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> In Review
                     </span>
-                    <span class="step-timestamp">Estimated: 1&mdash;“2 days</span>
+                    <span class="step-timestamp">Estimated: 1&mdash;ï¿½2 days</span>
                   </div>
                 </div>
               </div>
@@ -630,8 +628,8 @@
         </div>
 
         <div class="footer-links">
-          <a href="javascript:void(0)" onclick="showToast('Privacy Policy (mock).')">Privacy</a>
-          <a href="javascript:void(0)" onclick="showToast('Terms of Service (mock).')">Terms</a>
+          <a href="javascript:void(0)" onclick="showToast('Privacy Policy.')">Privacy</a>
+          <a href="javascript:void(0)" onclick="showToast('Terms of Service.')">Terms</a>
           <a href="../help-support/help-support.html">Help</a>
         </div>
       </footer>
@@ -670,6 +668,7 @@
   </div>
 
   <!-- Shared & Page JavaScript -->
+  <script src="../../common/api.js"></script>
   <script src="../common/common.js"></script>
   <script src="./trustee-verification.js"></script>
 </body>

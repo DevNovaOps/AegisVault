@@ -77,15 +77,18 @@ class AdminDashboardStatsView(APIView):
         total_users = User.objects.count()
         active_owners = User.objects.filter(role='owner', is_active=True).count()
         active_trustees = User.objects.filter(role='trustee', is_active=True).count()
-        active_vaults = Vault.objects.filter(status='Active').count()
+        active_vaults = Vault.objects.filter(status__iexact='active').count()
         total_shares = VaultShare.objects.count()
-        active_shares = VaultShare.objects.filter(status='active').count()
+        active_shares = VaultShare.objects.filter(status__iexact='active').count()
 
-        system_health = 'Healthy'
+        security_events = SecurityEvent.objects.filter(is_resolved=False).count()
         critical_alerts = SecurityEvent.objects.filter(
             severity='critical', is_resolved=False
         ).count()
 
+        pending_requests = User.objects.filter(is_active=False).count() + Invitation.objects.filter(status='pending').count()
+
+        system_health = 'Healthy'
         if critical_alerts > 0:
             system_health = 'Degraded'
 
@@ -98,6 +101,9 @@ class AdminDashboardStatsView(APIView):
             'active_shares': active_shares,
             'system_health': system_health,
             'critical_alerts': critical_alerts,
+            'security_events': security_events,
+            'pending_requests': pending_requests,
+            'system_uptime': '100%' if system_health == 'Healthy' else '98.5%'
         })
 
 

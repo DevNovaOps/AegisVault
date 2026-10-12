@@ -7,11 +7,10 @@
   'use strict';
 
   // =========================================================================
-  // MOCK DATA STORAGE (Simulating Backend API Responses)
-  // TODO: Replace with fetch('/api/v1/owner/vaults/...') upon backend connection
+  // LIVE VAULT STATE (Populated from Django Backend API)
   // =========================================================================
 
-  let mockVaults = [];
+  let liveVaults = [];
 
   // =========================================================================
   // RENDER & FILTER CONTROLLER
@@ -29,7 +28,7 @@
     const sortVal = document.getElementById('sortFilterSelect')?.value || 'updated';
 
     // Filter
-    let filtered = mockVaults.filter(v => {
+    let filtered = liveVaults.filter(v => {
       const matchSearch = !searchVal ||
         v.name.toLowerCase().includes(searchVal) ||
         v.desc.toLowerCase().includes(searchVal) ||
@@ -161,7 +160,7 @@
       Legacy: 0
     };
 
-    mockVaults.forEach(v => {
+    liveVaults.forEach(v => {
       const type = (v.type || '').toLowerCase();
       if (type === 'personal') cats.Personal++;
       else if (type === 'family') cats.Family++;
@@ -201,11 +200,11 @@
   }
 
   function updateStatCounts() {
-    const total = mockVaults.length;
-    const active = mockVaults.filter(v => v.status === 'Active').length;
-    const draft = mockVaults.filter(v => v.status === 'Draft').length;
-    const locked = mockVaults.filter(v => v.status === 'Locked').length;
-    const trustees = mockVaults.reduce((acc, v) => acc + v.trustees, 0);
+    const total = liveVaults.length;
+    const active = liveVaults.filter(v => v.status === 'Active').length;
+    const draft = liveVaults.filter(v => v.status === 'Draft').length;
+    const locked = liveVaults.filter(v => v.status === 'Locked').length;
+    const trustees = liveVaults.reduce((acc, v) => acc + v.trustees, 0);
 
     const elTotal = document.getElementById('statTotalVaults');
     const elActive = document.getElementById('statActiveVaults');
@@ -226,7 +225,7 @@
       btn.addEventListener('click', (e) => {
         const id = btn.getAttribute('data-id');
         const action = btn.getAttribute('data-action');
-        const vault = mockVaults.find(v => v.id === id);
+        const vault = liveVaults.find(v => v.id === id);
         if (!vault) return;
 
         if (action === 'view') {
@@ -241,7 +240,7 @@
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const id = btn.getAttribute('data-id');
-        const vault = mockVaults.find(v => v.id === id);
+        const vault = liveVaults.find(v => v.id === id);
         if (!vault) return;
 
         openContextMenu(vault, btn);
@@ -349,7 +348,7 @@
       if (confirm(`Are you sure you want to delete "${vault.name}"? This action cannot be undone.`)) {
         if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
           window.AegisAPI.delete(`/owner/vaults/${vault.id}/`).then(() => {
-            mockVaults = mockVaults.filter(v => v.id !== vault.id);
+            liveVaults = liveVaults.filter(v => v.id !== vault.id);
             renderVaultsTable();
             updateSidebarWidgets();
             window.AegisOwner.showToast(`Vault "${vault.name}" deleted.`, 'info');
@@ -357,7 +356,7 @@
             window.AegisOwner.showToast(`Failed to delete vault: ${err.message}`, 'error');
           });
         } else {
-          mockVaults = mockVaults.filter(v => v.id !== vault.id);
+          liveVaults = liveVaults.filter(v => v.id !== vault.id);
           renderVaultsTable();
           updateSidebarWidgets();
           window.AegisOwner.showToast(`Vault "${vault.name}" deleted.`, 'info');
@@ -855,7 +854,7 @@
           'Health': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>'
         };
         const vaultsData = Array.isArray(data) ? data : (data.results || []);
-        mockVaults = vaultsData.map(v => ({
+        liveVaults = vaultsData.map(v => ({
           id: v.id,
           name: v.name,
           desc: v.description || v.purpose || '',
@@ -885,7 +884,7 @@
         // Check if navigated from view details or external link with ?edit=<id>
         const editId = urlParams.get('edit');
         if (editId) {
-          const editTarget = mockVaults.find(v => v.id === editId);
+          const editTarget = liveVaults.find(v => v.id === editId);
           if (editTarget) {
             setTimeout(() => openEditVaultModal(editTarget), 200);
           }
@@ -953,7 +952,7 @@
         moreFiltersState = (moreFiltersState + 1) % 3;
         if (moreFiltersState === 1) {
           // Filter 100% quorum verified
-          const orig = mockVaults;
+          const orig = liveVaults;
           const searchVal = '100';
           btnMoreFilters.style.borderColor = 'var(--brand-orange)';
           btnMoreFilters.style.color = 'var(--brand-orange)';
@@ -1429,7 +1428,7 @@
           ? tagsInputVal.split(',').map(t => t.trim()).filter(Boolean)
           : selectedTypes;
 
-        const target = mockVaults.find(v => v.id === id);
+        const target = liveVaults.find(v => v.id === id);
         const payload = {
           name: name || (target ? target.name : 'Vault'),
           description: desc,

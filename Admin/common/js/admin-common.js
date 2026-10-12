@@ -46,7 +46,7 @@
             try { user = raw ? JSON.parse(raw) : null; } catch (e) {}
 
             if (!user && !token && !adminSession) {
-                window.location.href = '/AegisVault%20Home/auth.html';
+                window.location.href = '/auth.html';
                 return false;
             }
             return true;
@@ -394,7 +394,7 @@
                 localStorage.removeItem('aegis_refresh_token');
             } catch (err) {}
             setTimeout(() => {
-                window.location.href = '/AegisVault%20Home/auth.html';
+                window.location.href = '/auth.html';
             }, 500);
         },
 

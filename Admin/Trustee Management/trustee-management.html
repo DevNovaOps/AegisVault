@@ -321,11 +321,11 @@
                         </div>
                         <div class="kpi-data-col">
                             <div class="kpi-value-row">
-                                <span class="kpi-main-number" id="kpi-total-trustees">614</span>
-                                <span class="kpi-trend-pill up">↑ 10%</span>
+                                <span class="kpi-main-number" id="kpi-total-trustees">0</span>
+                                <span class="kpi-trend-pill up">Live</span>
                             </div>
                             <div class="kpi-card-title">Total Trustees</div>
-                            <div class="kpi-subtext">+56 this month</div>
+                            <div class="kpi-subtext">Active protocol trustees</div>
                         </div>
                     </div>
 
@@ -339,11 +339,11 @@
                         </div>
                         <div class="kpi-data-col">
                             <div class="kpi-value-row">
-                                <span class="kpi-main-number" id="kpi-verified-trustees">428</span>
-                                <span class="kpi-trend-pill up">↑ 15%</span>
+                                <span class="kpi-main-number" id="kpi-verified-trustees">0</span>
+                                <span class="kpi-trend-pill up">Verified</span>
                             </div>
                             <div class="kpi-card-title">Verified Trustees</div>
-                            <div class="kpi-subtext">69.7% of total</div>
+                            <div class="kpi-subtext">Verified key holders</div>
                         </div>
                     </div>
 
@@ -357,11 +357,11 @@
                         </div>
                         <div class="kpi-data-col">
                             <div class="kpi-value-row">
-                                <span class="kpi-main-number" id="kpi-pending-trustees">126</span>
-                                <span class="kpi-trend-pill down">↓ 18%</span>
+                                <span class="kpi-main-number" id="kpi-pending-trustees">0</span>
+                                <span class="kpi-trend-pill down">Pending</span>
                             </div>
                             <div class="kpi-card-title">Pending Verification</div>
-                            <div class="kpi-subtext">20.5% of total</div>
+                            <div class="kpi-subtext">Awaiting key shard verification</div>
                         </div>
                     </div>
 
@@ -375,11 +375,11 @@
                         </div>
                         <div class="kpi-data-col">
                             <div class="kpi-value-row">
-                                <span class="kpi-main-number" id="kpi-rejected-trustees">38</span>
-                                <span class="kpi-trend-pill down">↓ 5%</span>
+                                <span class="kpi-main-number" id="kpi-rejected-trustees">0</span>
+                                <span class="kpi-trend-pill down">Inactive</span>
                             </div>
                             <div class="kpi-card-title">Rejected / Inactive</div>
-                            <div class="kpi-subtext">6.2% of total</div>
+                            <div class="kpi-subtext">Revoked or rejected</div>
                         </div>
                     </div>
                 </section>
@@ -393,7 +393,7 @@
                                 <circle cx="9" cy="7" r="4"></circle>
                             </svg>
                             <span>All Trustees</span>
-                            <span class="tab-count-badge" id="tab-count-all">614</span>
+                            <span class="tab-count-badge" id="tab-count-all">0</span>
                         </button>
                         <button class="tab-btn" data-tab="pending" id="tab-btn-pending">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -401,7 +401,7 @@
                                 <polyline points="12 6 12 12 16 14"></polyline>
                             </svg>
                             <span>Pending Verification</span>
-                            <span class="tab-count-badge" id="tab-count-pending">126</span>
+                            <span class="tab-count-badge" id="tab-count-pending">0</span>
                         </button>
                         <button class="tab-btn" data-tab="verified" id="tab-btn-verified">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -409,7 +409,7 @@
                                 <polyline points="9 12 11 14 15 10"></polyline>
                             </svg>
                             <span>Verified</span>
-                            <span class="tab-count-badge" id="tab-count-verified">428</span>
+                            <span class="tab-count-badge" id="tab-count-verified">0</span>
                         </button>
                         <button class="tab-btn" data-tab="rejected" id="tab-btn-rejected">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -418,7 +418,7 @@
                                 <line x1="9" y1="9" x2="15" y2="15"></line>
                             </svg>
                             <span>Rejected</span>
-                            <span class="tab-count-badge" id="tab-count-rejected">38</span>
+                            <span class="tab-count-badge" id="tab-count-rejected">0</span>
                         </button>
                         <button class="tab-btn" data-tab="inactive" id="tab-btn-inactive">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -426,7 +426,7 @@
                                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                             </svg>
                             <span>Inactive</span>
-                            <span class="tab-count-badge" id="tab-count-inactive">22</span>
+                            <span class="tab-count-badge" id="tab-count-inactive">0</span>
                         </button>
                         <button class="tab-btn" data-tab="invitations" id="tab-btn-invitations">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -488,12 +488,6 @@
                         </select>
                         <select class="filter-select" id="filter-vault" aria-label="Filter by Linked Vault">
                             <option value="all">All Vaults</option>
-                            <option value="Family Legacy Vault">Family Legacy Vault</option>
-                            <option value="Digital Documents Vault">Digital Documents Vault</option>
-                            <option value="Emergency Access Vault">Emergency Access Vault</option>
-                            <option value="Personal Archive">Personal Archive</option>
-                            <option value="Crypto Cold Storage">Crypto Cold Storage</option>
-                            <option value="Offshore Trust Vault">Offshore Trust Vault</option>
                         </select>
                     </div>
                 </div>
@@ -525,7 +519,7 @@
 
                         <!-- Table Pagination Footer -->
                         <div class="table-pagination-footer">
-                            <div id="pagination-info">Showing 1-10 of 614 trustees</div>
+                            <div id="pagination-info">Showing 0 of 0 trustees</div>
                             <div class="pagination-controls-row" id="pagination-btns-container">
                                 <!-- Dynamic pagination buttons -->
                             </div>
@@ -908,8 +902,8 @@
         </div>
 
         <div class="footer-links">
-          <a href="javascript:void(0)" onclick="typeof showToast === 'function' ? showToast('Privacy Policy (mock).') : null;">Privacy</a>
-          <a href="javascript:void(0)" onclick="typeof showToast === 'function' ? showToast('Terms of Service (mock).') : null;">Terms</a>
+          <a href="javascript:void(0)" onclick="typeof showToast === 'function' ? showToast('Privacy Policy.') : null;">Privacy</a>
+          <a href="javascript:void(0)" onclick="typeof showToast === 'function' ? showToast('Terms of Service.') : null;">Terms</a>
           <a href="../Audit Logs/audit-logs.html">Audit</a>
         </div>
       </footer>
@@ -932,15 +926,15 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label class="form-label" for="add-name">Full Name *</label>
-                        <input type="text" id="add-name" class="form-input" placeholder="e.g. Siddharth Verma" required>
+                        <input type="text" id="add-name" class="form-input" placeholder="e.g. Trustee Full Name" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="add-email">Email Address *</label>
-                        <input type="email" id="add-email" class="form-input" placeholder="e.g. siddharth@example.com" required>
+                        <input type="email" id="add-email" class="form-input" placeholder="e.g. trustee@example.com" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="add-phone">Contact Number *</label>
-                        <input type="tel" id="add-phone" class="form-input" placeholder="e.g. +91 98111 22334" required>
+                        <input type="tel" id="add-phone" class="form-input" placeholder="e.g. +1 (555) 000-0000" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="add-type">Trustee Type *</label>
@@ -953,12 +947,7 @@
                     <div class="form-group">
                         <label class="form-label" for="add-vault">Vault Assignment *</label>
                         <select id="add-vault" class="form-select" required>
-                            <option value="Family Legacy Vault">Family Legacy Vault</option>
-                            <option value="Digital Documents Vault">Digital Documents Vault</option>
-                            <option value="Emergency Access Vault">Emergency Access Vault</option>
-                            <option value="Personal Archive">Personal Archive</option>
-                            <option value="Crypto Cold Storage">Crypto Cold Storage</option>
-                            <option value="Offshore Trust Vault">Offshore Trust Vault</option>
+                            <option value="General">General / All Assigned Vaults</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -1248,6 +1237,7 @@
     <div class="aegis-tooltip" id="aegis-tooltip"></div>
 
     <!-- Scripts -->
+    <script src="../../common/api.js"></script>
     <script src="../common/js/admin-common.js"></script>
     <script src="js/mockData.js"></script>
     <script src="js/trustee-management.js"></script>

@@ -60,7 +60,7 @@
         <a href="../notifications/notifications.html" class="nav-item active">
           <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
           <span class="nav-label">Notifications</span>
-          <span class="nav-badge" id="sidebarNotifBadge">3</span>
+          <span class="nav-badge" id="sidebarNotifBadge" style="display:none">0</span>
         </a>
         <a href="../activity-history/activity-history.html" class="nav-item">
           <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>
@@ -126,15 +126,17 @@
               <span class="notification-badge-dot" id="headerNotifDot"></span>
             </button>
             <div class="dropdown-panel" id="notificationDropdown">
-              <div class="dropdown-header">Recent Alerts</div>
-              <a href="../share-submission/share-submission.html" class="dropdown-item">Action required for Family Vault</a>
-              <a href="../invitations/invitations.html" class="dropdown-item">New vault invitation from Priya Shah</a>
+              <div class="dropdown-header">Recent Alerts (0)</div>
+              <div class="dropdown-item" style="color:var(--text-muted); cursor:default;">No new notifications</div>
+              <div class="dropdown-divider"></div>
+              <a href="../notifications/notifications.html" class="dropdown-item" style="color:var(--brand-orange); font-weight:600;">View all notifications &rarr;</a>
             </div>
+          </div>
           </div>
           <div class="profile-menu-wrapper">
             <button class="profile-chip" id="profileBtn">
-              <div class="profile-avatar-circle">RP</div>
-              <span class="profile-name">Rakesh Patel</span>
+              <div class="profile-avatar-circle">--</div>
+              <span class="profile-name">Trustee</span>
               <svg class="profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div class="dropdown-panel" id="profileDropdown">
@@ -218,22 +220,22 @@
               <div class="toolbar-top-row">
                 <div class="notif-filter-tabs">
                   <button type="button" class="notif-tab-btn active" data-filter="all" onclick="filterByTab('all')">
-                    All Alerts (<span id="countTabAll">8</span>)
+                    All Alerts (<span id="countTabAll">0</span>)
                   </button>
                   <button type="button" class="notif-tab-btn" data-filter="unread" onclick="filterByTab('unread')">
-                    Unread (<span id="countTabUnread">3</span>)
+                    Unread (<span id="countTabUnread">0</span>)
                   </button>
                   <button type="button" class="notif-tab-btn" data-filter="action" onclick="filterByTab('action')">
-                    Action Required (2)
+                    Action Required (0)
                   </button>
                   <button type="button" class="notif-tab-btn" data-filter="releases" onclick="filterByTab('releases')">
-                    Releases (2)
+                    Releases (0)
                   </button>
                   <button type="button" class="notif-tab-btn" data-filter="invitations" onclick="filterByTab('invitations')">
-                    Invitations (2)
+                    Invitations (0)
                   </button>
                   <button type="button" class="notif-tab-btn" data-filter="security" onclick="filterByTab('security')">
-                    Security (2)
+                    Security (0)
                   </button>
                 </div>
 
@@ -254,217 +256,12 @@
 
             <!-- Notifications Feed Container -->
             <div id="notifFeedContainer">
-              <!-- Today Group -->
-              <div class="feed-group" data-group="today">
-                <div class="feed-group-title">Today</div>
-                <div class="notif-list">
-                  <!-- Item 1: Release Action Required -->
-                  <div class="notif-card unread" data-id="NTF-101" data-category="action releases" data-vault="Family Vault">
-                    <div class="notif-icon-circle amber">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m21 3-9.5 9.5M15.5 8.5l3 3M18 6l2 2"/></svg>
-                    </div>
-                    <div class="notif-body">
-                      <div class="notif-meta-row">
-                        <div class="notif-meta-left">
-                          <span class="notif-tag action-req">Action Required</span>
-                          <span class="notif-tag in-review">Family Vault</span>
-                          <span class="notif-unread-badge-dot"></span>
-                        </div>
-                        <span class="notif-time-text">25 minutes ago</span>
-                      </div>
-                      <h3 class="notif-title">Release Process Initiated &mdash; Cryptographic Share Requested</h3>
-                      <p class="notif-desc">
-                        The release protocol has been triggered for <strong>Family Vault</strong> by owner Priya Shah. As a designated trustee, your secret share fragment is requested to reach the consensus quorum.
-                      </p>
-                      <div class="notif-action-row">
-                        <a href="../share-submission/share-submission.html" class="notif-cta-btn">
-                          <span>Submit Share Fragment</span>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-                        </a>
-                        <button type="button" class="notif-secondary-link" onclick="openNotifDetails('NTF-101', 'Release Process Initiated &mdash; Cryptographic Share Requested', 'Family Vault', 'Priya Shah', '25 minutes ago', 'Action Required', 'Quorum required: 2 of 3 shares needed. Grace period: 12 days remaining.')">
-                          View Audit Details
-                        </button>
-                      </div>
-                    </div>
-                    <button type="button" class="notif-menu-btn" title="Mark as read" onclick="toggleReadStatus('NTF-101')">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-                    </button>
-                  </div>
-
-                  <!-- Item 2: New Invitation -->
-                  <div class="notif-card unread" data-id="NTF-102" data-category="action invitations" data-vault="Family Vault">
-                    <div class="notif-icon-circle blue">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m22 7-10 7L2 7"/></svg>
-                    </div>
-                    <div class="notif-body">
-                      <div class="notif-meta-row">
-                        <div class="notif-meta-left">
-                          <span class="notif-tag in-review">New Invitation</span>
-                          <span class="notif-tag action-req">Pending Response</span>
-                          <span class="notif-unread-badge-dot"></span>
-                        </div>
-                        <span class="notif-time-text">2 hours ago</span>
-                      </div>
-                      <h3 class="notif-title">Priya Shah appointed you as Primary Trustee</h3>
-                      <p class="notif-desc">
-                        You have received a formal trustee appointment request for <strong>Family Vault</strong>. Please review the appointment charter and respond before the 14-day expiry.
-                      </p>
-                      <div class="notif-action-row">
-                        <a href="../invitations/invitations.html" class="notif-cta-btn">
-                          <span>Review Invitation</span>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-                        </a>
-                        <button type="button" class="notif-secondary-link" onclick="openNotifDetails('NTF-102', 'Priya Shah appointed you as Primary Trustee', 'Family Vault', 'Priya Shah', '2 hours ago', 'Invitation', 'Expires in 13 days. Cryptographic verification needed upon acceptance.')">
-                          Charter Details
-                        </button>
-                      </div>
-                    </div>
-                    <button type="button" class="notif-menu-btn" title="Mark as read" onclick="toggleReadStatus('NTF-102')">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-                    </button>
-                  </div>
-
-                  <!-- Item 3: Trustee Verification -->
-                  <div class="notif-card unread" data-id="NTF-103" data-category="security" data-vault="Identity Verification">
-                    <div class="notif-icon-circle emerald">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-                    </div>
-                    <div class="notif-body">
-                      <div class="notif-meta-row">
-                        <div class="notif-meta-left">
-                          <span class="notif-tag completed">Compliance Update</span>
-                          <span class="notif-unread-badge-dot"></span>
-                        </div>
-                        <span class="notif-time-text">5 hours ago</span>
-                      </div>
-                      <h3 class="notif-title">Identity Verification Document Passed Cryptographic Check</h3>
-                      <p class="notif-desc">
-                        Your government-issued identity passport upload has passed biometric MRZ verification (75% completed). Final institutional compliance clearance is estimated in 24 hours.
-                      </p>
-                      <div class="notif-action-row">
-                        <a href="../trustee-verification/trustee-verification.html" class="notif-cta-btn" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-medium); color: var(--text-primary);">
-                          <span>View Verification Status</span>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-                        </a>
-                      </div>
-                    </div>
-                    <button type="button" class="notif-menu-btn" title="Mark as read" onclick="toggleReadStatus('NTF-103')">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Earlier This Week Group -->
-              <div class="feed-group" data-group="this-week" style="margin-top: 1.5rem;">
-                <div class="feed-group-title">Earlier This Week</div>
-                <div class="notif-list">
-                  <!-- Item 4: Quorum Progress -->
-                  <div class="notif-card" data-id="NTF-104" data-category="releases" data-vault="Personal Vault">
-                    <div class="notif-icon-circle blue">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                    </div>
-                    <div class="notif-body">
-                      <div class="notif-meta-row">
-                        <div class="notif-meta-left">
-                          <span class="notif-tag in-review">Personal Vault</span>
-                          <span class="notif-tag completed">Quorum: 2/3</span>
-                        </div>
-                        <span class="notif-time-text">Yesterday, 03:45 PM</span>
-                      </div>
-                      <h3 class="notif-title">Quorum Threshold Reached for Personal Vault</h3>
-                      <p class="notif-desc">
-                        A second verified trustee share fragment has been received for <strong>Personal Vault</strong> (Aryan Patel). Quorum condition is now satisfied.
-                      </p>
-                      <div class="notif-action-row">
-                        <a href="../release-status/release-status.html" class="notif-secondary-link">
-                          Track Live Release Status &rarr;
-                        </a>
-                      </div>
-                    </div>
-                    <button type="button" class="notif-menu-btn" title="Options" onclick="openNotifDetails('NTF-104', 'Quorum Threshold Reached for Personal Vault', 'Personal Vault', 'Aryan Patel', 'Yesterday, 03:45 PM', 'Quorum Reached', '2 of 3 shares recorded in cryptographic buffer.')">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-                    </button>
-                  </div>
-
-                  <!-- Item 5: Security Login Notice -->
-                  <div class="notif-card" data-id="NTF-105" data-category="security" data-vault="Security">
-                    <div class="notif-icon-circle purple">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                    </div>
-                    <div class="notif-body">
-                      <div class="notif-meta-row">
-                        <div class="notif-meta-left">
-                          <span class="notif-tag security">Security Audit</span>
-                        </div>
-                        <span class="notif-time-text">12 Sep 2025, 10:24 AM</span>
-                      </div>
-                      <h3 class="notif-title">New Authenticated Trustee Session</h3>
-                      <p class="notif-desc">
-                        New session authenticated from <strong>Chrome on Windows</strong> (IP: 203.0.113.24, Mumbai, India) with cryptographic key signature match.
-                      </p>
-                      <div class="notif-action-row">
-                        <a href="../profile-security/profile-security.html" class="notif-secondary-link">
-                          Review Active Devices & Sessions &rarr;
-                        </a>
-                      </div>
-                    </div>
-                    <button type="button" class="notif-menu-btn" title="Options" onclick="openNotifDetails('NTF-105', 'New Authenticated Trustee Session', 'Trustee Account', 'Rakesh Patel', '12 Sep 2025, 10:24 AM', 'Security', 'Device: Windows PC, Browser: Chrome 128, IP: 203.0.113.24')">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Earlier This Month Group -->
-              <div class="feed-group" data-group="this-month" style="margin-top: 1.5rem;">
-                <div class="feed-group-title">Earlier This Month</div>
-                <div class="notif-list">
-                  <!-- Item 6: Heritage Trust Submission -->
-                  <div class="notif-card" data-id="NTF-106" data-category="releases" data-vault="Heritage Trust Vault">
-                    <div class="notif-icon-circle emerald">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                    </div>
-                    <div class="notif-body">
-                      <div class="notif-meta-row">
-                        <div class="notif-meta-left">
-                          <span class="notif-tag completed">Submission Recorded</span>
-                          <span class="notif-tag in-review">Heritage Trust Vault</span>
-                        </div>
-                        <span class="notif-time-text">10 Sep 2025, 04:18 PM</span>
-                      </div>
-                      <h3 class="notif-title">Cryptographic Share Recorded Successfully</h3>
-                      <p class="notif-desc">
-                        Your submitted key fragment <code>heritage_key_fragment.txt</code> (840 B) was confirmed and stored with SHA-256 integrity guarantee.
-                      </p>
-                    </div>
-                    <button type="button" class="notif-menu-btn" title="Options" onclick="openNotifDetails('NTF-106', 'Cryptographic Share Recorded Successfully', 'Heritage Trust Vault', 'Ananya Deshmukh', '10 Sep 2025, 04:18 PM', 'Success', 'Checksum validated client-side and saved to quorum buffer.')">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-                    </button>
-                  </div>
-
-                  <!-- Item 7: System Welcome -->
-                  <div class="notif-card" data-id="NTF-107" data-category="invitations" data-vault="System">
-                    <div class="notif-icon-circle amber">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    </div>
-                    <div class="notif-body">
-                      <div class="notif-meta-row">
-                        <div class="notif-meta-left">
-                          <span class="notif-tag completed">Trustee Onboarding</span>
-                        </div>
-                        <span class="notif-time-text">10 Aug 2025, 09:00 AM</span>
-                      </div>
-                      <h3 class="notif-title">Welcome to AegisVault Trustee Panel</h3>
-                      <p class="notif-desc">
-                        Welcome, Rakesh Patel! You have been designated as a trusted digital legacy custodian. Your role ensures that what matters most is protected and released according to the owner's exact wishes.
-                      </p>
-                    </div>
-                    <button type="button" class="notif-menu-btn" title="Options" onclick="openNotifDetails('NTF-107', 'Welcome to AegisVault Trustee Panel', 'AegisVault Core', 'System', '10 Aug 2025, 09:00 AM', 'System', 'Welcome package and cryptographic key generation completed.')">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-                    </button>
-                  </div>
-                </div>
+              <div class="notif-card" style="text-align: center; padding: 3rem 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 0.75rem; opacity: 0.5; color: var(--text-muted);">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+                <div style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.35rem;">No notifications yet</div>
+                <div style="font-size: 0.84rem; color: var(--text-secondary);">Notifications will appear here as you interact with the platform.</div>
               </div>
             </div>
           </div>
@@ -472,7 +269,7 @@
           <!-- Right Column: Action Box & Delivery Channels -->
           <div class="notif-side-col">
             <!-- Urgent Action Items Card -->
-            <section class="urgent-action-card" aria-labelledby="urgentHeading">
+            <section class="urgent-action-card" id="urgentActionCard" style="display: none;" aria-labelledby="urgentHeading">
               <div class="urgent-header-row">
                 <svg class="urgent-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                   <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
@@ -593,15 +390,15 @@
           </div>
           <div style="display: flex; justify-content: space-between; font-size: 0.84rem;">
             <span style="color: var(--text-muted);">Target Vault:</span>
-            <span style="font-weight: 600; color: var(--text-primary);" id="modalNotifVault">Family Vault</span>
+            <span style="font-weight: 600; color: var(--text-primary);" id="modalNotifVault">—</span>
           </div>
           <div style="display: flex; justify-content: space-between; font-size: 0.84rem;">
             <span style="color: var(--text-muted);">Initiated By:</span>
-            <span style="font-weight: 600; color: var(--text-primary);" id="modalNotifSender">Priya Shah</span>
+            <span style="font-weight: 600; color: var(--text-primary);" id="modalNotifSender">—</span>
           </div>
           <div style="display: flex; justify-content: space-between; font-size: 0.84rem;">
             <span style="color: var(--text-muted);">Timestamp:</span>
-            <span style="font-weight: 600; color: var(--text-primary);" id="modalNotifTime">25 minutes ago</span>
+            <span style="font-weight: 600; color: var(--text-primary);" id="modalNotifTime">—</span>
           </div>
           <div style="display: flex; justify-content: space-between; font-size: 0.84rem;">
             <span style="color: var(--text-muted);">Category:</span>
@@ -628,6 +425,7 @@
   </div>
 
   <!-- Shared Scripts -->
+  <script src="../../common/api.js"></script>
   <script src="../common/common.js"></script>
   <script src="./notifications.js"></script>
 </body>

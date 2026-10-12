@@ -126,15 +126,17 @@
               <span class="notification-badge-dot"></span>
             </button>
             <div class="dropdown-panel" id="notificationDropdown">
-              <div class="dropdown-header">Recent Alerts</div>
-              <a href="../invitations/invitations.html" class="dropdown-item">New vault invitation from Priya Shah</a>
-              <a href="../share-submission/share-submission.html" class="dropdown-item">Action required for Family Vault</a>
+              <div class="dropdown-header">Recent Alerts (0)</div>
+              <div class="dropdown-item" style="color:var(--text-muted); cursor:default;">No new notifications</div>
+              <div class="dropdown-divider"></div>
+              <a href="../notifications/notifications.html" class="dropdown-item" style="color:var(--brand-orange); font-weight:600;">View all notifications &rarr;</a>
             </div>
+          </div>
           </div>
           <div class="profile-menu-wrapper">
             <button class="profile-chip" id="profileBtn">
-              <div class="profile-avatar-circle">RP</div>
-              <span class="profile-name">Rakesh Patel</span>
+              <div class="profile-avatar-circle">--</div>
+              <span class="profile-name">Trustee</span>
               <svg class="profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             <div class="dropdown-panel" id="profileDropdown">
@@ -221,7 +223,7 @@
             </div>
             <div class="metric-data-group">
               <div class="metric-count-row">
-                <span class="metric-number" id="countPending">6</span>
+                <span class="metric-number" id="countPending">0</span>
                 <span class="metric-title">Pending</span>
               </div>
               <span class="metric-caption">Awaiting trustee confirmation</span>
@@ -238,7 +240,7 @@
             </div>
             <div class="metric-data-group">
               <div class="metric-count-row">
-                <span class="metric-number" id="countInReview">2</span>
+                <span class="metric-number" id="countInReview">0</span>
                 <span class="metric-title">In Review</span>
               </div>
               <span class="metric-caption">Under verification</span>
@@ -255,7 +257,7 @@
             </div>
             <div class="metric-data-group">
               <div class="metric-count-row">
-                <span class="metric-number" id="countApproved">3</span>
+                <span class="metric-number" id="countApproved">0</span>
                 <span class="metric-title">Approved</span>
               </div>
               <span class="metric-caption">Ready for release</span>
@@ -272,7 +274,7 @@
             </div>
             <div class="metric-data-group">
               <div class="metric-count-row">
-                <span class="metric-number" id="countReleased">1</span>
+                <span class="metric-number" id="countReleased">0</span>
                 <span class="metric-title">Released</span>
               </div>
               <span class="metric-caption">Successfully completed</span>
@@ -334,201 +336,9 @@
                     </tr>
                   </thead>
                   <tbody id="releaseTableBody">
-                    <!-- Row 1: Personal Vault -->
-                    <tr data-vault="Personal Vault" data-type="Full Release" data-status="Pending" data-id="REQ-8021">
-                      <td class="table-row-num">1</td>
-                      <td>
-                        <div class="release-vault-cell">
-                          <span class="vault-cell-icon blue">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                          </span>
-                          <span>Personal Vault</span>
-                        </div>
-                      </td>
-                      <td>Full Release</td>
-                      <td>
-                        <div class="table-date-time">
-                          <span class="date-main">12 Sep 2025</span>
-                          <span class="time-sub">10:24 AM</span>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="status-badge pending">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
-                          <span>Pending</span>
-                        </span>
-                      </td>
-                      <td class="next-step-cell">Awaiting trustee confirmation</td>
-                      <td style="text-align: right;">
-                        <button type="button" class="view-details-link" onclick="openReleaseDetails('REQ-8021', 'Personal Vault', 'Full Release', '12 Sep 2025, 10:24 AM', 'Pending', 'Awaiting trustee confirmation', 'Aryan Patel', '2 of 3 Shares Needed', 1)">
-                          <span>View Details</span>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                        </button>
-                      </td>
-                    </tr>
-
-                    <!-- Row 2: Family Vault -->
-                    <tr data-vault="Family Vault" data-type="Partial Release" data-status="In Review" data-id="REQ-7914">
-                      <td class="table-row-num">2</td>
-                      <td>
-                        <div class="release-vault-cell">
-                          <span class="vault-cell-icon amber">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                          </span>
-                          <span>Family Vault</span>
-                        </div>
-                      </td>
-                      <td>Partial Release</td>
-                      <td>
-                        <div class="table-date-time">
-                          <span class="date-main">10 Sep 2025</span>
-                          <span class="time-sub">04:18 PM</span>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="status-badge in-review">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
-                          <span>In Review</span>
-                        </span>
-                      </td>
-                      <td class="next-step-cell">Under verification</td>
-                      <td style="text-align: right;">
-                        <button type="button" class="view-details-link" onclick="openReleaseDetails('REQ-7914', 'Family Vault', 'Partial Release', '10 Sep 2025, 04:18 PM', 'In Review', 'Under verification', 'Priya Shah', '2 of 3 Shares Received', 2)">
-                          <span>View Details</span>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                        </button>
-                      </td>
-                    </tr>
-
-                    <!-- Row 3: Business Vault -->
-                    <tr data-vault="Business Vault" data-type="Full Release" data-status="Approved" data-id="REQ-7642">
-                      <td class="table-row-num">3</td>
-                      <td>
-                        <div class="release-vault-cell">
-                          <span class="vault-cell-icon purple">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-                          </span>
-                          <span>Business Vault</span>
-                        </div>
-                      </td>
-                      <td>Full Release</td>
-                      <td>
-                        <div class="table-date-time">
-                          <span class="date-main">28 Aug 2025</span>
-                          <span class="time-sub">02:36 PM</span>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="status-badge approved">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                          <span>Approved</span>
-                        </span>
-                      </td>
-                      <td class="next-step-cell">Preparing release</td>
-                      <td style="text-align: right;">
-                        <button type="button" class="view-details-link" onclick="openReleaseDetails('REQ-7642', 'Business Vault', 'Full Release', '28 Aug 2025, 02:36 PM', 'Approved', 'Preparing release', 'Rohan Mehta', 'Quorum Reached (3/3)', 3)">
-                          <span>View Details</span>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                        </button>
-                      </td>
-                    </tr>
-
-                    <!-- Row 4: Legacy Vault -->
-                    <tr data-vault="Legacy Vault" data-type="Full Release" data-status="Released" data-id="REQ-7510">
-                      <td class="table-row-num">4</td>
-                      <td>
-                        <div class="release-vault-cell">
-                          <span class="vault-cell-icon blue">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                          </span>
-                          <span>Legacy Vault</span>
-                        </div>
-                      </td>
-                      <td>Full Release</td>
-                      <td>
-                        <div class="table-date-time">
-                          <span class="date-main">16 Aug 2025</span>
-                          <span class="time-sub">09:14 AM</span>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="status-badge released">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                          <span>Released</span>
-                        </span>
-                      </td>
-                      <td class="next-step-cell">Completed on 18 Aug 2025</td>
-                      <td style="text-align: right;">
-                        <button type="button" class="view-details-link" onclick="openReleaseDetails('REQ-7510', 'Legacy Vault', 'Full Release', '16 Aug 2025, 09:14 AM', 'Released', 'Completed on 18 Aug 2025', 'Ananya Deshmukh', 'Fulfilled & Archived', 4)">
-                          <span>View Details</span>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                        </button>
-                      </td>
-                    </tr>
-
-                    <!-- Row 5: Health Vault -->
-                    <tr data-vault="Health Vault" data-type="Partial Release" data-status="Pending" data-id="REQ-7390">
-                      <td class="table-row-num">5</td>
-                      <td>
-                        <div class="release-vault-cell">
-                          <span class="vault-cell-icon emerald">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12h6"/><path d="M12 9v6"/></svg>
-                          </span>
-                          <span>Health Vault</span>
-                        </div>
-                      </td>
-                      <td>Partial Release</td>
-                      <td>
-                        <div class="table-date-time">
-                          <span class="date-main">02 Aug 2025</span>
-                          <span class="time-sub">11:09 AM</span>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="status-badge pending">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
-                          <span>Pending</span>
-                        </span>
-                      </td>
-                      <td class="next-step-cell">Review requirements</td>
-                      <td style="text-align: right;">
-                        <button type="button" class="view-details-link" onclick="openReleaseDetails('REQ-7390', 'Health Vault', 'Partial Release', '02 Aug 2025, 11:09 AM', 'Pending', 'Review requirements', 'Vikram Sen', '1 of 2 Shares Received', 1)">
-                          <span>View Details</span>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                        </button>
-                      </td>
-                    </tr>
-
-                    <!-- Row 6: Travel Vault -->
-                    <tr data-vault="Travel Vault" data-type="Full Release" data-status="In Review" data-id="REQ-7215">
-                      <td class="table-row-num">6</td>
-                      <td>
-                        <div class="release-vault-cell">
-                          <span class="vault-cell-icon blue">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/></svg>
-                          </span>
-                          <span>Travel Vault</span>
-                        </div>
-                      </td>
-                      <td>Full Release</td>
-                      <td>
-                        <div class="table-date-time">
-                          <span class="date-main">18 Jul 2025</span>
-                          <span class="time-sub">01:27 PM</span>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="status-badge in-review">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
-                          <span>In Review</span>
-                        </span>
-                      </td>
-                      <td class="next-step-cell">Awaiting additional information</td>
-                      <td style="text-align: right;">
-                        <button type="button" class="view-details-link" onclick="openReleaseDetails('REQ-7215', 'Travel Vault', 'Full Release', '18 Jul 2025, 01:27 PM', 'In Review', 'Awaiting additional information', 'Karan Patel', 'Verification in Progress', 2)">
-                          <span>View Details</span>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                        </button>
+                    <tr id="emptyReleaseRow">
+                      <td colspan="7" style="text-align: center; padding: 3rem 1rem; color: var(--text-muted); font-size: 0.9rem;">
+                        No release requests currently active or pending. Releases will appear here when initiated by a vault owner or automated trigger.
                       </td>
                     </tr>
                   </tbody>
@@ -748,15 +558,15 @@
           </div>
           <div class="modal-detail-row">
             <span class="detail-label">Vault Name:</span>
-            <span class="detail-val" id="modalVaultName">Personal Vault</span>
+            <span class="detail-val" id="modalVaultName">—</span>
           </div>
           <div class="modal-detail-row">
             <span class="detail-label">Vault Owner:</span>
-            <span class="detail-val" id="modalOwnerName">Aryan Patel</span>
+            <span class="detail-val" id="modalOwnerName">—</span>
           </div>
           <div class="modal-detail-row">
             <span class="detail-label">Request Type:</span>
-            <span class="detail-val" id="modalReqType">Full Release</span>
+            <span class="detail-val" id="modalReqType">—</span>
           </div>
           <div class="modal-detail-row">
             <span class="detail-label">Requested On:</span>
@@ -843,6 +653,7 @@
   </div>
 
   <!-- Shared Scripts -->
+  <script src="../../common/api.js"></script>
   <script src="../common/common.js"></script>
   <script src="./release-status.js"></script>
 </body>

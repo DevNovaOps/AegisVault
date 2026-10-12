@@ -3,12 +3,40 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  loadAssignedVaults();
   initFileUpload();
   initNotesCounter();
   initVaultSelectNotice();
   initFormSubmission();
   initFaqAccordion();
 });
+
+function loadAssignedVaults() {
+  const vaultSelect = document.getElementById('vaultSelect');
+  if (!vaultSelect) return;
+
+  if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+    window.AegisAPI.get('/trustee/assigned-vaults/').then(vaults => {
+      vaultSelect.innerHTML = '';
+      if (!vaults || vaults.length === 0) {
+        vaultSelect.innerHTML = '<option value="" disabled selected>No active assigned vaults found</option>';
+        return;
+      }
+      vaults.forEach((v, idx) => {
+        const opt = document.createElement('option');
+        opt.value = v.id || v.vault;
+        opt.setAttribute('data-owner', v.owner_name || 'Owner');
+        opt.setAttribute('data-status', v.status || 'active');
+        opt.textContent = `${v.vault_name || 'Vault'} — ${v.owner_name || 'Owner'} (${v.status === 'active' ? 'Active' : 'Pending'})`;
+        if (idx === 0) opt.selected = true;
+        vaultSelect.appendChild(opt);
+      });
+    }).catch(err => {
+      console.warn('Failed to load vaults for share submission', err);
+      vaultSelect.innerHTML = '<option value="" disabled selected>Error loading vaults</option>';
+    });
+  }
+}
 
 // State for active file
 let currentSelectedFile = null;
@@ -208,6 +236,9 @@ function initFormSubmission() {
 
       // Add new row to table at top
       if (tableBody) {
+        const emptyRow = document.getElementById('emptySubmissionsRow');
+        if (emptyRow) emptyRow.remove();
+
         const newRow = document.createElement('tr');
         newRow.setAttribute('data-sub-id', subId);
         newRow.style.backgroundColor = 'var(--brand-orange-tint)';
@@ -314,12 +345,16 @@ window.downloadReceipt = function() {
   const timestamp = document.getElementById('receiptTimestamp')?.textContent || new Date().toISOString();
   const hash = document.getElementById('receiptHash')?.textContent || 'N/A';
 
+  const user = (window.AegisAPI && window.AegisAPI.getCurrentUser()) || (typeof getStoredTrusteeUser === 'function' ? getStoredTrusteeUser() : null);
+  const trusteeName = user ? (user.name || user.email) : 'Trustee';
+  const trusteeEmail = user ? user.email : 'trustee@aegisvault.io';
+
   const receiptContent = `=====================================================
 AEGISVAULT CRYPTOGRAPHIC PROOF RECEIPT
 Module 05: Share Submission
 =====================================================
 Target Vault:       ${vaultName}
-Trustee Identity:   Rakesh Patel (RP-92841)
+Trustee Identity:   ${trusteeName} (${trusteeEmail})
 Consensus TX:       ${txId}
 Timestamp:          ${timestamp}
 Algorithm:          Shamir's Secret Sharing (2-of-3)
