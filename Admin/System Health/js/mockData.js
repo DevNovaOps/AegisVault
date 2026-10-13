@@ -15,28 +15,28 @@ const AegisHealthMockData = {
     overallStatus: {
         status: "All Systems Operational",
         statusCode: "operational",
-        healthPercentage: 99.8,
-        operationalCount: 9,
-        totalServices: 9,
-        lastUpdated: "12 Sep 2025, 10:24 AM"
+        healthPercentage: 99.99,
+        operationalCount: 6,
+        totalServices: 6,
+        lastUpdated: "Just now"
     },
 
     // 2. Overview Metrics (5 Top Cards)
     overviewMetrics: {
         systemUptime: {
             title: "System Uptime",
-            value: "99.8%",
-            trend: "↑ 0.2%",
+            value: "99.99%",
+            trend: "↑ 0.1%",
             trendType: "positive",
             subtext: "Last 30 days",
             icon: "pulse"
         },
         activeUsers: {
             title: "Active Users",
-            value: "1,248",
-            trend: "↑ 12%",
+            value: "Live",
+            trend: "↑ Active",
             trendType: "positive",
-            subtext: "Currently online: 86",
+            subtext: "Verified identities",
             icon: "users"
         },
         storageUsed: {

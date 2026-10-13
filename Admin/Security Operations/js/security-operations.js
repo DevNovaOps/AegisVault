@@ -84,6 +84,10 @@
     }
 
     async function initData() {
+        if (window.AegisAdminCommon && window.AegisAdminCommon.ensureAdminToken) {
+            await window.AegisAdminCommon.ensureAdminToken();
+        }
+
         if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
             try {
                 const [overview, alerts, events] = await Promise.all([
@@ -93,38 +97,67 @@
                 ]);
 
                 if (events && Array.isArray(events) && events.length > 0) {
-                    state.events = events.map(e => ({
-                        id: e.id || e.event_id || 'EVT-01',
-                        timestamp: e.timestamp || e.created_at || new Date().toISOString(),
-                        type: e.event_type || e.action_title || 'Security Event',
-                        severity: (e.severity || 'medium').toLowerCase(),
-                        source: e.source_ip || e.ip_address || '127.0.0.1',
-                        user: e.user_name || e.user || 'System',
-                        status: e.is_resolved ? 'Resolved' : 'Active',
-                        details: e.details || e.description || ''
-                    }));
+                    state.events = events.map(e => {
+                        const rawSev = (e.severity || 'medium').toLowerCase();
+                        const capSev = rawSev.charAt(0).toUpperCase() + rawSev.slice(1);
+                        const dateObj = new Date(e.timestamp);
+                        const timeStr = isNaN(dateObj.getTime()) ? (e.timestamp || 'Just now') :
+                            dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) + ' ' +
+                            dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+                        return {
+                            id: String(e.id || 'EVT-01'),
+                            timestamp: timeStr,
+                            rawTimestamp: e.timestamp,
+                            eventType: e.title || (e.event_type ? e.event_type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Security Alert'),
+                            type: e.event_type || 'security_event',
+                            severity: capSev,
+                            status: e.is_resolved ? 'Resolved' : 'Active',
+                            userOrIp: e.source_ip || e.user_email || '127.0.0.1',
+                            userDisplay: e.user_email && e.user_email !== 'Unknown' ? e.user_email.split('@')[0] : (e.source_ip || '127.0.0.1'),
+                            flag: '🌐',
+                            resource: e.resource || 'System Perimeter',
+                            details: e.description || e.title || 'Security event detected by AegisVault monitoring.',
+                            is_resolved: !!e.is_resolved
+                        };
+                    });
                 } else if (window.AegisSecurityData && window.AegisSecurityData.securityEvents) {
                     state.events = JSON.parse(JSON.stringify(window.AegisSecurityData.securityEvents));
                 }
 
                 if (alerts && Array.isArray(alerts) && alerts.length > 0) {
-                    state.alerts = alerts.map(a => ({
-                        id: a.id || 'ALT-01',
-                        title: a.title || a.event_type || 'Security Alert',
-                        severity: a.severity || 'Critical',
-                        timestamp: a.timestamp || new Date().toISOString(),
-                        source: a.source_ip || 'Internal',
-                        status: a.is_resolved ? 'Resolved' : 'Active',
-                        description: a.description || a.details || ''
-                    }));
+                    state.alerts = alerts.map(a => {
+                        const rawSev = (a.severity || 'critical').toLowerCase();
+                        const capSev = rawSev.charAt(0).toUpperCase() + rawSev.slice(1);
+                        const dateObj = new Date(a.timestamp);
+                        const timeStr = isNaN(dateObj.getTime()) ? (a.timestamp || 'Just now') :
+                            dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' }) + ' ' +
+                            dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+                        return {
+                            id: String(a.id || 'ALT-01'),
+                            title: a.title || (a.event_type ? a.event_type.replace(/_/g, ' ').toUpperCase() : 'Security Threat'),
+                            severity: capSev,
+                            timestamp: timeStr,
+                            rawTimestamp: a.timestamp,
+                            category: a.event_type || 'Threat Detection',
+                            affectedResource: a.resource || 'Cryptographic Vault',
+                            affectedUser: a.user_email || 'Perimeter Agent',
+                            affectedVault: a.resource || 'Main Vault',
+                            source: a.source_ip || 'External Net',
+                            status: a.is_resolved ? 'Resolved' : 'Active',
+                            description: a.description || 'Elevated anomaly flagged by perimeter sensors.'
+                        };
+                    });
                 } else if (window.AegisSecurityData && window.AegisSecurityData.activeAlerts) {
                     state.alerts = JSON.parse(JSON.stringify(window.AegisSecurityData.activeAlerts));
                 }
 
                 if (overview && window.AegisSecurityData && window.AegisSecurityData.kpis) {
-                    window.AegisSecurityData.kpis.securityEvents.displayValue = String(overview.events_24h || state.events.length || 0);
+                    window.AegisSecurityData.kpis.securityEvents.displayValue = String(overview.events_last_24h || state.events.length || 0);
                     window.AegisSecurityData.kpis.criticalAlerts.displayValue = String(overview.open_critical || 0);
-                    window.AegisSecurityData.kpis.activeThreats.displayValue = String(overview.total_open || 0);
+                    window.AegisSecurityData.kpis.activeThreats.displayValue = String(overview.total_open_alerts || overview.open_high || 0);
+                    window.AegisSecurityData.kpis.blockedAttempts.displayValue = String(overview.failed_logins_24h || 0);
                 }
             } catch (err) {
                 console.warn('Live SecOps data loading error:', err);
@@ -818,19 +851,39 @@
         }
     }
 
-    function confirmResolveAlert() {
+    async function confirmResolveAlert() {
         if (!pendingResolveAlertId) return;
         const alert = state.alerts.find(a => a.id === pendingResolveAlertId);
-        const notes = document.getElementById('resolve-notes-input').value.trim();
+        const notes = (document.getElementById('resolve-notes-input') ? document.getElementById('resolve-notes-input').value.trim() : '');
 
-        if (alert) {
-            alert.status = 'Resolved';
-            alert.resolutionNotes = notes || 'Reviewed and resolved by administrator.';
+        try {
+            if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+                await window.AegisAPI.post(`/admin/security/events/${pendingResolveAlertId}/resolve/`, { notes });
+            }
+            if (alert) {
+                alert.status = 'Resolved';
+                alert.resolutionNotes = notes || 'Reviewed and resolved by administrator.';
+            }
+            const matchedEvt = state.events.find(e => e.id === pendingResolveAlertId);
+            if (matchedEvt) {
+                matchedEvt.status = 'Resolved';
+                matchedEvt.is_resolved = true;
+            }
             renderKPIs();
+            renderEventsTable();
             renderAlertsWidget();
             renderFullAlertsList();
             closeAllModals();
-            showToast(`Alert ${pendingResolveAlertId} successfully resolved!`, 'success');
+            showToast(`Alert ${pendingResolveAlertId} successfully resolved in database!`, 'success');
+        } catch (err) {
+            console.error('Resolve error:', err);
+            if (alert) alert.status = 'Resolved';
+            renderKPIs();
+            renderEventsTable();
+            renderAlertsWidget();
+            renderFullAlertsList();
+            closeAllModals();
+            showToast(`Alert marked resolved locally`, 'info');
         }
         pendingResolveAlertId = null;
     }
@@ -969,15 +1022,20 @@
     /* --------------------------------------------------------------
        REFRESH & TOAST SYSTEM
        -------------------------------------------------------------- */
-    function refreshTelemetry() {
+    async function refreshTelemetry() {
         const timeBadge = document.getElementById('status-last-checked');
+        if (timeBadge) timeBadge.textContent = 'Refreshing...';
+
+        await initData();
+        renderKPIs();
+        renderEventsTable();
+        renderAlertsWidget();
+        renderFullEventsTable();
+        renderFullAlertsList();
+        renderTrendChart();
+
         if (timeBadge) timeBadge.textContent = 'Just now';
-        
-        // Slightly wiggle chart data to simulate real-time live telemetry
-        if (window.AegisSecurityData) {
-            renderTrendChart();
-        }
-        showToast('Telemetry refreshed with latest security state', 'info');
+        showToast('Telemetry refreshed with latest security state from database', 'info');
     }
 
     function showToast(message, type = 'info') {

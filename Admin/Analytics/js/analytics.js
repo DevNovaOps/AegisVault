@@ -1015,6 +1015,9 @@
        17b. Live Backend Data Loader
        ========================================================================== */
     async function loadLiveAnalyticsData() {
+        if (window.AegisAdminCommon && window.AegisAdminCommon.ensureAdminToken) {
+            await window.AegisAdminCommon.ensureAdminToken();
+        }
         if (!window.AegisAPI || !window.AegisAPI.isAuthenticated()) return;
         try {
             const [overview, userRoles, userGrowth, vaultActivity, auditLogs] = await Promise.all([
@@ -1022,7 +1025,7 @@
                 window.AegisAPI.get('/admin/analytics/user-roles/').catch(() => null),
                 window.AegisAPI.get('/admin/analytics/user-growth/?period=30d').catch(() => null),
                 window.AegisAPI.get('/admin/analytics/vault-activity/?period=30d').catch(() => null),
-                window.AegisAPI.get('/admin/audit-logs/').catch(() => null)
+                window.AegisAPI.get('/admin/audit/logs/').catch(() => null)
             ]);
 
             if (overview && window.AegisAnalyticsData) {

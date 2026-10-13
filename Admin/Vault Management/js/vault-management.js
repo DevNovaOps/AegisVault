@@ -29,7 +29,11 @@ const AegisVaultController = {
         this.loadData();
     },
 
-    loadData() {
+    async loadData() {
+        if (window.AegisAdminCommon && window.AegisAdminCommon.ensureAdminToken) {
+            await window.AegisAdminCommon.ensureAdminToken();
+        }
+
         if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
             Promise.all([
                 window.AegisAPI.get('/admin/vaults/').catch(err => {
@@ -733,13 +737,26 @@ const AegisVaultController = {
         }
     },
 
-    toggleVaultStatus(vaultId) {
+    async toggleVaultStatus(vaultId) {
         if (!window.AegisVaultMockData) return;
         const vault = AegisVaultMockData.vaults.find(v => v.id === vaultId);
         if (!vault) return;
 
-        vault.status = vault.status === 'Archived' ? 'Active' : 'Archived';
-        this.showToast(`Vault ${vault.name} status updated to ${vault.status}`, 'success');
+        const nextStatus = vault.status === 'Archived' ? 'Active' : 'Archived';
+        vault.status = nextStatus;
+
+        try {
+            if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+                await window.AegisAPI.put(`/admin/vaults/${vault.rawId || vaultId}/`, {
+                    status: nextStatus
+                });
+            }
+            this.showToast(`Vault ${vault.name} status updated to ${nextStatus}`, 'success');
+        } catch (e) {
+            console.warn('Vault status update error:', e);
+            this.showToast(`Vault ${vault.name} status updated locally to ${nextStatus}`, 'info');
+        }
+
         this.updateDynamicKPIs();
         this.renderTable();
     },

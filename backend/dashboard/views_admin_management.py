@@ -57,10 +57,42 @@ class AdminUserListView(APIView):
         return Response(data)
 
 
+    def post(self, request):
+        name = request.data.get('name', '').strip()
+        email = request.data.get('email', '').strip()
+        role = request.data.get('role', 'owner').lower()
+        password = request.data.get('password', 'DemoPass123!')
+        if not email:
+            return Response({'error': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
+        if User.objects.filter(email=email).exists():
+            return Response({'error': 'A user with this email already exists'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.create_user(email=email, password=password, name=name or email.split('@')[0], role=role)
+        AuditService.log(
+            user=request.user,
+            action_key='admin_user_created',
+            action_title=f'Admin created user: {user.email}',
+            category='admin',
+            details=f'Created new {role} account for {user.name}',
+        )
+        return Response({
+            'id': str(user.id),
+            'name': user.name,
+            'email': user.email,
+            'role': user.role,
+            'status': 'Active',
+            'statusType': 'active',
+            'joined': user.date_joined.strftime('%d %b %Y'),
+            'vault_count': 0,
+            'is_2fa_enabled': user.is_2fa_enabled,
+        }, status=status.HTTP_201_CREATED)
+
+
 class AdminUserDetailView(APIView):
     """
-    GET  /api/v1/admin/users/{id}/ — User detail
-    PUT  /api/v1/admin/users/{id}/ — Update user (suspend/activate/change role)
+    GET    /api/v1/admin/users/{id}/ — User detail
+    PUT    /api/v1/admin/users/{id}/ — Update user
+    DELETE /api/v1/admin/users/{id}/ — Delete user
     """
     permission_classes = [IsAuthenticated, IsAdminUser]
 
@@ -82,10 +114,16 @@ class AdminUserDetailView(APIView):
     def put(self, request, pk):
         user = get_object_or_404(User, pk=pk)
 
+        if 'name' in request.data:
+            user.name = request.data['name'].strip()
+        if 'email' in request.data:
+            user.email = request.data['email'].strip()
         if 'is_active' in request.data:
             user.is_active = request.data['is_active']
+        if 'status' in request.data:
+            user.is_active = (str(request.data['status']).lower() == 'active')
         if 'role' in request.data:
-            user.role = request.data['role']
+            user.role = request.data['role'].lower()
 
         user.save()
 
@@ -94,16 +132,32 @@ class AdminUserDetailView(APIView):
             user=request.user,
             action_key=f'admin_user_{action}',
             action_title=f'User {action.title()}',
-            details=f'Admin {action} user {user.email}',
+            details=f'Admin updated user {user.email}',
             category='admin',
         )
 
         return Response({
             'detail': f'User {user.email} updated.',
             'id': str(user.id),
+            'name': user.name,
+            'email': user.email,
             'is_active': user.is_active,
             'role': user.role,
+            'status': 'Active' if user.is_active else 'Suspended',
         })
+
+    def delete(self, request, pk):
+        user = get_object_or_404(User, pk=pk)
+        email = user.email
+        user.delete()
+        AuditService.log(
+            user=request.user,
+            action_key='admin_user_deleted',
+            action_title=f'User Deleted: {email}',
+            details=f'Admin permanently deleted user {email}',
+            category='admin',
+        )
+        return Response({'detail': f'User {email} has been deleted.'})
 
 
 class AdminUserSuspendView(APIView):
@@ -280,11 +334,58 @@ class AdminVaultDetailView(APIView):
             'created_at': v.created_at.isoformat(),
         })
 
+    def put(self, request, pk):
+        v = get_object_or_404(Vault, pk=pk)
+        name = request.data.get('name')
+        status_val = request.data.get('status')
+        vault_type = request.data.get('vault_type')
+        if name:
+            v.name = name.strip()
+        if status_val:
+            v.status = status_val.capitalize()
+        if vault_type:
+            v.vault_type = vault_type.lower()
+        v.save()
+
+        AuditService.log(
+            user=request.user,
+            action_key='vault_updated_admin',
+            action_title='Vault Updated by Admin',
+            details=f'Admin updated vault: {v.name}',
+            category='vault',
+        )
+
+        return Response({
+            'id': str(v.id),
+            'name': v.name,
+            'status': v.status,
+            'vault_type': v.vault_type,
+            'detail': 'Vault updated successfully.'
+        })
+
+    def delete(self, request, pk):
+        v = get_object_or_404(Vault, pk=pk)
+        vault_name = v.name
+        v.delete()
+
+        AuditService.log(
+            user=request.user,
+            action_key='vault_deleted_admin',
+            action_title='Vault Deleted by Admin',
+            details=f'Admin deleted vault: {vault_name}',
+            category='vault',
+        )
+
+        return Response({'detail': f'Vault {vault_name} deleted successfully.'}, status=status.HTTP_200_OK)
+
 
 # ─── Trustee Management ──────────────────────────────────────────────────────
 
 class AdminTrusteeListView(APIView):
-    """GET /api/v1/admin/trustees/ — List all trustees"""
+    """
+    GET  /api/v1/admin/trustees/ — List all trustees
+    POST /api/v1/admin/trustees/ — Add or invite a trustee
+    """
     permission_classes = [IsAuthenticated, IsAdminUser]
 
     def get(self, request):
@@ -303,19 +404,197 @@ class AdminTrusteeListView(APIView):
 
         data = []
         for t in trustees.order_by('-date_joined')[:100]:
-            vaults_assigned = VaultShare.objects.filter(trustee=t).count()
+            shares = VaultShare.objects.filter(trustee=t).select_related('vault')
+            linked_vaults = [s.vault.name for s in shares if s.vault]
+            profile = getattr(t, 'trustee_profile', None)
+            phone = profile.phone if profile else getattr(t, 'phone', '') or '+1 (555) 234-8901'
+            trustee_type = 'Primary' if len(linked_vaults) > 0 else 'Designated'
+
             data.append({
                 'id': str(t.id),
-                'name': t.name,
+                'name': t.name or (t.email.split('@')[0] if t.email else 'Trustee'),
                 'email': t.email,
-                'status': 'Active' if t.is_active else 'Suspended',
-                'statusType': 'active' if t.is_active else 'suspended',
+                'phone': phone,
+                'trusteeType': trustee_type,
+                'status': 'Verified' if t.is_active else 'Suspended',
+                'statusType': 'verified' if t.is_active else 'rejected',
                 'joined': t.date_joined.strftime('%d %b %Y'),
-                'vaults_assigned': vaults_assigned,
+                'vaults_assigned': len(linked_vaults),
+                'linked_vaults': linked_vaults,
+                'notes': f'Designated custody trustee linked to {len(linked_vaults)} active vault(s).',
+                'documentsVerified': True,
                 'is_2fa_enabled': t.is_2fa_enabled,
             })
 
         return Response(data)
+
+    def post(self, request):
+        name = request.data.get('name', '').strip()
+        email = request.data.get('email', '').strip()
+        phone = request.data.get('phone', '').strip()
+        if not email:
+            return Response({'error': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
+        if User.objects.filter(email=email).exists():
+            return Response({'error': 'A user with this email already exists'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.create_user(
+            email=email,
+            password='DemoPass123!',
+            name=name or email.split('@')[0],
+            role='trustee'
+        )
+        owner = User.objects.filter(role='owner').first()
+        if owner:
+            TrusteeProfile.objects.create(
+                user=user,
+                owner=owner,
+                name=user.name,
+                email=user.email,
+                phone=phone or '+1 (555) 000-0000',
+                status='Active',
+                verification_status='Verified'
+            )
+
+        AuditService.log(
+            user=request.user,
+            action_key='admin_trustee_created',
+            action_title=f'Trustee Enrolled: {user.email}',
+            details=f'Admin enrolled new trustee {user.name}',
+            category='trustee',
+        )
+        return Response({
+            'id': str(user.id),
+            'name': user.name,
+            'email': user.email,
+            'phone': phone or '+1 (555) 000-0000',
+            'trusteeType': 'Primary',
+            'status': 'Verified',
+            'statusType': 'verified',
+            'joined': user.date_joined.strftime('%d %b %Y'),
+            'vaults_assigned': 0,
+            'linked_vaults': [],
+            'notes': 'New enrolled trustee',
+            'documentsVerified': True,
+            'is_2fa_enabled': user.is_2fa_enabled,
+        }, status=status.HTTP_201_CREATED)
+
+
+class AdminTrusteeDetailView(APIView):
+    """
+    GET    /api/v1/admin/trustees/{id}/ — Trustee detail
+    PUT    /api/v1/admin/trustees/{id}/ — Update trustee
+    DELETE /api/v1/admin/trustees/{id}/ — Deactivate/delete trustee
+    """
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def get(self, request, pk):
+        trustee = get_object_or_404(User.objects.filter(role='trustee'), pk=pk)
+        shares = VaultShare.objects.filter(trustee=trustee).select_related('vault')
+        linked_vaults = [s.vault.name for s in shares if s.vault]
+        profile = getattr(trustee, 'trustee_profile', None)
+
+        return Response({
+            'id': str(trustee.id),
+            'name': trustee.name,
+            'email': trustee.email,
+            'phone': profile.phone if profile else '+1 (555) 234-8901',
+            'status': 'Verified' if trustee.is_active else 'Suspended',
+            'statusType': 'verified' if trustee.is_active else 'rejected',
+            'joined': trustee.date_joined.strftime('%d %b %Y'),
+            'vaults_assigned': len(linked_vaults),
+            'linked_vaults': linked_vaults,
+            'notes': f'Designated custody trustee linked to {len(linked_vaults)} active vault(s).',
+            'documentsVerified': True,
+            'is_2fa_enabled': trustee.is_2fa_enabled,
+        })
+
+    def put(self, request, pk):
+        trustee = get_object_or_404(User.objects.filter(role='trustee'), pk=pk)
+        if 'name' in request.data:
+            trustee.name = request.data['name'].strip()
+        if 'email' in request.data:
+            trustee.email = request.data['email'].strip()
+        if 'status' in request.data:
+            trustee.is_active = (str(request.data['status']).lower() in ['verified', 'active'])
+        if 'is_active' in request.data:
+            trustee.is_active = request.data['is_active']
+        trustee.save()
+
+        profile = getattr(trustee, 'trustee_profile', None)
+        if profile and 'phone' in request.data:
+            profile.phone = request.data['phone'].strip()
+            profile.save(update_fields=['phone'])
+
+        AuditService.log(
+            user=request.user,
+            action_key='admin_trustee_updated',
+            action_title=f'Trustee Updated: {trustee.email}',
+            details=f'Admin updated profile for trustee {trustee.name}',
+            category='trustee',
+        )
+        return Response({'detail': f'Trustee {trustee.email} updated.'})
+
+    def delete(self, request, pk):
+        trustee = get_object_or_404(User.objects.filter(role='trustee'), pk=pk)
+        trustee.is_active = False
+        trustee.save(update_fields=['is_active'])
+        AuditService.log(
+            user=request.user,
+            action_key='admin_trustee_deactivated',
+            action_title=f'Trustee Deactivated: {trustee.email}',
+            details=f'Admin deactivated trustee {trustee.name}',
+            category='trustee',
+        )
+        return Response({'detail': f'Trustee {trustee.email} has been deactivated.'})
+
+
+class AdminTrusteeApproveView(APIView):
+    """POST /api/v1/admin/trustees/{id}/approve/"""
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def post(self, request, pk):
+        trustee = get_object_or_404(User.objects.filter(role='trustee'), pk=pk)
+        trustee.is_active = True
+        trustee.save(update_fields=['is_active'])
+        profile = getattr(trustee, 'trustee_profile', None)
+        if profile:
+            profile.verification_status = 'Verified'
+            profile.status = 'Active'
+            profile.save(update_fields=['verification_status', 'status'])
+
+        AuditService.log(
+            user=request.user,
+            action_key='admin_trustee_approved',
+            action_title=f'Trustee Approved: {trustee.email}',
+            details=f'Admin approved verification credentials for {trustee.name}',
+            category='trustee',
+        )
+        return Response({'detail': f'Trustee {trustee.email} verified and approved.'})
+
+
+class AdminTrusteeRejectView(APIView):
+    """POST /api/v1/admin/trustees/{id}/reject/"""
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def post(self, request, pk):
+        trustee = get_object_or_404(User.objects.filter(role='trustee'), pk=pk)
+        reason = request.data.get('reason', 'Verification rejected by administrator')
+        trustee.is_active = False
+        trustee.save(update_fields=['is_active'])
+        profile = getattr(trustee, 'trustee_profile', None)
+        if profile:
+            profile.verification_status = 'Revoked'
+            profile.status = 'Suspended'
+            profile.save(update_fields=['verification_status', 'status'])
+
+        AuditService.log(
+            user=request.user,
+            action_key='admin_trustee_rejected',
+            action_title=f'Trustee Rejected: {trustee.email}',
+            details=f'Admin rejected verification credentials for {trustee.name}: {reason}',
+            category='trustee',
+        )
+        return Response({'detail': f'Trustee {trustee.email} marked as rejected.'})
 
 
 # ─── Pending Actions ─────────────────────────────────────────────────────────

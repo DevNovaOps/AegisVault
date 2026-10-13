@@ -44,21 +44,21 @@ class AnalyticsService:
         data = {'labels': [], 'values': []}
 
         if period == '30d':
-            for i in range(4, 0, -1):
-                start = now - timedelta(days=i * 7)
-                end = now - timedelta(days=(i - 1) * 7)
+            for i in range(4, -1, -1):
+                start = now - timedelta(days=(i + 1) * 7)
+                end = now - timedelta(days=i * 7) if i > 0 else now
                 count = User.objects.filter(date_joined__lte=end).count()
-                data['labels'].append(f'Week {5 - i}')
+                data['labels'].append(f'W{5 - i}')
                 data['values'].append(count)
         elif period == '1y':
-            for i in range(9, 0, -1):
-                end = now - timedelta(days=i * 30)
+            for i in range(11, -1, -1):
+                end = now - timedelta(days=i * 30) if i > 0 else now
                 count = User.objects.filter(date_joined__lte=end).count()
                 data['labels'].append(end.strftime('%b'))
                 data['values'].append(count)
         else:  # 6m
-            for i in range(7, 0, -1):
-                end = now - timedelta(days=i * 30)
+            for i in range(5, -1, -1):
+                end = now - timedelta(days=i * 30) if i > 0 else now
                 count = User.objects.filter(date_joined__lte=end).count()
                 data['labels'].append(end.strftime('%b'))
                 data['values'].append(count)
@@ -76,33 +76,33 @@ class AnalyticsService:
         data = {'labels': [], 'created': [], 'accessed': [], 'released': []}
 
         if period == '30d':
-            for i in range(4, 0, -1):
-                start = now - timedelta(days=i * 7)
-                end = now - timedelta(days=(i - 1) * 7)
-                created = Vault.objects.filter(created_at__gte=start, created_at__lt=end).count()
+            for i in range(4, -1, -1):
+                start = now - timedelta(days=(i + 1) * 7)
+                end = now - timedelta(days=i * 7) if i > 0 else now
+                created = Vault.objects.filter(created_at__gte=start, created_at__lte=end).count()
                 accessed = AuditLog.objects.filter(
-                    category='vault', timestamp__gte=start, timestamp__lt=end
+                    category='vault', timestamp__gte=start, timestamp__lte=end
                 ).count()
                 released = ReleaseRequest.objects.filter(
-                    released_at__gte=start, released_at__lt=end
+                    released_at__gte=start, released_at__lte=end
                 ).count()
-                data['labels'].append(f'Week {5 - i}')
+                data['labels'].append(f'W{5 - i}')
                 data['created'].append(created)
                 data['accessed'].append(accessed)
                 data['released'].append(released)
         else:  # 6m or 1y
-            months = 7 if period == '6m' else 9
-            for i in range(months, 0, -1):
-                start = now - timedelta(days=i * 30)
-                end = now - timedelta(days=(i - 1) * 30)
-                created = Vault.objects.filter(created_at__gte=start, created_at__lt=end).count()
+            months = 6 if period == '6m' else 12
+            for i in range(months - 1, -1, -1):
+                start = now - timedelta(days=(i + 1) * 30)
+                end = now - timedelta(days=i * 30) if i > 0 else now
+                created = Vault.objects.filter(created_at__gte=start, created_at__lte=end).count()
                 accessed = AuditLog.objects.filter(
-                    category='vault', timestamp__gte=start, timestamp__lt=end
+                    category='vault', timestamp__gte=start, timestamp__lte=end
                 ).count()
                 released = ReleaseRequest.objects.filter(
-                    released_at__gte=start, released_at__lt=end
+                    released_at__gte=start, released_at__lte=end
                 ).count()
-                data['labels'].append(start.strftime('%b'))
+                data['labels'].append(end.strftime('%b'))
                 data['created'].append(created)
                 data['accessed'].append(accessed)
                 data['released'].append(released)

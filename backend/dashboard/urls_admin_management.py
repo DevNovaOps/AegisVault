@@ -7,7 +7,8 @@ from .views_admin_management import (
     AdminUserListView, AdminUserDetailView,
     AdminUserSuspendView, AdminUserActivateView,
     AdminVaultListView, AdminVaultDetailView,
-    AdminTrusteeListView,
+    AdminTrusteeListView, AdminTrusteeDetailView,
+    AdminTrusteeApproveView, AdminTrusteeRejectView,
     AdminPendingActionsView,
     AdminAuditLogView,
 )
@@ -25,6 +26,9 @@ urlpatterns = [
 
     # Trustees
     path('trustees/', AdminTrusteeListView.as_view(), name='admin-trustees-list'),
+    path('trustees/<uuid:pk>/', AdminTrusteeDetailView.as_view(), name='admin-trustee-detail'),
+    path('trustees/<uuid:pk>/approve/', AdminTrusteeApproveView.as_view(), name='admin-trustee-approve'),
+    path('trustees/<uuid:pk>/reject/', AdminTrusteeRejectView.as_view(), name='admin-trustee-reject'),
 
     # Pending Actions
     path('pending-actions/', AdminPendingActionsView.as_view(), name='admin-pending-actions'),

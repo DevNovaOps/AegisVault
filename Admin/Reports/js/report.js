@@ -25,6 +25,9 @@
         reportsData: [],
 
         async loadLiveData() {
+            if (window.AegisAdminCommon && window.AegisAdminCommon.ensureAdminToken) {
+                await window.AegisAdminCommon.ensureAdminToken();
+            }
             if (!window.AegisAPI || !window.AegisAPI.isAuthenticated()) return;
             try {
                 const [auditSummary, userRpt, vaultRpt, secRpt, compRpt, auditLogs] = await Promise.all([
@@ -33,7 +36,7 @@
                     window.AegisAPI.get('/admin/reports/vaults/').catch(() => null),
                     window.AegisAPI.get('/admin/reports/security/').catch(() => null),
                     window.AegisAPI.get('/admin/reports/compliance/').catch(() => null),
-                    window.AegisAPI.get('/admin/audit-logs/').catch(() => null)
+                    window.AegisAPI.get('/admin/audit/logs/').catch(() => null)
                 ]);
 
                 if (window.AegisReportMockData) {

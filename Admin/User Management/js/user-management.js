@@ -21,9 +21,13 @@ window.AegisUserManagement = {
     selectedUserId: "USR001248",
     activeTab: "overview",
 
-    init() {
+    async init() {
         this.initModals();
         this.initEventListeners();
+
+        if (window.AegisAdminCommon && !localStorage.getItem('aegis_access_token')) {
+            await AegisAdminCommon.ensureAdminToken();
+        }
 
         if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
             window.AegisAPI.get('/admin/users/').then(data => {
@@ -101,40 +105,34 @@ window.AegisUserManagement = {
                     return;
                 }
 
-                const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'US';
-                const newId = `USR${Math.floor(100000 + Math.random() * 900000)}`;
-
-                const newUser = {
-                    id: newId,
-                    index: this.users.length + 1,
-                    initials: initials,
-                    name: name,
-                    email: email,
-                    role: role,
-                    roleTitle: role === 'Owner' ? 'Vault Owner' : 'Designated Trustee',
-                    status: 'Active',
-                    vaults: 0,
-                    trustees: 0,
-                    joinedOn: 'Today',
-                    joinedOnFull: 'Today, Just Now',
-                    lastLogin: 'Just Now',
-                    emailVerified: 'Yes',
-                    phoneVerified: 'Pending',
-                    mfaEnabled: false,
-                    recentActivity: [
-                        { action: 'Account registered by Administrator', timestamp: 'Just now', status: 'Success' }
-                    ],
-                    securityDetails: { mfaMethod: 'Pending Setup', encryptionLevel: 'AES-256-GCM', failedLogins: 0, ipAddress: '127.0.0.1', trustedDevices: 1 },
-                    vaultsList: []
-                };
-
-                this.users.unshift(newUser);
-                this.applyFilters();
-                this.selectUser(newId);
-
-                modalAdd.classList.remove('active');
-                formAdd.reset();
-                this.showToast(`User ${name} added successfully!`, 'success');
+                if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+                    window.AegisAPI.post('/admin/users/', { name, email, role: role.toLowerCase() }).then(res => {
+                        const newUser = {
+                            id: res.id,
+                            name: res.name,
+                            email: res.email,
+                            role: res.role ? (res.role.charAt(0).toUpperCase() + res.role.slice(1)) : role,
+                            status: res.status || 'Active',
+                            verification: 'Verified',
+                            initials: (res.name || res.email || 'US').split(' ').map(n=>n[0]).join('').substring(0, 2).toUpperCase(),
+                            joinedOn: res.joined || 'Today',
+                            lastLogin: 'Never',
+                            vaults: 0,
+                            trustees: 0,
+                            mfaEnabled: false,
+                            recentActivity: [{ action: 'Account registered by Administrator', timestamp: 'Just now', status: 'Success' }],
+                            securityDetails: { mfaMethod: 'None', encryptionLevel: 'AES-256-GCM', failedLogins: 0, ipAddress: '127.0.0.1', trustedDevices: 1 }
+                        };
+                        this.users.unshift(newUser);
+                        this.applyFilters();
+                        this.selectUser(newUser.id);
+                        modalAdd.classList.remove('active');
+                        formAdd.reset();
+                        this.showToast(`User ${name} enrolled successfully in database!`, 'success');
+                    }).catch(err => {
+                        this.showToast(err.message || 'Failed to add user', 'error');
+                    });
+                }
             });
         }
 
@@ -168,16 +166,32 @@ window.AegisUserManagement = {
                 const user = this.users.find(u => u.id === this.selectedUserId);
                 if (!user) return;
 
-                user.name = document.getElementById('edit-user-name')?.value.trim() || user.name;
-                user.email = document.getElementById('edit-user-email')?.value.trim() || user.email;
-                user.role = document.getElementById('edit-user-role')?.value || user.role;
-                user.status = document.getElementById('edit-user-status')?.value || user.status;
+                const newName = document.getElementById('edit-user-name')?.value.trim() || user.name;
+                const newEmail = document.getElementById('edit-user-email')?.value.trim() || user.email;
+                const newRole = document.getElementById('edit-user-role')?.value || user.role;
+                const newStatus = document.getElementById('edit-user-status')?.value || user.status;
 
-                this.renderTable();
-                this.selectUser(user.id);
+                if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+                    window.AegisAPI.put(`/admin/users/${user.id}/`, {
+                        name: newName,
+                        email: newEmail,
+                        role: newRole.toLowerCase(),
+                        status: newStatus
+                    }).then(() => {
+                        user.name = newName;
+                        user.email = newEmail;
+                        user.role = newRole;
+                        user.status = newStatus;
+                        user.initials = newName.split(' ').map(n=>n[0]).join('').substring(0, 2).toUpperCase();
 
-                modalEdit.classList.remove('active');
-                this.showToast(`Updated user details for ${user.name}`, 'success');
+                        this.renderTable();
+                        this.selectUser(user.id);
+                        modalEdit.classList.remove('active');
+                        this.showToast(`Updated user details for ${user.name}`, 'success');
+                    }).catch(err => {
+                        this.showToast(err.message || 'Failed to update user', 'error');
+                    });
+                }
             });
         }
 
@@ -187,7 +201,7 @@ window.AegisUserManagement = {
             btnResetPwd.addEventListener('click', () => {
                 const user = this.users.find(u => u.id === this.selectedUserId);
                 if (!user) return;
-                this.showToast(`Password reset link dispatched to ${user.email}`, 'info');
+                this.showToast(`Cryptographic reset credentials dispatched to ${user.email}`, 'info');
             });
         }
 
@@ -209,17 +223,8 @@ window.AegisUserManagement = {
                         this.renderTable();
                         this.selectUser(user.id);
                     }).catch(err => {
-                        console.warn('Failed to update user status:', err);
-                        user.status = willSuspend ? 'Suspended' : 'Active';
-                        this.updateKPIs();
-                        this.renderTable();
-                        this.selectUser(user.id);
+                        this.showToast(err.message || 'Status update failed', 'error');
                     });
-                } else {
-                    user.status = willSuspend ? 'Suspended' : 'Active';
-                    this.updateKPIs();
-                    this.renderTable();
-                    this.selectUser(user.id);
                 }
             });
         }
@@ -231,13 +236,21 @@ window.AegisUserManagement = {
                 const user = this.users.find(u => u.id === this.selectedUserId);
                 if (!user) return;
 
-                if (confirm(`Are you sure you want to permanently delete user ${user.name} (${user.id})?`)) {
-                    this.users = this.users.filter(u => u.id !== user.id);
-                    this.applyFilters();
-                    if (this.users.length > 0) {
-                        this.selectUser(this.users[0].id);
+                if (confirm(`Are you sure you want to permanently delete user ${user.name} (${user.email})?`)) {
+                    if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+                        window.AegisAPI.delete(`/admin/users/${user.id}/`).then(() => {
+                            this.users = this.users.filter(u => u.id !== user.id);
+                            this.applyFilters();
+                            if (this.users.length > 0) {
+                                this.selectUser(this.users[0].id);
+                            } else {
+                                this.clearInspector();
+                            }
+                            this.showToast(`Permanently deleted user ${user.name}`, 'warning');
+                        }).catch(err => {
+                            this.showToast(err.message || 'Failed to delete user', 'error');
+                        });
                     }
-                    this.showToast(`Deleted user ${user.name}`, 'warning');
                 }
             });
         }
@@ -249,6 +262,92 @@ window.AegisUserManagement = {
                 if (modal) modal.classList.remove('active');
             });
         });
+    },
+
+    openRowMenu(e, userId) {
+        e.stopPropagation();
+        const existing = document.getElementById('user-row-dropdown-menu');
+        if (existing) existing.remove();
+
+        const user = this.users.find(u => u.id === userId);
+        if (!user) return;
+
+        const btn = e.currentTarget;
+        const rect = btn.getBoundingClientRect();
+
+        const menu = document.createElement('div');
+        menu.id = 'user-row-dropdown-menu';
+        menu.style.position = 'fixed';
+        menu.style.top = `${rect.bottom + 6}px`;
+        menu.style.left = `${Math.max(10, rect.right - 180)}px`;
+        menu.style.width = '190px';
+        menu.style.background = 'var(--bg-card, #1E293B)';
+        menu.style.border = '1px solid var(--border-color, rgba(255,255,255,0.1))';
+        menu.style.borderRadius = '8px';
+        menu.style.boxShadow = '0 10px 25px -5px rgba(0,0,0,0.4)';
+        menu.style.zIndex = '9999';
+        menu.style.padding = '0.4rem 0';
+        menu.style.fontSize = '0.8rem';
+
+        const isSuspended = user.status === 'Suspended';
+
+        menu.innerHTML = `
+            <div style="padding: 0.35rem 0.85rem; font-weight:700; font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; border-bottom:1px solid var(--border-color, rgba(255,255,255,0.06)); margin-bottom:0.25rem;">Actions &bull; ${user.initials}</div>
+            <div class="row-menu-item" data-action="inspect" style="padding:0.45rem 0.85rem; cursor:pointer; color:var(--text-heading); display:flex; align-items:center; gap:0.5rem; transition:background 0.15s;">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span>Inspect Details</span>
+            </div>
+            <div class="row-menu-item" data-action="edit" style="padding:0.45rem 0.85rem; cursor:pointer; color:var(--text-heading); display:flex; align-items:center; gap:0.5rem; transition:background 0.15s;">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                <span>Edit Profile</span>
+            </div>
+            <div class="row-menu-item" data-action="toggle-status" style="padding:0.45rem 0.85rem; cursor:pointer; color:${isSuspended ? '#10B981' : '#F59E0B'}; display:flex; align-items:center; gap:0.5rem; transition:background 0.15s;">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                <span>${isSuspended ? 'Reactivate Access' : 'Suspend Access'}</span>
+            </div>
+            <div class="row-menu-item" data-action="reset-pwd" style="padding:0.45rem 0.85rem; cursor:pointer; color:var(--text-heading); display:flex; align-items:center; gap:0.5rem; transition:background 0.15s;">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <span>Reset Password</span>
+            </div>
+            <div style="border-top:1px solid var(--border-color, rgba(255,255,255,0.06)); margin:0.25rem 0;"></div>
+            <div class="row-menu-item" data-action="delete" style="padding:0.45rem 0.85rem; cursor:pointer; color:#EF4444; display:flex; align-items:center; gap:0.5rem; transition:background 0.15s;">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                <span>Delete Account</span>
+            </div>
+        `;
+
+        document.body.appendChild(menu);
+
+        menu.querySelectorAll('.row-menu-item').forEach(item => {
+            item.addEventListener('mouseenter', () => { item.style.background = 'rgba(255,255,255,0.08)'; });
+            item.addEventListener('mouseleave', () => { item.style.background = 'transparent'; });
+            item.addEventListener('click', (ev) => {
+                ev.stopPropagation();
+                menu.remove();
+                const act = item.getAttribute('data-action');
+                if (act === 'inspect') {
+                    this.selectUser(user.id);
+                } else if (act === 'edit') {
+                    this.selectUser(user.id);
+                    document.getElementById('btn-action-edit')?.click();
+                } else if (act === 'toggle-status') {
+                    this.selectUser(user.id);
+                    document.getElementById('btn-action-suspend')?.click();
+                } else if (act === 'reset-pwd') {
+                    this.selectUser(user.id);
+                    document.getElementById('btn-action-reset-pwd')?.click();
+                } else if (act === 'delete') {
+                    this.selectUser(user.id);
+                    document.getElementById('btn-action-delete')?.click();
+                }
+            });
+        });
+
+        const closeHandler = () => {
+            menu.remove();
+            document.removeEventListener('click', closeHandler);
+        };
+        setTimeout(() => document.addEventListener('click', closeHandler), 10);
     },
 
     /* =========================================================================

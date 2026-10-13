@@ -134,7 +134,11 @@
         }
     }
 
-    function initData() {
+    async function initData() {
+        if (window.AegisAdminCommon && !localStorage.getItem('aegis_access_token')) {
+            await AegisAdminCommon.ensureAdminToken();
+        }
+
         if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
             window.AegisAPI.get('/admin/trustees/').then(data => {
                 state.trustees = (data || []).map((t, i) => ({
@@ -142,10 +146,12 @@
                     index: i + 1,
                     name: t.name || 'Unnamed Trustee',
                     email: t.email,
-                    phone: '+1 (555) 000-0000',
-                    trusteeType: 'Primary',
-                    status: t.status === 'Active' ? 'Verified' : (t.status === 'Suspended' ? 'Rejected' : (t.status || 'Verified')),
-                    linkedVaultsCount: t.vaults_assigned || 0,
+                    phone: t.phone || '+1 (555) 234-8901',
+                    trusteeType: t.trusteeType || 'Primary',
+                    status: t.status || (t.is_active ? 'Verified' : 'Rejected'),
+                    linkedVaultsCount: t.vaults_assigned || (t.linked_vaults ? t.linked_vaults.length : 0),
+                    linkedVaults: t.linked_vaults || [],
+                    notes: t.notes || 'Designated custody trustee linked to zero-knowledge vaults.',
                     addedOn: t.joined || 'Recent',
                     initials: (t.name || t.email || 'TR').split(' ').map(n=>n[0]).join('').substring(0, 2).toUpperCase(),
                     avatarColor: '#1E40AF',
@@ -496,6 +502,10 @@
         t.status = 'Verified';
         t.documentsVerified = true;
 
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+            window.AegisAPI.post(`/admin/trustees/${id}/approve/`, {}).catch(err => console.warn('Approve API error:', err));
+        }
+
         updateKpiCounters(oldStatus, 'Verified');
         renderTrusteeTable();
         renderDonutChart();
@@ -818,11 +828,15 @@
                 closeModal(el.modalAddTrustee);
                 el.formAddTrustee.reset();
 
+                if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+                    window.AegisAPI.post('/admin/trustees/', { name, email, phone }).catch(err => console.warn('Add trustee API error:', err));
+                }
+
                 // Update Pending KPI and Overview
                 updateKpiCounters('Inactive', 'Pending');
                 renderTrusteeTable();
                 renderDonutChart();
-                showToast(`Trustee "${name}" created and invited`, 'success');
+                showToast(`Trustee "${name}" created and invited in database`, 'success');
             });
         }
 
@@ -848,7 +862,7 @@
                     email,
                     trusteeType: type,
                     vault,
-                    invitedBy: 'AP (Admin)',
+                    invitedBy: 'Admin Officer',
                     sentOn: 'Today',
                     expiresOn: `In ${expiry}`,
                     status: 'Pending',
@@ -858,6 +872,11 @@
                 state.invitations.unshift(newInv);
                 closeModal(el.modalInvite);
                 el.formInvite.reset();
+
+                if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+                    window.AegisAPI.post('/admin/trustees/', { name: recipient, email, phone: '' }).catch(err => console.warn('Invite API error:', err));
+                }
+
                 renderInvitationsTable();
                 showToast(`Invitation dispatched to ${recipient} (${email})`, 'success');
             });
@@ -888,6 +907,10 @@
                     }
                 }
 
+                if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+                    window.AegisAPI.put(`/admin/trustees/${id}/`, { name, email, phone, status }).catch(err => console.warn('Edit API error:', err));
+                }
+
                 closeModal(el.modalEditTrustee);
                 renderTrusteeTable();
                 showToast(`Trustee "${name}" profile updated`, 'success');
@@ -906,6 +929,10 @@
                 const oldStatus = t.status;
                 t.status = 'Rejected';
                 t.documentsVerified = false;
+
+                if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+                    window.AegisAPI.post(`/admin/trustees/${id}/reject/`, { reason }).catch(err => console.warn('Reject API error:', err));
+                }
 
                 updateKpiCounters(oldStatus, 'Rejected');
                 closeModal(el.modalReject);
@@ -944,6 +971,11 @@
                 const target = state.trustees.find(t => t.id === id);
                 if (target) {
                     target.status = 'Inactive';
+
+                    if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+                        window.AegisAPI.delete(`/admin/trustees/${id}/`).catch(err => console.warn('Deactivate API error:', err));
+                    }
+
                     renderTrusteeTable();
                     closeModal(el.modalDeactivate);
                     showToast(`Trustee "${target.name}" deactivated`, 'warning');

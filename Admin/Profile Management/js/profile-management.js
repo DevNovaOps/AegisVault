@@ -10,10 +10,57 @@ document.addEventListener('DOMContentLoaded', () => {
     initProfileManagement();
 });
 
-function initProfileManagement() {
+async function initProfileManagement() {
+    if (window.AegisAdminCommon && window.AegisAdminCommon.ensureAdminToken) {
+        await window.AegisAdminCommon.ensureAdminToken();
+    }
+    await loadAdminProfileData();
     initPasswordStrengthMeter();
     initProfileForm();
     initPasswordForm();
+}
+
+async function loadAdminProfileData() {
+    let user = null;
+    try {
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+            user = await window.AegisAPI.getCurrentUser();
+        }
+    } catch (e) {
+        console.warn('Could not fetch /auth/me/, checking localStorage:', e);
+    }
+
+    if (!user) {
+        const raw = localStorage.getItem('aegis_user');
+        try { user = raw ? JSON.parse(raw) : null; } catch (e) {}
+    }
+
+    if (!user) return;
+
+    const nameInput = document.getElementById('profFullName');
+    const emailInput = document.getElementById('profEmail');
+    const phoneInput = document.getElementById('profPhone');
+    const tzSelect = document.getElementById('profTimezone');
+    const idInput = document.getElementById('profAdminId');
+    const displayAdminName = document.getElementById('displayAdminName');
+    const avatarEl = document.getElementById('adminAvatarLarge');
+
+    if (nameInput) nameInput.value = user.name || user.email?.split('@')[0] || 'Master Administrator';
+    if (emailInput) emailInput.value = user.email || 'admin@aegisvault.internal';
+    if (phoneInput && user.phone) phoneInput.value = user.phone;
+    if (tzSelect && user.timezone_preference) tzSelect.value = user.timezone_preference;
+    if (idInput && user.id) idInput.value = `ADM-${String(user.id).slice(0, 8).toUpperCase()}`;
+    if (displayAdminName) displayAdminName.textContent = user.name || user.email || 'Master Administrator';
+    if (avatarEl) {
+        const init = (user.name || user.email || 'AD').replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase() || 'AD';
+        avatarEl.textContent = init;
+    }
+
+    // Update navbar avatar & name if present
+    const navName = document.querySelector('.profile-name');
+    if (navName) navName.textContent = (user.name || user.email?.split('@')[0] || 'Admin').split(' ')[0];
+    const navAvatar = document.querySelector('.profile-avatar-circle');
+    if (navAvatar) navAvatar.textContent = (user.name || user.email || 'AD').replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase() || 'AD';
 }
 
 /**
@@ -61,27 +108,53 @@ function initProfileForm() {
     const form = document.getElementById('adminProfileForm');
     if (!form) return;
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const nameInput = document.getElementById('profFullName');
         const emailInput = document.getElementById('profEmail');
+        const phoneInput = document.getElementById('profPhone');
+        const tzSelect = document.getElementById('profTimezone');
         const roleLabel = document.getElementById('displayAdminName');
 
-        if (nameInput && roleLabel) {
-            roleLabel.textContent = nameInput.value;
-        }
+        const payload = {
+            name: nameInput?.value.trim(),
+            email: emailInput?.value.trim(),
+            phone: phoneInput?.value.trim() || '',
+            timezone_preference: tzSelect?.value || 'America/New_York'
+        };
 
-        // Also update navbar profile name if element exists
-        const navbarProfileName = document.querySelector('.profile-name');
-        if (navbarProfileName && nameInput) {
-            navbarProfileName.textContent = nameInput.value.split(' ')[0] || 'Admin';
-        }
+        try {
+            if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+                const res = await window.AegisAPI.put('/auth/profile/update/', payload);
+                if (res && res.user) {
+                    localStorage.setItem('aegis_user', JSON.stringify(res.user));
+                }
+            } else {
+                const cur = JSON.parse(localStorage.getItem('aegis_user') || '{}');
+                Object.assign(cur, payload);
+                localStorage.setItem('aegis_user', JSON.stringify(cur));
+            }
 
-        if (typeof window.showToast === 'function') {
-            window.showToast('Administrator profile details updated successfully.', 'success');
-        } else {
-            alert('Administrator profile updated successfully.');
+            if (nameInput && roleLabel) roleLabel.textContent = nameInput.value;
+            const navbarProfileName = document.querySelector('.profile-name');
+            if (navbarProfileName && nameInput) navbarProfileName.textContent = nameInput.value.split(' ')[0] || 'Admin';
+
+            if (window.AegisAdminCommon) {
+                AegisAdminCommon.showToast('Administrator profile details updated in database.', 'success');
+            } else if (typeof window.showToast === 'function') {
+                window.showToast('Administrator profile details updated successfully.', 'success');
+            } else {
+                alert('Administrator profile updated successfully.');
+            }
+        } catch (err) {
+            console.error('Profile update error:', err);
+            const msg = err.message || 'Failed to update profile details';
+            if (window.AegisAdminCommon) {
+                AegisAdminCommon.showToast(msg, 'error');
+            } else {
+                alert(msg);
+            }
         }
     });
 }
@@ -139,7 +212,7 @@ function initPasswordForm() {
     const form = document.getElementById('adminPasswordForm');
     if (!form) return;
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const curPass = document.getElementById('currentMasterPass');
@@ -149,39 +222,51 @@ function initPasswordForm() {
         if (!curPass || !newPass || !confirmPass) return;
 
         if (newPass.value !== confirmPass.value) {
-            if (typeof window.showToast === 'function') {
-                window.showToast('New passwords do not match. Please verify and try again.', 'error');
-            } else {
-                alert('Passwords do not match.');
-            }
+            const msg = 'New passwords do not match. Please verify and try again.';
+            if (window.AegisAdminCommon) AegisAdminCommon.showToast(msg, 'error');
+            else if (typeof window.showToast === 'function') window.showToast(msg, 'error');
+            else alert(msg);
             return;
         }
 
-        if (newPass.value.length < 10) {
-            if (typeof window.showToast === 'function') {
-                window.showToast('Master password must be at least 10 characters long.', 'warning');
-            } else {
-                alert('Master password must be at least 10 characters long.');
-            }
+        if (newPass.value.length < 8) {
+            const msg = 'Master password must be at least 8 characters long.';
+            if (window.AegisAdminCommon) AegisAdminCommon.showToast(msg, 'warning');
+            else if (typeof window.showToast === 'function') window.showToast(msg, 'warning');
+            else alert(msg);
             return;
         }
 
-        curPass.value = '';
-        newPass.value = '';
-        confirmPass.value = '';
+        try {
+            if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+                await window.AegisAPI.post('/auth/profile/change-password/', {
+                    current_password: curPass.value,
+                    new_password: newPass.value
+                });
+            }
 
-        const strengthBar = document.getElementById('passwordStrengthBar');
-        const strengthText = document.getElementById('passwordStrengthText');
-        if (strengthBar) strengthBar.style.width = '0%';
-        if (strengthText) {
-            strengthText.textContent = 'None';
-            strengthText.style.color = 'var(--text-muted)';
-        }
+            curPass.value = '';
+            newPass.value = '';
+            confirmPass.value = '';
 
-        if (typeof window.showToast === 'function') {
-            window.showToast('Master administrative password rotated and cryptographic hash updated.', 'success');
-        } else {
-            alert('Password successfully updated.');
+            const strengthBar = document.getElementById('passwordStrengthBar');
+            const strengthText = document.getElementById('passwordStrengthText');
+            if (strengthBar) strengthBar.style.width = '0%';
+            if (strengthText) {
+                strengthText.textContent = 'None';
+                strengthText.style.color = 'var(--text-muted)';
+            }
+
+            const successMsg = 'Master administrative password rotated and cryptographic hash updated in database.';
+            if (window.AegisAdminCommon) AegisAdminCommon.showToast(successMsg, 'success');
+            else if (typeof window.showToast === 'function') window.showToast(successMsg, 'success');
+            else alert(successMsg);
+        } catch (err) {
+            console.error('Password change error:', err);
+            const msg = err.message || (err.current_password ? err.current_password[0] : 'Failed to rotate master password. Check your current password.');
+            if (window.AegisAdminCommon) AegisAdminCommon.showToast(msg, 'error');
+            else if (typeof window.showToast === 'function') window.showToast(msg, 'error');
+            else alert(msg);
         }
     });
 }
