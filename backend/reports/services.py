@@ -14,20 +14,76 @@ class ReportService:
     def generate_audit_summary(days=30):
         """Audit summary for the last N days."""
         from audit.models import AuditLog
+        from django.db.models.functions import TruncDate
 
         cutoff = timezone.now() - timedelta(days=days)
         logs = AuditLog.objects.filter(timestamp__gte=cutoff)
 
-        by_category = logs.values('category').annotate(count=Count('id')).order_by('-count')
-        by_status = logs.values('status').annotate(count=Count('id')).order_by('-count')
-        total = logs.count()
+        by_category = list(logs.values('category').annotate(count=Count('id')).order_by('-count'))
+        by_status = list(logs.values('status').annotate(count=Count('id')).order_by('-count'))
+        total = logs.count() or 1
+
+        # Build daily trends timelines (7 days, 12 days, 30 days)
+        daily_qs = logs.annotate(day=TruncDate('timestamp')).values('day').annotate(count=Count('id')).order_by('day')
+        daily_dict = {item['day'].strftime('%Y-%m-%d'): item['count'] for item in daily_qs}
+        today = timezone.now().date()
+
+        def build_timeline(num_days):
+            timeline = []
+            for i in range(num_days - 1, -1, -1):
+                d = today - timedelta(days=i)
+                d_str = d.strftime('%Y-%m-%d')
+                timeline.append({
+                    'date': d.strftime('%b %d'),
+                    'fullDate': d.strftime('%B %d, %Y'),
+                    'count': daily_dict.get(d_str, 0)
+                })
+            return timeline
+
+        trends = {
+            '7days': build_timeline(7),
+            '12days': build_timeline(12),
+            '30days': build_timeline(30),
+        }
+
+        # Category breakdown for donut chart
+        user_cnt = sum(c['count'] for c in by_category if c['category'] in ['auth', 'profile', 'trustee'])
+        vault_cnt = sum(c['count'] for c in by_category if c['category'] in ['vault', 'release'])
+        sec_cnt = sum(c['count'] for c in by_category if c['category'] in ['security', 'heartbeat'])
+        sys_cnt = sum(c['count'] for c in by_category if c['category'] in ['system'])
+
+        user_pct = round((user_cnt / total) * 100)
+        vault_pct = round((vault_cnt / total) * 100)
+        sec_pct = round((sec_cnt / total) * 100)
+        sys_pct = max(0, 100 - user_pct - vault_pct - sec_pct)
+
+        category_breakdown = [
+            {'label': 'User Reports', 'percentage': user_pct, 'color': '#2563EB', 'count': user_cnt},
+            {'label': 'Vault Reports', 'percentage': vault_pct, 'color': '#F59E0B', 'count': vault_cnt},
+            {'label': 'Security Reports', 'percentage': sec_pct, 'color': '#10B981', 'count': sec_cnt},
+            {'label': 'System Reports', 'percentage': sys_pct, 'color': '#8B5CF6', 'count': sys_cnt},
+        ]
+
+        # Status breakdown for donut chart
+        completed_cnt = sum(s['count'] for s in by_status if s['status'].lower() in ['success', 'completed'])
+        pending_cnt = total - completed_cnt
+        completed_pct = round((completed_cnt / total) * 100)
+        pending_pct = 100 - completed_pct
+
+        status_breakdown = [
+            {'label': 'Completed', 'percentage': completed_pct, 'color': '#10B981', 'count': completed_cnt},
+            {'label': 'Pending Review', 'percentage': pending_pct, 'color': '#F59E0B', 'count': pending_cnt},
+        ]
 
         return {
             'report_type': 'audit_summary',
             'period_days': days,
             'total_events': total,
-            'by_category': list(by_category),
-            'by_status': list(by_status),
+            'by_category': by_category,
+            'by_status': by_status,
+            'trends': trends,
+            'category_breakdown': category_breakdown,
+            'status_breakdown': status_breakdown,
             'generated_at': timezone.now().isoformat(),
         }
 

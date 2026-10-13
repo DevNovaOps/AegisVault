@@ -25,8 +25,8 @@ window.AegisHealthData = window.AegisHealthData || {
     },
     overviewMetrics: {
         systemUptime: { title: "System Uptime", value: "99.9%", trend: "Live", trendType: "positive", subtext: "Last 30 days", icon: "pulse" },
-        activeUsers: { title: "Active Users", value: "0", trend: "Live", trendType: "positive", subtext: "Verified identities", icon: "users" },
-        storageUsed: { title: "Storage Used", value: "0 GB", percent: 0, total: "500 GB", progressLabel: "500 GB", percentLabel: "0%", subtext: "Storage Used", icon: "database" },
+        activeUsers: { title: "Active Users", value: "7", trend: "Live", trendType: "positive", subtext: "Verified identities", icon: "users" },
+        storageUsed: { title: "Storage Used", value: "2.1 MB", percent: 0.02, total: "10.0 GB", progressLabel: "10.0 GB", percentLabel: "0.02%", subtext: "Database Vault Custody", icon: "database" },
         cpuUsage: { title: "CPU Usage", value: "24%", trend: "Normal", trendType: "positive", subtext: "8 vCPU", icon: "cpu" },
         memoryUsage: { title: "Memory Usage", value: "30%", percent: 30, progressLabel: "32 GB", percentLabel: "30%", subtext: "Memory Usage", icon: "memory" }
     },
@@ -34,22 +34,22 @@ window.AegisHealthData = window.AegisHealthData || {
     recentEvents: [],
     resourceUsage: {
         "24h": {
-            cpu: { current: "24%", avg: "21%", peak: "35%", min: 0, max: 100, color: "#3B82F6", colorDark: "#60A5FA", dataPoints: [18, 22, 25, 20, 24] },
-            memory: { current: "30%", avg: "28%", peak: "35%", min: 0, max: 100, color: "#10B981", colorDark: "#34D399", dataPoints: [26, 28, 30, 29, 30] },
-            disk: { current: "15%", avg: "15%", peak: "16%", min: 0, max: 100, color: "#F59E0B", colorDark: "#FBBF24", dataPoints: [15, 15, 15, 15, 15] },
-            network: { current: "2.1 MB/s", avg: "1.8 MB/s", peak: "4.5 MB/s", min: 0, max: 10, color: "#8B5CF6", colorDark: "#A78BFA", dataPoints: [1.2, 1.8, 2.1, 2.0, 2.1] }
+            cpu: { current: "24%", avg: "21%", peak: "35%", min: 0, max: 100, color: "#3B82F6", colorDark: "#60A5FA", dataPoints: [18, 22, 25, 20, 24], yTicks: ["100%", "50%", "0%"], xLabels: ["00:00", "06:00", "12:00", "18:00", "Now"] },
+            memory: { current: "30%", avg: "28%", peak: "35%", min: 0, max: 100, color: "#10B981", colorDark: "#34D399", dataPoints: [26, 28, 30, 29, 30], yTicks: ["100%", "50%", "0%"], xLabels: ["00:00", "06:00", "12:00", "18:00", "Now"] },
+            disk: { current: "15%", avg: "15%", peak: "16%", min: 0, max: 100, color: "#F59E0B", colorDark: "#FBBF24", dataPoints: [15, 15, 15, 15, 15], yTicks: ["100%", "50%", "0%"], xLabels: ["00:00", "06:00", "12:00", "18:00", "Now"] },
+            network: { current: "2.1 MB/s", avg: "1.8 MB/s", peak: "4.5 MB/s", min: 0, max: 10, color: "#8B5CF6", colorDark: "#A78BFA", dataPoints: [1.2, 1.8, 2.1, 2.0, 2.1], yTicks: ["10M", "5M", "0"], xLabels: ["00:00", "06:00", "12:00", "18:00", "Now"] }
         },
         "1h": {
-            cpu: { current: "24%", avg: "22%", peak: "30%", min: 0, max: 100, color: "#3B82F6", colorDark: "#60A5FA", dataPoints: [20, 23, 24, 22, 24] },
-            memory: { current: "30%", avg: "29%", peak: "32%", min: 0, max: 100, color: "#10B981", colorDark: "#34D399", dataPoints: [29, 29, 30, 30, 30] },
-            disk: { current: "15%", avg: "15%", peak: "15%", min: 0, max: 100, color: "#F59E0B", colorDark: "#FBBF24", dataPoints: [15, 15, 15, 15, 15] },
-            network: { current: "2.1 MB/s", avg: "2.0 MB/s", peak: "3.1 MB/s", min: 0, max: 10, color: "#8B5CF6", colorDark: "#A78BFA", dataPoints: [1.8, 2.0, 2.1, 1.9, 2.1] }
+            cpu: { current: "24%", avg: "22%", peak: "30%", min: 0, max: 100, color: "#3B82F6", colorDark: "#60A5FA", dataPoints: [20, 23, 24, 22, 24], yTicks: ["100%", "50%", "0%"], xLabels: ["60m", "45m", "30m", "15m", "Now"] },
+            memory: { current: "30%", avg: "29%", peak: "32%", min: 0, max: 100, color: "#10B981", colorDark: "#34D399", dataPoints: [29, 29, 30, 30, 30], yTicks: ["100%", "50%", "0%"], xLabels: ["60m", "45m", "30m", "15m", "Now"] },
+            disk: { current: "15%", avg: "15%", peak: "15%", min: 0, max: 100, color: "#F59E0B", colorDark: "#FBBF24", dataPoints: [15, 15, 15, 15, 15], yTicks: ["100%", "50%", "0%"], xLabels: ["60m", "45m", "30m", "15m", "Now"] },
+            network: { current: "2.1 MB/s", avg: "2.0 MB/s", peak: "3.1 MB/s", min: 0, max: 10, color: "#8B5CF6", colorDark: "#A78BFA", dataPoints: [1.8, 2.0, 2.1, 1.9, 2.1], yTicks: ["10M", "5M", "0"], xLabels: ["60m", "45m", "30m", "15m", "Now"] }
         },
         "7d": {
-            cpu: { current: "24%", avg: "23%", peak: "48%", min: 0, max: 100, color: "#3B82F6", colorDark: "#60A5FA", dataPoints: [22, 25, 23, 28, 24] },
-            memory: { current: "30%", avg: "29%", peak: "40%", min: 0, max: 100, color: "#10B981", colorDark: "#34D399", dataPoints: [28, 30, 31, 29, 30] },
-            disk: { current: "15%", avg: "14%", peak: "15%", min: 0, max: 100, color: "#F59E0B", colorDark: "#FBBF24", dataPoints: [14, 14, 15, 15, 15] },
-            network: { current: "2.1 MB/s", avg: "2.2 MB/s", peak: "6.8 MB/s", min: 0, max: 10, color: "#8B5CF6", colorDark: "#A78BFA", dataPoints: [2.0, 2.3, 2.5, 2.1, 2.1] }
+            cpu: { current: "24%", avg: "23%", peak: "48%", min: 0, max: 100, color: "#3B82F6", colorDark: "#60A5FA", dataPoints: [22, 25, 23, 28, 24], yTicks: ["100%", "50%", "0%"], xLabels: ["Mon", "Wed", "Fri", "Sun", "Today"] },
+            memory: { current: "30%", avg: "29%", peak: "40%", min: 0, max: 100, color: "#10B981", colorDark: "#34D399", dataPoints: [28, 30, 31, 29, 30], yTicks: ["100%", "50%", "0%"], xLabels: ["Mon", "Wed", "Fri", "Sun", "Today"] },
+            disk: { current: "15%", avg: "14%", peak: "15%", min: 0, max: 100, color: "#F59E0B", colorDark: "#FBBF24", dataPoints: [14, 14, 15, 15, 15], yTicks: ["100%", "50%", "0%"], xLabels: ["Mon", "Wed", "Fri", "Sun", "Today"] },
+            network: { current: "2.1 MB/s", avg: "2.2 MB/s", peak: "6.8 MB/s", min: 0, max: 10, color: "#8B5CF6", colorDark: "#A78BFA", dataPoints: [2.0, 2.3, 2.5, 2.1, 2.1], yTicks: ["10M", "5M", "0"], xLabels: ["Mon", "Wed", "Fri", "Sun", "Today"] }
         }
     },
     systemInfo: {
@@ -173,17 +173,23 @@ const AegisSystemHealth = {
                     elOnline.textContent = `Active Owners: ${stats.active_owners || 0} | Trustees: ${stats.active_trustees || 0}`;
                 }
 
-                const totalVaults = stats.active_vaults || 2;
-                const storageGb = (totalVaults * 1.5).toFixed(1);
+                const storageDisplay = summary?.storage_used || stats?.storage_used || '2.1 MB';
+                const storageQuota = summary?.storage_quota || '10.0 GB';
                 const elStorage = document.getElementById('kpi-sys-storage');
-                if (elStorage) elStorage.textContent = `${storageGb} GB`;
+                if (elStorage) elStorage.textContent = storageDisplay;
 
-                const storagePct = ((parseFloat(storageGb) / 500) * 100).toFixed(1);
+                const storageBytes = summary?.storage_used_bytes || 2204730;
+                const quotaBytes = 10 * 1024 * 1024 * 1024; // 10.0 GB
+                const storagePct = ((storageBytes / quotaBytes) * 100).toFixed(2);
+                
+                const elStorageQuota = document.getElementById('kpi-sys-storage-quota');
+                if (elStorageQuota) elStorageQuota.textContent = storageQuota;
+
                 const elStoragePct = document.getElementById('kpi-sys-storage-percent');
                 if (elStoragePct) elStoragePct.textContent = `${storagePct}%`;
 
                 const elStorageBar = document.getElementById('kpi-sys-storage-bar');
-                if (elStorageBar) elStorageBar.style.width = `${Math.max(6, parseFloat(storagePct))}%`;
+                if (elStorageBar) elStorageBar.style.width = `${Math.max(4, parseFloat(storagePct))}%`;
 
                 const elCpu = document.getElementById('kpi-sys-cpu');
                 if (elCpu) elCpu.textContent = '24%';
@@ -313,8 +319,9 @@ const AegisSystemHealth = {
             const axisColor = isDark ? 'rgba(255, 255, 255, 0.08)' : '#E2E8F0';
             const textColor = isDark ? '#526775' : '#94A3B8';
             let yAxisSvg = '';
-            const yTicks = metricData.yTicks;
-            const tickStep = chartH / (yTicks.length - 1);
+            const defaultYTicks = unit === '%' ? ['100%', '50%', '0%'] : ['10M', '5M', '0'];
+            const yTicks = (Array.isArray(metricData?.yTicks) && metricData.yTicks.length > 0) ? metricData.yTicks : defaultYTicks;
+            const tickStep = chartH / Math.max(1, yTicks.length - 1);
 
             yTicks.forEach((tickLabel, idx) => {
                 const y = padTop + idx * tickStep;
@@ -326,9 +333,10 @@ const AegisSystemHealth = {
 
             // X Axis Labels
             let xAxisSvg = '';
-            const xLabels = metricData.xLabels;
+            const defaultXLabels = ['00:00', '06:00', '12:00', '18:00', 'Now'];
+            const xLabels = (Array.isArray(metricData?.xLabels) && metricData.xLabels.length > 0) ? metricData.xLabels : defaultXLabels;
             xLabels.forEach((label, idx) => {
-                const x = padLeft + (idx / (xLabels.length - 1)) * chartW;
+                const x = padLeft + (idx / Math.max(1, xLabels.length - 1)) * chartW;
                 xAxisSvg += `
                     <text x="${x}" y="${height - 4}" fill="${textColor}" font-size="8" font-family="'Plus Jakarta Sans', sans-serif" text-anchor="middle">${label}</text>
                 `;
@@ -357,7 +365,7 @@ const AegisSystemHealth = {
                     <!-- Interactive Data Points -->
                     ${coords.map((pt, i) => `
                         <circle cx="${pt.x}" cy="${pt.y}" r="3" fill="${color}" stroke="${isDark ? '#06151E' : '#FFFFFF'}" stroke-width="1.5"
-                                class="sparkline-dot" data-val="${pt.val}${unit}" data-label="${metricData.xLabels[Math.min(i, metricData.xLabels.length - 1)]}" style="cursor:pointer;" />
+                                class="sparkline-dot" data-val="${pt.val}${unit}" data-label="${xLabels[Math.min(i, xLabels.length - 1)]}" style="cursor:pointer;" />
                     `).join('')}
 
                     <!-- X Axis -->

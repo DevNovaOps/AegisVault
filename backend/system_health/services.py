@@ -42,6 +42,17 @@ class SystemHealthService:
         else:
             overall = 'Healthy'
 
+        from django.db.models import Sum
+        from vaults.models import Vault
+
+        total_bytes = Vault.objects.aggregate(total=Sum('storage_used_bytes'))['total'] or 0
+        if total_bytes < 1024 * 1024:
+            storage_display = f"{total_bytes / 1024:.1f} KB"
+        elif total_bytes < 1024 * 1024 * 1024:
+            storage_display = f"{total_bytes / (1024 * 1024):.1f} MB"
+        else:
+            storage_display = f"{total_bytes / (1024 * 1024 * 1024):.2f} GB"
+
         return {
             'overall_status': overall,
             'healthy_services': healthy,
@@ -49,6 +60,9 @@ class SystemHealthService:
             'down_services': down,
             'total_services': len(services),
             'services': services,
+            'storage_used': storage_display,
+            'storage_used_bytes': total_bytes,
+            'storage_quota': '10.0 GB',
             'checked_at': timezone.now().isoformat(),
         }
 
@@ -154,6 +168,11 @@ class SystemHealthService:
     @staticmethod
     def _check_storage():
         """Storage status. Returns healthy for local storage."""
+        from django.db.models import Sum
+        from vaults.models import Vault
+
+        total_bytes = Vault.objects.aggregate(total=Sum('storage_used_bytes'))['total'] or 0
+        display = f"{total_bytes / (1024 * 1024):.1f} MB" if total_bytes >= 1024 * 1024 else f"{total_bytes / 1024:.1f} KB"
         return {
             'id': 'srv-storage',
             'name': 'Storage',
@@ -162,7 +181,7 @@ class SystemHealthService:
             'statusClass': 'healthy',
             'latency': '< 10ms',
             'uptime': '100.0%',
-            'details': 'Encrypted storage operational. Vault payloads use AES-256-GCM.',
+            'details': f'Encrypted storage operational ({display} used across active vaults). AES-256-GCM enforced.',
         }
 
     @staticmethod
