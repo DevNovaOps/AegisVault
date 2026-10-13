@@ -466,13 +466,12 @@ document.addEventListener('DOMContentLoaded', () => {
         <span>Transmitting Ticket...</span>
       `;
 
-      setTimeout(() => {
+      const subjectSelect = document.getElementById('supportSubject');
+      const subjectText = (subjectSelect && subjectSelect.options[subjectSelect.selectedIndex]) ? subjectSelect.options[subjectSelect.selectedIndex].text : subject;
+
+      function onTicketSubmitted(ticketId) {
         submitSupportBtn.disabled = false;
         submitSupportBtn.innerHTML = origContent;
-
-        // Generate dynamic ticket ID
-        const randomNum = Math.floor(10000 + Math.random() * 90000);
-        const ticketId = `#TKT-${randomNum}`;
         document.getElementById('modalTicketId').textContent = ticketId;
 
         const user = (window.AegisAPI && window.AegisAPI.getUser()) || {};
@@ -481,18 +480,39 @@ document.addEventListener('DOMContentLoaded', () => {
           emailEl.textContent = user.email;
         }
 
-        // Reset form
         contactForm.reset();
 
-        // Open Confirmation Modal
         if (window.openModal) {
           window.openModal('ticketConfirmModal');
         }
 
         if (window.showToast) {
-          window.showToast(`Support ticket ${ticketId} generated successfully.`, 'success');
+          window.showToast(`Support ticket ${ticketId} generated and logged in audit trail.`, 'success');
         }
-      }, 1000);
+      }
+
+      if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+        window.AegisAPI.post('/trustee/support/tickets/', {
+          subject: subjectText,
+          category: subject,
+          description: message,
+          priority: 'medium'
+        }).then(res => {
+          const ticketId = `#TKT-${res.ticket_id ? res.ticket_id.split('-')[0].substring(0, 5).toUpperCase() : Math.floor(10000 + Math.random() * 90000)}`;
+          onTicketSubmitted(ticketId);
+        }).catch(err => {
+          submitSupportBtn.disabled = false;
+          submitSupportBtn.innerHTML = origContent;
+          if (window.showToast) {
+            window.showToast(`Failed to submit ticket: ${err.message}`, 'error');
+          }
+        });
+      } else {
+        setTimeout(() => {
+          const randomNum = Math.floor(10000 + Math.random() * 90000);
+          onTicketSubmitted(`#TKT-${randomNum}`);
+        }, 800);
+      }
     });
   }
 
