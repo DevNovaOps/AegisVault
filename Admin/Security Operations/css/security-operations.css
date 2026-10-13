@@ -640,8 +640,18 @@
 }
 
 .map-landmass {
-    fill: var(--map-land);
-    transition: fill var(--trans-normal);
+    fill: var(--map-land, #162636);
+    stroke: var(--map-land-stroke, rgba(56, 189, 248, 0.45));
+    stroke-width: 1.5px;
+    filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.18));
+    transition: fill var(--trans-normal), stroke var(--trans-normal);
+}
+
+[data-theme="light"] .map-landmass,
+.light-theme .map-landmass {
+    fill: #CBD5E1;
+    stroke: #64748B;
+    filter: none;
 }
 
 .threat-pulse-pin {

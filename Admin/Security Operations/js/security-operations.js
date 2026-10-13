@@ -202,6 +202,17 @@ window.AegisSecurityData = window.AegisSecurityData || {
                     window.AegisSecurityData.kpis.criticalAlerts.displayValue = String(overview.open_critical || 0);
                     window.AegisSecurityData.kpis.activeThreats.displayValue = String(overview.total_open_alerts || overview.open_high || 0);
                     window.AegisSecurityData.kpis.blockedAttempts.displayValue = String(overview.failed_logins_24h || 0);
+
+                    if (overview.trends) {
+                        window.AegisSecurityData.trends = overview.trends;
+                    }
+                    if (overview.threat_sources) {
+                        window.AegisSecurityData.threatSources = overview.threat_sources;
+                    }
+
+                    renderKPIs();
+                    renderTrendChart();
+                    renderThreatMap();
                 }
             } catch (err) {
                 console.warn('Live SecOps data loading error:', err);
@@ -357,10 +368,30 @@ window.AegisSecurityData = window.AegisSecurityData || {
         const graphW = width - padding.left - padding.right;
         const graphH = height - padding.top - padding.bottom;
 
-        const maxVal = 200; // Axis cap
-        const stepX = graphW / (trends.labels.length - 1);
+        const allValues = (trends.series || []).flatMap(s => s.data || [0]);
+        const maxRaw = Math.max(...allValues, 1);
+        let maxVal = 10;
+        let yTicks = [0, 2, 4, 6, 8, 10];
+        if (maxRaw <= 5) {
+            maxVal = 5;
+            yTicks = [0, 1, 2, 3, 4, 5];
+        } else if (maxRaw <= 10) {
+            maxVal = 10;
+            yTicks = [0, 2, 4, 6, 8, 10];
+        } else if (maxRaw <= 20) {
+            maxVal = 20;
+            yTicks = [0, 5, 10, 15, 20];
+        } else if (maxRaw <= 50) {
+            maxVal = 50;
+            yTicks = [0, 10, 20, 30, 40, 50];
+        } else {
+            maxVal = Math.ceil(maxRaw / 50) * 50;
+            yTicks = [0, Math.round(maxVal * 0.25), Math.round(maxVal * 0.5), Math.round(maxVal * 0.75), maxVal];
+        }
 
-        const getY = (val) => padding.top + graphH - (val / maxVal) * graphH;
+        const stepX = graphW / Math.max(1, trends.labels.length - 1);
+
+        const getY = (val) => padding.top + graphH - ((val || 0) / maxVal) * graphH;
         const getX = (idx) => padding.left + idx * stepX;
 
         // Colors
@@ -370,8 +401,8 @@ window.AegisSecurityData = window.AegisSecurityData || {
 
         let svgHtml = `<svg class="svg-line-chart" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">`;
 
-        // 1. Horizontal Grid Lines and Y-Axis labels (0, 50, 100, 150, 200)
-        [0, 50, 100, 150, 200].forEach(val => {
+        // 1. Horizontal Grid Lines and Y-Axis labels
+        yTicks.forEach(val => {
             const y = getY(val);
             svgHtml += `
                 <line x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" stroke="${gridColor}" stroke-width="1" />
