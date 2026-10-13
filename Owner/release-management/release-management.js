@@ -338,10 +338,22 @@
   // 6. Modal Functions
   // =========================================================================
   function openCreateModal() {
-    if (formCreateRelease) formCreateRelease.reset();
-    if (createReleaseModal) {
-      createReleaseModal.classList.add('show', 'active');
+    const modal = document.getElementById('createReleaseModal');
+    const form = document.getElementById('formCreateRelease');
+    if (form) form.reset();
+    if (modal) {
+      modal.classList.add('show', 'active');
+      modal.style.display = 'flex';
       document.body.style.overflow = 'hidden';
+    }
+  }
+
+  function closeCreateModal() {
+    const modal = document.getElementById('createReleaseModal');
+    if (modal) {
+      modal.classList.remove('show', 'active');
+      modal.style.display = '';
+      document.body.style.overflow = '';
     }
   }
 
@@ -451,9 +463,6 @@
     }
   }
 
-  function openMoreOptions(id) {
-    const item = releases.find(r => r.id === id);
-    if (!item) return;
   // Floating Context Menu for Releases
   let activeReleaseMenu = null;
 
@@ -667,20 +676,43 @@
         const noteInput = document.getElementById('releaseNote');
 
         const title = titleInput ? titleInput.value.trim() : 'Digital Legacy Release';
-        const vault = vaultSelect ? vaultSelect.value : 'Designated Vault';
-        const recipient = recipientSelect ? recipientSelect.value : 'Designated Trustee';
+        const vault = vaultSelect ? vaultSelect.value : '';
+        const recipientOpt = recipientSelect && recipientSelect.selectedIndex >= 0 ? recipientSelect.options[recipientSelect.selectedIndex] : null;
+        const recipientEmail = recipientOpt ? (recipientOpt.dataset.email || recipientOpt.value) : '';
+        const recipientName = recipientOpt ? (recipientOpt.dataset.name || recipientOpt.text) : 'Designated Trustee';
         const trigger = triggerSelect ? triggerSelect.value : 'Upon Inactivity (12 months)';
-        const sched = schedInput ? schedInput.value.trim() : new Date().toLocaleDateString();
+        const sched = schedInput ? schedInput.value.trim() : '';
         const note = noteInput ? noteInput.value.trim() : '';
 
         const newId = 'rel-' + Date.now();
-        const schedParts = sched.split(' ');
+        const schedParts = sched ? sched.split(' ') : [];
         const sDate = schedParts.slice(0, 3).join(' ') || new Date().toLocaleDateString();
         const sTime = schedParts.slice(3).join(' ') || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-        const vaultName = vaultSelect && vaultSelect.options ? vaultSelect.options[vaultSelect.selectedIndex]?.text : vault;
+        const vaultName = vaultSelect && vaultSelect.options && vaultSelect.selectedIndex >= 0 ? vaultSelect.options[vaultSelect.selectedIndex]?.text : 'Designated Vault';
         const triggerType = trigger.split('(')[0].trim();
         const triggerDetail = trigger.includes('(') ? '(' + trigger.split('(')[1] : '';
+
+        let scheduledIso = null;
+        if (sched) {
+          const parsed = new Date(sched);
+          if (!isNaN(parsed.getTime())) {
+            scheduledIso = parsed.toISOString();
+          } else {
+            const combined = new Date(sDate + ' ' + sTime);
+            if (!isNaN(combined.getTime())) {
+              scheduledIso = combined.toISOString();
+            } else {
+              const fallback = new Date();
+              fallback.setMonth(fallback.getMonth() + 12);
+              scheduledIso = fallback.toISOString();
+            }
+          }
+        } else {
+          const fallback = new Date();
+          fallback.setMonth(fallback.getMonth() + 12);
+          scheduledIso = fallback.toISOString();
+        }
 
         if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
           window.AegisAPI.post('/owner/releases/', {
@@ -690,12 +722,13 @@
             trigger_detail: triggerDetail,
             status: 'scheduled',
             note: note,
-            scheduled_at: new Date(sDate + ' ' + sTime).toISOString()
+            trustee_emails: recipientEmail ? [recipientEmail] : [],
+            scheduled_at: scheduledIso
           }).then(r => {
             const newRelease = {
               id: r.id, title: r.title, subtext: r.description || 'Encrypted Release Workflow',
               iconTheme: 'blue', iconType: 'file-text', vault: vaultName,
-              recipientType: 'single', recipientName: recipient, recipientEmail: `${recipient.toLowerCase().replace(/ /g, '.')}@email.com`,
+              recipientType: 'single', recipientName: recipientName, recipientEmail: recipientEmail || `${recipientName.toLowerCase().replace(/ /g, '.')}@email.com`,
               avatarType: 'img', avatar: '../assets/images/trustee-avatar-2.png',
               trigger: r.trigger_type, triggerDetail: r.trigger_detail, status: r.status.toLowerCase(),
               scheduledDate: r.scheduled_at ? new Date(r.scheduled_at).toLocaleDateString() : sDate,
@@ -714,7 +747,7 @@
           const newRelease = {
             id: newId, title: title, subtext: 'Encrypted Release Workflow',
             iconTheme: 'blue', iconType: 'file-text', vault: vaultName,
-            recipientType: 'single', recipientName: recipient, recipientEmail: `${recipient.toLowerCase().replace(/ /g, '.')}@email.com`,
+            recipientType: 'single', recipientName: recipientName, recipientEmail: recipientEmail || `${recipientName.toLowerCase().replace(/ /g, '.')}@email.com`,
             avatarType: 'img', avatar: '../assets/images/trustee-avatar-2.png',
             trigger: triggerType, triggerDetail: triggerDetail, status: 'scheduled',
             scheduledDate: sDate, scheduledTime: sTime, note: note
@@ -804,15 +837,18 @@
   // 8. Public API
   // =========================================================================
   window.AegisReleases = {
+    openCreateModal: openCreateModal,
+    closeCreateModal: closeCreateModal,
     openViewModal: openViewModal,
     openEditModal: openEditModal,
     openMoreOptions: openMoreOptions
   };
+  window.openCreateReleaseModal = openCreateModal;
 
   // =========================================================================
   // 9. Startup Execution
   // =========================================================================
-  document.addEventListener('DOMContentLoaded', function() {
+  function start() {
     initEvents();
     if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
       window.AegisAPI.get('/owner/vaults/').then(vs => {
@@ -822,7 +858,9 @@
           protStatus.textContent = vaultsList.length > 0 ? `All ${vaultsList.length} Vaults Sealed` : 'No Vaults Sealed';
         }
         const sel = document.getElementById('releaseVaultSelect') || document.getElementById('newReleaseVault');
-        if (sel && vaultsList.length > 0) sel.innerHTML = vaultsList.map(v => `<option value="${v.name}">${v.name}</option>`).join('');
+        if (sel && vaultsList.length > 0) {
+          sel.innerHTML = '<option value="">Select a vault...</option>' + vaultsList.map(v => `<option value="${v.id}">${v.name}</option>`).join('');
+        }
         const filterSel = document.getElementById('vaultFilterSelect');
         if (filterSel && vaultsList.length > 0) {
           filterSel.innerHTML = '<option value="all">All Vaults</option>' + vaultsList.map(v => `<option value="${v.name}">${v.name}</option>`).join('');
@@ -831,7 +869,7 @@
 
       window.AegisAPI.get('/owner/trustees/').then(ts => {
         const trusteesList = Array.isArray(ts) ? ts : (ts.results || []);
-        const recipOptions = trusteesList.map(t => `<option value="${t.name}">${t.name} (${t.email})</option>`).join('');
+        const recipOptions = '<option value="">Select a recipient...</option>' + trusteesList.map(t => `<option value="${t.email}" data-name="${t.name}" data-email="${t.email}">${t.name} (${t.email})</option>`).join('');
         const selRecip = document.getElementById('releaseRecipientSelect') || document.getElementById('newReleaseRecipient');
         if (selRecip && trusteesList.length > 0) selRecip.innerHTML = recipOptions;
         const filterRecip = document.getElementById('recipientFilterSelect');
@@ -871,6 +909,12 @@
       updateKPIsAndDonut();
       renderTable();
     }
-  });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
 
 })();

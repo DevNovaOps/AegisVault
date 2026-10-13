@@ -81,7 +81,12 @@ class ReleaseListCreateView(APIView):
         vault_id = request.data.get('vault_id')
         vault = None
         if vault_id:
-            vault = Vault.objects.filter(pk=vault_id, owner=request.user).first()
+            import uuid
+            try:
+                uuid_obj = uuid.UUID(str(vault_id))
+                vault = Vault.objects.filter(pk=uuid_obj, owner=request.user).first()
+            except (ValueError, TypeError, AttributeError):
+                vault = Vault.objects.filter(name__iexact=str(vault_id), owner=request.user).first()
         if not vault:
             vault = Vault.objects.filter(owner=request.user).first()
         if not vault:
@@ -89,6 +94,12 @@ class ReleaseListCreateView(APIView):
                 {'detail': 'Please create a vault first before scheduling a release.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+        scheduled_at_raw = request.data.get('scheduled_at')
+        scheduled_at = None
+        if scheduled_at_raw:
+            from django.utils.dateparse import parse_datetime
+            scheduled_at = parse_datetime(str(scheduled_at_raw))
 
         release = ReleaseRequest.objects.create(
             vault=vault,
@@ -101,7 +112,7 @@ class ReleaseListCreateView(APIView):
             note=request.data.get('note', ''),
             required_shares=request.data.get('required_shares', vault.required_shares),
             total_shares=request.data.get('total_shares', vault.total_shares),
-            scheduled_at=request.data.get('scheduled_at') or None,
+            scheduled_at=scheduled_at,
         )
 
         # Add participants from trustee emails if provided
