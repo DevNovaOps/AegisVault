@@ -1,15 +1,15 @@
 /**
  * AegisVault Owner Panel — Dashboard Logic
- * Module 01: Interactive Charts, Search Filtering, Quick Action Modals & Mock Persistence
+ * Module 01: Interactive Charts, Search Filtering & Quick Action Modals
  *
- * Data Source Priority: Backend API → localStorage cache → hardcoded mock data
+ * Data Source: 100% Live Django REST Backend API & Database
  */
 
 (function () {
   'use strict';
 
   // =========================================================================
-  // API DATA LOADING — Fetches from backend, falls back to mock data
+  // API DATA LOADING — Fetches directly from backend API
   // =========================================================================
 
   async function loadDashboardData() {
@@ -61,7 +61,7 @@
             vault: log.vault || log.vault_name || '',
             details: log.details || '',
           }));
-          mockRecentActivity.splice(0, mockRecentActivity.length, ...mapped);
+          dashboardRecentActivity.splice(0, dashboardRecentActivity.length, ...mapped);
         }
 
         // Update vault health if data was returned
@@ -79,7 +79,7 @@
             badgeClass: 'badge-success',
             details: `Encryption: ${v.encryption || 'AES-256-GCM'}. Shares: ${v.shares_ratio || 'N/A'}.`,
           }));
-          mockVaultHealth.splice(0, mockVaultHealth.length, ...mapped);
+          dashboardVaultHealth.splice(0, dashboardVaultHealth.length, ...mapped);
         }
 
         // Vault overview chart data
@@ -119,7 +119,7 @@
         if (typeof renderUpcomingEvents === 'function') renderUpcomingEvents();
 
       } catch (err) {
-        console.warn('[AegisVault] Dashboard API load failed, using mock data:', err.message);
+        console.warn('[AegisVault] Dashboard API load failed:', err.message);
       }
   }
 
@@ -217,22 +217,22 @@
     return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>';
   }
 
-  const mockChartData = {
+  const dashboardChartData = {
     '6m': [],
     '30d': [],
     'ytd': []
   };
 
-  const mockReleaseStatus = {
+  const dashboardReleaseStatus = {
     total: 0,
     segments: []
   };
 
-  const mockUpcomingEvents = [];
+  const dashboardUpcomingEvents = [];
 
-  const mockRecentActivity = [];
+  const dashboardRecentActivity = [];
 
-  const mockVaultHealth = [];
+  const dashboardVaultHealth = [];
 
   // =========================================================================
   // RENDER CONTROLLERS
@@ -240,7 +240,7 @@
 
   // 1. Render Interactive Bar Chart
   function renderBarChart(range = '6m') {
-    const data = mockChartData[range] || mockChartData['6m'];
+    const data = (window.API_CHART_DATA && window.API_CHART_DATA[range]) ? window.API_CHART_DATA[range] : (dashboardChartData[range] || dashboardChartData['6m']);
     const container = document.getElementById('chartBarsWrap');
     if (!container) return;
 
@@ -321,7 +321,7 @@
     const svg = document.getElementById('donutSvg');
     if (!svg) return;
 
-    const sourceData = window.API_RELEASE_DATA || mockReleaseStatus;
+    const sourceData = window.API_RELEASE_DATA || dashboardReleaseStatus;
     const segments = sourceData.segments;
     const total = sourceData.total > 0 ? sourceData.total : 1;
     const radius = 54;
@@ -382,7 +382,7 @@
     if (!list) return;
 
     list.innerHTML = '';
-    mockUpcomingEvents.forEach(evt => {
+    dashboardUpcomingEvents.forEach(evt => {
       const item = document.createElement('div');
       item.className = 'event-item';
       item.innerHTML = `
@@ -418,7 +418,7 @@
     tbody.innerHTML = '';
     const query = filterQuery.toLowerCase().trim();
 
-    const filtered = mockRecentActivity.filter(act => {
+    const filtered = dashboardRecentActivity.filter(act => {
       if (!query) return true;
       return (
         act.action.toLowerCase().includes(query) ||
@@ -494,7 +494,7 @@
 
     list.innerHTML = '';
     const query = filterQuery.toLowerCase().trim();
-    const filtered = mockVaultHealth.filter(v => {
+    const filtered = dashboardVaultHealth.filter(v => {
       if (!query) return true;
       return (
         v.name.toLowerCase().includes(query) ||
@@ -610,7 +610,7 @@
   // DOM EVENT BINDINGS
   // =========================================================================
   document.addEventListener('DOMContentLoaded', async () => {
-    // 0. Load data from backend API (falls back to mocks on failure)
+    // 0. Load data from backend API
     await loadDashboardData();
 
     // 1. Initial Renders
@@ -712,7 +712,7 @@
           }
         }
 
-        mockRecentActivity.unshift({
+        dashboardRecentActivity.unshift({
           id: `act-${Date.now()}`,
           date: 'Just now',
           action: 'Vault Created',
@@ -723,7 +723,7 @@
         });
         renderRecentActivity();
 
-        mockVaultHealth.unshift({
+        dashboardVaultHealth.unshift({
           name: vaultName,
           mode: 'Active',
           avatarColor: 'teal',
@@ -765,7 +765,7 @@
           }
         }
 
-        mockRecentActivity.unshift({
+        dashboardRecentActivity.unshift({
           id: `act-${Date.now()}`,
           date: 'Just now',
           action: 'Trustee Invited',

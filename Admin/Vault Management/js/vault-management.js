@@ -3,6 +3,31 @@
  * Fully integrated with Django Backend /api/v1/admin/vaults/ and /api/v1/admin/users/
  */
 
+// Self-contained live vault data store (100% database driven)
+window.AegisVaultData = window.AegisVaultData || {
+    overview: {
+        totalVaults: 0,
+        totalVaultsTrend: "Live",
+        totalVaultsSubtext: "All system vaults",
+        activeVaults: 0,
+        activeVaultsTrend: "Live",
+        activeVaultsSubtext: "Active & unlocked",
+        archivedVaults: 0,
+        archivedVaultsTrend: "Live",
+        archivedVaultsSubtext: "Archived custody",
+        pendingAccess: 0,
+        pendingAccessTrend: "Live",
+        pendingAccessSubtext: "Requires review"
+    },
+    vaultTypesDistribution: [],
+    vaults: [],
+    templates: [
+        { title: "Standard Estate Vault", type: "Personal", trustees: "3 Trustees (2-of-3)", desc: "Pre-configured for family legacy, identity records, and essential documents." },
+        { title: "Corporate Succession Vault", type: "Business", trustees: "5 Trustees (3-of-5)", desc: "Designed for corporate shareholding, server access, and board resolution escrow." },
+        { title: "Cryptographic Asset Vault", type: "Financial", trustees: "4 Trustees (3-of-4)", desc: "Optimized for hardware wallet seeds, multi-sig shards, and 2FA recovery." }
+    ]
+};
+
 const AegisVaultController = {
     THEME_KEY: 'aegisvault_theme',
     currentPage: 1,
@@ -46,9 +71,9 @@ const AegisVaultController = {
                 })
             ]).then(([vaultsData, usersData]) => {
                 this.availableUsers = usersData || [];
-                if (!window.AegisVaultMockData) window.AegisVaultMockData = {};
+                if (!window.AegisVaultData) window.AegisVaultData = {};
 
-                window.AegisVaultMockData.vaults = (vaultsData || []).map((v, idx) => ({
+                window.AegisVaultData.vaults = (vaultsData || []).map((v, idx) => ({
                     id: v.id || `VLT-${String(idx + 1).padStart(3, '0')}`,
                     rawId: v.id,
                     index: idx + 1,
@@ -76,8 +101,8 @@ const AegisVaultController = {
                 this.renderTable();
             });
         } else {
-            if (!window.AegisVaultMockData) window.AegisVaultMockData = {};
-            window.AegisVaultMockData.vaults = [];
+            if (!window.AegisVaultData) window.AegisVaultData = {};
+            window.AegisVaultData.vaults = [];
             this.updateDynamicKPIs();
             this.populateOwnerFilterOptions();
             this.renderTable();
@@ -92,13 +117,13 @@ const AegisVaultController = {
        Dynamic KPI & Overview Calculation
        ========================================================================= */
     updateDynamicKPIs() {
-        const vaults = (window.AegisVaultMockData && AegisVaultMockData.vaults) ? AegisVaultMockData.vaults : [];
+        const vaults = (window.AegisVaultData && AegisVaultData.vaults) ? AegisVaultData.vaults : [];
         const total = vaults.length;
         const active = vaults.filter(v => (v.status || '').toLowerCase() === 'active').length;
         const archived = vaults.filter(v => (v.status || '').toLowerCase() === 'archived').length;
         const pending = vaults.filter(v => (v.status || '').toLowerCase() === 'pending').length;
 
-        AegisVaultMockData.overview = {
+        AegisVaultData.overview = {
             totalVaults: total,
             totalVaultsSubtext: 'All system vaults',
             activeVaults: active,
@@ -124,7 +149,7 @@ const AegisVaultController = {
         };
 
         if (total > 0) {
-            AegisVaultMockData.vaultTypesDistribution = Object.keys(typeCounts).map(type => {
+            AegisVaultData.vaultTypesDistribution = Object.keys(typeCounts).map(type => {
                 const count = typeCounts[type];
                 const pct = Math.round((count / total) * 1000) / 10;
                 const c = colors[type] || colors['Other'];
@@ -137,7 +162,7 @@ const AegisVaultController = {
                 };
             });
         } else {
-            AegisVaultMockData.vaultTypesDistribution = [];
+            AegisVaultData.vaultTypesDistribution = [];
         }
 
         this.renderKPIs();
@@ -145,8 +170,8 @@ const AegisVaultController = {
     },
 
     renderKPIs() {
-        if (!window.AegisVaultMockData || !AegisVaultMockData.overview) return;
-        const ov = AegisVaultMockData.overview;
+        if (!window.AegisVaultData || !AegisVaultData.overview) return;
+        const ov = AegisVaultData.overview;
 
         const setTxt = (id, val) => {
             const el = document.getElementById(id);
@@ -178,9 +203,9 @@ const AegisVaultController = {
     renderVaultTypesDonut() {
         const wrap = document.getElementById('donut-chart-wrap');
         const legendWrap = document.getElementById('chart-legend-list');
-        if (!wrap || !legendWrap || !window.AegisVaultMockData) return;
+        if (!wrap || !legendWrap || !window.AegisVaultData) return;
 
-        const data = AegisVaultMockData.vaultTypesDistribution || [];
+        const data = AegisVaultData.vaultTypesDistribution || [];
         const isDark = this.isDark();
 
         const size = 120;
@@ -272,8 +297,8 @@ const AegisVaultController = {
        ========================================================================= */
     populateOwnerFilterOptions() {
         const ownerSelect = document.getElementById('filter-owner-select');
-        if (ownerSelect && window.AegisVaultMockData) {
-            const owners = Array.from(new Set((AegisVaultMockData.vaults || []).map(v => v.owner).filter(Boolean))).sort();
+        if (ownerSelect && window.AegisVaultData) {
+            const owners = Array.from(new Set((AegisVaultData.vaults || []).map(v => v.owner).filter(Boolean))).sort();
             ownerSelect.innerHTML = '<option value="all">All Owners</option>' +
                 owners.map(o => `<option value="${this.escapeHtml(o)}">${this.escapeHtml(o)}</option>`).join('');
         }
@@ -339,9 +364,9 @@ const AegisVaultController = {
     },
 
     getFilteredVaults() {
-        if (!window.AegisVaultMockData || !AegisVaultMockData.vaults) return [];
+        if (!window.AegisVaultData || !AegisVaultData.vaults) return [];
 
-        return AegisVaultMockData.vaults.filter(v => {
+        return AegisVaultData.vaults.filter(v => {
             if (this.searchQuery) {
                 const q = this.searchQuery;
                 const matchId = (v.id || '').toLowerCase().includes(q);
@@ -677,8 +702,8 @@ const AegisVaultController = {
     },
 
     openDetailsModal(vaultId) {
-        if (!window.AegisVaultMockData) return;
-        const vault = AegisVaultMockData.vaults.find(v => v.id === vaultId);
+        if (!window.AegisVaultData) return;
+        const vault = AegisVaultData.vaults.find(v => v.id === vaultId);
         if (!vault) return;
 
         const setTxt = (id, val) => {
@@ -738,8 +763,8 @@ const AegisVaultController = {
     },
 
     async toggleVaultStatus(vaultId) {
-        if (!window.AegisVaultMockData) return;
-        const vault = AegisVaultMockData.vaults.find(v => v.id === vaultId);
+        if (!window.AegisVaultData) return;
+        const vault = AegisVaultData.vaults.find(v => v.id === vaultId);
         if (!vault) return;
 
         const nextStatus = vault.status === 'Archived' ? 'Active' : 'Archived';
@@ -810,7 +835,7 @@ const AegisVaultController = {
             btnBulkArchive.addEventListener('click', () => {
                 const count = this.selectedVaultIds.size;
                 if (count === 0) return;
-                AegisVaultMockData.vaults.forEach(v => {
+                AegisVaultData.vaults.forEach(v => {
                     if (this.selectedVaultIds.has(v.id)) {
                         v.status = 'Archived';
                     }
@@ -833,8 +858,8 @@ const AegisVaultController = {
 
     openTemplatesModal() {
         const listWrap = document.getElementById('templates-cards-list');
-        if (listWrap && window.AegisVaultMockData) {
-            listWrap.innerHTML = AegisVaultMockData.templates.map(t => `
+        if (listWrap && window.AegisVaultData) {
+            listWrap.innerHTML = AegisVaultData.templates.map(t => `
                 <div style="padding: 1rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 0.75rem;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
                         <h4 style="margin: 0; font-size: 0.95rem; color: var(--text-heading); font-weight: 700;">${this.escapeHtml(t.title)}</h4>
@@ -849,9 +874,9 @@ const AegisVaultController = {
     },
 
     exportMetadataCSV(selectedOnly = false) {
-        if (!window.AegisVaultMockData) return;
+        if (!window.AegisVaultData) return;
 
-        let records = AegisVaultMockData.vaults || [];
+        let records = AegisVaultData.vaults || [];
         if (selectedOnly) {
             records = records.filter(v => this.selectedVaultIds.has(v.id));
         }

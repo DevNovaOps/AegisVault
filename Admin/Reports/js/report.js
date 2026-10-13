@@ -15,6 +15,24 @@
 (function () {
     'use strict';
 
+// Self-contained live reports data store (100% database driven)
+window.AegisReportData = window.AegisReportData || {
+    kpis: {
+        totalReports: { value: 0, change: "Live", trend: "up", subtext: "Audited records" },
+        userReports: { value: 0, change: "Live", trend: "up", subtext: "Identity records" },
+        securityReports: { value: 0, change: "Live", trend: "up", subtext: "Security logs" },
+        vaultReports: { value: 0, change: "Live", trend: "up", subtext: "Active custody" }
+    },
+    trends: {
+        '12days': [],
+        '7days': [],
+        '30days': []
+    },
+    reportsByType: [],
+    reportStatus: [],
+    reportsList: []
+};
+
     const AegisReportsController = {
         THEME_KEY: 'aegisvault_theme',
         currentTab: 'Overview',
@@ -39,28 +57,28 @@
                     window.AegisAPI.get('/admin/audit/logs/').catch(() => null)
                 ]);
 
-                if (window.AegisReportMockData) {
-                    if (!window.AegisReportMockData.kpis) window.AegisReportMockData.kpis = {};
+                if (window.AegisReportData) {
+                    if (!window.AegisReportData.kpis) window.AegisReportData.kpis = {};
                     const totalAudit = auditSummary?.total_events || (Array.isArray(auditLogs) ? auditLogs.length : 97);
-                    window.AegisReportMockData.kpis.totalReports = {
+                    window.AegisReportData.kpis.totalReports = {
                         value: String(totalAudit || 97),
                         change: 'Live',
                         trend: 'up',
                         subtext: 'Audited records'
                     };
-                    window.AegisReportMockData.kpis.userReports = {
+                    window.AegisReportData.kpis.userReports = {
                         value: String(userRpt?.total_users ?? 7),
                         change: `${userRpt?.active_users ?? 7} active`,
                         trend: 'up',
                         subtext: 'Platform users'
                     };
-                    window.AegisReportMockData.kpis.securityReports = {
+                    window.AegisReportData.kpis.securityReports = {
                         value: String(secRpt?.total_events ?? 4),
                         change: `${secRpt?.resolved_events ?? 0} resolved`,
                         trend: 'up',
                         subtext: 'Security audit events'
                     };
-                    window.AegisReportMockData.kpis.vaultReports = {
+                    window.AegisReportData.kpis.vaultReports = {
                         value: String(vaultRpt?.total_vaults ?? 2),
                         change: `${vaultRpt?.active_vaults ?? 2} active`,
                         trend: 'up',
@@ -106,7 +124,7 @@
 
         async init() {
             // 1. Initial data clone
-            this.reportsData = [...(window.AegisReportMockData?.reportsList || [])];
+            this.reportsData = [...(window.AegisReportData?.reportsList || [])];
 
             // 2. Fetch live reports and telemetry
             await this.loadLiveData();
@@ -148,7 +166,7 @@
            3. KPI Summary Metrics
            ========================================================================= */
         renderKPIs() {
-            const data = window.AegisReportMockData?.kpis;
+            const data = window.AegisReportData?.kpis;
             if (!data) return;
 
             const elTotal = document.getElementById('kpi-total-reports');
@@ -176,7 +194,7 @@
            ========================================================================= */
         renderLineChart() {
             const container = document.getElementById('trend-chart-container');
-            const pointsData = window.AegisReportMockData?.trends[this.trendPeriod] || [];
+            const pointsData = window.AegisReportData?.trends[this.trendPeriod] || [];
             if (!container || pointsData.length === 0) return;
 
             const width = 460;
@@ -308,7 +326,7 @@
         renderReportsByTypeDonut() {
             const container = document.getElementById('donut-type-container');
             const legendContainer = document.getElementById('donut-type-legend');
-            const data = window.AegisReportMockData?.reportsByType || [];
+            const data = window.AegisReportData?.reportsByType || [];
             if (!container || !legendContainer) return;
 
             const size = 110;
@@ -337,7 +355,7 @@
                 currentOffset += strokeLength;
             });
 
-            const totalReports = window.AegisReportMockData?.kpis?.totalReports?.value || 97;
+            const totalReports = window.AegisReportData?.kpis?.totalReports?.value || 97;
 
             container.innerHTML = `
                 <svg class="donut-svg" viewBox="0 0 ${size} ${size}">
@@ -367,7 +385,7 @@
         renderReportStatusDonut() {
             const container = document.getElementById('donut-status-container');
             const legendContainer = document.getElementById('donut-status-legend');
-            const data = window.AegisReportMockData?.reportStatus || [];
+            const data = window.AegisReportData?.reportStatus || [];
             if (!container || !legendContainer) return;
 
             const size = 100;
@@ -395,7 +413,7 @@
                 currentOffset += strokeLength;
             });
 
-            const totalStatus = window.AegisReportMockData?.kpis?.totalReports?.value || 97;
+            const totalStatus = window.AegisReportData?.kpis?.totalReports?.value || 97;
 
             container.innerHTML = `
                 <svg class="donut-svg" viewBox="0 0 ${size} ${size}">

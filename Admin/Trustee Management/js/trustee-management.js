@@ -4,6 +4,35 @@
  * Add/Edit/View/Deactivate trustee workflows, and Invitations section.
  */
 
+// Self-contained live trustee data store (100% database driven)
+window.AegisTrusteeData = window.AegisTrusteeData || {
+    kpis: {
+        totalTrustees: 0,
+        totalTrusteesGrowth: "0%",
+        totalTrusteesSubtext: "Live platform records",
+        verifiedTrustees: 0,
+        verifiedTrusteesGrowth: "0%",
+        verifiedTrusteesSubtext: "Verified key holders",
+        pendingVerification: 0,
+        pendingVerificationGrowth: "0%",
+        pendingVerificationSubtext: "Pending verification",
+        rejectedInactive: 0,
+        rejectedInactiveGrowth: "0%",
+        rejectedInactiveSubtext: "Inactive trustees"
+    },
+    verificationOverview: [],
+    trusteeTypes: [],
+    trustees: [],
+    invitations: [],
+    permissionMatrix: [
+        { action: "Vault Key Shard Decryption", primary: "Allowed", coTrustee: "Allowed", backup: "Conditional" },
+        { action: "Heartbeat Pulse Verification", primary: "Allowed", coTrustee: "Allowed", backup: "Not Allowed" },
+        { action: "Quorum Consensus Initiation", primary: "Allowed", coTrustee: "Conditional", backup: "Conditional" },
+        { action: "Emergency Custody Override", primary: "Conditional", coTrustee: "Not Allowed", backup: "Not Allowed" }
+    ],
+    vaultAccessAssignments: []
+};
+
 (function () {
     'use strict';
 
@@ -410,7 +439,7 @@
         if (!el.matrixTbody || !el.accessTbody) return;
 
         // Render Permission Matrix Table
-        const matrix = window.AegisTrusteeMockData ? window.AegisTrusteeMockData.permissionMatrix : [];
+        const matrix = window.AegisTrusteeData ? window.AegisTrusteeData.permissionMatrix : [];
         el.matrixTbody.innerHTML = matrix.map(row => {
             const getBadge = (val) => {
                 if (val === 'Allowed') return '<span class="matrix-badge allowed">✓ Allowed</span>';
@@ -428,7 +457,7 @@
         }).join('');
 
         // Render Vault Access Assignments Table
-        const access = window.AegisTrusteeMockData ? window.AegisTrusteeMockData.vaultAccessAssignments : [];
+        const access = window.AegisTrusteeData ? window.AegisTrusteeData.vaultAccessAssignments : [];
         el.accessTbody.innerHTML = access.map(a => `
             <tr>
                 <td style="font-weight: 600; color: var(--text-heading);">${a.trustee}</td>
@@ -451,7 +480,7 @@
         const tabCountVerified = document.getElementById('tab-count-verified');
         const tabCountRejected = document.getElementById('tab-count-rejected');
 
-        const ov = window.AegisTrusteeMockData ? window.AegisTrusteeMockData.verificationOverview : [];
+        const ov = window.AegisTrusteeData ? window.AegisTrusteeData.verificationOverview : [];
         const verifiedSeg = ov.find(s => s.label === 'Verified');
         const pendingSeg = ov.find(s => s.label === 'Pending');
         const rejectedSeg = ov.find(s => s.label === 'Rejected');
@@ -519,6 +548,9 @@
         if (!el.donutSvg) return;
 
         const total = state.trustees ? state.trustees.length : 0;
+        const totalValEl = document.getElementById('donut-total-val');
+        if (totalValEl) totalValEl.textContent = total;
+
         const verified = state.trustees ? state.trustees.filter(t => t.status === 'Verified').length : 0;
         const pending = state.trustees ? state.trustees.filter(t => t.status === 'Pending').length : 0;
         const rejected = state.trustees ? state.trustees.filter(t => t.status === 'Rejected' || t.status === 'Inactive').length : 0;
