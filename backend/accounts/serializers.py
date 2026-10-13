@@ -8,7 +8,6 @@ from django.contrib.auth import authenticate
 from django.conf import settings
 from .models import User
 
-
 class UserSerializer(serializers.ModelSerializer):
     """
     Serializes user data.

@@ -24,7 +24,8 @@ async function loadAdminProfileData() {
     let user = null;
     try {
         if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-            user = await window.AegisAPI.getCurrentUser();
+            const res = await window.AegisAPI.getCurrentUser();
+            user = (res && res.user) ? res.user : res;
         }
     } catch (e) {
         console.warn('Could not fetch /auth/me/, checking localStorage:', e);
@@ -45,22 +46,38 @@ async function loadAdminProfileData() {
     const displayAdminName = document.getElementById('displayAdminName');
     const avatarEl = document.getElementById('adminAvatarLarge');
 
-    if (nameInput) nameInput.value = user.name || user.email?.split('@')[0] || 'Master Administrator';
+    const adminName = user.name || user.email?.split('@')[0] || 'Administrator';
+    if (nameInput) nameInput.value = adminName;
     if (emailInput) emailInput.value = user.email || 'admin@aegisvault.internal';
-    if (phoneInput && user.phone) phoneInput.value = user.phone;
+    if (phoneInput) phoneInput.value = user.phone || '+1 (555) 019-2831';
     if (tzSelect && user.timezone_preference) tzSelect.value = user.timezone_preference;
-    if (idInput && user.id) idInput.value = `ADM-${String(user.id).slice(0, 8).toUpperCase()}`;
-    if (displayAdminName) displayAdminName.textContent = user.name || user.email || 'Master Administrator';
+    if (idInput) {
+        const rawId = user.id ? String(user.id).slice(0, 8).toUpperCase() : 'ROOT-9082';
+        idInput.value = `ADM-${rawId}`;
+    }
+    if (displayAdminName) displayAdminName.textContent = adminName;
     if (avatarEl) {
-        const init = (user.name || user.email || 'AD').replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase() || 'AD';
+        const init = adminName.replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase() || 'AD';
         avatarEl.textContent = init;
     }
 
     // Update navbar avatar & name if present
     const navName = document.querySelector('.profile-name');
-    if (navName) navName.textContent = (user.name || user.email?.split('@')[0] || 'Admin').split(' ')[0];
+    if (navName) navName.textContent = adminName.split(' ')[0];
     const navAvatar = document.querySelector('.profile-avatar-circle');
-    if (navAvatar) navAvatar.textContent = (user.name || user.email || 'AD').replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase() || 'AD';
+    if (navAvatar) navAvatar.textContent = adminName.replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase() || 'AD';
+
+    // Update session item to reflect current client workstation
+    const currentDeviceName = document.querySelector('.session-item.current .session-device-name');
+    if (currentDeviceName) {
+        const isWin = navigator.userAgent.includes('Windows');
+        const isMac = navigator.userAgent.includes('Mac');
+        const osName = isWin ? 'Windows 11 Pro' : (isMac ? 'macOS Sonoma' : 'Linux x86_64');
+        const isEdge = navigator.userAgent.includes('Edg');
+        const isChrome = navigator.userAgent.includes('Chrome') && !isEdge;
+        const browser = isEdge ? 'Edge' : (isChrome ? 'Chrome' : 'Browser');
+        currentDeviceName.innerHTML = `${osName} &bull; ${browser} (Current Active Session)`;
+    }
 }
 
 /**

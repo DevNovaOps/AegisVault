@@ -332,11 +332,11 @@
                     </div>
                     <div class="kpi-data-col">
                         <div class="kpi-val-row">
-                            <span class="kpi-val-num" id="kpi-total-reports">28</span>
-                            <span class="kpi-pill-tag">↑ 12%</span>
+                            <span class="kpi-val-num" id="kpi-total-reports">--</span>
+                            <span class="kpi-pill-tag" id="kpi-total-reports-badge">↑ Live</span>
                         </div>
                         <span class="kpi-title-label">Total Reports</span>
-                        <span class="kpi-sub-label">+3 this month</span>
+                        <span class="kpi-sub-label" id="kpi-total-reports-sub">Audited telemetry</span>
                     </div>
                 </div>
 
@@ -352,11 +352,11 @@
                     </div>
                     <div class="kpi-data-col">
                         <div class="kpi-val-row">
-                            <span class="kpi-val-num" id="kpi-user-reports">1,248</span>
-                            <span class="kpi-pill-tag">↑ 8%</span>
+                            <span class="kpi-val-num" id="kpi-user-reports">--</span>
+                            <span class="kpi-pill-tag" id="kpi-user-reports-badge">Live</span>
                         </div>
                         <span class="kpi-title-label">User Reports</span>
-                        <span class="kpi-sub-label">43.6% of total</span>
+                        <span class="kpi-sub-label" id="kpi-user-reports-sub">Registered accounts</span>
                     </div>
                 </div>
 
@@ -370,11 +370,11 @@
                     </div>
                     <div class="kpi-data-col">
                         <div class="kpi-val-row">
-                            <span class="kpi-val-num" id="kpi-security-reports">892</span>
-                            <span class="kpi-pill-tag">↑ 25%</span>
+                            <span class="kpi-val-num" id="kpi-security-reports">--</span>
+                            <span class="kpi-pill-tag" id="kpi-security-reports-badge">Verified</span>
                         </div>
                         <span class="kpi-title-label">Security Reports</span>
-                        <span class="kpi-sub-label">31.9% of total</span>
+                        <span class="kpi-sub-label" id="kpi-security-reports-sub">Audit trail integrity</span>
                     </div>
                 </div>
 
@@ -389,11 +389,11 @@
                     </div>
                     <div class="kpi-data-col">
                         <div class="kpi-val-row">
-                            <span class="kpi-val-num" id="kpi-vault-reports">614</span>
-                            <span class="kpi-pill-tag">↑ 10%</span>
+                            <span class="kpi-val-num" id="kpi-vault-reports">--</span>
+                            <span class="kpi-pill-tag" id="kpi-vault-reports-badge">Protected</span>
                         </div>
                         <span class="kpi-title-label">Vault Reports</span>
-                        <span class="kpi-sub-label">21.9% of total</span>
+                        <span class="kpi-sub-label" id="kpi-vault-reports-sub">Cryptographic custody</span>
                     </div>
                 </div>
             </section>
@@ -448,7 +448,7 @@
                         <line x1="8" y1="2" x2="8" y2="6"></line>
                         <line x1="3" y1="10" x2="21" y2="10"></line>
                     </svg>
-                    <span>01 Sep 2025 - 12 Sep 2025</span>
+                    <span id="report-date-range-text">Live Audited Period</span>
                     <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="6 9 12 15 18 9"></polyline>
                     </svg>

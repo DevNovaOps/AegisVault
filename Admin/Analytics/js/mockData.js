@@ -339,3 +339,6 @@ const AegisAnalyticsData = {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = AegisAnalyticsData;
 }
+if (typeof window !== 'undefined') {
+    window.AegisAnalyticsData = AegisAnalyticsData;
+}

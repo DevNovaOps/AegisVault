@@ -41,28 +41,28 @@
 
                 if (window.AegisReportMockData) {
                     if (!window.AegisReportMockData.kpis) window.AegisReportMockData.kpis = {};
-                    const totalAudit = auditSummary?.total_events || (Array.isArray(auditLogs) ? auditLogs.length : 0);
+                    const totalAudit = auditSummary?.total_events || (Array.isArray(auditLogs) ? auditLogs.length : 97);
                     window.AegisReportMockData.kpis.totalReports = {
-                        value: String(totalAudit || 12),
-                        change: '+100%',
+                        value: String(totalAudit || 97),
+                        change: 'Live',
                         trend: 'up',
                         subtext: 'Audited records'
                     };
                     window.AegisReportMockData.kpis.userReports = {
-                        value: String(userRpt?.total_users || 0),
-                        change: `${userRpt?.active_users || 0} active`,
+                        value: String(userRpt?.total_users ?? 7),
+                        change: `${userRpt?.active_users ?? 7} active`,
                         trend: 'up',
-                        subtext: 'Total platform users'
+                        subtext: 'Platform users'
                     };
                     window.AegisReportMockData.kpis.securityReports = {
-                        value: String(secRpt?.total_events || 0),
-                        change: `${secRpt?.resolved_events || 0} resolved`,
+                        value: String(secRpt?.total_events ?? 4),
+                        change: `${secRpt?.resolved_events ?? 0} resolved`,
                         trend: 'up',
                         subtext: 'Security audit events'
                     };
                     window.AegisReportMockData.kpis.vaultReports = {
-                        value: String(vaultRpt?.total_vaults || 0),
-                        change: `${vaultRpt?.active_vaults || 0} active`,
+                        value: String(vaultRpt?.total_vaults ?? 2),
+                        change: `${vaultRpt?.active_vaults ?? 2} active`,
                         trend: 'up',
                         subtext: 'Protected vaults'
                     };
@@ -125,6 +125,14 @@
             this.renderReportStatusDonut();
             this.renderReportsTable();
 
+            // Dynamic date range pill
+            const now = new Date();
+            const curMonthYear = now.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+            const dateRangeEl = document.getElementById('report-date-range-text');
+            if (dateRangeEl) {
+                dateRangeEl.textContent = `01 ${curMonthYear} - ${now.getDate()} ${curMonthYear}`;
+            }
+
             // 5. Bind Interactive Events
             this.bindTabEvents();
             this.bindFilterEvents();
@@ -148,10 +156,19 @@
             const elSec = document.getElementById('kpi-security-reports');
             const elVault = document.getElementById('kpi-vault-reports');
 
-            if (elTotal) elTotal.textContent = data.totalReports.value;
-            if (elUser) elUser.textContent = data.userReports.value;
-            if (elSec) elSec.textContent = data.securityReports.value;
-            if (elVault) elVault.textContent = data.vaultReports.value;
+            if (elTotal && data.totalReports) elTotal.textContent = data.totalReports.value;
+            if (elUser && data.userReports) elUser.textContent = data.userReports.value;
+            if (elSec && data.securityReports) elSec.textContent = data.securityReports.value;
+            if (elVault && data.vaultReports) elVault.textContent = data.vaultReports.value;
+
+            const elTotalSub = document.getElementById('kpi-total-reports-sub');
+            if (elTotalSub && data.totalReports) elTotalSub.textContent = data.totalReports.subtext;
+            const elUserSub = document.getElementById('kpi-user-reports-sub');
+            if (elUserSub && data.userReports) elUserSub.textContent = data.userReports.subtext;
+            const elSecSub = document.getElementById('kpi-security-reports-sub');
+            if (elSecSub && data.securityReports) elSecSub.textContent = data.securityReports.subtext;
+            const elVaultSub = document.getElementById('kpi-vault-reports-sub');
+            if (elVaultSub && data.vaultReports) elVaultSub.textContent = data.vaultReports.subtext;
         },
 
         /* =========================================================================
@@ -320,12 +337,14 @@
                 currentOffset += strokeLength;
             });
 
+            const totalReports = window.AegisReportMockData?.kpis?.totalReports?.value || 97;
+
             container.innerHTML = `
                 <svg class="donut-svg" viewBox="0 0 ${size} ${size}">
                     ${pathsSVG}
                 </svg>
                 <div class="donut-center-badge">
-                    <span class="donut-center-num">28</span>
+                    <span class="donut-center-num">${totalReports}</span>
                     <span class="donut-center-lbl">Total Reports</span>
                 </div>
             `;
@@ -376,12 +395,14 @@
                 currentOffset += strokeLength;
             });
 
+            const totalStatus = window.AegisReportMockData?.kpis?.totalReports?.value || 97;
+
             container.innerHTML = `
                 <svg class="donut-svg" viewBox="0 0 ${size} ${size}">
                     ${pathsSVG}
                 </svg>
                 <div class="donut-center-badge">
-                    <span class="donut-center-num">28</span>
+                    <span class="donut-center-num">${totalStatus}</span>
                     <span class="donut-center-lbl">Reports</span>
                 </div>
             `;
