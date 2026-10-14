@@ -64,15 +64,30 @@ function populateTrusteeProfileUI(user, trusteeProfiles) {
   // 2FA Status
   update2FAUI(is2fa);
 
-  // Populate linked owner profiles in the sidebar or info card
+  // Populate linked owner profiles
   const ownersList = document.getElementById('linkedOwnersList');
-  if (ownersList && trusteeProfiles.length > 0) {
-    ownersList.innerHTML = trusteeProfiles.map(tp => `
-      <div class="linked-owner-item">
-        <div class="linked-owner-name">${tp.owner_name}</div>
-        <div class="linked-owner-meta">${tp.relationship} · ${tp.verification_status}</div>
-      </div>
-    `).join('');
+  if (ownersList) {
+    if (trusteeProfiles && trusteeProfiles.length > 0) {
+      ownersList.innerHTML = trusteeProfiles.map(tp => `
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); margin-bottom: 0.65rem;">
+          <div style="display: flex; flex-direction: column; gap: 0.2rem;">
+            <div style="font-size: 0.92rem; font-weight: 700; color: var(--text-primary);">${tp.owner_name} <span style="font-size: 0.76rem; font-weight: normal; color: var(--text-muted);">&bull; ${tp.owner_email}</span></div>
+            <div style="font-size: 0.78rem; color: var(--text-secondary);">${tp.relationship || 'Designated Trustee'} &bull; Appointed ${tp.date_added ? new Date(tp.date_added).toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' }) : ''}</div>
+          </div>
+          <span class="verified-trustee-badge" style="font-size: 0.74rem;">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            ${tp.verification_status || 'Active'}
+          </span>
+        </div>
+      `).join('');
+    } else {
+      ownersList.innerHTML = `
+        <div style="padding: 1.25rem 1rem; text-align: center; background: var(--bg-surface-elevated); border: 1px dashed var(--border-subtle); border-radius: var(--radius-md);">
+          <div style="font-size: 0.88rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem;">No Estate Vaults Assigned Yet</div>
+          <p style="font-size: 0.78rem; color: var(--text-muted); margin: 0;">When a vault owner designates you as a trustee and you accept the invitation, their estate vault appointment will appear here.</p>
+        </div>
+      `;
+    }
   }
 }
 
@@ -154,7 +169,9 @@ function initProfileForm() {
       const stored = window.AegisAPI.getUser() || {};
       Object.assign(stored, updatedUser);
       localStorage.setItem('aegis_user', JSON.stringify(stored));
-      window.AegisAPI.syncUserProfileUI();
+      if (window.AegisAPI.syncUserProfileUI) {
+        window.AegisAPI.syncUserProfileUI();
+      }
 
       // Update name on page & topbar
       const userNameHeader = document.querySelector('.profile-user-fullname');
@@ -234,58 +251,4 @@ window.copyTrusteeId = function() {
     navigator.clipboard?.writeText(input.value);
     showToast(`Trustee ID "${input.value}" copied to clipboard.`);
   }
-};
-
-/**
- * Revoke Other Remote Sessions
- */
-window.revokeOtherSessions = function() {
-  const sessions = document.querySelectorAll('.session-item:not(.current)');
-  sessions.forEach(s => s.remove());
-  showToast('All other remote sessions have been terminated.');
-};
-
-/**
- * Simulate WebAuthn Key Registration
- */
-window.simulateKeyRegistration = function() {
-  if (window.closeModal) {
-    window.closeModal('registerKeyModal');
-  }
-
-  setTimeout(() => {
-    const list = document.querySelector('.keys-list');
-    if (list) {
-      const newItem = document.createElement('div');
-      newItem.className = 'key-item';
-      newItem.innerHTML = `
-        <div class="key-item-left">
-          <div class="key-icon-bubble">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-          </div>
-          <div class="key-details">
-            <span class="key-name">FIDO2 Security Key (YubiKey 5 NFC #2)</span>
-            <span class="key-meta">FIDO2 / WebAuthn • Registered Just now</span>
-          </div>
-        </div>
-        <div class="key-badges">
-          <span class="verified-trustee-badge">Active</span>
-        </div>
-      `;
-      list.appendChild(newItem);
-    }
-
-    showToast('New FIDO2 Hardware Key registered and cryptographically bound.');
-  }, 300);
-};
-
-/**
- * Confirm Emergency Freeze
- */
-window.confirmEmergencyFreeze = function() {
-  if (window.closeModal) {
-    window.closeModal('freezeAccountModal');
-  }
-
-  showToast('EMERGENCY FREEZE ACTIVATED. Trustee signing capabilities suspended.', 'error');
 };
