@@ -161,6 +161,10 @@ class TrusteeProfileUpdateView(APIView):
             user.name = data['name']
         if 'phone' in data:
             user.phone = data['phone']
+        if 'timezone_preference' in data:
+            user.timezone_preference = data['timezone_preference']
+        if 'bio' in data:
+            user.bio = data['bio']
 
         user.save()
 
