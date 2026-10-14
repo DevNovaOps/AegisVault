@@ -383,19 +383,19 @@
                     </button>
                     <button class="ops-tab-btn" data-tab="alerts">
                         <span>Active Alerts</span>
-                        <span class="tab-badge" id="tab-alerts-count">5</span>
+                        <span class="tab-badge" id="tab-alerts-count">0</span>
                     </button>
                     <button class="ops-tab-btn" data-tab="events">
                         <span>Security Events</span>
-                        <span class="tab-badge">1,284</span>
+                        <span class="tab-badge" id="tab-events-count">0</span>
                     </button>
                     <button class="ops-tab-btn" data-tab="access">
                         <span>Access Activity</span>
-                        <span class="tab-badge">1,124</span>
+                        <span class="tab-badge" id="tab-access-count">0</span>
                     </button>
                     <button class="ops-tab-btn" data-tab="incidents">
                         <span>Incidents</span>
-                        <span class="tab-badge">3</span>
+                        <span class="tab-badge" id="tab-incidents-count">0</span>
                     </button>
                 </nav>
 
@@ -812,8 +812,8 @@
                             <p style="font-size: 0.88rem; color: var(--text-muted);">Audit log of user logins, role elevations, and cryptographic shard submissions.</p>
                         </div>
                         <div style="display: flex; gap: 12px;">
-                            <span class="badge-pill badge-low">1,124 Success</span>
-                            <span class="badge-pill badge-high">27 Blocked</span>
+                            <span class="badge-pill badge-low" id="access-success-pill">0 Success</span>
+                            <span class="badge-pill badge-high" id="access-blocked-pill">0 Blocked</span>
                         </div>
                     </div>
                     <div class="table-card">
@@ -849,7 +849,7 @@
                             <h2 style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary);">Security Incidents & Response Cases</h2>
                             <p style="font-size: 0.88rem; color: var(--text-muted);">Active multi-signature, access breach, and system investigation cases.</p>
                         </div>
-                        <button class="btn-modal-primary" onclick="AegisSecurityModule.showToast('Incident creation workflow open', 'info')">
+                        <button class="btn-modal-primary" onclick="AegisSecurityModule.openCreateIncidentModal()">
                             + Create Incident
                         </button>
                     </div>
@@ -1125,6 +1125,50 @@
             <div class="modal-footer">
                 <button class="btn-modal-cancel" onclick="AegisSecurityModule.closeAllModals()">Close</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal: Create New Security Incident -->
+    <div class="modal-overlay" id="modal-create-incident">
+        <div class="modal-window" style="max-width: 560px;">
+            <div class="modal-header">
+                <div>
+                    <span class="mono-cell" style="font-size: 0.8rem; color: var(--brand-orange);">INCIDENT RESPONSE</span>
+                    <h3 class="modal-title-text" style="margin-top: 2px;">Create Security Incident</h3>
+                </div>
+                <button class="btn-close-modal" onclick="AegisSecurityModule.closeAllModals()">&times;</button>
+            </div>
+            <form id="form-create-incident" onsubmit="event.preventDefault(); AegisSecurityModule.submitCreateIncident();">
+                <div class="modal-body">
+                    <div style="margin-bottom: 14px;">
+                        <label class="modal-input-label" for="new-inc-title">INCIDENT TITLE *</label>
+                        <input type="text" id="new-inc-title" class="form-input" required placeholder="e.g. Unauthorized Shard Reconstruction Spike" style="width: 100%; padding: 8px 12px; background: var(--bg-surface-elevated, #161b22); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 0.9rem;">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+                        <div>
+                            <label class="modal-input-label" for="new-inc-severity">SEVERITY</label>
+                            <select id="new-inc-severity" class="form-input" style="width: 100%; padding: 8px 12px; background: var(--bg-surface-elevated, #161b22); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 0.9rem;">
+                                <option value="critical">Critical</option>
+                                <option value="high" selected>High</option>
+                                <option value="medium">Medium</option>
+                                <option value="low">Low</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="modal-input-label" for="new-inc-resource">AFFECTED RESOURCE</label>
+                            <input type="text" id="new-inc-resource" class="form-input" value="Core Vault Perimeter" style="width: 100%; padding: 8px 12px; background: var(--bg-surface-elevated, #161b22); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 0.9rem;">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="modal-input-label" for="new-inc-desc">SYNOPSIS / INVESTIGATION NOTES</label>
+                        <textarea id="new-inc-desc" rows="3" style="width: 100%; padding: 8px 12px; background: var(--bg-surface-elevated, #161b22); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 0.88rem; resize: vertical;" placeholder="Provide technical context on the incident..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-modal-cancel" onclick="AegisSecurityModule.closeAllModals()">Cancel</button>
+                    <button type="submit" class="btn-modal-primary">Create Incident</button>
+                </div>
+            </form>
         </div>
     </div>
 
