@@ -1,7 +1,12 @@
 /**
  * AegisVault Owner Panel — Profile & Security Module
- * Module 09: Personal Info, Cryptographic Credentials, 2FA, Devices & Auth
- * Connected to live Django backend: /api/v1/auth/me, /api/v1/accounts/profile/...
+ * Module 09: Personal Info, Master Password, 2FA, and Cryptographic Data Export
+ * Fully integrated with Django REST backend:
+ *   - GET  /api/v1/auth/me/
+ *   - PUT  /api/v1/accounts/profile/update/
+ *   - POST /api/v1/accounts/profile/change-password/
+ *   - POST /api/v1/accounts/profile/2fa/toggle/
+ *   - GET  /api/v1/accounts/profile/export-data/
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -9,7 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // 1. Elements
   // =========================================================================
   const tabs = document.querySelectorAll('.profile-tab-item');
-  const currentThemeLabel = document.getElementById('currentThemeLabel');
 
   const editProfileModal = document.getElementById('editProfileModal');
   const changePasswordModal = document.getElementById('changePasswordModal');
@@ -25,29 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const rowToggle2FA = document.getElementById('rowToggle2FA');
   const qaEnable2FA = document.getElementById('qaEnable2FA');
-
-  const btnViewAllDevices = document.getElementById('btnViewAllDevices');
-  const qaManageDevices = document.getElementById('qaManageDevices');
   const qaDownloadData = document.getElementById('qaDownloadData');
 
-  const btnToggleGoogle = document.getElementById('btnToggleGoogle');
-  const statusGoogle = document.getElementById('statusGoogle');
-  const btnToggleMs = document.getElementById('btnToggleMs');
-  const statusMs = document.getElementById('statusMs');
-  const btnToggleApple = document.getElementById('btnToggleApple');
-  const statusApple = document.getElementById('statusApple');
-
   let currentUserData = null;
-
-  // Sync theme label with current document theme
-  function syncThemeLabel() {
-    const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
-    if (currentThemeLabel) {
-      currentThemeLabel.textContent = isDark ? 'Dark Mode' : 'Light Mode';
-    }
-  }
-  syncThemeLabel();
-  window.addEventListener('aegis-theme-changed', syncThemeLabel);
 
   // =========================================================================
   // 2. Load Real User Data from Live Backend
@@ -76,8 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
       ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
       : (user.name || user.email?.split('@')[0] || 'Vault Owner');
     const email = user.email || 'owner@aegisvault.io';
-    const role = (user.role || 'OWNER').toUpperCase();
     const is2fa = Boolean(user.is_2fa_enabled);
+    const timezone = user.timezone_preference || 'UTC';
 
     // Initials for avatar
     const nameParts = fullName.split(' ');
@@ -105,23 +89,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 2. Personal Information Card
-    const personalRows = document.querySelectorAll('#sectionPersonal .profile-item-row');
-    if (personalRows[0]) {
-      const val = personalRows[0].querySelector('.item-value');
-      if (val) val.textContent = fullName;
-    }
-    if (personalRows[1]) {
-      const val = personalRows[1].querySelector('.item-value');
-      if (val) val.textContent = email;
-    }
-    if (personalRows[2] && user.phone) {
-      const val = personalRows[2].querySelector('.item-value');
-      if (val) val.textContent = user.phone;
-    }
-    if (personalRows[3] && user.location) {
-      const val = personalRows[3].querySelector('.item-value');
-      if (val) val.textContent = user.location;
-    }
+    const dispName = document.getElementById('dispFullName');
+    if (dispName) dispName.textContent = fullName;
+
+    const dispMail = document.getElementById('dispEmail');
+    if (dispMail) dispMail.textContent = email;
+
+    const dispPh = document.getElementById('dispPhone');
+    if (dispPh) dispPh.textContent = user.phone || 'Not specified';
+
+    const dispTz = document.getElementById('dispTimezone');
+    if (dispTz) dispTz.textContent = formatTimezoneLabel(timezone);
 
     // 3. Security Settings Card (2FA)
     update2FAUI(is2fa);
@@ -134,10 +112,23 @@ document.addEventListener('DOMContentLoaded', () => {
     if (inputEmail) inputEmail.value = email;
 
     const inputPhone = document.getElementById('inputPhone');
-    if (inputPhone && user.phone) inputPhone.value = user.phone;
+    if (inputPhone) inputPhone.value = user.phone || '';
 
-    const inputLoc = document.getElementById('inputLocation');
-    if (inputLoc && user.location) inputLoc.value = user.location;
+    const inputTz = document.getElementById('inputTimezone');
+    if (inputTz && timezone) inputTz.value = timezone;
+  }
+
+  function formatTimezoneLabel(tz) {
+    const map = {
+      'America/New_York': 'UTC -05:00 (Eastern Time)',
+      'America/Chicago': 'UTC -06:00 (Central Time)',
+      'America/Los_Angeles': 'UTC -08:00 (Pacific Time)',
+      'Europe/London': 'UTC +00:00 (London / GMT)',
+      'Asia/Kolkata': 'UTC +05:30 (India / IST)',
+      'Asia/Singapore': 'UTC +08:00 (Singapore / SGT)',
+      'UTC': 'UTC (Coordinated Universal Time)'
+    };
+    return map[tz] || tz || 'UTC';
   }
 
   function update2FAUI(isEnabled) {
@@ -147,17 +138,11 @@ document.addEventListener('DOMContentLoaded', () => {
       tfaVal.className = isEnabled ? 'item-value text-green' : 'item-value text-muted';
     }
 
-    const tfaBadge = document.getElementById('tfaBadgeStatus');
-    if (tfaBadge) {
-      tfaBadge.textContent = isEnabled ? 'Protected' : 'Off';
-      tfaBadge.className = isEnabled ? 'badge-success' : 'badge-warning';
-    }
-
     const sideCheck = document.getElementById('side2faCheck');
     if (sideCheck) {
       sideCheck.innerHTML = isEnabled 
-        ? '<span class="dot-green"></span><span>Verified</span>' 
-        : '<span class="dot-amber"></span><span>Disabled</span>';
+        ? '<span class="dot-green"></span><span>Enabled</span>' 
+        : '<span class="dot-amber" style="background:#f59e0b; width:6px; height:6px; border-radius:50%;"></span><span style="color:var(--text-muted);">Disabled</span>';
     }
   }
 
@@ -175,9 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (target === 'overview') targetElem = document.getElementById('sectionOverview');
       else if (target === 'personal') targetElem = document.getElementById('sectionPersonal');
       else if (target === 'security') targetElem = document.getElementById('sectionSecurity');
-      else if (target === 'devices') targetElem = document.getElementById('sectionDevices');
-      else if (target === 'preferences') targetElem = document.getElementById('sectionPreferences');
-      else if (target === 'connected') targetElem = document.getElementById('sectionConnected');
 
       if (targetElem) {
         targetElem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -221,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const fullName = document.getElementById('inputFullName')?.value.trim();
       const email = document.getElementById('inputEmail')?.value.trim();
       const phone = document.getElementById('inputPhone')?.value.trim();
-      const location = document.getElementById('inputLocation')?.value.trim();
+      const timezone = document.getElementById('inputTimezone')?.value;
 
       if (!fullName) {
         if (window.AegisOwner) window.AegisOwner.showToast('Please enter your full name', 'error');
@@ -236,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
           name: fullName,
           email: email,
           phone: phone,
-          location: location
+          timezone_preference: timezone
         };
 
         const res = await window.AegisAPI.put('/accounts/profile/update/', payload);
@@ -246,6 +228,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const stored = window.AegisAPI.getUser() || {};
         Object.assign(stored, updatedUser, payload);
         localStorage.setItem('aegis_user', JSON.stringify(stored));
+        if (window.AegisAPI.syncUserProfileUI) {
+          window.AegisAPI.syncUserProfileUI();
+        }
 
         populateUserUI(stored);
         closeModal(editProfileModal);
@@ -373,103 +358,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-
-  // =========================================================================
-  // 9. Devices & Sessions Management
-  // =========================================================================
-  function showDevicesPrompt() {
-    if (window.AegisOwner) {
-      window.AegisOwner.showToast('Active session registered on 127.0.0.1. Hardware identity verified.', 'info');
-    }
-  }
-  if (btnViewAllDevices) btnViewAllDevices.addEventListener('click', showDevicesPrompt);
-  if (qaManageDevices) qaManageDevices.addEventListener('click', showDevicesPrompt);
-
-  document.querySelectorAll('.btn-device-more').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const devRow = btn.closest('.device-row');
-      const devName = devRow?.querySelector('.device-name')?.textContent || 'Device';
-      if (devRow?.querySelector('.current-device-tag')) {
-        if (window.AegisOwner) window.AegisOwner.showToast('Cannot terminate current active browsing session', 'warning');
-        return;
-      }
-      if (confirm(`Revoke session for ${devName}? This device will be signed out.`)) {
-        devRow.style.opacity = '0.4';
-        devRow.style.pointerEvents = 'none';
-        if (window.AegisOwner) window.AegisOwner.showToast(`Revoked session for ${devName}`, 'info');
-      }
-    });
-  });
-
-  // =========================================================================
-  // 10. Connected OAuth Providers Toggles
-  // =========================================================================
-  function setupOAuthToggle(btn, statusEl, providerName) {
-    if (!btn) return;
-    btn.addEventListener('click', () => {
-      const isConnected = btn.textContent.trim() === 'Disconnect';
-      if (isConnected) {
-        btn.textContent = 'Connect';
-        btn.classList.add('btn-connect-outline');
-        if (statusEl) {
-          statusEl.textContent = 'Not connected';
-          statusEl.classList.add('text-muted');
-          statusEl.classList.remove('text-green');
-        }
-        if (window.AegisOwner) window.AegisOwner.showToast(`Disconnected ${providerName} OAuth login`, 'info');
-      } else {
-        btn.textContent = 'Disconnect';
-        btn.classList.remove('btn-connect-outline');
-        if (statusEl) {
-          statusEl.textContent = 'Connected';
-          statusEl.classList.remove('text-muted');
-          statusEl.classList.add('text-green');
-        }
-        if (window.AegisOwner) window.AegisOwner.showToast(`Connected ${providerName} OAuth login`, 'success');
-      }
-    });
-  }
-
-  setupOAuthToggle(btnToggleGoogle, statusGoogle, 'Google');
-  setupOAuthToggle(btnToggleMs, statusMs, 'Microsoft');
-  setupOAuthToggle(btnToggleApple, statusApple, 'Apple');
-
-  // Preferences interactive cycles
-  const prefRows = document.querySelectorAll('#sectionPreferences .profile-item-row');
-  prefRows.forEach(row => {
-    row.addEventListener('click', () => {
-      const label = row.querySelector('.item-label')?.textContent;
-      const val = row.querySelector('.item-value');
-      if (!val) return;
-
-      if (label === 'Email Notifications') {
-        const isEnabled = val.textContent.trim() === 'Enabled';
-        val.textContent = isEnabled ? 'Disabled' : 'Enabled';
-        val.className = isEnabled ? 'item-value text-muted' : 'item-value text-green';
-        if (window.AegisOwner) window.AegisOwner.showToast(`Email notifications ${isEnabled ? 'disabled' : 'enabled'}`, 'info');
-      } else if (label === 'Language') {
-        const langs = ['English (US)', 'English (UK)', 'Español', 'Français', 'Deutsch'];
-        const curIdx = langs.indexOf(val.textContent.trim());
-        const next = langs[(curIdx + 1) % langs.length];
-        val.textContent = next;
-        if (window.AegisOwner) window.AegisOwner.showToast(`Language set to ${next}`, 'success');
-      } else if (label === 'Theme') {
-        const toggleBtn = document.getElementById('themeToggleBtn');
-        if (toggleBtn) toggleBtn.click();
-      } else if (label === 'Date Format') {
-        const formats = ['DD MMM YYYY', 'MM/DD/YYYY', 'YYYY-MM-DD'];
-        const curIdx = formats.indexOf(val.textContent.trim());
-        const next = formats[(curIdx + 1) % formats.length];
-        val.textContent = next;
-        if (window.AegisOwner) window.AegisOwner.showToast(`Date format set to ${next}`, 'info');
-      } else if (label === 'Time Format') {
-        const is12 = val.textContent.includes('12-hour');
-        val.textContent = is12 ? '24-hour (UTC)' : '12-hour (AM/PM)';
-        if (window.AegisOwner) window.AegisOwner.showToast(`Time format set to ${val.textContent}`, 'info');
-      }
-    });
-  });
 
   // Initial load
   loadUserProfile();
