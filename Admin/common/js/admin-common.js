@@ -59,13 +59,14 @@
 
         async ensureAdminToken() {
             let token = localStorage.getItem('aegis_access_token');
-            if (token) return token;
-
             const raw = localStorage.getItem('aegis_user');
             let user = null;
             try { user = raw ? JSON.parse(raw) : null; } catch (e) {}
 
-            const email = (user && user.email) ? user.email : 'alice.vance@aegisvault-secops.io';
+            // If already authenticated as admin, return the token
+            if (token && user && user.role === 'admin') return token;
+
+            const email = (user && user.role === 'admin' && user.email) ? user.email : 'admin123@gmail.com';
             const password = (email === 'admin123@gmail.com') ? 'Admin@123' : 'DemoPass123!';
 
             try {
