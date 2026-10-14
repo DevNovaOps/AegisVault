@@ -103,6 +103,12 @@ class SecurityService:
                 {'id': 'h3', 'name': 'WAF Perimeter Node', 'x': 510, 'y': 110, 'r': 5, 'count': 2, 'color': '#F59E0B'}
             ]
         }
+        total_events = SecurityEvent.objects.count()
+        total_access = AuditLog.objects.count()
+        access_success = AuditLog.objects.filter(status='success').count()
+        access_blocked = AuditLog.objects.filter(status__in=['failure', 'warning']).count()
+        open_incidents = SecurityEvent.objects.filter(severity__in=['critical', 'high', 'medium'], is_resolved=False).count()
+        total_incidents = SecurityEvent.objects.filter(severity__in=['critical', 'high', 'medium']).count()
 
         return {
             'threat_level': threat_level,
@@ -115,6 +121,12 @@ class SecurityService:
             'events_last_7d': events_7d,
             'failed_logins_24h': failed_logins_24h,
             'active_users_7d': active_users_7d,
+            'total_events': total_events,
+            'total_access': total_access,
+            'access_success': access_success,
+            'access_blocked': access_blocked,
+            'open_incidents': open_incidents,
+            'total_incidents': total_incidents,
             'trends': trends,
             'threat_sources': threat_sources,
         }
@@ -142,3 +154,83 @@ class SecurityService:
             }
             for a in alerts
         ]
+
+    @staticmethod
+    def get_access_activity():
+        """Audit log of user logins, role elevations, and actions."""
+        from audit.models import AuditLog
+
+        logs = AuditLog.objects.all().order_by('-timestamp')[:200]
+        total_count = AuditLog.objects.count()
+        success_count = AuditLog.objects.filter(status='success').count()
+        blocked_count = AuditLog.objects.filter(status__in=['failure', 'warning']).count()
+
+        items = []
+        for l in logs:
+            user_name = (l.user.name or l.user.email.split('@')[0]) if l.user else 'System Agent'
+            user_role = (getattr(l.user, 'role', '') or 'User').capitalize() if l.user else 'System'
+
+            res_str = 'Success'
+            if l.status == 'failure':
+                res_str = 'Blocked'
+            elif l.status == 'warning':
+                res_str = 'Warning'
+
+            items.append({
+                'id': f"ACC-{str(l.id)[:8].upper()}",
+                'raw_id': str(l.id),
+                'user': user_name,
+                'role': user_role,
+                'action': l.action_title or l.action_key.replace('_', ' ').title(),
+                'resource': l.vault_name or (l.category.capitalize() if l.category else 'Core System'),
+                'ip': l.ip_address or '127.0.0.1',
+                'device': (l.user_agent[:45] + '...') if l.user_agent and len(l.user_agent) > 45 else (l.user_agent or 'Desktop / Chrome'),
+                'timestamp': l.timestamp.strftime('%d %b %I:%M %p'),
+                'raw_timestamp': l.timestamp.isoformat(),
+                'result': res_str,
+            })
+
+        return {
+            'count': total_count,
+            'success_count': success_count,
+            'blocked_count': blocked_count,
+            'logs': items
+        }
+
+    @staticmethod
+    def get_incidents():
+        """Active and past incident response cases."""
+        from audit.models import SecurityEvent
+
+        events = SecurityEvent.objects.filter(
+            severity__in=['critical', 'high', 'medium']
+        ).order_by('-timestamp')[:100]
+
+        incidents = []
+        for e in events:
+            incidents.append({
+                'id': f"INC-{str(e.id)[:8].upper()}",
+                'raw_id': str(e.id),
+                'title': e.title,
+                'severity': e.severity.title(),
+                'affectedArea': e.resource or 'Security Perimeter',
+                'created': e.timestamp.strftime('%d %b %I:%M %p'),
+                'raw_created': e.timestamp.isoformat(),
+                'assignedTo': f"SecOps ({e.resolved_by.name})" if e.resolved_by else 'SecOps Root Admin',
+                'status': 'Resolved' if e.is_resolved else 'Investigating',
+                'description': e.description,
+                'source_ip': e.source_ip,
+                'user_email': e.user.email if e.user else 'Unknown',
+            })
+
+        open_count = SecurityEvent.objects.filter(
+            severity__in=['critical', 'high', 'medium'],
+            is_resolved=False
+        ).count()
+
+        return {
+            'count': len(incidents),
+            'open_count': open_count,
+            'incidents': incidents
+        }
+
