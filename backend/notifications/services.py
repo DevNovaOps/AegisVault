@@ -47,11 +47,52 @@ class NotificationService:
             related_object_id=related_object_id,
         )
 
-        logger.info(f"Notification created for {user.email}: [{notification_type}] {title}")
+        safe_title = title.encode('ascii', 'replace').decode('ascii')
+        logger.info(f"Notification created for {user.email}: [{notification_type}] {safe_title}")
 
-        # In a real system, we'd also trigger push/email based on prefs here.
-        if prefs.email_enabled:
-            # e.g., send_email_task.delay(...)
-            pass
+        # Real email dispatch (respecting user preference and email presence)
+        if prefs.email_enabled and getattr(user, 'email', None):
+            NotificationService._dispatch_email(notification)
 
         return notification
+
+    @staticmethod
+    def _is_redis_available():
+        """Fast check to verify if Redis broker is reachable before queuing."""
+        try:
+            import redis
+            from django.conf import settings
+            broker_url = getattr(settings, 'CELERY_BROKER_URL', 'redis://127.0.0.1:6379/1')
+            r = redis.from_url(broker_url, socket_connect_timeout=0.25)
+            return bool(r.ping())
+        except Exception:
+            return False
+
+    @classmethod
+    def _dispatch_email(cls, notification):
+        """
+        Dispatches email via Celery async queue if broker is up,
+        otherwise dispatches directly in a non-blocking daemon thread.
+        Never freezes or blocks HTTP API responses.
+        """
+        import threading
+
+        def _worker():
+            if cls._is_redis_available():
+                try:
+                    from .tasks import send_notification_email_async
+                    send_notification_email_async.delay(str(notification.id))
+                    logger.info(f"Notification {notification.id} queued to Celery worker.")
+                    return
+                except Exception as e:
+                    logger.info(f"Failed to queue to Celery ({e}). Falling back to direct email delivery.")
+
+            # Fallback direct delivery
+            try:
+                from .email_service import NotificationEmailService
+                NotificationEmailService.send_notification_email(notification)
+            except Exception as ex:
+                logger.error(f"Fallback email delivery failed for notification {notification.id}: {ex}", exc_info=True)
+
+        thread = threading.Thread(target=_worker, daemon=True)
+        thread.start()

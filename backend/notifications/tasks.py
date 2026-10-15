@@ -25,3 +25,23 @@ def cleanup_old_notifications():
 
     logger.info(f"Cleaned up {deleted_count} old notifications")
     return f"Deleted {deleted_count} notifications"
+
+
+@shared_task(name='notifications.tasks.send_notification_email_async')
+def send_notification_email_async(notification_id):
+    """
+    Asynchronous Celery task: dispatches real transactional email for a notification.
+    """
+    from notifications.models import Notification
+    from notifications.email_service import NotificationEmailService
+
+    try:
+        notification = Notification.objects.select_related('user').get(id=notification_id)
+        success, msg = NotificationEmailService.send_notification_email(notification)
+        return {"success": success, "message": msg}
+    except Notification.DoesNotExist:
+        logger.warning(f"Notification ID {notification_id} not found for email dispatch")
+        return {"success": False, "message": "Notification not found"}
+    except Exception as e:
+        logger.error(f"Error executing send_notification_email_async for {notification_id}: {e}", exc_info=True)
+        return {"success": False, "message": str(e)}
