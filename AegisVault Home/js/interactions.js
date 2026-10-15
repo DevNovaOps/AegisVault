@@ -153,22 +153,31 @@
      * Initialize all interactive listeners
      */
     function init() {
-        // Modal Open Triggers
-        if (btnSignIn) btnSignIn.addEventListener('click', () => openModal(modalSignIn));
-        if (btnMobileSignIn) btnMobileSignIn.addEventListener('click', () => openModal(modalSignIn));
-        if (btnCloseSignIn) btnCloseSignIn.addEventListener('click', () => closeModal(modalSignIn));
+        // Authentication Navigation Triggers (Unified Single Auth Portal)
+        if (btnSignIn) btnSignIn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = 'auth.html?mode=signin';
+        });
+        if (btnMobileSignIn) btnMobileSignIn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = 'auth.html?mode=signin';
+        });
 
         const signupTriggers = [btnGetStarted, btnMobileGetStarted, btnHeroCreateVault, btnCtaCreate];
         signupTriggers.forEach(btn => {
-            if (btn) btn.addEventListener('click', () => openModal(modalGetStarted));
+            if (btn) btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.location.href = 'auth.html?mode=signup';
+            });
         });
 
         // Plan Selection buttons
         document.querySelectorAll('.btn-select-plan').forEach(btn => {
-            btn.addEventListener('click', () => openModal(modalGetStarted));
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.location.href = 'auth.html?mode=signup';
+            });
         });
-
-        if (btnCloseSignUp) btnCloseSignUp.addEventListener('click', () => closeModal(modalGetStarted));
 
         // Video Modal Triggers
         if (btnHeroWatchVideo) btnHeroWatchVideo.addEventListener('click', () => openModal(modalVideo));
