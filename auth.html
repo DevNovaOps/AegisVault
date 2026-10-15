@@ -834,18 +834,6 @@
                     </div>
                 </div>
 
-                <!-- Trustee Extra Token -->
-                <div class="form-row-group" id="group-signin-trustee" style="display: none;">
-                    <label for="signin-trustee-token" class="form-row-label">Assigned Vault ID / Trustee Invitation (Optional)</label>
-                    <div class="input-relative-wrap">
-                        <svg viewBox="0 0 24 24" class="input-icon-svg" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 2l-2 2m-1.5 1.5L10 13l-4 4-2-2 4-4 7.5-7.5z"></path>
-                            <circle cx="7.5" cy="16.5" r="1.5"></circle>
-                        </svg>
-                        <input type="text" id="signin-trustee-token" class="form-clean-input trustee-focus" placeholder="e.g. VLT-001 or INV-7821">
-                    </div>
-                </div>
-
                 <!-- Admin Clearance Token -->
                 <div class="form-row-group" id="group-signin-admin" style="display: none;">
                     <label for="signin-admin-token" class="form-row-label">SecOps Root Clearance Token</label>
@@ -942,14 +930,20 @@
                 </div>
 
                 <div class="form-row-group" id="group-signup-trustee" style="display: none;">
-                    <label for="signup-trustee-invite" class="form-row-label">Designated Vault Invitation Code</label>
+                    <div class="form-row-label">
+                        <span>Designated Vault Invitation Code / ID</span>
+                        <span style="color: #F45A1F; font-size: 11px; font-weight: 800; background: rgba(244, 90, 31, 0.15); padding: 2px 7px; border-radius: 4px; border: 1px solid rgba(244, 90, 31, 0.3);">REQUIRED</span>
+                    </div>
                     <div class="input-relative-wrap">
                         <svg viewBox="0 0 24 24" class="input-icon-svg" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M21 2l-2 2m-1.5 1.5L10 13l-4 4-2-2 4-4 7.5-7.5z"></path>
                             <circle cx="7.5" cy="16.5" r="1.5"></circle>
                         </svg>
-                        <input type="text" id="signup-trustee-invite" class="form-clean-input trustee-focus" placeholder="e.g. TRST-INV-2026-99">
+                        <input type="text" id="signup-trustee-invite" class="form-clean-input trustee-focus" placeholder="Enter Owner Invitation ID or Token" required>
                     </div>
+                    <span style="font-size: 11px; color: var(--auth-text-muted); margin-top: 2px;">
+                        A valid invitation issued by a Vault Owner is strictly required to register as a Trustee.
+                    </span>
                 </div>
 
                 <div class="form-row-group" id="group-signup-admin" style="display: none;">
@@ -1036,7 +1030,12 @@
     <div class="toast-float-container" id="toast-float-container" role="region" aria-live="polite"></div>
 
     <!-- Shared API Client -->
-    <script src="/common/api.js"></script>
+    <script src="common/api.js"></script>
+    <script>
+        if (typeof window.AegisAPI === 'undefined') {
+            document.write('<script src="../common/api.js"><\/script>');
+        }
+    </script>
 
     <!-- Master Controller Script -->
     <script>
@@ -1098,7 +1097,6 @@
             const btnSigninText = document.getElementById('btn-signin-text');
             const btnSignupText = document.getElementById('btn-signup-text');
 
-            const groupSigninTrustee = document.getElementById('group-signin-trustee');
             const groupSigninAdmin = document.getElementById('group-signin-admin');
             const groupSignupOwner = document.getElementById('group-signup-owner');
             const groupSignupTrustee = document.getElementById('group-signup-trustee');
@@ -1196,7 +1194,6 @@
                 btnSubmitSignIn.className = `btn-submit-master ${cfg.btnClass}`;
                 btnSubmitSignUp.className = `btn-submit-master ${cfg.btnClass}`;
 
-                if (groupSigninTrustee) groupSigninTrustee.style.display = role === 'trustee' ? 'flex' : 'none';
                 if (groupSigninAdmin) groupSigninAdmin.style.display = role === 'admin' ? 'flex' : 'none';
 
                 if (groupSignupOwner) groupSignupOwner.style.display = role === 'owner' ? 'flex' : 'none';
@@ -1330,6 +1327,8 @@
                         const data = await window.AegisAPI.login(email, pwd, activeRole, extras);
                         completeAuthentication(data.user, data.tokens);
                         return;
+                    } else {
+                        throw new Error('AegisAPI security client is offline. Please check backend connection.');
                     }
                 } catch (err) {
                     showToast(err.message || 'Authentication failed. Please verify credentials.', 'error');
@@ -1337,11 +1336,6 @@
                     btnSubmitSignIn.disabled = false;
                     return;
                 }
-
-                // Fallback demo session
-                setTimeout(() => {
-                    completeAuthentication({ name: email.split('@')[0], email, role: activeRole }, null);
-                }, 400);
             });
 
             // ================= Form 2: Sign Up Submit =================
@@ -1363,7 +1357,16 @@
                 if (activeRole === 'owner') {
                     payload.vault_name = document.getElementById('signup-vault-name')?.value || 'Primary Family Vault';
                 } else if (activeRole === 'trustee') {
-                    payload.invite_code = document.getElementById('signup-trustee-invite')?.value || '';
+                    const inviteInput = document.getElementById('signup-trustee-invite');
+                    const inviteCode = inviteInput ? inviteInput.value.trim() : '';
+                    if (!inviteCode) {
+                        showToast('Trustee Invitation Code is required. A Vault Owner must invite you first.', 'error');
+                        inviteInput?.focus();
+                        btnSubmitSignUp.classList.remove('loading');
+                        btnSubmitSignUp.disabled = false;
+                        return;
+                    }
+                    payload.invite_code = inviteCode;
                 } else if (activeRole === 'admin') {
                     payload.admin_token = document.getElementById('signup-admin-token')?.value || 'ROOT-SEC-8821';
                 }
@@ -1373,18 +1376,15 @@
                         const data = await window.AegisAPI.register(payload);
                         completeAuthentication(data.user, data.tokens);
                         return;
+                    } else {
+                        throw new Error('AegisAPI security client is offline. Please check backend connection.');
                     }
                 } catch (err) {
-                    showToast(err.message || 'Registration failed.', 'error');
+                    showToast(err.message || 'Registration failed. Verify your details.', 'error');
                     btnSubmitSignUp.classList.remove('loading');
                     btnSubmitSignUp.disabled = false;
                     return;
                 }
-
-                // Fallback demo session
-                setTimeout(() => {
-                    completeAuthentication({ name, email, role: activeRole }, null);
-                }, 400);
             });
 
             // Passkey Biometrics
@@ -1462,8 +1462,6 @@
                 activeMode = 'signup';
                 const inputInvite = document.getElementById('signup-trustee-invite');
                 if (inputInvite) inputInvite.value = paramToken;
-                const inSignInvite = document.getElementById('signin-trustee-token');
-                if (inSignInvite) inSignInvite.value = paramToken;
             }
             if (paramEmail) {
                 const inSign = document.getElementById('signin-email');

@@ -73,12 +73,12 @@ class InvitationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Invitation
         fields = [
-            'id', 'invitee_name', 'invitee_email', 'relationship',
+            'id', 'token', 'invitee_name', 'invitee_email', 'relationship',
             'vault', 'vault_name', 'owner_name', 'owner_email', 'status', 'note',
             'sent_at', 'expires_at', 'expiry_days',
             'accepted_at', 'declined_at', 'decline_reason',
         ]
-        read_only_fields = ['id', 'sent_at', 'accepted_at', 'declined_at']
+        read_only_fields = ['id', 'token', 'sent_at', 'accepted_at', 'declined_at']
 
 
 class InvitationCreateSerializer(serializers.Serializer):

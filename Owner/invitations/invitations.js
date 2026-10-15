@@ -453,6 +453,15 @@
         </div>` : ''
       }
 
+      <div style="background: rgba(244, 90, 31, 0.08); border: 1px solid rgba(244, 90, 31, 0.28); padding: 0.95rem; border-radius: var(--radius-md); margin-bottom: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem;">
+          <span style="font-size: 0.72rem; color: #F45A1F; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Trustee Invitation Code / ID</span>
+          <button type="button" onclick="navigator.clipboard.writeText('${item.id}'); window.AegisOwner?.showToast('Copied Invitation Code to clipboard!', 'success');" style="background: var(--brand-orange); color: #fff; border: none; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; cursor: pointer;">Copy Code</button>
+        </div>
+        <code style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: #fff; word-break: break-all; display: block; background: rgba(0,0,0,0.3); padding: 6px 8px; border-radius: 4px;">${item.id}</code>
+        <span style="font-size: 0.72rem; color: var(--text-muted); display: block; margin-top: 0.4rem;">The trustee must enter this exact code when signing up on the authentication portal.</span>
+      </div>
+
       <div style="font-size: 0.75rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle);">
         <span>Security Checksum: <code style="color: var(--brand-orange); font-family: monospace;">SHA256-${item.id.toUpperCase()}-77FA8B</code></span>
         <span>Status: <strong style="color: var(--text-primary); text-transform: capitalize;">${item.status}</strong></span>
@@ -501,9 +510,13 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         <span>View Details</span>
       </button>
-      <button class="dropdown-item" data-action="copy" style="width:100%; border:none; background:none; text-align:left; cursor:pointer;">
+      <button class="dropdown-item" data-action="copy-code" style="width:100%; border:none; background:none; text-align:left; cursor:pointer;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        <span>Copy Invite Token</span>
+        <span>Copy Invitation ID</span>
+      </button>
+      <button class="dropdown-item" data-action="copy-link" style="width:100%; border:none; background:none; text-align:left; cursor:pointer;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        <span>Copy Signup Link</span>
       </button>
       <button class="dropdown-item" data-action="resend" style="width:100%; border:none; background:none; text-align:left; cursor:pointer;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
@@ -527,7 +540,14 @@
       openDetailsModal(item.id);
     });
 
-    menu.querySelector('[data-action="copy"]').addEventListener('click', () => {
+    menu.querySelector('[data-action="copy-code"]').addEventListener('click', () => {
+      closeInviteContextMenu();
+      const code = item.id;
+      navigator.clipboard?.writeText(code);
+      window.AegisOwner?.showToast(`Copied Trustee Invitation ID (${code}) to clipboard!`, 'success');
+    });
+
+    menu.querySelector('[data-action="copy-link"]').addEventListener('click', () => {
       closeInviteContextMenu();
       const baseUrl = window.location.origin;
       const directLink = `${baseUrl}/auth.html?role=trustee&mode=signup&token=${item.token || item.id}&email=${encodeURIComponent(item.email)}`;

@@ -56,11 +56,68 @@ class RegisterSerializer(serializers.Serializer):
                     'admin_token': 'Invalid Admin Master Enrollment Key.'
                 })
 
+        # Trustee registration strictly requires an active, valid invitation from a Vault Owner
+        if role == 'trustee':
+            invite_code = attrs.get('invite_code', '').strip()
+            if not invite_code:
+                raise serializers.ValidationError({
+                    'invite_code': 'A valid Trustee Invitation Code or Invitation ID is required to register as a Trustee.'
+                })
+
+            email = attrs.get('email', '').strip().lower()
+            from trustees.models import Invitation
+            import uuid
+
+            # Search by token or invitation UUID
+            invitation = Invitation.objects.filter(token=invite_code).first()
+
+            if not invitation:
+                try:
+                    uuid_val = uuid.UUID(invite_code)
+                    invitation = Invitation.objects.filter(id=uuid_val).first()
+                except (ValueError, TypeError, AttributeError):
+                    pass
+
+            if not invitation:
+                raise serializers.ValidationError({
+                    'invite_code': 'Invalid Invitation Code. No active trustee invitation was found for this code or ID. You must receive an invitation from a Vault Owner to register.'
+                })
+
+            # Check invitation status
+            if invitation.status == Invitation.InvitationStatus.ACCEPTED:
+                raise serializers.ValidationError({
+                    'invite_code': 'This invitation code has already been used and accepted.'
+                })
+            elif invitation.status == Invitation.InvitationStatus.DECLINED:
+                raise serializers.ValidationError({
+                    'invite_code': 'This invitation was previously declined.'
+                })
+            elif invitation.status == Invitation.InvitationStatus.REVOKED:
+                raise serializers.ValidationError({
+                    'invite_code': 'This invitation has been revoked by the vault owner.'
+                })
+            elif invitation.is_expired:
+                invitation.status = Invitation.InvitationStatus.EXPIRED
+                invitation.save(update_fields=['status'])
+                raise serializers.ValidationError({
+                    'invite_code': 'This invitation has expired. Please request a renewed invitation from the vault owner.'
+                })
+
+            # Ensure registering email matches invited email
+            if invitation.invitee_email.strip().lower() != email:
+                raise serializers.ValidationError({
+                    'email': f"This invitation code was issued specifically to '{invitation.invitee_email}'. Please register using that email address."
+                })
+
+            attrs['_validated_invitation'] = invitation
+            self._validated_invitation = invitation
+
         return attrs
 
     def create(self, validated_data):
         vault_name = validated_data.pop('vault_name', None) or 'Primary Legacy Vault'
         invite_code = validated_data.pop('invite_code', None)
+        validated_invitation = validated_data.pop('_validated_invitation', None) or getattr(self, '_validated_invitation', None)
         validated_data.pop('admin_token', None)
 
         password = validated_data.pop('password')
@@ -93,8 +150,16 @@ class RegisterSerializer(serializers.Serializer):
                 TrusteeProfile.objects.filter(email__iexact=user.email, user__isnull=True).update(user=user)
 
                 invitations = []
-                if invite_code:
+                if validated_invitation:
+                    invitations.append(validated_invitation)
+                elif invite_code:
                     inv_by_code = Invitation.objects.filter(token=invite_code).first()
+                    if not inv_by_code:
+                        try:
+                            import uuid
+                            inv_by_code = Invitation.objects.filter(id=uuid.UUID(invite_code)).first()
+                        except Exception:
+                            pass
                     if inv_by_code:
                         invitations.append(inv_by_code)
 

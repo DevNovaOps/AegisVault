@@ -223,7 +223,13 @@
   }
 
   function redirectToAuth() {
-    window.location.href = '/AegisVault%20Home/auth.html';
+    if (window.location.pathname.endsWith('auth.html')) return; // Already on auth page
+    if (window.location.protocol === 'file:') {
+      const idx = window.location.href.lastIndexOf('/');
+      window.location.href = window.location.href.substring(0, idx + 1) + 'auth.html';
+    } else {
+      window.location.href = '/AegisVault%20Home/auth.html';
+    }
   }
 
   function requireAuth() {
@@ -235,15 +241,18 @@
   }
 
   function getRolePanelUrl(role) {
-    switch ((role || '').toLowerCase()) {
-      case 'admin':
-        return '/Admin/Dashboard/admin.html';
-      case 'trustee':
-        return '/Trustee/dashboard/dashboard.html';
-      case 'owner':
-      default:
-        return '/Owner/dashboard/dashboard.html';
+    const isFile = typeof window !== 'undefined' && window.location.protocol === 'file:';
+    const r = (role || '').toLowerCase();
+    let target = '/Owner/dashboard/dashboard.html';
+    if (r === 'admin') target = '/Admin/Dashboard/admin.html';
+    else if (r === 'trustee') target = '/Trustee/dashboard/dashboard.html';
+
+    if (isFile) {
+      // Replace AegisVault Home/auth.html or auth.html with target relative to AegisVault
+      const href = window.location.href;
+      return href.replace(/(AegisVault%20Home\/auth\.html|auth\.html).*$/, target.replace(/^\//, ''));
     }
+    return target;
   }
 
   function syncUserProfileUI() {
