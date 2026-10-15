@@ -339,6 +339,9 @@
   // --------------------------------------------------------------------------
   const HEARTBEAT_KEY = 'aegis_heartbeat_last_ping';
   const INTERVAL_KEY = 'aegis_heartbeat_interval_days';
+  const STATE_KEY = 'aegis_heartbeat_state';
+  const DEADLINE_KEY = 'aegis_heartbeat_deadline';
+  const GRACE_DEADLINE_KEY = 'aegis_heartbeat_grace_deadline';
 
   function playHeartbeatSound() {
     try {
@@ -419,11 +422,19 @@
       const now = Date.now();
       try {
         localStorage.setItem(HEARTBEAT_KEY, now);
+        localStorage.setItem(STATE_KEY, 'active');
+        localStorage.removeItem(GRACE_DEADLINE_KEY);
       } catch (e) {}
 
       // Sync with backend API
       if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-        window.AegisAPI.post('/owner/heartbeat/checkin/').catch(err => {
+        window.AegisAPI.post('/owner/heartbeat/checkin/').then(res => {
+          if (res && res.next_deadline) {
+            localStorage.setItem(DEADLINE_KEY, new Date(res.next_deadline).getTime());
+            localStorage.setItem(STATE_KEY, res.state || 'active');
+            window.AegisHeartbeat.updateUI();
+          }
+        }).catch(err => {
           console.warn('Heartbeat API sync failed:', err.message);
         });
       }
@@ -477,10 +488,22 @@
     updateUI: () => {
       const intervalDays = window.AegisHeartbeat.getIntervalDays();
       const lastPing = window.AegisHeartbeat.getLastPing();
-      const deadline = lastPing + (intervalDays * 24 * 60 * 60 * 1000);
-      const remainingMs = deadline - Date.now();
+      const state = localStorage.getItem(STATE_KEY) || 'active';
+      const isGrace = state === 'grace';
+      const storedDeadline = parseInt(localStorage.getItem(DEADLINE_KEY), 10);
+      const storedGraceDeadline = parseInt(localStorage.getItem(GRACE_DEADLINE_KEY), 10);
 
-      const isOverdue = remainingMs <= 0;
+      let targetTime;
+      if (isGrace && storedGraceDeadline && !isNaN(storedGraceDeadline)) {
+        targetTime = storedGraceDeadline;
+      } else if (storedDeadline && !isNaN(storedDeadline)) {
+        targetTime = storedDeadline;
+      } else {
+        targetTime = lastPing + (intervalDays * 24 * 60 * 60 * 1000);
+      }
+
+      const remainingMs = targetTime - Date.now();
+      const isOverdue = isGrace || remainingMs <= 0;
       const safeMs = Math.max(0, remainingMs);
 
       const days = Math.floor(safeMs / (24 * 60 * 60 * 1000));
@@ -504,10 +527,14 @@
       // 2. Update Topbar Widget
       const elTopbarTimer = document.getElementById('heartbeatTopbarTimer');
       if (elTopbarTimer) {
-        elTopbarTimer.textContent = isOverdue ? '00d 00h 00m' : `${days}d ${pad(hours)}h ${pad(mins)}m`;
-        if (isOverdue) {
+        if (isGrace) {
+          elTopbarTimer.textContent = `Grace: ${days}d ${pad(hours)}h ${pad(mins)}m`;
+          elTopbarTimer.style.color = '#f97316';
+        } else if (isOverdue) {
+          elTopbarTimer.textContent = '00d 00h 00m';
           elTopbarTimer.style.color = '#ef4444';
         } else {
+          elTopbarTimer.textContent = `${days}d ${pad(hours)}h ${pad(mins)}m`;
           elTopbarTimer.style.color = '';
         }
       }
@@ -515,9 +542,9 @@
       // 3. Update Status Badges
       const elBadge = document.getElementById('heartbeatStatusBadge');
       if (elBadge) {
-        if (isOverdue) {
+        if (isGrace || isOverdue) {
           elBadge.className = 'heartbeat-status-badge warning';
-          elBadge.innerHTML = '<span class="pulsing-dot"></span><span>GRACE PERIOD: ACTION REQUIRED</span>';
+          elBadge.innerHTML = '<span class="pulsing-dot" style="background:#f97316;"></span><span>GRACE PERIOD: ACTION REQUIRED</span>';
         } else {
           elBadge.className = 'heartbeat-status-badge active';
           elBadge.innerHTML = '<span class="pulsing-dot"></span><span>Dead Man\'s Switch: ACTIVE</span>';
@@ -561,6 +588,17 @@
             localStorage.setItem(INTERVAL_KEY, res.interval_days);
             if (res.last_checkin) {
               localStorage.setItem(HEARTBEAT_KEY, new Date(res.last_checkin).getTime());
+            }
+            if (res.state) {
+              localStorage.setItem(STATE_KEY, res.state);
+            }
+            if (res.next_deadline) {
+              localStorage.setItem(DEADLINE_KEY, new Date(res.next_deadline).getTime());
+            }
+            if (res.grace_deadline) {
+              localStorage.setItem(GRACE_DEADLINE_KEY, new Date(res.grace_deadline).getTime());
+            } else {
+              localStorage.removeItem(GRACE_DEADLINE_KEY);
             }
             // Sync grace period in the UI if present
             const graceSel = document.getElementById('selectGracePeriod');
