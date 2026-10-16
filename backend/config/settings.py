@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'audit.apps.AuditConfig',
     'dashboard.apps.DashboardConfig',
     'support.apps.SupportConfig',
-    'security.apps.SecurityConfig',
     'analytics.apps.AnalyticsConfig',
     'reports.apps.ReportsConfig',
     'system_health.apps.SystemHealthConfig',

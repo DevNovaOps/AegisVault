@@ -32,7 +32,6 @@ urlpatterns = [
     path('api/v1/admin/dashboard/', include('dashboard.urls_admin')),
     path('api/v1/admin/security/', include('audit.urls_admin')),
     path('api/v1/admin/', include('dashboard.urls_admin_management')),
-    path('api/v1/admin/security/', include('security.urls')),
     path('api/v1/admin/analytics/', include('analytics.urls')),
     path('api/v1/admin/reports/', include('reports.urls')),
     path('api/v1/admin/system-health/', include('system_health.urls')),

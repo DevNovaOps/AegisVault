@@ -841,7 +841,7 @@ stateDiagram-v2
 <details>
 <summary>
 
-### &nbsp; `14` &nbsp; 🛠️ &nbsp; Admin / Security Operations Module
+### &nbsp; `14` &nbsp; 🛠️ &nbsp; Admin / System Administration & Audit Module
 
 </summary>
 
