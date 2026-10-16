@@ -12,27 +12,38 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
     window.AegisAPI.get('/trustee/assigned-vaults/').then(data => {
       VAULT_ITEMS = (data || []).map(share => {
+        const statusLower = (share.status || 'pending').toLowerCase();
         let categories = ['all'];
-        if (share.status === 'active') categories.push('active');
-        if (share.status === 'pending') categories.push('pending_verification');
+        if (statusLower === 'active') {
+          categories.push('active');
+        } else if (statusLower === 'submitted') {
+          categories.push('active');
+          categories.push('release_in_progress');
+        } else if (statusLower === 'pending' || statusLower === 'pending_verification') {
+          categories.push('pending_verification');
+        }
+
+        const isVerified = statusLower === 'active' || statusLower === 'submitted';
+        const isSubmitted = statusLower === 'submitted';
+
         return {
-          id: share.vault || 'vault-' + Math.random(),
+          id: String(share.vault || share.id || 'vault-' + Math.random()),
           name: share.vault_name || 'Vault',
           owner: share.owner_name || 'Vault Owner',
           email: share.owner_email || 'Verified Owner',
           assignedOn: new Date(share.created_at || Date.now()).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
-          verificationStatus: share.status === 'active' ? 'Verified' : 'Pending',
-          verificationSub: '',
-          shareStatus: share.status === 'active' ? 'Active' : 'Pending',
-          shareDate: 'Active',
-          releaseStatus: 'No Release',
-          releaseSub: 'Not initiated',
-          tags: ['Assigned'],
+          verificationStatus: isVerified ? 'Verified' : 'Pending',
+          verificationSub: isVerified ? 'Cryptographically confirmed' : 'Requires verification',
+          shareStatus: isSubmitted ? 'Submitted' : (isVerified ? 'Active' : 'Pending'),
+          shareDate: isSubmitted ? 'Share Submitted' : (isVerified ? 'Active Custody' : 'Pending'),
+          releaseStatus: isSubmitted ? 'In Progress' : 'No Release',
+          releaseSub: isSubmitted ? 'Shard Deposited' : 'Not initiated',
+          tags: ['Assigned', isSubmitted ? 'Submitted' : (isVerified ? 'Active' : 'Pending')],
           categories: categories,
-          lockColor: share.status === 'active' ? 'blue' : 'amber',
-          requiresAction: share.status !== 'active',
+          lockColor: isVerified ? 'blue' : 'amber',
+          requiresAction: !isVerified,
           scheme: 'Shamir Secret Sharing (2-of-3)',
-          shareHash: share.id ? `sha256:${share.id.replace(/-/g, '')}` : 'Active Token',
+          shareHash: share.id ? `sha256:${String(share.id).replace(/-/g, '')}` : 'Active Token',
           description: share.vault_description || 'Secure personal legacy vault protected under AegisVault protocol.'
         };
       });
@@ -58,7 +69,7 @@ function updateSummaryMetrics() {
   const total = VAULT_ITEMS.length;
   const verified = VAULT_ITEMS.filter(v => v.verificationStatus === 'Verified').length;
   const pending = VAULT_ITEMS.filter(v => v.verificationStatus === 'Pending').length;
-  const submitted = VAULT_ITEMS.filter(v => v.shareStatus === 'Active' || v.shareStatus === 'Submitted').length;
+  const submitted = VAULT_ITEMS.filter(v => v.shareStatus === 'Submitted').length;
   const released = VAULT_ITEMS.filter(v => v.categories.includes('release_in_progress')).length;
 
   const elTotal = document.getElementById('sumTotalVaults');
@@ -200,7 +211,7 @@ function renderFilteredVaults() {
         </svg>
       `;
       
-      container.insertBefore(card, emptyBox);
+      container.appendChild(card);
     }
   });
 
@@ -237,7 +248,7 @@ function initVaultCardClicks() {
       }
 
       const vaultId = card.getAttribute('data-vault-id');
-      const vault = VAULT_ITEMS.find(v => v.id === vaultId);
+      const vault = VAULT_ITEMS.find(v => String(v.id) === String(vaultId));
       if (vault) {
         openVaultModal(vault);
       }
@@ -294,15 +305,19 @@ function initActionAlertButton() {
   if (!actionBtn) return;
 
   actionBtn.addEventListener('click', () => {
-    // Highlight Family Vault card
-    const familyCard = document.querySelector('[data-vault-id="vault-family"]');
-    if (familyCard) {
-      familyCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      familyCard.classList.add('highlight-pulse');
+    // Switch tab to pending verification
+    const pendingTab = document.querySelector('.vault-tab-btn[data-filter="pending_verification"]');
+    if (pendingTab) {
+      pendingTab.click();
+    }
+    const firstPendingCard = document.querySelector('.assigned-vault-card');
+    if (firstPendingCard) {
+      firstPendingCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      firstPendingCard.classList.add('highlight-pulse');
       setTimeout(() => {
-        familyCard.classList.remove('highlight-pulse');
+        firstPendingCard.classList.remove('highlight-pulse');
       }, 3000);
-      window.showToast('Family Vault requires identity verification and key share submission.');
+      window.showToast?.('Vault assignment pending your verification. Click the vault card to review.', 'info');
     }
   });
 }

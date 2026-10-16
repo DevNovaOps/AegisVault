@@ -42,7 +42,7 @@ class TrusteeDashboardView(APIView):
         ).count()
 
         active_shares = VaultShare.objects.filter(
-            trustee=user, status='active'
+            trustee=user, status__in=['active', 'submitted']
         ).count()
 
         pending_releases = ReleaseParticipant.objects.filter(
@@ -63,20 +63,22 @@ class TrusteeDashboardView(APIView):
 
         # Assigned Vaults for the dashboard
         shares = VaultShare.objects.filter(
-            trustee=user, status='active'
+            trustee=user, status__in=['active', 'submitted']
         ).select_related('vault', 'vault__owner')
-        assigned_vaults = [
-            {
+        assigned_vaults = []
+        for s in shares:
+            has_release = ReleaseRequest.objects.filter(
+                vault=s.vault, status__in=['pending', 'in_progress', 'authorized']
+            ).exists()
+            assigned_vaults.append({
                 'id': str(s.vault.id),
                 'name': s.vault.name,
                 'owner_name': s.vault.owner.name,
                 'owner_email': s.vault.owner.email,
                 'status': s.status,
                 'vault_type': s.vault.vault_type,
-                'release_status': 'No Release',
-            }
-            for s in shares
-        ]
+                'release_status': 'In Progress' if has_release else 'No Release',
+            })
 
         # Pending Actions
         pending_actions = []
