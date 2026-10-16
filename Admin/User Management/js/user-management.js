@@ -551,12 +551,9 @@ window.AegisUserManagement = {
                 </td>
                 <td style="color: var(--text-secondary); font-weight: 600;">${startIndex + i + 1}</td>
                 <td>
-                    <div class="user-avatar-cell">
-                        <div class="avatar-circle">${u.initials}</div>
-                        <div class="user-avatar-meta">
-                            <span class="user-cell-name">${u.name}</span>
-                            <span class="user-cell-id">${u.id}</span>
-                        </div>
+                    <div class="user-cell">
+                        <div class="user-avatar-pill ${roleClass}">${u.initials}</div>
+                        <span class="user-name-text">${u.name}</span>
                     </div>
                 </td>
                 <td style="color: var(--text-secondary);">${u.email}</td>

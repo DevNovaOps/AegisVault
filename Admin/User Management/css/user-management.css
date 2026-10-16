@@ -371,30 +371,49 @@ body.dark-theme .btn-apply-filter {
 }
 
 /* User Identity Cell */
-.user-cell {
+.user-cell,
+.user-avatar-cell {
     display: flex;
     align-items: center;
     gap: 0.65rem;
+    white-space: nowrap;
 }
 
-.user-avatar-pill {
-    width: 28px;
-    height: 28px;
+.user-avatar-pill,
+.avatar-circle {
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     background: var(--blue-bg);
     color: var(--blue);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 700;
     flex-shrink: 0;
     border: 1px solid var(--blue-border);
 }
 
-.user-name-text {
-    font-weight: 700;
+.user-avatar-pill.trustee,
+.avatar-circle.trustee {
+    background: var(--purple-bg);
+    color: var(--purple);
+    border-color: var(--purple-border);
+}
+
+.user-avatar-pill.owner,
+.avatar-circle.owner {
+    background: var(--blue-bg);
+    color: var(--blue);
+    border-color: var(--blue-border);
+}
+
+.user-name-text,
+.user-cell-name {
+    font-weight: 600;
     color: var(--text-heading);
+    white-space: nowrap;
 }
 
 /* Role Badges */
