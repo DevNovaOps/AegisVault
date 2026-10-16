@@ -86,6 +86,8 @@ class HeartbeatStatusView(APIView):
             'total_checkins': config.total_checkins,
             'missed_count': config.missed_count,
             'remaining_seconds': config.remaining_seconds,
+            'reminder_milestones': config.reminder_milestones,
+            'reminders_sent': config.reminders_sent or [],
             'recent_logs': [
                 {
                     'event_type': log.event_type,
@@ -139,4 +141,47 @@ class HeartbeatConfigView(APIView):
             'interval_days': config.interval_days,
             'grace_period_days': config.grace_period_days,
             'next_deadline': config.next_deadline.isoformat(),
+            'reminder_milestones': config.reminder_milestones,
+        })
+
+
+class HeartbeatTestReminderView(APIView):
+    """POST /api/v1/owner/heartbeat/test-reminder/ — Dispatch immediate test reminder email"""
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def post(self, request):
+        config, _ = HeartbeatConfig.objects.get_or_create(
+            owner=request.user,
+            defaults={
+                'interval_days': 30,
+                'grace_period_days': 7,
+            }
+        )
+
+        milestones_str = ", ".join(f"{m} days" for m in config.reminder_milestones)
+
+        notification = NotificationService.create(
+            user=request.user,
+            notification_type='heartbeat',
+            title='🧪 Test Heartbeat Reminder: Verification Successful',
+            description=(
+                f"This is a test notification for your Dead Man's Switch. "
+                f"Your interval is set to {config.interval_days} days. "
+                f"Automated email reminders will be sent {milestones_str} before your check-in deadline."
+            ),
+            related_object_type='heartbeat_config',
+            related_object_id=config.id,
+        )
+
+        HeartbeatLog.objects.create(
+            config=config,
+            event_type=HeartbeatLog.EventType.REMINDER,
+            details=f"Test reminder dispatched to {request.user.email} (Milestones: {milestones_str}).",
+        )
+
+        return Response({
+            'detail': f'Test reminder email dispatched to {request.user.email}',
+            'interval_days': config.interval_days,
+            'milestones': config.reminder_milestones,
+            'notification_id': str(notification.id) if notification else None,
         })

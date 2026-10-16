@@ -40,6 +40,9 @@ class HeartbeatConfig(models.Model):
     next_deadline = models.DateTimeField()
     grace_deadline = models.DateTimeField(null=True, blank=True)
 
+    # Automated reminder milestones tracking (prevents duplicate email dispatches)
+    reminders_sent = models.JSONField(default=list, blank=True)
+
     # History tracking
     total_checkins = models.PositiveIntegerField(default=0)
     missed_count = models.PositiveIntegerField(default=0)
@@ -58,6 +61,40 @@ class HeartbeatConfig(models.Model):
             self.next_deadline = timezone.now() + timedelta(days=self.interval_days)
         super().save(*args, **kwargs)
 
+    @property
+    def reminder_milestones(self):
+        """
+        Calculates the reminder milestones (days before deadline) based on interval_days.
+        - For 30 days (Monthly): [7, 5, 3, 1]
+        - For 14 days (Bi-weekly): [5, 3, 1]
+        - For 7 days (Weekly): [3, 2, 1]
+        - For 60 days (Bi-monthly): [14, 7, 5, 3, 1]
+        - For 90 days (Quarterly): [21, 14, 7, 3, 1]
+        - For 180 days (Half-Yearly): [30, 14, 7, 3, 1]
+        - For 365 days (Annual): [60, 30, 14, 7, 3, 1]
+        """
+        n = self.interval_days
+        if n >= 365:
+            return [60, 30, 14, 7, 3, 1]
+        elif n >= 180:
+            return [30, 14, 7, 3, 1]
+        elif n >= 90:
+            return [21, 14, 7, 3, 1]
+        elif n >= 60:
+            return [14, 7, 5, 3, 1]
+        elif n >= 25:
+            return [7, 5, 3, 1]
+        elif n >= 14:
+            return [5, 3, 1]
+        elif n >= 7:
+            return [3, 2, 1]
+        else:
+            milestones = []
+            if n > 2:
+                milestones.append(n // 2)
+            milestones.append(1)
+            return sorted(list(set(milestones)), reverse=True)
+
     def checkin(self):
         """Process an 'I'm Alive' check-in. Resets the dead man's switch."""
         now = timezone.now()
@@ -66,6 +103,7 @@ class HeartbeatConfig(models.Model):
         self.grace_deadline = None
         self.state = self.SwitchState.ACTIVE
         self.total_checkins += 1
+        self.reminders_sent = []  # Reset milestone tracker for new cycle
         self.save()
 
     def enter_grace_period(self):
@@ -75,6 +113,7 @@ class HeartbeatConfig(models.Model):
         self.state = self.SwitchState.GRACE
         self.grace_deadline = timezone.now() + timedelta(days=self.grace_period_days)
         self.missed_count += 1
+        self.reminders_sent = []  # Reset for grace period milestone tracking
         self.save()
         return True
 
@@ -106,6 +145,8 @@ class HeartbeatLog(models.Model):
         GRACE_EXPIRED = 'grace_expired', 'Grace Period Expired'
         TRIGGERED = 'triggered', 'Release Triggered'
         CONFIG_CHANGED = 'config_changed', 'Configuration Changed'
+        REMINDER = 'reminder', 'Reminder Sent'
+        GRACE_REMINDER = 'grace_reminder', 'Grace Reminder Sent'
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     config = models.ForeignKey(

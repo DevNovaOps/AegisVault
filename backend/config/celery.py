@@ -33,10 +33,10 @@ app.conf.beat_schedule = {
         'task': 'releases.tasks.process_pending_releases',
         'schedule': crontab(minute='*/30'),
     },
-    # Send heartbeat reminder notifications daily at 9 AM UTC
+    # Send heartbeat reminder notifications every 30 minutes
     'send-heartbeat-reminders': {
         'task': 'heartbeat.tasks.send_heartbeat_reminders',
-        'schedule': crontab(hour=9, minute=0),
+        'schedule': crontab(minute='*/30'),
     },
     # Cleanup old notification records weekly
     'cleanup-old-notifications': {

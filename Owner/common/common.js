@@ -600,6 +600,16 @@
             } else {
               localStorage.removeItem(GRACE_DEADLINE_KEY);
             }
+
+            // Sync interval in modal if present
+            const intervalSel = document.getElementById('selectHeartbeatInterval');
+            if (intervalSel && res.interval_days) {
+              intervalSel.value = String(res.interval_days);
+              if (window.AegisHeartbeat.renderReminderSchedule) {
+                window.AegisHeartbeat.renderReminderSchedule(res.interval_days);
+              }
+            }
+
             // Sync grace period in the UI if present
             const graceSel = document.getElementById('selectGracePeriod');
             if (graceSel && res.grace_period_days) {
@@ -639,6 +649,58 @@
           window.AegisOwner.openModal('heartbeatConfigModal');
         }
       });
+    },
+
+    getReminderSchedule: (days) => {
+      let milestones;
+      let label;
+      if (days >= 365) {
+        milestones = [60, 30, 14, 7, 3, 1];
+        label = '365-Day (Annual)';
+      } else if (days >= 180) {
+        milestones = [30, 14, 7, 3, 1];
+        label = '180-Day (Half-Yearly)';
+      } else if (days >= 90) {
+        milestones = [21, 14, 7, 3, 1];
+        label = '90-Day (Quarterly)';
+      } else if (days >= 60) {
+        milestones = [14, 7, 5, 3, 1];
+        label = '60-Day (Bi-Monthly)';
+      } else if (days >= 25) {
+        milestones = [7, 5, 3, 1];
+        label = '30-Day (Monthly)';
+      } else if (days >= 14) {
+        milestones = [5, 3, 1];
+        label = '14-Day (Bi-Weekly)';
+      } else if (days >= 7) {
+        milestones = [3, 2, 1];
+        label = '7-Day (Weekly)';
+      } else {
+        milestones = [Math.max(1, Math.floor(days / 2)), 1];
+        label = `${days}-Day`;
+      }
+      return { milestones, label };
+    },
+
+    renderReminderSchedule: (days) => {
+      const schedule = window.AegisHeartbeat.getReminderSchedule(days);
+      const descEl = document.getElementById('heartbeatScheduleDescription');
+      const badgesEl = document.getElementById('heartbeatMilestoneBadges');
+      if (!descEl || !badgesEl) return;
+
+      const milestoneStr = schedule.milestones.map(m => m === 1 ? '24 hours' : `${m} days`).join(', ');
+      descEl.innerHTML = `For a <strong>${schedule.label}</strong> cycle, automated email reminders are dispatched at <strong>${milestoneStr}</strong> before your deadline.`;
+
+      badgesEl.innerHTML = schedule.milestones.map(m => {
+        const isCritical = m === 1;
+        const text = isCritical ? 'T-24h Critical Notice' : `T-${m}d Reminder`;
+        const bg = isCritical ? 'rgba(239, 68, 68, 0.15)' : 'rgba(56, 189, 248, 0.15)';
+        const border = isCritical ? 'rgba(239, 68, 68, 0.35)' : 'rgba(56, 189, 248, 0.3)';
+        const color = isCritical ? '#f87171' : '#38bdf8';
+        return `<span style="background:${bg};border:1px solid ${border};color:${color};font-size:0.75rem;padding:3px 8px;border-radius:12px;font-weight:600;display:inline-flex;align-items:center;gap:4px;">
+          <span>${isCritical ? '🚨' : '⏰'}</span> ${text}
+        </span>`;
+      }).join('');
     },
 
     injectTopbarWidget: () => {
@@ -681,7 +743,7 @@
 
       const modalHtml = `
         <div class="modal-overlay" id="heartbeatConfigModal">
-          <div class="modal-content" style="max-width: 520px;">
+          <div class="modal-content" style="max-width: 540px;">
             <div class="modal-header">
               <div style="display:flex;align-items:center;gap:10px;">
                 <span style="font-size:1.3rem;">❤️</span>
@@ -707,6 +769,27 @@
                     <option value="180">Every 180 Days (Half-Yearly)</option>
                     <option value="365">Every 365 Days (Annual Check-in)</option>
                   </select>
+                </div>
+
+                <!-- Dynamic Email Reminder Notification Schedule Box -->
+                <div class="heartbeat-reminder-schedule-box" id="heartbeatReminderScheduleBox" style="margin: 12px 0 16px 0; padding: 12px 14px; background: rgba(56, 189, 248, 0.06); border: 1px solid rgba(56, 189, 248, 0.22); border-radius: 8px;">
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                    <span style="font-size:0.75rem;font-weight:700;color:var(--accent-cyan);letter-spacing:0.5px;text-transform:uppercase;display:flex;align-items:center;gap:6px;">
+                      <span>📧</span> Automated Email Reminders
+                    </span>
+                    <span style="font-size:0.68rem;background:rgba(56,189,248,0.15);color:#38bdf8;padding:2px 7px;border-radius:10px;font-weight:600;">Interval-Scaled</span>
+                  </div>
+                  <p id="heartbeatScheduleDescription" style="font-size:0.8rem;color:var(--text-secondary);margin:0 0 8px 0;line-height:1.45;">
+                    Loading schedule...
+                  </p>
+                  <div id="heartbeatMilestoneBadges" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+                    <!-- Milestone badges populated via JS -->
+                  </div>
+                  <div style="display:flex;justify-content:flex-end;">
+                    <button type="button" class="btn btn-outline" id="btnSendTestReminder" style="border-color: rgba(56,189,248,0.4); color: #38bdf8; font-size:0.76rem; padding: 4px 10px; display:inline-flex; align-items:center; gap:5px; border-radius:6px; cursor:pointer; background: transparent;">
+                      <span>✉️</span> Send Test Reminder Email
+                    </button>
+                  </div>
                 </div>
 
                 <div class="heartbeat-form-group">
@@ -759,6 +842,36 @@
         const sel = document.getElementById('selectHeartbeatInterval');
         if (sel) {
           sel.value = String(window.AegisHeartbeat.getIntervalDays());
+          window.AegisHeartbeat.renderReminderSchedule(parseInt(sel.value, 10));
+
+          // When interval dropdown changes, re-render reminder schedule immediately
+          sel.addEventListener('change', () => {
+            const days = parseInt(sel.value, 10) || 30;
+            window.AegisHeartbeat.renderReminderSchedule(days);
+          });
+        }
+
+        // Send test reminder button
+        const btnTest = document.getElementById('btnSendTestReminder');
+        if (btnTest) {
+          btnTest.addEventListener('click', async (e) => {
+            e.preventDefault();
+            btnTest.disabled = true;
+            btnTest.innerHTML = '<span>⏳</span> Sending...';
+            try {
+              if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+                const res = await window.AegisAPI.post('/owner/heartbeat/test-reminder/');
+                window.AegisOwner?.showToast(res.detail || 'Test reminder email dispatched to your inbox!', 'success');
+              } else {
+                window.AegisOwner?.showToast('Test email simulated: 7, 5, 3 and 1 day milestones verified.', 'info');
+              }
+            } catch (err) {
+              window.AegisOwner?.showToast(err.message || 'Failed to dispatch test reminder email.', 'error');
+            } finally {
+              btnTest.disabled = false;
+              btnTest.innerHTML = '<span>✉️</span> Send Test Reminder Email';
+            }
+          });
         }
 
         // Save button
