@@ -21,7 +21,6 @@ from audit.services import AuditService
 class RegisterView(APIView):
     """POST /api/v1/auth/register"""
     permission_classes = [AllowAny]
-    throttle_scope = 'login'
 
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
@@ -58,7 +57,6 @@ class RegisterView(APIView):
 class LoginView(APIView):
     """POST /api/v1/auth/login"""
     permission_classes = [AllowAny]
-    throttle_scope = 'login'
 
     def post(self, request):
         serializer = LoginSerializer(data=request.data)

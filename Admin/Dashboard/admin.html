@@ -795,7 +795,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn-secondary" data-close-modal>Close</button>
-                <button class="btn-primary" onclick="AegisInteractions.showToast('Firewall block rule deployed to Edge Gateway.', 'success'); AegisInteractions.closeModal('event-detail-modal');">Block IP</button>
+                <button class="btn-primary" data-close-modal onclick="if (window.AegisInteractions && window.AegisInteractions.showToast) { window.AegisInteractions.showToast('Security event audit acknowledged.', 'info'); } AegisInteractions.closeModal('event-detail-modal');">Acknowledge</button>
             </div>
         </div>
     </div>
