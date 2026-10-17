@@ -261,6 +261,10 @@
             gap: 10px;
         }
 
+        .role-cards-grid.signup-mode {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
         .role-card-item {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--auth-border);
@@ -807,8 +811,8 @@
                     <!-- Admin -->
                     <div class="role-card-item role-admin" id="card-role-admin" data-role="admin" role="radio" aria-checked="false" tabindex="0">
                         <div class="role-icon-circle" style="color: #C084FC; background: rgba(139, 92, 246, 0.15);">⚡</div>
-                        <span class="role-item-name">SecOps Admin</span>
-                        <span class="role-item-sub">Root Sentinel</span>
+                        <span class="role-item-name">Administrator</span>
+                        <span class="role-item-sub">System Admin</span>
                     </div>
                 </div>
             </div>
@@ -834,17 +838,7 @@
                     </div>
                 </div>
 
-                <!-- Admin Clearance Token -->
-                <div class="form-row-group" id="group-signin-admin" style="display: none;">
-                    <label for="signin-admin-token" class="form-row-label">SecOps Root Clearance Token</label>
-                    <div class="input-relative-wrap">
-                        <svg viewBox="0 0 24 24" class="input-icon-svg" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                        </svg>
-                        <input type="password" id="signin-admin-token" class="form-clean-input admin-focus" placeholder="AEGIS-ROOT-••••••••" value="AEGIS-ROOT-9092">
-                    </div>
-                </div>
+
 
                 <!-- Password with Toggle -->
                 <div class="form-row-group">
@@ -946,15 +940,7 @@
                     </span>
                 </div>
 
-                <div class="form-row-group" id="group-signup-admin" style="display: none;">
-                    <label for="signup-admin-token" class="form-row-label">Admin Master Enrollment Key</label>
-                    <div class="input-relative-wrap">
-                        <svg viewBox="0 0 24 24" class="input-icon-svg" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                        </svg>
-                        <input type="password" id="signup-admin-token" class="form-clean-input admin-focus" placeholder="ROOT-KEY-••••••••" value="ROOT-SEC-8821">
-                    </div>
-                </div>
+
 
                 <!-- Create Master Password with Strength Meter -->
                 <div class="form-row-group">
@@ -1016,9 +1002,9 @@
                         <span>🤝</span>
                         <span>Trustee (Rakesh)</span>
                     </button>
-                    <button type="button" class="persona-chip" id="btn-quick-admin" title="Authenticate as SecOps Admin">
+                    <button type="button" class="persona-chip" id="btn-quick-admin" title="Authenticate as Administrator">
                         <span>⚡</span>
-                        <span>Admin (Alice)</span>
+                        <span>Admin</span>
                     </button>
                 </div>
             </div>
@@ -1071,16 +1057,16 @@
                     demoUser: { name: 'Rakesh Patel', email: 'rakesh.patel@trustee-network.org', role: 'trustee' }
                 },
                 admin: {
-                    title: 'SecOps Administrator',
+                    title: 'Administrator',
                     targetPanel: '/Admin/Dashboard/admin.html',
                     targetLabel: 'Opens: Admin Command Center',
-                    notice: 'Authenticating as <strong>SecOps Administrator</strong>. Logging in will launch platform governance in the <strong>Admin Command Center</strong>.',
+                    notice: 'Authenticating as <strong>Administrator</strong>. Logging in will launch platform governance in the <strong>Admin Command Center</strong>.',
                     submitSignInText: 'Launch Admin Command Center',
-                    submitSignUpText: 'Enroll SecOps Root Officer',
+                    submitSignUpText: 'Admin Creation Restricted',
                     btnClass: 'admin-style',
                     indicatorColor: '#C084FC',
                     pulseColor: '#8B5CF6',
-                    demoUser: { name: 'Alice Vance', email: 'alice.vance@aegisvault-secops.io', role: 'admin' }
+                    demoUser: { name: 'Administrator', email: 'admin123@gmail.com', role: 'admin' }
                 }
             };
 
@@ -1097,10 +1083,8 @@
             const btnSigninText = document.getElementById('btn-signin-text');
             const btnSignupText = document.getElementById('btn-signup-text');
 
-            const groupSigninAdmin = document.getElementById('group-signin-admin');
             const groupSignupOwner = document.getElementById('group-signup-owner');
             const groupSignupTrustee = document.getElementById('group-signup-trustee');
-            const groupSignupAdmin = document.getElementById('group-signup-admin');
 
             // Theme Toggle
             const btnThemeToggle = document.getElementById('btn-theme-toggle');
@@ -1194,21 +1178,24 @@
                 btnSubmitSignIn.className = `btn-submit-master ${cfg.btnClass}`;
                 btnSubmitSignUp.className = `btn-submit-master ${cfg.btnClass}`;
 
-                if (groupSigninAdmin) groupSigninAdmin.style.display = role === 'admin' ? 'flex' : 'none';
-
                 if (groupSignupOwner) groupSignupOwner.style.display = role === 'owner' ? 'flex' : 'none';
                 if (groupSignupTrustee) groupSignupTrustee.style.display = role === 'trustee' ? 'flex' : 'none';
-                if (groupSignupAdmin) groupSignupAdmin.style.display = role === 'admin' ? 'flex' : 'none';
             }
 
             // Set Mode (Sign In vs Sign Up)
             function setMode(mode) {
                 activeMode = mode;
+                const roleGrid = document.querySelector('.role-cards-grid');
+                const cardAdmin = document.getElementById('card-role-admin');
+
                 if (mode === 'signin') {
                     tabSignIn.classList.add('active');
                     tabSignIn.setAttribute('aria-selected', 'true');
                     tabSignUp.classList.remove('active');
                     tabSignUp.setAttribute('aria-selected', 'false');
+
+                    if (cardAdmin) cardAdmin.style.display = '';
+                    if (roleGrid) roleGrid.classList.remove('signup-mode');
 
                     formSignIn.style.display = 'flex';
                     formSignUp.style.display = 'none';
@@ -1217,6 +1204,13 @@
                     tabSignUp.setAttribute('aria-selected', 'true');
                     tabSignIn.classList.remove('active');
                     tabSignIn.setAttribute('aria-selected', 'false');
+
+                    if (cardAdmin) cardAdmin.style.display = 'none';
+                    if (roleGrid) roleGrid.classList.add('signup-mode');
+
+                    if (activeRole === 'admin') {
+                        setRole('owner');
+                    }
 
                     formSignUp.style.display = 'flex';
                     formSignIn.style.display = 'none';
@@ -1317,14 +1311,9 @@
                 btnSubmitSignIn.classList.add('loading');
                 btnSubmitSignIn.disabled = true;
 
-                const extras = {};
-                if (activeRole === 'admin') {
-                    extras.clearance_token = document.getElementById('signin-admin-token')?.value || 'AEGIS-ROOT-9092';
-                }
-
                 try {
                     if (window.AegisAPI) {
-                        const data = await window.AegisAPI.login(email, pwd, activeRole, extras);
+                        const data = await window.AegisAPI.login(email, pwd, activeRole);
                         completeAuthentication(data.user, data.tokens);
                         return;
                     } else {
@@ -1350,6 +1339,11 @@
                     return;
                 }
 
+                if (activeRole === 'admin') {
+                    showToast('Administrator accounts cannot be created publicly. Administrators must be provisioned via Django superuser management.', 'error');
+                    return;
+                }
+
                 btnSubmitSignUp.classList.add('loading');
                 btnSubmitSignUp.disabled = true;
 
@@ -1367,8 +1361,6 @@
                         return;
                     }
                     payload.invite_code = inviteCode;
-                } else if (activeRole === 'admin') {
-                    payload.admin_token = document.getElementById('signup-admin-token')?.value || 'ROOT-SEC-8821';
                 }
 
                 try {
@@ -1433,10 +1425,10 @@
             document.getElementById('btn-quick-admin')?.addEventListener('click', async () => {
                 setRole('admin');
                 document.getElementById('signin-email').value = roleConfig.admin.demoUser.email;
-                document.getElementById('signin-password').value = 'DemoPass123!';
+                document.getElementById('signin-password').value = 'Admin@123';
                 try {
                     if (window.AegisAPI) {
-                        const data = await window.AegisAPI.login(roleConfig.admin.demoUser.email, 'DemoPass123!', 'admin');
+                        const data = await window.AegisAPI.login(roleConfig.admin.demoUser.email, 'Admin@123', 'admin');
                         completeAuthentication(data.user, data.tokens);
                         return;
                     }
@@ -1456,6 +1448,9 @@
             }
             if (paramMode === 'signup' || paramMode === 'signin') {
                 activeMode = paramMode;
+            }
+            if (activeMode === 'signup' && activeRole === 'admin') {
+                activeRole = 'owner';
             }
             if (paramToken) {
                 activeRole = 'trustee';

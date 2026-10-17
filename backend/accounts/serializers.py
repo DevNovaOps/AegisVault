@@ -47,14 +47,11 @@ class RegisterSerializer(serializers.Serializer):
     def validate(self, attrs):
         role = attrs.get('role', 'owner')
 
-        # Admin registration requires valid enrollment key
+        # Admin accounts cannot be created via public registration
         if role == 'admin':
-            token = attrs.get('admin_token', '').strip()
-            expected = getattr(settings, 'AEGIS_ADMIN_ENROLLMENT_KEY', 'ROOT-SEC-8821')
-            if not token or token != expected:
-                raise serializers.ValidationError({
-                    'admin_token': 'Invalid Admin Master Enrollment Key.'
-                })
+            raise serializers.ValidationError({
+                'role': 'Administrator accounts cannot be created publicly. Administrators must be provisioned via Django superuser management.'
+            })
 
         # Trustee registration strictly requires an active, valid invitation from a Vault Owner
         if role == 'trustee':
@@ -237,15 +234,6 @@ class LoginSerializer(serializers.Serializer):
         elif role and user.role != role:
             role = user.role
             attrs['role'] = user.role
-
-        # Admin clearance token check (superusers bypassed)
-        if role == 'admin' and not user.is_superuser:
-            clearance = attrs.get('clearance_token', '').strip()
-            expected = getattr(settings, 'AEGIS_ADMIN_CLEARANCE_TOKEN', 'AEGIS-ROOT-9092')
-            if expected and clearance and clearance != expected:
-                raise serializers.ValidationError({
-                    'clearance_token': 'Invalid SecOps Root Clearance Token.'
-                })
 
         attrs['user'] = user
         return attrs

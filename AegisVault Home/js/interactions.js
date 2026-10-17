@@ -245,14 +245,14 @@
                 demoUser: { name: 'Rakesh Patel', email: 'rakesh.patel@trustee-network.org', role: 'trustee' }
             },
             admin: {
-                title: 'SecOps Administrator',
+                title: 'Administrator',
                 targetPanel: '../Admin/Dashboard/admin.html',
                 targetLabel: 'Opens: Admin Command Center',
                 signinSubmitText: 'Launch Admin Command Center',
-                signupSubmitText: 'Enroll SecOps Root Officer',
-                signinSubtitle: 'Platform administration, threat telemetry & zero-knowledge auditing.',
-                signupSubtitle: 'Enroll administrative security officer with cryptographic hardware attestation.',
-                demoUser: { name: 'Alice Vance', email: 'alice.vance@aegisvault-secops.io', role: 'admin' }
+                signupSubmitText: 'Admin Creation Restricted',
+                signinSubtitle: 'Platform administration & system governance.',
+                signupSubtitle: 'Administrator accounts must be provisioned via Django superuser management.',
+                demoUser: { name: 'Admin', email: 'admin123@gmail.com', role: 'admin' }
             }
         };
 
@@ -290,18 +290,18 @@
             if (signinBtnText) signinBtnText.textContent = cfg.signinSubmitText;
             if (signupBtnText) signupBtnText.textContent = cfg.signupSubmitText;
 
-            // Dynamic field visibility
+            // Dynamic field visibility (only trustee requires invite token)
             const signinExtra = document.getElementById('modal-signin-extra-group');
             const signupExtra = document.getElementById('modal-signup-extra-group');
             if (signinExtra) {
-                signinExtra.style.display = role !== 'owner' ? 'flex' : 'none';
+                signinExtra.style.display = role === 'trustee' ? 'flex' : 'none';
                 const label = document.getElementById('modal-signin-extra-label');
-                if (label) label.textContent = role === 'trustee' ? 'Assigned Vault ID / Invite Token' : 'SecOps Root Clearance Token';
+                if (label) label.textContent = 'Assigned Vault ID / Invite Token';
             }
             if (signupExtra) {
-                signupExtra.style.display = role !== 'owner' ? 'flex' : 'none';
+                signupExtra.style.display = role === 'trustee' ? 'flex' : 'none';
                 const label = document.getElementById('modal-signup-extra-label');
-                if (label) label.textContent = role === 'trustee' ? 'Designated Vault Invitation Code' : 'Admin Master Enrollment Key';
+                if (label) label.textContent = 'Designated Vault Invitation Code';
             }
         }
 
@@ -327,14 +327,10 @@
 
                 const email = emailInput.value.trim();
                 const pwd = pwdInput.value;
-                const extras = {};
-                if (modalActiveRole === 'admin') {
-                    extras.clearance_token = document.getElementById('signin-extra-field')?.value || document.getElementById('modal-signin-extra')?.value || 'AEGIS-ROOT-9092';
-                }
 
                 try {
                     if (window.AegisAPI) {
-                        const data = await window.AegisAPI.login(email, pwd, modalActiveRole, extras);
+                        const data = await window.AegisAPI.login(email, pwd, modalActiveRole);
                         const user = data.user;
                         const role = user.role || modalActiveRole;
                         const targetUrl = window.AegisAPI.getRolePanelUrl(role);
@@ -382,6 +378,11 @@
         if (formGetStarted) {
             formGetStarted.addEventListener('submit', async (e) => {
                 e.preventDefault();
+                if (modalActiveRole === 'admin') {
+                    showToast('Administrator accounts cannot be created publicly. Administrators must be provisioned via Django superuser management.', 'error');
+                    return;
+                }
+
                 const nameInput = document.getElementById('signup-name');
                 const emailInput = document.getElementById('signup-email');
                 const pwdInput = document.getElementById('signup-password');
@@ -403,8 +404,11 @@
                     password: pwdInput.value,
                     role: modalActiveRole
                 };
-                if (modalActiveRole === 'admin') {
-                    payload.admin_token = document.getElementById('signup-extra-field')?.value || document.getElementById('modal-signup-extra')?.value || 'ROOT-SEC-8821';
+                if (modalActiveRole === 'trustee') {
+                    const extraInput = document.getElementById('signup-extra-field') || document.getElementById('modal-signup-extra');
+                    if (extraInput && extraInput.value.trim()) {
+                        payload.invite_code = extraInput.value.trim();
+                    }
                 }
 
                 try {

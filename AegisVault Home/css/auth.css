@@ -245,6 +245,10 @@
             gap: 10px;
         }
 
+        .role-cards-grid.signup-mode {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
         .role-card-item {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--auth-border);
