@@ -273,8 +273,9 @@
       if (user.email) el.textContent = user.email;
     });
 
+    const heroHeading = document.querySelector('.hero-heading');
     const heroAccent = document.querySelector('.hero-heading .hero-accent');
-    if (heroAccent) {
+    if (heroAccent && heroHeading && /welcome/i.test(heroHeading.textContent)) {
       heroAccent.textContent = firstName + '!';
     }
 

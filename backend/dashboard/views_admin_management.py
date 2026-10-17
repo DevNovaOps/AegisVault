@@ -15,7 +15,6 @@ from vaults.models import Vault, VaultShare
 from trustees.models import TrusteeProfile, Invitation
 from audit.services import AuditService
 
-
 # ─── User Management ─────────────────────────────────────────────────────────
 
 class AdminUserListView(APIView):

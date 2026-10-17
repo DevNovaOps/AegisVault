@@ -154,7 +154,7 @@ function renderAuditTable(activities) {
         </div>
       </td>
       <td>
-        <div class="activity-user-cell">
+        <div class="activity-user-cell" title="${escapeHtml(act.user)}${act.email ? ' (' + escapeHtml(act.email) + ')' : ''}">
           <div class="activity-user-avatar">${escapeHtml(act.user.substring(0, 2).toUpperCase())}</div>
           <div class="activity-user-info">
             <span class="activity-user-name">${escapeHtml(act.user)}</span>
@@ -163,18 +163,18 @@ function renderAuditTable(activities) {
         </div>
       </td>
       <td>
-        <div class="activity-action-cell">
+        <div class="activity-action-cell" title="${escapeHtml(act.actionTitle)}">
           <span class="activity-action-icon ${iconData.cls}">${iconData.icon}</span>
           <span class="activity-action-title">${escapeHtml(act.actionTitle)}</span>
         </div>
       </td>
-      <td><span class="activity-details-text">${escapeHtml(act.details)}</span></td>
+      <td><span class="activity-details-text" title="${escapeHtml(act.details)}">${escapeHtml(act.details)}</span></td>
       <td>${act.vault === '—' || act.vault === 'General' ? '<span class="empty-dash">—</span>' : `<span class="vault-tag">${escapeHtml(act.vault)}</span>`}</td>
       <td><span class="ip-mono">${escapeHtml(act.ip)}</span></td>
       <td>
-        <span class="device-cell">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-          <span>Web Client</span>
+        <span class="device-cell" title="Web Client">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <span>Web</span>
         </span>
       </td>
       <td>
@@ -182,9 +182,9 @@ function renderAuditTable(activities) {
           ${isFailed ? '✗ Failed' : '✓ Success'}
         </span>
       </td>
-      <td>
-        <button class="btn-row-action" onclick="openAuditRecord('${escapeHtml(act.id)}', '${escapeHtml(act.actionTitle)}', '${escapeHtml(act.user)}', '${escapeHtml(act.date)} ${escapeHtml(act.time)}', '${escapeHtml(act.vault)}', '${escapeHtml(act.ip)}', 'Web Client', '${escapeHtml(act.details)}')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+      <td style="text-align: right;">
+        <button class="btn-row-action" title="View audit entry details" onclick="openAuditRecord('${escapeHtml(act.id)}', '${escapeHtml(act.actionTitle)}', '${escapeHtml(act.user)}', '${escapeHtml(act.date)} ${escapeHtml(act.time)}', '${escapeHtml(act.vault)}', '${escapeHtml(act.ip)}', 'Web Client', '${escapeHtml(act.details)}')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/><circle cx="5" cy="12" r="1.5"/></svg>
         </button>
       </td>
     `;
