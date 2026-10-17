@@ -42,7 +42,7 @@ window.AegisUserManagement = {
                     joinedOn: u.joined || 'Recent',
                     lastLogin: u.last_login ? new Date(u.last_login).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Never',
                     vaults: u.vault_count || 0,
-                    trustees: 0,
+                    trustees: u.trustee_count || 0,
                     mfaEnabled: !!u.is_2fa_enabled,
                     recentActivity: [],
                     securityDetails: {
@@ -608,6 +608,20 @@ window.AegisUserManagement = {
         setVal('meta-val-vaults', user.vaults);
         setVal('meta-val-trustees', user.trustees);
 
+        // Fetch full user details if not already loaded (vaults and trustees list)
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated() && !user.detailLoaded) {
+            window.AegisAPI.get(`/admin/users/${id}/`).then(detail => {
+                user.detailLoaded = true;
+                if (detail.vault_count !== undefined) user.vaults = detail.vault_count;
+                if (detail.trustee_count !== undefined) user.trustees = detail.trustee_count;
+                user.vaultsList = detail.vaults || [];
+                user.trusteesList = detail.trustees || [];
+                setVal('meta-val-vaults', user.vaults);
+                setVal('meta-val-trustees', user.trustees);
+                this.renderVaultsTab(user);
+            }).catch(e => console.warn('Failed to load user detail:', e));
+        }
+
         // Render Recent Activity Stream
         this.renderRecentActivity(user);
 
@@ -689,21 +703,57 @@ window.AegisUserManagement = {
         const container = document.getElementById('tab-panel-vaults');
         if (!container) return;
 
-        if (!user.vaultsList || user.vaultsList.length === 0) {
-            container.innerHTML = `<p style="color: var(--text-muted); font-size: 0.78rem; text-align: center; padding: 1rem 0;">No active vaults created yet.</p>`;
-            return;
+        let html = '';
+
+        // Section 1: Active Vaults
+        const vaults = user.vaultsList || [];
+        html += `<div style="font-size: 0.76rem; font-weight: 700; color: var(--text-heading); margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+            <span>Active Vaults (${vaults.length})</span>
+        </div>`;
+
+        if (vaults.length === 0) {
+            html += `<p style="color: var(--text-muted); font-size: 0.75rem; text-align: center; padding: 0.75rem 0; background: var(--bg-card-subtle); border: 1px dashed var(--border-color); border-radius: 6px; margin-bottom: 1rem;">No active vaults created yet.</p>`;
+        } else {
+            html += vaults.map(v => `
+                <div style="background: var(--bg-card-subtle); border: 1px solid var(--border-color); border-radius: 6px; padding: 0.65rem; font-size: 0.78rem; margin-bottom: 0.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 700; color: var(--text-heading);">${v.name}</span>
+                        <span style="font-size: 0.68rem; padding: 0.15rem 0.45rem; border-radius: 4px; background: rgba(16, 185, 129, 0.12); color: var(--emerald); font-weight: 600;">${v.status}</span>
+                    </div>
+                    <div style="font-size: 0.72rem; color: var(--text-secondary); margin: 0.2rem 0;">Type: ${v.type} • Trigger: ${v.trigger}</div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--brand-orange); font-weight: 600;">
+                        <span>Quorum: ${v.required_shares} of ${v.total_shares}</span>
+                        <span>${v.storage_used || '0 B'}</span>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        container.innerHTML = user.vaultsList.map(v => `
-            <div style="background: var(--bg-card-subtle); border: 1px solid var(--border-color); border-radius: 6px; padding: 0.65rem; font-size: 0.78rem;">
-                <div style="font-weight: 700; color: var(--text-heading);">${v.name}</div>
-                <div style="font-size: 0.72rem; color: var(--text-secondary); margin: 0.15rem 0;">${v.type}</div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--brand-orange); font-weight: 600;">
-                    <span>${v.status}</span>
-                    <span>${v.trigger}</span>
+        // Section 2: Designated Trustees
+        const trustees = user.trusteesList || [];
+        html += `<div style="font-size: 0.76rem; font-weight: 700; color: var(--text-heading); margin-top: 1rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+            <span>Designated Trustees (${trustees.length})</span>
+        </div>`;
+
+        if (trustees.length === 0) {
+            html += `<p style="color: var(--text-muted); font-size: 0.75rem; text-align: center; padding: 0.75rem 0; background: var(--bg-card-subtle); border: 1px dashed var(--border-color); border-radius: 6px;">No designated trustees assigned.</p>`;
+        } else {
+            html += trustees.map(t => `
+                <div style="background: var(--bg-card-subtle); border: 1px solid var(--border-color); border-radius: 6px; padding: 0.65rem; font-size: 0.78rem; margin-bottom: 0.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 700; color: var(--text-heading);">${t.name}</span>
+                        <span style="font-size: 0.68rem; padding: 0.15rem 0.45rem; border-radius: 4px; background: rgba(59, 130, 246, 0.12); color: #3B82F6; font-weight: 600;">${t.relationship || 'Trustee'}</span>
+                    </div>
+                    <div style="font-size: 0.72rem; color: var(--text-secondary); margin: 0.15rem 0;">${t.email}</div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-muted); margin-top: 0.35rem;">
+                        <span>Vaults: ${(t.vaults || []).join(', ') || 'All'}</span>
+                        <span style="color: ${t.status === 'Active' ? 'var(--emerald)' : 'var(--coral)'}; font-weight: 600;">${t.verification_status || t.status}</span>
+                    </div>
                 </div>
-            </div>
-        `).join('');
+            `).join('');
+        }
+
+        container.innerHTML = html;
     },
 
     /* =========================================================================

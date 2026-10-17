@@ -55,10 +55,13 @@ function renderReleaseTable() {
     if (statusLower.includes('review') || statusLower.includes('progress')) {
       badgeClass = 'in-review';
       badgeIcon = '<circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>';
-    } else if (statusLower.includes('approved') || statusLower.includes('released')) {
+    } else if (statusLower.includes('approved') || statusLower.includes('authorized')) {
       badgeClass = 'approved';
       badgeIcon = '<circle cx="12" cy="12" r="10"/><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>';
-    } else if (statusLower.includes('denied') || statusLower.includes('fail')) {
+    } else if (statusLower.includes('released')) {
+      badgeClass = 'approved';
+      badgeIcon = '<circle cx="12" cy="12" r="10"/><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>';
+    } else if (statusLower.includes('denied') || statusLower.includes('fail') || statusLower.includes('cancel')) {
       badgeClass = 'denied';
       badgeIcon = '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>';
     }
@@ -286,8 +289,8 @@ function updateMetricCounts() {
   rows.forEach(row => {
     const status = (row.getAttribute('data-status') || '').toLowerCase();
     if (status === 'pending') pending++;
-    else if (status === 'in review') inReview++;
-    else if (status === 'approved') approved++;
+    else if (status === 'in review' || status === 'in_progress' || status === 'in progress') inReview++;
+    else if (status === 'approved' || status === 'authorized') approved++;
     else if (status === 'released') released++;
   });
 

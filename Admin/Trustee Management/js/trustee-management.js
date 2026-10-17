@@ -180,6 +180,9 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
                     status: t.status || (t.is_active ? 'Verified' : 'Rejected'),
                     linkedVaultsCount: t.vaults_assigned || (t.linked_vaults ? t.linked_vaults.length : 0),
                     linkedVaults: t.linked_vaults || [],
+                    ownerName: t.owner_name || '',
+                    ownerEmail: t.owner_email || '',
+                    relationship: t.relationship || '',
                     notes: t.notes || 'Designated custody trustee linked to zero-knowledge vaults.',
                     addedOn: t.joined || 'Recent',
                     initials: (t.name || t.email || 'TR').split(' ').map(n=>n[0]).join('').substring(0, 2).toUpperCase(),
@@ -288,7 +291,10 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
                         <td>
                             <div class="trustee-name-cell">
                                 <div class="initials-avatar" style="background-color: ${t.avatarColor};">${t.initials}</div>
-                                <span class="trustee-fullname">${t.name}</span>
+                                <div>
+                                    <span class="trustee-fullname">${t.name}</span>
+                                    ${t.ownerName ? `<div style="font-size: 0.68rem; color: var(--text-muted);">Owner: ${t.ownerName} (${t.relationship || 'Trustee'})</div>` : ''}
+                                </div>
                             </div>
                         </td>
                         <td style="color: var(--text-secondary); font-family: var(--font-mono); font-size: 0.74rem;">${t.email}</td>
@@ -1093,6 +1099,7 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
                             <div>
                                 <h4 style="font-size: 1.1rem; font-weight: 700; color: var(--text-heading);">${t.name}</h4>
                                 <div style="font-size: 0.74rem; color: var(--text-muted); font-family: var(--font-mono);">${t.id} &bull; ${t.email}</div>
+                                ${t.ownerName ? `<div style="font-size: 0.74rem; color: var(--brand-orange); font-weight: 600; margin-top: 2px;">Designated by: ${t.ownerName} (${t.relationship || 'Trustee'})</div>` : ''}
                             </div>
                         </div>
 

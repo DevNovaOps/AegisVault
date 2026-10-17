@@ -39,6 +39,13 @@ class AdminUserListView(APIView):
 
         data = []
         for u in users.order_by('-date_joined')[:100]:
+            trustee_count = 0
+            if u.role == 'owner':
+                profile_trustees = set(TrusteeProfile.objects.filter(owner=u).values_list('email', flat=True))
+                share_trustees = set(VaultShare.objects.filter(vault__owner=u).values_list('trustee__email', flat=True))
+                invitation_trustees = set(Invitation.objects.filter(owner=u).values_list('invitee_email', flat=True))
+                trustee_count = len(profile_trustees | share_trustees | invitation_trustees)
+
             data.append({
                 'id': str(u.id),
                 'name': u.name,
@@ -49,6 +56,7 @@ class AdminUserListView(APIView):
                 'joined': u.date_joined.strftime('%d %b %Y'),
                 'last_login': u.last_login.isoformat() if u.last_login else None,
                 'vault_count': u.vaults.count() if u.role == 'owner' else 0,
+                'trustee_count': trustee_count,
                 'is_2fa_enabled': u.is_2fa_enabled,
             })
 
@@ -96,6 +104,63 @@ class AdminUserDetailView(APIView):
 
     def get(self, request, pk):
         user = get_object_or_404(User, pk=pk)
+        vaults_list = []
+        trustees_list = []
+        trustee_count = 0
+
+        if user.role == 'owner':
+            for v in user.vaults.all():
+                vaults_list.append({
+                    'id': str(v.id),
+                    'name': v.name,
+                    'type': v.vault_type.title() if v.vault_type else 'Personal',
+                    'status': v.status.title() if v.status else 'Active',
+                    'trigger': getattr(v, 'trigger_type', 'Heartbeat DMS'),
+                    'required_shares': v.required_shares,
+                    'total_shares': v.total_shares,
+                    'storage_used': v.storage_used_display,
+                })
+
+            t_profiles = TrusteeProfile.objects.filter(owner=user).select_related('user')
+            seen_emails = set()
+            for tp in t_profiles:
+                email_lower = tp.email.lower()
+                seen_emails.add(email_lower)
+                tp_vaults = []
+                if tp.user:
+                    tp_vaults = list(VaultShare.objects.filter(vault__owner=user, trustee=tp.user).values_list('vault__name', flat=True))
+                if not tp_vaults:
+                    tp_vaults = list(Invitation.objects.filter(owner=user, invitee_email__iexact=tp.email).values_list('vault__name', flat=True))
+                trustees_list.append({
+                    'id': str(tp.id),
+                    'name': tp.name or (tp.user.name if tp.user else tp.email.split('@')[0]),
+                    'email': tp.email,
+                    'phone': tp.phone or (tp.user.phone if tp.user else ''),
+                    'relationship': tp.relationship or 'Designated',
+                    'status': tp.status or 'Active',
+                    'verification_status': tp.verification_status or 'Verified',
+                    'vaults': tp_vaults or ['All Vaults'],
+                    'date_added': tp.date_added.strftime('%d %b %Y') if tp.date_added else 'Recent',
+                })
+
+            for share in VaultShare.objects.filter(vault__owner=user).select_related('trustee', 'vault'):
+                t_user = share.trustee
+                if t_user and t_user.email.lower() not in seen_emails:
+                    seen_emails.add(t_user.email.lower())
+                    trustees_list.append({
+                        'id': str(share.id),
+                        'name': t_user.name or t_user.email.split('@')[0],
+                        'email': t_user.email,
+                        'phone': getattr(t_user, 'phone', ''),
+                        'relationship': 'Designated Trustee',
+                        'status': 'Active' if t_user.is_active else 'Suspended',
+                        'verification_status': 'Verified' if t_user.is_active else 'Pending',
+                        'vaults': [share.vault.name] if share.vault else [],
+                        'date_added': share.created_at.strftime('%d %b %Y') if hasattr(share, 'created_at') and share.created_at else 'Recent',
+                    })
+
+            trustee_count = len(trustees_list)
+
         return Response({
             'id': str(user.id),
             'name': user.name,
@@ -106,7 +171,10 @@ class AdminUserDetailView(APIView):
             'is_2fa_enabled': user.is_2fa_enabled,
             'date_joined': user.date_joined.isoformat(),
             'last_login': user.last_login.isoformat() if user.last_login else None,
-            'vault_count': user.vaults.count() if user.role == 'owner' else 0,
+            'vault_count': len(vaults_list),
+            'vaults': vaults_list,
+            'trustee_count': trustee_count,
+            'trustees': trustees_list,
         })
 
     def put(self, request, pk):
@@ -415,11 +483,23 @@ class AdminTrusteeListView(APIView):
 
         data = []
         for t in trustees.order_by('-date_joined')[:100]:
-            shares = VaultShare.objects.filter(trustee=t).select_related('vault')
+            shares = VaultShare.objects.filter(trustee=t).select_related('vault', 'vault__owner')
             linked_vaults = [s.vault.name for s in shares if s.vault]
             profile = getattr(t, 'trustee_profile', None)
+            if not profile:
+                profile = TrusteeProfile.objects.filter(email__iexact=t.email).first()
             phone = profile.phone if profile else getattr(t, 'phone', '') or '+1 (555) 234-8901'
             trustee_type = 'Primary' if len(linked_vaults) > 0 else 'Designated'
+
+            owner_name = profile.owner.name if profile and profile.owner else ''
+            owner_email = profile.owner.email if profile and profile.owner else ''
+            if not owner_name:
+                first_share = shares.first()
+                if first_share and first_share.vault and first_share.vault.owner:
+                    owner_name = first_share.vault.owner.name
+                    owner_email = first_share.vault.owner.email
+
+            relationship = profile.relationship if profile else 'Designated Trustee'
 
             data.append({
                 'id': str(t.id),
@@ -432,7 +512,10 @@ class AdminTrusteeListView(APIView):
                 'joined': t.date_joined.strftime('%d %b %Y'),
                 'vaults_assigned': len(linked_vaults),
                 'linked_vaults': linked_vaults,
-                'notes': f'Designated custody trustee linked to {len(linked_vaults)} active vault(s).',
+                'owner_name': owner_name,
+                'owner_email': owner_email,
+                'relationship': relationship,
+                'notes': f'Designated custody trustee linked to {len(linked_vaults)} active vault(s).' + (f' Designated by {owner_name}.' if owner_name else ''),
                 'documentsVerified': True,
                 'is_2fa_enabled': t.is_2fa_enabled,
             })
@@ -500,9 +583,19 @@ class AdminTrusteeDetailView(APIView):
 
     def get(self, request, pk):
         trustee = get_object_or_404(User.objects.filter(role='trustee'), pk=pk)
-        shares = VaultShare.objects.filter(trustee=trustee).select_related('vault')
+        shares = VaultShare.objects.filter(trustee=trustee).select_related('vault', 'vault__owner')
         linked_vaults = [s.vault.name for s in shares if s.vault]
         profile = getattr(trustee, 'trustee_profile', None)
+        if not profile:
+            profile = TrusteeProfile.objects.filter(email__iexact=trustee.email).first()
+
+        owner_name = profile.owner.name if profile and profile.owner else ''
+        owner_email = profile.owner.email if profile and profile.owner else ''
+        if not owner_name:
+            first_share = shares.first()
+            if first_share and first_share.vault and first_share.vault.owner:
+                owner_name = first_share.vault.owner.name
+                owner_email = first_share.vault.owner.email
 
         return Response({
             'id': str(trustee.id),
@@ -514,7 +607,10 @@ class AdminTrusteeDetailView(APIView):
             'joined': trustee.date_joined.strftime('%d %b %Y'),
             'vaults_assigned': len(linked_vaults),
             'linked_vaults': linked_vaults,
-            'notes': f'Designated custody trustee linked to {len(linked_vaults)} active vault(s).',
+            'owner_name': owner_name,
+            'owner_email': owner_email,
+            'relationship': profile.relationship if profile else 'Designated Trustee',
+            'notes': f'Designated custody trustee linked to {len(linked_vaults)} active vault(s).' + (f' Designated by {owner_name}.' if owner_name else ''),
             'documentsVerified': True,
             'is_2fa_enabled': trustee.is_2fa_enabled,
         })

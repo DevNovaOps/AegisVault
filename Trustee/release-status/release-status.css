@@ -15,9 +15,9 @@
   background-size: cover;
   background-position: center right;
   background-repeat: no-repeat;
-  height: 230px;
   min-height: 230px;
-  max-height: 230px;
+  height: auto;
+  max-height: none;
   box-sizing: border-box;
   display: flex;
   align-items: center;

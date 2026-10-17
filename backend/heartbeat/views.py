@@ -45,6 +45,32 @@ class HeartbeatCheckinView(APIView):
             ip_address=self._get_ip(request),
         )
 
+        # Notify participants of any releases cancelled by this checkin
+        from releases.models import ReleaseRequest
+        cancelled_releases = ReleaseRequest.objects.filter(
+            owner=request.user,
+            cancelled_at=config.last_checkin
+        )
+        for cr in cancelled_releases:
+            AuditService.log(
+                user=request.user,
+                action_key='release_cancelled_checkin',
+                action_title='Release Cancelled (Owner Checked In)',
+                details=f'Release "{cr.title}" for vault "{cr.vault.name}" was aborted because owner proved life via check-in.',
+                category='release',
+                vault_name=cr.vault.name,
+                ip_address=self._get_ip(request),
+            )
+            for part in cr.participants.select_related('trustee'):
+                NotificationService.create(
+                    user=part.trustee,
+                    notification_type='release',
+                    title=f'Release Cancelled: {cr.vault.name}',
+                    description=f'The pending release for "{cr.vault.name}" was cancelled because the owner checked in.',
+                    vault_name=cr.vault.name,
+                )
+
+
         return Response({
             'detail': 'Check-in successful. Dead Man\'s Switch reset.',
             'last_checkin': config.last_checkin.isoformat(),

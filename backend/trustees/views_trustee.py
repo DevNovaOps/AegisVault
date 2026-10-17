@@ -450,9 +450,14 @@ class TrusteeReleasesView(APIView):
     permission_classes = [IsAuthenticated, IsTrustee]
 
     def get(self, request):
+        include_cancelled = request.query_params.get('include_cancelled', 'false').lower() == 'true'
         participations = ReleaseParticipant.objects.filter(
             trustee=request.user
         ).select_related('release', 'release__vault')
+
+        if not include_cancelled:
+            participations = participations.exclude(release__status='cancelled')
+
 
         data = []
         for p in participations:

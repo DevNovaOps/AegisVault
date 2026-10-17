@@ -96,7 +96,7 @@ class HeartbeatConfig(models.Model):
             return sorted(list(set(milestones)), reverse=True)
 
     def checkin(self):
-        """Process an 'I'm Alive' check-in. Resets the dead man's switch."""
+        """Process an 'I'm Alive' check-in. Resets the dead man's switch and cancels any active release requests."""
         now = timezone.now()
         self.last_checkin = now
         self.next_deadline = now + timedelta(days=self.interval_days)
@@ -105,6 +105,20 @@ class HeartbeatConfig(models.Model):
         self.total_checkins += 1
         self.reminders_sent = []  # Reset milestone tracker for new cycle
         self.save()
+
+        # Abort / Cancel any active release requests for this owner (proof of life received)
+        from releases.models import ReleaseRequest
+        active_releases = ReleaseRequest.objects.filter(
+            owner=self.owner,
+            status__in=['pending', 'in_progress', 'scheduled', 'authorized']
+        )
+        for rel in active_releases:
+            rel.status = ReleaseRequest.ReleaseStatus.CANCELLED
+            rel.cancelled_at = now
+            note_msg = "Auto-cancelled: Owner checked in (Dead Man's Switch reset / Proof of life received)."
+            rel.note = f"{rel.note} | {note_msg}".strip(" |")
+            rel.save()
+
 
     def enter_grace_period(self):
         """Transition to grace period after missed heartbeat."""
