@@ -105,18 +105,12 @@ class TrusteeDashboardView(APIView):
             for log in recent_logs
         ]
 
-        # Unread notifications count
-        unread_notifications = Notification.objects.filter(
-            user=user, status='unread'
-        ).count()
-
         return Response({
             'pending_invitations': pending_invitations,
             'active_shares': active_shares,
             'pending_releases': pending_releases,
             'completed_releases': completed_releases,
             'recent_activity': recent_activity,
-            'unread_notifications': unread_notifications,
             'assigned_vaults': assigned_vaults,
             'pending_actions': pending_actions,
         })
@@ -295,62 +289,6 @@ class TrusteeAuditLogView(APIView):
         ]
         return Response(data)
 
-
-# ═══════════════════════════════════════════════════════════════════════════════
-#  NOTIFICATIONS (Trustee-facing)
-# ═══════════════════════════════════════════════════════════════════════════════
-
-class TrusteeNotificationListView(APIView):
-    """GET /api/v1/trustee/notifications/"""
-    permission_classes = [IsAuthenticated, IsTrustee]
-
-    def get(self, request):
-        notifications = Notification.objects.filter(
-            user=request.user
-        ).order_by('-created_at')[:50]
-
-        type_filter = request.query_params.get('type')
-        if type_filter and type_filter != 'all':
-            notifications = notifications.filter(notification_type=type_filter)
-
-        return Response([
-            {
-                'id': str(n.id),
-                'type': n.notification_type,
-                'title': n.title,
-                'description': n.description,
-                'vault_name': n.vault_name,
-                'status': n.status,
-                'created_at': n.created_at.isoformat(),
-                'date': n.created_at.strftime('%d %b %Y'),
-                'time': n.created_at.strftime('%I:%M %p'),
-            }
-            for n in notifications
-        ])
-
-
-class TrusteeNotificationMarkReadView(APIView):
-    """POST /api/v1/trustee/notifications/{id}/mark-read/"""
-    permission_classes = [IsAuthenticated, IsTrustee]
-
-    def post(self, request, pk):
-        notification = get_object_or_404(
-            Notification, pk=pk, user=request.user
-        )
-        notification.status = 'read'
-        notification.save(update_fields=['status'])
-        return Response({'detail': 'Notification marked as read.'})
-
-
-class TrusteeNotificationMarkAllReadView(APIView):
-    """POST /api/v1/trustee/notifications/mark-all-read/"""
-    permission_classes = [IsAuthenticated, IsTrustee]
-
-    def post(self, request):
-        updated = Notification.objects.filter(
-            user=request.user, status='unread'
-        ).update(status='read')
-        return Response({'detail': f'Marked {updated} notifications as read.'})
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -535,88 +473,3 @@ class TrusteeReleasesView(APIView):
         return Response(data)
 
 
-class TrusteeShareSubmitView(APIView):
-    """POST /api/v1/trustee/shares/{id}/submit — Submit share for release"""
-    permission_classes = [IsAuthenticated, IsTrustee]
-
-    def post(self, request, pk):
-        # 1. Check if pk is a ReleaseParticipant id directly
-        participant = ReleaseParticipant.objects.filter(
-            pk=pk, trustee=request.user
-        ).first()
-
-        # 2. If not, check if pk is a VaultShare id or a Vault id
-        if not participant:
-            vshare = VaultShare.objects.filter(
-                pk=pk, trustee=request.user
-            ).select_related('vault', 'vault__owner').first()
-
-            if not vshare:
-                vshare = VaultShare.objects.filter(
-                    vault_id=pk, trustee=request.user
-                ).select_related('vault', 'vault__owner').first()
-
-            if vshare:
-                # Find or create a ReleaseRequest for this vault
-                release = ReleaseRequest.objects.filter(
-                    vault=vshare.vault, status__in=['pending', 'in_progress', 'scheduled']
-                ).first()
-
-                if not release:
-                    release = ReleaseRequest.objects.create(
-                        vault=vshare.vault,
-                        owner=vshare.vault.owner,
-                        title=f'Release Quorum for {vshare.vault.name}',
-                        trigger_type='Trustee Consensus',
-                        status='in_progress',
-                        required_shares=vshare.vault.required_shares or 2,
-                        total_shares=vshare.vault.total_shares or 3,
-                    )
-
-                participant, _ = ReleaseParticipant.objects.get_or_create(
-                    release=release,
-                    trustee=request.user,
-                    defaults={'status': 'pending'}
-                )
-
-        if not participant:
-            return Response(
-                {'detail': 'Release participant or assigned vault not found.'},
-                status=status.HTTP_404_NOT_FOUND
-            )
-
-        participant.status = 'submitted'
-        participant.submitted_at = timezone.now()
-        participant.save()
-
-        # Update VaultShare if exists
-        VaultShare.objects.filter(
-            vault=participant.release.vault, trustee=request.user
-        ).update(status='submitted')
-
-        # Recalculate collected shares on release
-        release = participant.release
-        release.collected_shares = ReleaseParticipant.objects.filter(
-            release=release, status='submitted'
-        ).count()
-        release.save(update_fields=['collected_shares'])
-
-        # Check K-of-N threshold
-        release.check_threshold()
-
-        AuditService.log(
-            user=request.user,
-            action_key='share_submitted',
-            action_title='Share Submitted for Release',
-            details=f'{request.user.name} submitted cryptographic shard for "{release.vault.name}"',
-            category='release',
-            vault_name=release.vault.name,
-        )
-
-        return Response({
-            'detail': 'Share submitted successfully.',
-            'release_status': release.status,
-            'collected': release.collected_shares,
-            'required': release.required_shares,
-            'vault_name': release.vault.name,
-        })

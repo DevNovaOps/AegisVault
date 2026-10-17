@@ -35,19 +35,8 @@ function fetchTrusteeDashboardData() {
         elActions.textContent = actionCount;
       }
 
-      const elShares = document.getElementById('kpiSharesSubmitted');
-      if (elShares) elShares.textContent = data.active_shares || 0;
-
       const elRelease = document.getElementById('kpiActiveRelease');
       if (elRelease) elRelease.textContent = data.pending_releases || 0;
-
-      // Update sidebar notification badge
-      const sidebarNotifBadge = document.getElementById('sidebarNotifBadge');
-      if (sidebarNotifBadge) {
-        const unread = data.unread_notifications || 0;
-        sidebarNotifBadge.textContent = unread;
-        sidebarNotifBadge.style.display = unread > 0 ? 'inline-flex' : 'none';
-      }
 
       // Update sidebar invitation badge
       const sidebarInvBadge = document.getElementById('sidebarInvBadge');
@@ -155,13 +144,6 @@ function populatePendingActions(actions) {
 
     let boxClass = 'coral';
     let iconSvg = '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="m22 7-10 7L2 7"/>';
-    if (act.type === 'verification') {
-      boxClass = 'orange';
-      iconSvg = '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>';
-    } else if (act.type === 'share') {
-      boxClass = 'green';
-      iconSvg = '<circle cx="7.5" cy="15.5" r="4.5"/><path d="m21 3-9.5 9.5M15.5 8.5l3 3M18 6l2 2"/>';
-    }
 
     item.innerHTML = `
       <div class="action-icon-box ${boxClass}">
@@ -305,10 +287,6 @@ function initActionClicks() {
 
       if (title.includes('Invitation')) {
         window.location.href = '../invitations/invitations.html';
-      } else if (title.includes('Verification')) {
-        window.location.href = '../trustee-verification/trustee-verification.html';
-      } else if (title.includes('Share')) {
-        window.location.href = '../share-submission/share-submission.html';
       } else {
         window.showToast(`Selected action: ${title}`);
       }
@@ -352,8 +330,6 @@ function initMetricClicks() {
         window.location.href = '../invitations/invitations.html';
       } else if (label.includes('Pending Actions')) {
         window.showToast(`You have ${val} pending trustee actions requiring attention.`);
-      } else if (label.includes('Shares Submitted')) {
-        window.location.href = '../share-submission/share-submission.html';
       } else if (label.includes('Active Release')) {
         window.location.href = '../release-status/release-status.html';
       }

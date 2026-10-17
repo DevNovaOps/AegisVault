@@ -68,32 +68,6 @@ function fetchSidebarBadgeCounts() {
       sidebarInvBadge.textContent = pending;
       sidebarInvBadge.style.display = pending > 0 ? 'inline-flex' : 'none';
     }
-
-    const sidebarNotifBadge = document.getElementById('sidebarNotifBadge');
-    if (sidebarNotifBadge) {
-      const unread = data.unread_notifications || 0;
-      sidebarNotifBadge.textContent = unread;
-      sidebarNotifBadge.style.display = unread > 0 ? 'inline-flex' : 'none';
-    }
-
-    // Dynamic header notification dropdown
-    const notificationDropdown = document.getElementById('notificationDropdown');
-    if (notificationDropdown) {
-      const unreadCount = data.unread_notifications || 0;
-      let html = `<div class="dropdown-header">Recent Alerts (${unreadCount})</div>`;
-      if (data.pending_actions && data.pending_actions.length > 0) {
-        data.pending_actions.slice(0, 3).forEach(act => {
-          html += `<a href="${act.link || '../notifications/notifications.html'}" class="dropdown-item">${act.title}</a>`;
-        });
-      } else {
-        html += `<div class="dropdown-item" style="color:var(--text-muted); cursor:default;">No new notifications</div>`;
-      }
-      html += `<div class="dropdown-divider"></div><a href="../notifications/notifications.html" class="dropdown-item" style="color:var(--brand-orange); font-weight:600;">View all notifications &rarr;</a>`;
-      notificationDropdown.innerHTML = html;
-
-      const dot = document.querySelector('.notification-badge-dot');
-      if (dot) dot.style.display = unreadCount > 0 ? 'block' : 'none';
-    }
   }).catch(() => {
     // Silent — don't block page load for badge counts
   });
@@ -139,25 +113,13 @@ function initMobileSidebar() {
   overlay.addEventListener('click', closeSidebar);
 }
 
-// Dropdowns (Notifications & Profile)
+// Dropdowns (Profile)
 function initDropdowns() {
-  const notificationBtn = document.getElementById('notificationBtn');
-  const notificationDropdown = document.getElementById('notificationDropdown');
   const profileBtn = document.getElementById('profileBtn');
   const profileDropdown = document.getElementById('profileDropdown');
 
   function closeAllDropdowns() {
-    if (notificationDropdown) notificationDropdown.classList.remove('show');
     if (profileDropdown) profileDropdown.classList.remove('show');
-  }
-
-  if (notificationBtn && notificationDropdown) {
-    notificationBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isShown = notificationDropdown.classList.contains('show');
-      closeAllDropdowns();
-      if (!isShown) notificationDropdown.classList.add('show');
-    });
   }
 
   if (profileBtn && profileDropdown) {

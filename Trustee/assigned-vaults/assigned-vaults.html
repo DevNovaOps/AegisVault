@@ -76,29 +76,7 @@
           <span class="nav-badge" id="sidebarInvBadge" style="display:none">0</span>
         </a>
 
-        <!-- 4. Trustee Verification -->
-        <a href="../trustee-verification/trustee-verification.html" class="nav-item" id="navVerification">
-          <span class="nav-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              <path d="m9 12 2 2 4-4"/>
-            </svg>
-          </span>
-          <span class="nav-label">Trustee Verification</span>
-        </a>
-
-        <!-- 5. Share Submission -->
-        <a href="../share-submission/share-submission.html" class="nav-item" id="navShareSubmission">
-          <span class="nav-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <circle cx="7.5" cy="15.5" r="4.5"/>
-              <path d="m21 3-9.5 9.5M15.5 8.5l3 3M18 6l2 2"/>
-            </svg>
-          </span>
-          <span class="nav-label">Share Submission</span>
-        </a>
-
-        <!-- 6. Release Status -->
+        <!-- 4. Release Status -->
         <a href="../release-status/release-status.html" class="nav-item" id="navReleaseStatus">
           <span class="nav-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -110,19 +88,7 @@
           <span class="nav-label">Release Status</span>
         </a>
 
-        <!-- 7. Notifications -->
-        <a href="../notifications/notifications.html" class="nav-item" id="navNotifications">
-          <span class="nav-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-            </svg>
-          </span>
-          <span class="nav-label">Notifications</span>
-          <span class="nav-badge" id="sidebarNotifBadge" style="display:none">0</span>
-        </a>
-
-        <!-- 8. Activity & History -->
+        <!-- 5. Activity & History -->
         <a href="../activity-history/activity-history.html" class="nav-item" id="navActivityHistory">
           <span class="nav-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -136,7 +102,7 @@
           <span class="nav-label">Activity & History</span>
         </a>
 
-        <!-- 9. Profile & Security -->
+        <!-- 6. Profile & Security -->
         <a href="../profile-security/profile-security.html" class="nav-item" id="navProfileSecurity">
           <span class="nav-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -145,18 +111,6 @@
             </svg>
           </span>
           <span class="nav-label">Profile & Security</span>
-        </a>
-
-        <!-- 10. Help & Support -->
-        <a href="../help-support/help-support.html" class="nav-item" id="navHelpSupport">
-          <span class="nav-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <circle cx="12" cy="12" r="10"/>
-              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-              <line x1="12" y1="17" x2="12.01" y2="17"/>
-            </svg>
-          </span>
-          <span class="nav-label">Help & Support</span>
         </a>
       </nav>
       <!-- Sidebar Scenic Quote (Natural footer on full scenic background) -->
@@ -213,23 +167,6 @@
             </span>
           </button>
 
-          <!-- Notifications Dropdown Trigger -->
-          <div class="notification-btn-wrapper">
-            <button class="notification-btn" id="notificationBtn" aria-label="Notifications" title="Notifications">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-              </svg>
-              <span class="notification-badge-dot"></span>
-            </button>
-            <div class="dropdown-panel" id="notificationDropdown">
-              <div class="dropdown-header">Recent Alerts (0)</div>
-              <div class="dropdown-item" style="color:var(--text-muted); cursor:default;">No new notifications</div>
-              <div class="dropdown-divider"></div>
-              <a href="../notifications/notifications.html" class="dropdown-item" style="color:var(--brand-orange); font-weight:600;">View all notifications &rarr;</a>
-            </div>
-          </div>
-
           <!-- Profile Chip Menu -->
           <div class="profile-menu-wrapper">
             <button class="profile-chip" id="profileBtn" aria-label="User Profile Menu">
@@ -242,8 +179,6 @@
             <div class="dropdown-panel" id="profileDropdown">
               <div class="dropdown-header">Trustee Account</div>
               <a href="../profile-security/profile-security.html" class="dropdown-item">Profile & Security</a>
-              <a href="../trustee-verification/trustee-verification.html" class="dropdown-item">Verification Status</a>
-              <a href="../help-support/help-support.html" class="dropdown-item">Help & Support</a>
               <div class="dropdown-divider"></div>
               <a href="javascript:void(0)" class="dropdown-item" onclick="signOutTrustee()">Sign Out</a>
             </div>
@@ -518,7 +453,6 @@
         <div class="footer-links">
           <a href="javascript:void(0)" onclick="showToast('Privacy Policy.')">Privacy</a>
           <a href="javascript:void(0)" onclick="showToast('Terms of Service.')">Terms</a>
-          <a href="../help-support/help-support.html">Help</a>
         </div>
       </footer>
     </div>
@@ -585,8 +519,6 @@
 
       <div class="modal-footer">
         <button class="modal-close-btn" data-modal-close style="padding: 0.55rem 1.15rem; width: auto; font-size: 0.86rem;">Close</button>
-        <button id="modalBtnVerify" style="background-color: var(--accent-amber); color: #000; padding: 0.55rem 1.25rem; border-radius: var(--radius-md); font-weight: 700; font-size: 0.86rem; display: none;">Complete Verification</button>
-        <button id="modalBtnSubmitShare" style="background-color: var(--brand-orange); color: #fff; padding: 0.55rem 1.25rem; border-radius: var(--radius-md); font-weight: 700; font-size: 0.86rem; display: none;">Submit Share Now</button>
       </div>
     </div>
   </div>

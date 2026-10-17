@@ -38,7 +38,6 @@ urlpatterns = [
 
     # Trustee panel APIs
     path('api/v1/trustee/', include('trustees.urls_trustee')),
-    path('api/v1/trustee/support/', include('support.urls')),
 
     # Web routes (Landing, Auth, Portals)
     path('', include('web.urls')),

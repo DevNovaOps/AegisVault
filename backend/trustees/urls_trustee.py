@@ -8,12 +8,9 @@ from .views_trustee import (
     TrusteeDashboardView, TrusteeInvitationsView,
     TrusteeAcceptInvitationView, TrusteeDeclineInvitationView,
     TrusteeAssignedVaultsView, TrusteeReleasesView,
-    TrusteeShareSubmitView,
     TrusteeProfileView, TrusteeProfileUpdateView,
     TrusteeChangePasswordView, TrusteeToggle2FAView,
     TrusteeAuditLogView,
-    TrusteeNotificationListView, TrusteeNotificationMarkReadView,
-    TrusteeNotificationMarkAllReadView,
 )
 
 urlpatterns = [
@@ -29,11 +26,6 @@ urlpatterns = [
     # Audit Logs
     path('audit/logs/', TrusteeAuditLogView.as_view(), name='trustee-audit-logs'),
 
-    # Notifications
-    path('notifications/', TrusteeNotificationListView.as_view(), name='trustee-notifications'),
-    path('notifications/mark-all-read/', TrusteeNotificationMarkAllReadView.as_view(), name='trustee-mark-all-read'),
-    path('notifications/<uuid:pk>/mark-read/', TrusteeNotificationMarkReadView.as_view(), name='trustee-mark-read'),
-
     # Invitations
     path('invitations/', TrusteeInvitationsView.as_view(), name='trustee-invitations'),
     path('invitations/<uuid:pk>/accept/', TrusteeAcceptInvitationView.as_view(), name='trustee-accept'),
@@ -44,5 +36,4 @@ urlpatterns = [
 
     # Releases
     path('releases/', TrusteeReleasesView.as_view(), name='trustee-releases'),
-    path('shares/<uuid:pk>/submit/', TrusteeShareSubmitView.as_view(), name='trustee-share-submit'),
 ]

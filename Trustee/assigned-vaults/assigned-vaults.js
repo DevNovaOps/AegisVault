@@ -279,23 +279,6 @@ function openVaultModal(vault) {
   releaseBadge.className = `status-badge ${vault.releaseStatus === 'No Release' ? 'no-release' : 'in-progress'}`;
   releaseBadge.innerHTML = `<span class="badge-dot"></span>${vault.releaseStatus}`;
 
-  // Action button routing inside modal
-  const btnShare = document.getElementById('modalBtnSubmitShare');
-  if (btnShare) {
-    btnShare.style.display = vault.shareStatus === 'Not Submitted' ? 'inline-flex' : 'none';
-    btnShare.onclick = () => {
-      window.location.href = '../share-submission/share-submission.html';
-    };
-  }
-
-  const btnVerify = document.getElementById('modalBtnVerify');
-  if (btnVerify) {
-    btnVerify.style.display = vault.verificationStatus === 'Pending' ? 'inline-flex' : 'none';
-    btnVerify.onclick = () => {
-      window.location.href = '../trustee-verification/trustee-verification.html';
-    };
-  }
-
   window.openModal('vaultDetailModal');
 }
 
