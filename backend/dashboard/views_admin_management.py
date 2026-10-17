@@ -166,6 +166,11 @@ class AdminUserSuspendView(APIView):
 
     def post(self, request, pk):
         user = get_object_or_404(User, pk=pk)
+        if user == request.user:
+            return Response(
+                {'detail': 'You cannot suspend your own administrative account.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         user.is_active = False
         user.save(update_fields=['is_active'])
 
@@ -177,7 +182,11 @@ class AdminUserSuspendView(APIView):
             category='admin',
         )
 
-        return Response({'detail': f'User {user.email} has been suspended.'})
+        return Response({
+            'detail': f'User {user.email} has been suspended.',
+            'status': 'Suspended',
+            'is_active': False
+        })
 
 
 class AdminUserActivateView(APIView):
@@ -197,7 +206,11 @@ class AdminUserActivateView(APIView):
             category='admin',
         )
 
-        return Response({'detail': f'User {user.email} has been activated.'})
+        return Response({
+            'detail': f'User {user.email} has been activated.',
+            'status': 'Active',
+            'is_active': True
+        })
 
 
 # ─── Vault Management ────────────────────────────────────────────────────────

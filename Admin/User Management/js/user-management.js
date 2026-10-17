@@ -136,121 +136,43 @@ window.AegisUserManagement = {
             });
         }
 
-        // Edit User Modal
-        const btnEdit = document.getElementById('btn-action-edit');
-        const modalEdit = document.getElementById('modal-edit-user');
-        const formEdit = document.getElementById('form-edit-user');
-
-        if (btnEdit && modalEdit) {
-            btnEdit.addEventListener('click', () => {
-                const user = this.users.find(u => u.id === this.selectedUserId);
-                if (!user) return;
-
-                const inputName = document.getElementById('edit-user-name');
-                const inputEmail = document.getElementById('edit-user-email');
-                const selectRole = document.getElementById('edit-user-role');
-                const selectStatus = document.getElementById('edit-user-status');
-
-                if (inputName) inputName.value = user.name;
-                if (inputEmail) inputEmail.value = user.email;
-                if (selectRole) selectRole.value = user.role;
-                if (selectStatus) selectStatus.value = user.status;
-
-                modalEdit.classList.add('active');
-            });
-        }
-
-        if (formEdit) {
-            formEdit.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const user = this.users.find(u => u.id === this.selectedUserId);
-                if (!user) return;
-
-                const newName = document.getElementById('edit-user-name')?.value.trim() || user.name;
-                const newEmail = document.getElementById('edit-user-email')?.value.trim() || user.email;
-                const newRole = document.getElementById('edit-user-role')?.value || user.role;
-                const newStatus = document.getElementById('edit-user-status')?.value || user.status;
-
-                if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-                    window.AegisAPI.put(`/admin/users/${user.id}/`, {
-                        name: newName,
-                        email: newEmail,
-                        role: newRole.toLowerCase(),
-                        status: newStatus
-                    }).then(() => {
-                        user.name = newName;
-                        user.email = newEmail;
-                        user.role = newRole;
-                        user.status = newStatus;
-                        user.initials = newName.split(' ').map(n=>n[0]).join('').substring(0, 2).toUpperCase();
-
-                        this.renderTable();
-                        this.selectUser(user.id);
-                        modalEdit.classList.remove('active');
-                        this.showToast(`Updated user details for ${user.name}`, 'success');
-                    }).catch(err => {
-                        this.showToast(err.message || 'Failed to update user', 'error');
-                    });
-                }
-            });
-        }
-
-        // Reset Password Action
-        const btnResetPwd = document.getElementById('btn-action-reset-pwd');
-        if (btnResetPwd) {
-            btnResetPwd.addEventListener('click', () => {
-                const user = this.users.find(u => u.id === this.selectedUserId);
-                if (!user) return;
-                this.showToast(`Cryptographic reset credentials dispatched to ${user.email}`, 'info');
-            });
-        }
-
-        // Suspend User Action
+        // Suspend / Reactivate User Action
         const btnSuspend = document.getElementById('btn-action-suspend');
         if (btnSuspend) {
-            btnSuspend.addEventListener('click', () => {
+            btnSuspend.addEventListener('click', async () => {
                 const user = this.users.find(u => u.id === this.selectedUserId);
-                if (!user) return;
+                if (!user) {
+                    this.showToast('No user selected', 'warning');
+                    return;
+                }
 
-                const willSuspend = user.status === 'Active';
+                if (window.AegisAdminCommon && !localStorage.getItem('aegis_access_token')) {
+                    await AegisAdminCommon.ensureAdminToken();
+                }
+
+                const isActive = (user.status || '').toLowerCase() === 'active';
+                const willSuspend = isActive;
                 const endpoint = willSuspend ? `/admin/users/${user.id}/suspend/` : `/admin/users/${user.id}/activate/`;
 
-                if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-                    window.AegisAPI.post(endpoint, {}).then(() => {
-                        user.status = willSuspend ? 'Suspended' : 'Active';
-                        this.showToast(`${willSuspend ? 'Suspended' : 'Activated'} access for ${user.name}`, willSuspend ? 'warning' : 'success');
-                        this.updateKPIs();
-                        this.renderTable();
-                        this.selectUser(user.id);
-                    }).catch(err => {
-                        this.showToast(err.message || 'Status update failed', 'error');
-                    });
-                }
-            });
-        }
+                btnSuspend.disabled = true;
+                const origHtml = btnSuspend.innerHTML;
+                btnSuspend.innerHTML = `<span>Updating status...</span>`;
 
-        // Delete User Action
-        const btnDelete = document.getElementById('btn-action-delete');
-        if (btnDelete) {
-            btnDelete.addEventListener('click', () => {
-                const user = this.users.find(u => u.id === this.selectedUserId);
-                if (!user) return;
-
-                if (confirm(`Are you sure you want to permanently delete user ${user.name} (${user.email})?`)) {
-                    if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-                        window.AegisAPI.delete(`/admin/users/${user.id}/`).then(() => {
-                            this.users = this.users.filter(u => u.id !== user.id);
-                            this.applyFilters();
-                            if (this.users.length > 0) {
-                                this.selectUser(this.users[0].id);
-                            } else {
-                                this.clearInspector();
-                            }
-                            this.showToast(`Permanently deleted user ${user.name}`, 'warning');
-                        }).catch(err => {
-                            this.showToast(err.message || 'Failed to delete user', 'error');
-                        });
+                try {
+                    if (window.AegisAPI) {
+                        await window.AegisAPI.post(endpoint, {});
                     }
+                    user.status = willSuspend ? 'Suspended' : 'Active';
+                    user.statusType = willSuspend ? 'suspended' : 'active';
+                    this.showToast(`${willSuspend ? 'Suspended' : 'Reactivated'} access for ${user.name}`, willSuspend ? 'warning' : 'success');
+                    this.applyFilters();
+                    this.updateKPIs();
+                    this.selectUser(user.id);
+                } catch (err) {
+                    btnSuspend.innerHTML = origHtml;
+                    this.showToast(err.message || 'Status update failed', 'error');
+                } finally {
+                    btnSuspend.disabled = false;
                 }
             });
         }
@@ -297,22 +219,9 @@ window.AegisUserManagement = {
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                 <span>Inspect Details</span>
             </div>
-            <div class="row-menu-item" data-action="edit" style="padding:0.45rem 0.85rem; cursor:pointer; color:var(--text-heading); display:flex; align-items:center; gap:0.5rem; transition:background 0.15s;">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                <span>Edit Profile</span>
-            </div>
-            <div class="row-menu-item" data-action="toggle-status" style="padding:0.45rem 0.85rem; cursor:pointer; color:${isSuspended ? '#10B981' : '#F59E0B'}; display:flex; align-items:center; gap:0.5rem; transition:background 0.15s;">
+            <div class="row-menu-item" data-action="toggle-status" style="padding:0.45rem 0.85rem; cursor:pointer; color:${isSuspended ? '#10B981' : '#EF4444'}; display:flex; align-items:center; gap:0.5rem; transition:background 0.15s;">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
                 <span>${isSuspended ? 'Reactivate Access' : 'Suspend Access'}</span>
-            </div>
-            <div class="row-menu-item" data-action="reset-pwd" style="padding:0.45rem 0.85rem; cursor:pointer; color:var(--text-heading); display:flex; align-items:center; gap:0.5rem; transition:background 0.15s;">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                <span>Reset Password</span>
-            </div>
-            <div style="border-top:1px solid var(--border-color, rgba(255,255,255,0.06)); margin:0.25rem 0;"></div>
-            <div class="row-menu-item" data-action="delete" style="padding:0.45rem 0.85rem; cursor:pointer; color:#EF4444; display:flex; align-items:center; gap:0.5rem; transition:background 0.15s;">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                <span>Delete Account</span>
             </div>
         `;
 
@@ -327,18 +236,9 @@ window.AegisUserManagement = {
                 const act = item.getAttribute('data-action');
                 if (act === 'inspect') {
                     this.selectUser(user.id);
-                } else if (act === 'edit') {
-                    this.selectUser(user.id);
-                    document.getElementById('btn-action-edit')?.click();
                 } else if (act === 'toggle-status') {
                     this.selectUser(user.id);
                     document.getElementById('btn-action-suspend')?.click();
-                } else if (act === 'reset-pwd') {
-                    this.selectUser(user.id);
-                    document.getElementById('btn-action-reset-pwd')?.click();
-                } else if (act === 'delete') {
-                    this.selectUser(user.id);
-                    document.getElementById('btn-action-delete')?.click();
                 }
             });
         });
@@ -611,6 +511,19 @@ window.AegisUserManagement = {
             statusEl.className = 'badge-status active';
             statusEl.innerHTML = '<span class="status-dot"></span><span>--</span>';
         }
+        const btnSuspend = document.getElementById('btn-action-suspend');
+        if (btnSuspend) {
+            btnSuspend.classList.remove('status-action-activate');
+            btnSuspend.classList.add('status-action-suspend');
+            btnSuspend.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="10" y1="15" x2="10" y2="9"></line>
+                    <line x1="14" y1="15" x2="14" y2="9"></line>
+                </svg>
+                <span id="btn-suspend-text">Suspend User</span>
+            `;
+        }
         const recentAct = document.getElementById('recent-activity-list');
         if (recentAct) recentAct.innerHTML = '<p style="font-size: 0.74rem; color: var(--text-muted); padding: 0.5rem 0;">No recorded events.</p>';
         const vaultsTab = document.getElementById('tab-panel-vaults');
@@ -655,6 +568,34 @@ window.AegisUserManagement = {
             const st = (user.status || 'Active').toLowerCase();
             statusEl.className = `badge-status ${st}`;
             statusEl.innerHTML = `<span class="status-dot"></span><span>${user.status}</span>`;
+        }
+
+        // Dynamically Update Suspend / Reactivate Button State
+        const btnSuspend = document.getElementById('btn-action-suspend');
+        if (btnSuspend) {
+            const isActive = (user.status || '').toLowerCase() === 'active';
+            btnSuspend.classList.toggle('status-action-activate', !isActive);
+            btnSuspend.classList.toggle('status-action-suspend', isActive);
+            btnSuspend.title = isActive ? 'Suspend User Access' : 'Reactivate User Access';
+            
+            if (isActive) {
+                btnSuspend.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="10" y1="15" x2="10" y2="9"></line>
+                        <line x1="14" y1="15" x2="14" y2="9"></line>
+                    </svg>
+                    <span id="btn-suspend-text">Suspend User</span>
+                `;
+            } else {
+                btnSuspend.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polygon points="10 8 16 12 10 16 10 8" fill="currentColor"></polygon>
+                    </svg>
+                    <span id="btn-suspend-text">Reactivate User</span>
+                `;
+            }
         }
 
         // Update Overview Tab Key-Value Meta Rows matching HTML IDs
