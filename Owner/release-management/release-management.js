@@ -686,8 +686,8 @@
 
         const newId = 'rel-' + Date.now();
         const schedParts = sched ? sched.split(' ') : [];
-        const sDate = schedParts.slice(0, 3).join(' ') || new Date().toLocaleDateString();
-        const sTime = schedParts.slice(3).join(' ') || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const sDate = schedParts.slice(0, 3).join(' ') || new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' });
+        const sTime = schedParts.slice(3).join(' ') || new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' });
 
         const vaultName = vaultSelect && vaultSelect.options && vaultSelect.selectedIndex >= 0 ? vaultSelect.options[vaultSelect.selectedIndex]?.text : 'Designated Vault';
         const triggerType = trigger.split('(')[0].trim();
@@ -731,8 +731,8 @@
               recipientType: 'single', recipientName: recipientName, recipientEmail: recipientEmail || `${recipientName.toLowerCase().replace(/ /g, '.')}@email.com`,
               avatarType: 'img', avatar: '../assets/images/trustee-avatar-2.png',
               trigger: r.trigger_type, triggerDetail: r.trigger_detail, status: r.status.toLowerCase(),
-              scheduledDate: r.scheduled_at ? new Date(r.scheduled_at).toLocaleDateString() : sDate,
-              scheduledTime: r.scheduled_at ? new Date(r.scheduled_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : sTime, note: r.note || ''
+              scheduledDate: r.scheduled_at ? new Date(r.scheduled_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }) : sDate,
+              scheduledTime: r.scheduled_at ? new Date(r.scheduled_at).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }) : sTime, note: r.note || ''
             };
             releases.unshift(newRelease);
             updateKPIsAndDonut();
@@ -894,8 +894,8 @@
           trigger: r.trigger_type,
           triggerDetail: r.trigger_detail,
           status: r.status.toLowerCase(),
-          scheduledDate: r.scheduled_at ? new Date(r.scheduled_at).toLocaleDateString() : '-',
-          scheduledTime: r.scheduled_at ? new Date(r.scheduled_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
+          scheduledDate: r.scheduled_at ? new Date(r.scheduled_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }) : '-',
+          scheduledTime: r.scheduled_at ? new Date(r.scheduled_at).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }) : '',
           note: r.note || ''
         }));
         updateKPIsAndDonut();

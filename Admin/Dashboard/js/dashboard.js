@@ -119,7 +119,7 @@ const AegisDashboard = {
                 joined: u.joined || 'Recent',
                 vaultCount: u.vault_count || 0,
                 trusteesCount: 0,
-                lastHeartbeat: u.last_login ? new Date(u.last_login).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Never',
+                lastHeartbeat: u.last_login ? new Date(u.last_login).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }) : 'Never',
                 accountTier: u.role === 'admin' ? 'Administrator' : 'Standard Custody'
             }));
             if (window.AegisDashboardData) {
@@ -193,7 +193,7 @@ const AegisDashboard = {
         window.AegisAPI.get('/admin/security/events/').then(events => {
             const list = (events || []).slice(0, 5).map(e => ({
                 id: e.id,
-                time: e.timestamp ? new Date(e.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recent',
+                time: e.timestamp ? new Date(e.timestamp).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }) : 'Recent',
                 event: e.title || e.event_type || 'Security Event',
                 severity: (e.severity || 'medium').toUpperCase(),
                 severityType: (e.severity || 'medium').toLowerCase(),

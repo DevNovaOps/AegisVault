@@ -99,7 +99,7 @@ class TrusteeDashboardView(APIView):
                 'action_title': log.action_title,
                 'details': log.details,
                 'category': log.category,
-                'timestamp': log.timestamp.isoformat(),
+                'timestamp': timezone.localtime(log.timestamp).isoformat(),
                 'vault_name': log.vault_name or 'General',
             }
             for log in recent_logs
@@ -267,12 +267,14 @@ class TrusteeAuditLogView(APIView):
                 Q(action_title__icontains=search) | Q(details__icontains=search)
             )
 
-        data = [
-            {
+        data = []
+        for log in logs[:100]:
+            local_ts = timezone.localtime(log.timestamp)
+            data.append({
                 'id': str(log.id),
-                'date': log.timestamp.strftime('%d %b %Y'),
-                'time': log.timestamp.strftime('%I:%M %p'),
-                'rawDate': log.timestamp.strftime('%Y-%m-%d %H:%M'),
+                'date': local_ts.strftime('%d %b %Y'),
+                'time': local_ts.strftime('%I:%M %p'),
+                'rawDate': local_ts.strftime('%Y-%m-%d %H:%M'),
                 'actionKey': log.action_key,
                 'actionTitle': log.action_title,
                 'details': log.details,
@@ -282,11 +284,9 @@ class TrusteeAuditLogView(APIView):
                 'email': request.user.email,
                 'ip': log.ip_address or '127.0.0.1',
                 'status': log.status or 'success',
-                'timestamp': log.timestamp.isoformat(),
+                'timestamp': local_ts.isoformat(),
                 'hash': f"sha256:{abs(hash(str(log.id))):016x}{abs(hash(log.action_title)):016x}",
-            }
-            for log in logs[:100]
-        ]
+            })
         return Response(data)
 
 

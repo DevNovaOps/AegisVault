@@ -18,12 +18,22 @@ window.AegisAuditLogs = {
 
         if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
             window.AegisAPI.get('/admin/audit/logs/').then(data => {
-                this.logs = (data || []).map((l, index) => ({
-                    id: l.id || `LOG-${String(index + 1).padStart(6, '0')}`,
-                    rawId: l.raw_id || l.id,
-                    index: index + 1,
-                    timestamp: l.timestamp || `${l.date || ''} ${l.time || ''}`.trim() || 'Just now',
-                    dateSort: l.dateSort || l.timestamp || new Date().toISOString(),
+                this.logs = (data || []).map((l, index) => {
+                    let tsDisplay = l.timestamp || `${l.date || ''} ${l.time || ''}`.trim() || 'Just now';
+                    if (l.dateSort || (l.timestamp && (l.timestamp.includes('T') || l.timestamp.includes('-')))) {
+                        try {
+                            const d = new Date(l.dateSort || l.timestamp);
+                            if (!isNaN(d.getTime())) {
+                                tsDisplay = d.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }) + ', ' + d.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' });
+                            }
+                        } catch (e) {}
+                    }
+                    return {
+                        id: l.id || `LOG-${String(index + 1).padStart(6, '0')}`,
+                        rawId: l.raw_id || l.id,
+                        index: index + 1,
+                        timestamp: tsDisplay,
+                        dateSort: l.dateSort || l.timestamp || new Date().toISOString(),
                     user: l.user || l.userName || 'System',
                     userName: l.userName || l.user || 'System',
                     email: l.email || '',

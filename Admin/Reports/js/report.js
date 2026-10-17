@@ -138,7 +138,7 @@ window.AegisReportData = window.AegisReportData || {
                             release: 'Vault'
                         };
                         const type = typeMap[l.category] || 'Security';
-                        const timeStr = l.timestamp ? new Date(l.timestamp).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) : 'Recent';
+                        const timeStr = l.timestamp ? new Date(l.timestamp).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'short', timeStyle: 'short' }) : 'Recent';
                         return {
                             id: `RPT-AUD-${String(l.id || idx + 1).padStart(4, '0')}`,
                             num: idx + 1,

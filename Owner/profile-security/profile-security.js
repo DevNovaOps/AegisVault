@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const joinedDate = new Date(user.date_joined || user.created_at);
       const metaValues = document.querySelectorAll('.overview-meta-col .meta-value');
       if (metaValues[0]) {
-        metaValues[0].textContent = joinedDate.toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' });
+        metaValues[0].textContent = joinedDate.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' });
       }
     }
 

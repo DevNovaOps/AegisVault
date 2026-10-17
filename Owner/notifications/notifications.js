@@ -710,8 +710,8 @@ document.addEventListener('DOMContentLoaded', () => {
           desc: n.description,
           vault: n.vault_name || 'System',
           status: n.status ? n.status.toLowerCase() : 'unread',
-          date: new Date(n.created_at).toLocaleDateString(),
-          time: new Date(n.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          date: new Date(n.created_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }),
+          time: new Date(n.created_at).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }),
           rawDate: n.created_at
         }));
         renderTableRows();

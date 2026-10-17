@@ -191,8 +191,8 @@ function populateActivityTimeline(activities) {
     row.setAttribute('tabindex', '0');
 
     const ts = new Date(act.timestamp);
-    const timeStr = ts.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const dateStr = ts.toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' });
+    const timeStr = ts.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' });
+    const dateStr = ts.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' });
 
     let dotColor = 'teal';
     if (act.category === 'trustee' || act.category === 'invitation') dotColor = 'green';

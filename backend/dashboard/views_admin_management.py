@@ -8,7 +8,6 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-
 from accounts.permissions import IsAdminUser
 from accounts.models import User
 from accounts.serializers import UserSerializer
@@ -682,15 +681,17 @@ class AdminAuditLogView(APIView):
             logs = logs.filter(action_title__icontains=search) | \
                    logs.filter(details__icontains=search)
 
+        from django.utils import timezone
         data = []
         for log in logs.order_by('-timestamp')[:200]:
+            local_ts = timezone.localtime(log.timestamp)
             action_code = (log.action_key or 'SYSTEM_EVENT').upper()
             status_display = log.status.capitalize() if log.status else 'Success'
             data.append({
                 'id': f"LOG-{str(log.id)[:8].upper()}",
                 'raw_id': str(log.id),
-                'date': log.timestamp.strftime('%Y-%m-%d'),
-                'time': log.timestamp.strftime('%H:%M:%S'),
+                'date': local_ts.strftime('%Y-%m-%d'),
+                'time': local_ts.strftime('%I:%M:%S %p'),
                 'actionKey': log.action_key,
                 'actionTitle': log.action_title,
                 'action': action_code,
@@ -710,8 +711,8 @@ class AdminAuditLogView(APIView):
                 'device': log.user_agent or 'Desktop Browser',
                 'sessionId': str(log.id),
                 'status': status_display,
-                'timestamp': log.timestamp.strftime('%d %b %Y, %I:%M %p'),
-                'dateSort': log.timestamp.isoformat(),
+                'timestamp': local_ts.strftime('%d %b %Y, %I:%M %p'),
+                'dateSort': local_ts.isoformat(),
                 'rawData': {
                     'eventId': f"LOG-{str(log.id)[:8].upper()}",
                     'action': action_code,
@@ -722,7 +723,7 @@ class AdminAuditLogView(APIView):
                     },
                     'ipAddress': log.ip_address or '127.0.0.1',
                     'status': status_display,
-                    'timestamp': log.timestamp.isoformat()
+                    'timestamp': local_ts.isoformat()
                 }
             })
 

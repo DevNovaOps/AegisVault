@@ -205,7 +205,7 @@ const AegisSystemHealth = {
                     const isWarn = (l.status || '').toLowerCase() !== 'success';
                     return {
                         id: `evt-${idx + 1}`,
-                        time: l.timestamp ? new Date(l.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Just now',
+                        time: l.timestamp ? new Date(l.timestamp).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }) : 'Just now',
                         level: isWarn ? 'WARN' : 'INFO',
                         levelType: isWarn ? 'warn' : 'info',
                         service: l.category ? l.category.toUpperCase() : 'CORE-API',

@@ -114,8 +114,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const defaultUserEmail = currentUser.email || 'owner@aegisvault.io';
 
       activities = rawList.map((item, idx) => {
-        const itemDate = item.date || (item.timestamp ? new Date(item.timestamp).toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' }) : 'Recently');
-        const itemTime = item.time || (item.timestamp ? new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '');
+        let itemDate = item.date || 'Recently';
+        let itemTime = item.time || '';
+        if (item.timestamp) {
+          try {
+            const d = new Date(item.timestamp);
+            if (!isNaN(d.getTime())) {
+              itemDate = d.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' });
+              itemTime = d.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' });
+            }
+          } catch (e) {}
+        }
         return {
           id: item.id || (idx + 1),
           date: itemDate,

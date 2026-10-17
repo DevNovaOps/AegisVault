@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
           name: share.vault_name || 'Vault',
           owner: share.owner_name || 'Vault Owner',
           email: share.owner_email || 'Verified Owner',
-          assignedOn: new Date(share.created_at || Date.now()).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+          assignedOn: new Date(share.created_at || Date.now()).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }),
           verificationStatus: isVerified ? 'Verified' : 'Pending',
           verificationSub: isVerified ? 'Cryptographically confirmed' : 'Requires verification',
           shareStatus: isSubmitted ? 'Submitted' : (isVerified ? 'Active' : 'Pending'),

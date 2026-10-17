@@ -35,7 +35,7 @@ function populateTrusteeProfileUI(user, trusteeProfiles) {
   const email = user.email || 'trustee@aegisvault.io';
   const phone = user.phone || '';
   const is2fa = Boolean(user.is_2fa_enabled);
-  const dateJoined = user.date_joined ? new Date(user.date_joined).toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A';
+  const dateJoined = user.date_joined ? new Date(user.date_joined).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A';
 
   // Header name / email
   const userNameHeader = document.querySelector('.profile-user-fullname');
@@ -72,7 +72,7 @@ function populateTrusteeProfileUI(user, trusteeProfiles) {
         <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); margin-bottom: 0.65rem;">
           <div style="display: flex; flex-direction: column; gap: 0.2rem;">
             <div style="font-size: 0.92rem; font-weight: 700; color: var(--text-primary);">${tp.owner_name} <span style="font-size: 0.76rem; font-weight: normal; color: var(--text-muted);">&bull; ${tp.owner_email}</span></div>
-            <div style="font-size: 0.78rem; color: var(--text-secondary);">${tp.relationship || 'Designated Trustee'} &bull; Appointed ${tp.date_added ? new Date(tp.date_added).toLocaleDateString([], { day: '2-digit', month: 'short', year: 'numeric' }) : ''}</div>
+            <div style="font-size: 0.78rem; color: var(--text-secondary);">${tp.relationship || 'Designated Trustee'} &bull; Appointed ${tp.date_added ? new Date(tp.date_added).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }) : ''}</div>
           </div>
           <span class="verified-trustee-badge" style="font-size: 0.74rem;">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>

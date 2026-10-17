@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
+from django.utils import timezone
 from accounts.permissions import IsOwner, IsAdminUser
 from .models import AuditLog, SecurityEvent
 
@@ -32,12 +33,14 @@ class OwnerAuditLogView(APIView):
         # Sort
         logs = logs.order_by('-timestamp')
 
-        data = [
-            {
+        data = []
+        for log in logs[:100]:
+            local_ts = timezone.localtime(log.timestamp)
+            data.append({
                 'id': str(log.id),
-                'date': log.timestamp.strftime('%d %b %Y'),
-                'time': log.timestamp.strftime('%I:%M %p'),
-                'rawDate': log.timestamp.strftime('%Y-%m-%d %H:%M'),
+                'date': local_ts.strftime('%d %b %Y'),
+                'time': local_ts.strftime('%I:%M %p'),
+                'rawDate': local_ts.strftime('%Y-%m-%d %H:%M'),
                 'actionKey': log.action_key,
                 'actionTitle': log.action_title,
                 'details': log.details,
@@ -47,11 +50,9 @@ class OwnerAuditLogView(APIView):
                 'email': request.user.email,
                 'ip': log.ip_address or '127.0.0.1',
                 'status': log.status or 'success',
-                'timestamp': log.timestamp.isoformat(),
+                'timestamp': local_ts.isoformat(),
                 'hash': f"sha256:{abs(hash(str(log.id))):016x}{abs(hash(log.action_title)):016x}",
-            }
-            for log in logs[:100]  # Limit to 100 for performance
-        ]
+            })
         return Response(data)
 
 
@@ -91,7 +92,7 @@ class AdminSecurityEventsView(APIView):
                 'resource': e.resource,
                 'is_resolved': e.is_resolved,
                 'user_email': e.user.email if e.user else 'Unknown',
-                'timestamp': e.timestamp.isoformat(),
+                'timestamp': timezone.localtime(e.timestamp).isoformat(),
             }
             for e in events[:200]
         ]

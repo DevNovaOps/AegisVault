@@ -420,7 +420,7 @@
             </td>
             <td style="padding: 0.65rem 0.85rem; color: var(--text-muted);">${asset.category || (isNote ? 'Secure Note' : 'Document')}</td>
             <td style="padding: 0.65rem 0.85rem; color: var(--text-muted);">${formatBytes(asset.file_size_bytes)}</td>
-            <td style="padding: 0.65rem 0.85rem; color: var(--text-muted);">${new Date(asset.created_at).toLocaleDateString()}</td>
+            <td style="padding: 0.65rem 0.85rem; color: var(--text-muted);">${new Date(asset.created_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' })}</td>
             <td style="padding: 0.65rem 0.85rem; text-align: right;">
               <div style="display: inline-flex; gap: 0.35rem; align-items: center; justify-content: flex-end;">
                 <button type="button" class="btn btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 0.25rem;" onclick="previewVaultAsset('${vaultId}', '${asset.id}')" title="Preview asset">
@@ -873,8 +873,8 @@
           emergency_claim: v.emergency_claim || false,
           priority: v.priority || 'Normal',
           tags: v.tags || [],
-          date: new Date(v.created_at).toLocaleDateString(),
-          time: new Date(v.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          date: new Date(v.created_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }),
+          time: new Date(v.created_at).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }),
           thumbImg: '../assets/images/vault-thumb-1.png',
           releaseCondition: v.release_condition || 'Not set',
           storageUsed: v.storage_used || '0 MB'
@@ -1454,7 +1454,7 @@
               target.releaseCondition = payload.release_condition;
               target.emergency_claim = emergencyClaim;
               target.date = 'Just now';
-              target.time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+              target.time = new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' });
             }
             window.AegisOwner.closeModal('editVaultModal');
             renderVaultsTable();
@@ -1477,7 +1477,7 @@
             target.grace_period = gracePeriod;
             target.releaseCondition = payload.release_condition;
             target.date = 'Just now';
-            target.time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            target.time = new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' });
           }
           window.AegisOwner.closeModal('editVaultModal');
           renderVaultsTable();

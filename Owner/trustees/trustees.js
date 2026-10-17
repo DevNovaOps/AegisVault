@@ -678,7 +678,7 @@
       verifClass: verifClass,
       status: status,
       statusClass: statusClass,
-      dateAdded: t.date_added ? new Date(t.date_added).toLocaleDateString() : 'Recently',
+      dateAdded: t.date_added ? new Date(t.date_added).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }) : 'Recently',
       sharesHeld: t.shares_held || 'Pending acceptance'
     };
   }

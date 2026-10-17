@@ -40,7 +40,7 @@ window.AegisUserManagement = {
                     verification: u.is_2fa_enabled ? 'Verified' : 'Pending',
                     initials: (u.name || u.email || 'US').split(' ').map(n=>n[0]).join('').substring(0, 2).toUpperCase(),
                     joinedOn: u.joined || 'Recent',
-                    lastLogin: u.last_login ? new Date(u.last_login).toLocaleString() : 'Never',
+                    lastLogin: u.last_login ? new Date(u.last_login).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Never',
                     vaults: u.vault_count || 0,
                     trustees: 0,
                     mfaEnabled: !!u.is_2fa_enabled,

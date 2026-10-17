@@ -567,7 +567,7 @@
           elLastCheckIn.textContent = `${diffMinutes}m ago`;
         } else {
           const d = new Date(lastPing);
-          elLastCheckIn.textContent = d.toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+          elLastCheckIn.textContent = d.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
         }
       }
     },

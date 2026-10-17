@@ -37,22 +37,36 @@ async function loadTrusteeAuditLogs() {
     const currentUser = window.AegisAPI.getUser() || {};
     const defaultUserName = currentUser.name || currentUser.email || 'Trustee';
 
-    liveActivities = rawList.map((item, idx) => ({
-      id: item.id || (idx + 1),
-      date: item.date || 'Recently',
-      time: item.time || '',
-      rawDate: item.rawDate || item.timestamp || '',
-      actionKey: item.actionKey || item.action_key || 'activity',
-      actionTitle: item.actionTitle || item.action_title || 'Activity Event',
-      details: item.details || item.description || '',
-      vault: item.vault || item.vault_name || '—',
-      category: (item.category || 'trustee').toLowerCase(),
-      user: item.user || defaultUserName,
-      email: item.email || currentUser.email || '',
-      ip: item.ip || item.ip_address || '127.0.0.1',
-      status: (item.status || 'success').toLowerCase(),
-      hash: item.hash || `sha256:${item.id || idx}`
-    }));
+    liveActivities = rawList.map((item, idx) => {
+      let dateVal = item.date || 'Recently';
+      let timeVal = item.time || '';
+      if (item.timestamp) {
+        try {
+          const d = new Date(item.timestamp);
+          if (!isNaN(d.getTime())) {
+            dateVal = d.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' });
+            timeVal = d.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' });
+          }
+        } catch (e) {}
+      }
+
+      return {
+        id: item.id || (idx + 1),
+        date: dateVal,
+        time: timeVal,
+        rawDate: item.rawDate || item.timestamp || '',
+        actionKey: item.actionKey || item.action_key || 'activity',
+        actionTitle: item.actionTitle || item.action_title || 'Activity Event',
+        details: item.details || item.description || '',
+        vault: item.vault || item.vault_name || '—',
+        category: (item.category || 'trustee').toLowerCase(),
+        user: item.user || defaultUserName,
+        email: item.email || currentUser.email || '',
+        ip: item.ip || item.ip_address || '127.0.0.1',
+        status: (item.status || 'success').toLowerCase(),
+        hash: item.hash || `sha256:${item.id || idx}`
+      };
+    });
 
     renderAuditTable(liveActivities);
     updateMetricCards(liveActivities);

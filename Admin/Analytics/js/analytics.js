@@ -1231,7 +1231,7 @@ window.AegisAnalyticsData = window.AegisAnalyticsData || {
             if (logs.length > 0 && window.AegisAnalyticsData) {
                 AegisAnalyticsData.recentActivity = logs.slice(0, 10).map((l, idx) => ({
                     id: `act-${idx}`,
-                    time: l.timestamp ? new Date(l.timestamp).toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Recent',
+                    time: l.timestamp ? new Date(l.timestamp).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Recent',
                     event: l.action || 'Audit Record',
                     details: l.user_email ? `${l.user_email} (${l.target || l.ip_address || 'System'})` : (l.target || 'System Activity'),
                     user: l.user_email || 'System'

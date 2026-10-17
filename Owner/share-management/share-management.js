@@ -665,9 +665,9 @@
               avatar: '../assets/images/trustee-avatar-2.png',
               accessLevel: s.access_level,
               status: s.status,
-              sharedDate: new Date(s.created_at).toLocaleDateString(),
-              sharedTime: new Date(s.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-              expiresOn: s.expires_at ? new Date(s.expires_at).toLocaleDateString() : 'Never',
+              sharedDate: new Date(s.created_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }),
+              sharedTime: new Date(s.created_at).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }),
+              expiresOn: s.expires_at ? new Date(s.expires_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }) : 'Never',
               note: s.note || ''
             };
             shares.unshift(newShare);
@@ -684,7 +684,7 @@
           const now = new Date();
           const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
           const sharedDate = `${String(now.getDate()).padStart(2, '0')} ${months[now.getMonth()]} ${now.getFullYear()}`;
-          const sharedTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const sharedTime = now.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' });
           const newShare = {
             id: newId, vault: vaultVal, vaultDesc: 'Encrypted assets...', vaultThumb: '../assets/images/vault-thumb-1.png',
             trusteeName: trusteeName, trusteeEmail: email, avatarType: 'img', avatar: '../assets/images/trustee-avatar-2.png',
@@ -722,7 +722,7 @@
             expires_at: newExpiry === 'Never' ? null : new Date(Date.now() + 30*24*60*60*1000).toISOString()
           }).then(s => {
             activeShareItem.accessLevel = s.access_level;
-            activeShareItem.expiresOn = s.expires_at ? new Date(s.expires_at).toLocaleDateString() : 'Never';
+            activeShareItem.expiresOn = s.expires_at ? new Date(s.expires_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }) : 'Never';
             activeShareItem.note = s.note;
             updateKPIs();
             renderTable();
@@ -809,9 +809,9 @@
           avatar: '../assets/images/trustee-avatar-2.png',
           accessLevel: s.access_level,
           status: s.status,
-          sharedDate: new Date(s.created_at).toLocaleDateString(),
-          sharedTime: new Date(s.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          expiresOn: s.expires_at ? new Date(s.expires_at).toLocaleDateString() : 'Never',
+          sharedDate: new Date(s.created_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }),
+          sharedTime: new Date(s.created_at).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }),
+          expiresOn: s.expires_at ? new Date(s.expires_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }) : 'Never',
           note: s.note || ''
         }));
         updateKPIs();

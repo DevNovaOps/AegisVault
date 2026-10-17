@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Sum
+from django.utils import timezone
 
 from accounts.permissions import IsOwner, IsAdminUser
 from vaults.models import Vault, VaultAsset, VaultShare
@@ -60,7 +61,7 @@ class OwnerDashboardActivityView(APIView):
                 'details': log.details,
                 'category': log.category,
                 'status': log.status,
-                'timestamp': log.timestamp.isoformat(),
+                'timestamp': timezone.localtime(log.timestamp).isoformat(),
             }
             for log in logs
         ]

@@ -732,7 +732,7 @@
             const initials = parts.length > 1 ? (parts[0][0] + parts[1][0]).toUpperCase() : name.slice(0, 2).toUpperCase();
             const newInvite = {
               id: inv.id, name: name, email: email, rel: rel, relClass: rel.toLowerCase().replace(/ /g, '-'),
-              vault: vaultName, status: 'pending', sentDate: new Date(inv.sent_at).toLocaleDateString(), sentTime: new Date(inv.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              vault: vaultName, status: 'pending', sentDate: new Date(inv.sent_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }), sentTime: new Date(inv.sent_at).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }),
               initials: initials, avatarType: 'initials', avatarClass: 'avatar-gradient-rk', expiryDays: 14, note: note
             };
             invitations.unshift(newInvite);
@@ -751,7 +751,7 @@
           const initials = parts.length > 1 ? (parts[0][0] + parts[1][0]).toUpperCase() : name.slice(0, 2).toUpperCase();
           const newInvite = {
             id: 'inv-' + Date.now(), name: name, email: email, rel: rel, relClass: rel.toLowerCase().replace(/ /g, '-'),
-            vault: vaultName, status: 'pending', sentDate: new Date().toLocaleDateString(), sentTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            vault: vaultName, status: 'pending', sentDate: new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }), sentTime: new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }),
             initials: initials, avatarType: 'initials', avatarClass: 'avatar-gradient-rk', expiryDays: 14, note: note
           };
           invitations.unshift(newInvite);
@@ -776,8 +776,8 @@
             if (activeCandidate.status === 'expired') {
               activeCandidate.status = 'pending';
             }
-            activeCandidate.sentDate = new Date().toLocaleDateString();
-            activeCandidate.sentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            activeCandidate.sentDate = new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' });
+            activeCandidate.sentTime = new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' });
             updateKPIsAndDonut();
             renderTable();
             if (resendInviteModal) {
@@ -792,8 +792,8 @@
           if (activeCandidate.status === 'expired') {
             activeCandidate.status = 'pending';
           }
-          activeCandidate.sentDate = new Date().toLocaleDateString();
-          activeCandidate.sentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          activeCandidate.sentDate = new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' });
+          activeCandidate.sentTime = new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' });
           updateKPIsAndDonut();
           renderTable();
           if (resendInviteModal) {
@@ -842,14 +842,14 @@
           vault: inv.vault_name || 'Designated Vault',
           status: (inv.status || 'pending').toLowerCase(),
           token: inv.token,
-          sentDate: new Date(inv.sent_at).toLocaleDateString(),
-          sentTime: new Date(inv.sent_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          sentDate: new Date(inv.sent_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }),
+          sentTime: new Date(inv.sent_at).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }),
           avatar: '../assets/images/trustee-avatar-1.png',
           avatarType: 'img',
           expiryDays: inv.expiry_days || 14,
           isRecent: true,
           note: inv.note || '',
-          acceptedDate: inv.accepted_at ? new Date(inv.accepted_at).toLocaleString() : undefined
+          acceptedDate: inv.accepted_at ? new Date(inv.accepted_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : undefined
         }));
         updateKPIsAndDonut();
         renderTable();

@@ -192,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${asset.category || (isNote ? 'Secure Note' : 'Document')}</td>
                     <td><span style="padding:0.2rem 0.5rem; border-radius:4px; font-size:0.75rem; background:rgba(249,115,22,0.1); color:var(--brand-orange);">${asset.sensitivity || 'Sensitive'}</span></td>
                     <td>${formatBytes(asset.file_size_bytes)}</td>
-                    <td>${new Date(asset.created_at).toLocaleDateString()}</td>
+                    <td>${new Date(asset.created_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' })}</td>
                     <td style="text-align:right;">
                         ${actionBtnHtml}
                     </td>

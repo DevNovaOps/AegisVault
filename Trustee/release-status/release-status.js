@@ -64,8 +64,8 @@ function renderReleaseTable() {
     }
 
     const dateObj = req.created_at ? new Date(req.created_at) : new Date();
-    const dateStr = dateObj.toLocaleDateString();
-    const timeStr = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const dateStr = dateObj.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' });
+    const timeStr = dateObj.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' });
 
     tr.innerHTML = `
       <td class="table-row-num">${index + 1}</td>
