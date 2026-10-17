@@ -50,6 +50,14 @@ def frontend_serve(request, path=''):
         index_file = target / 'index.html'
         if index_file.exists():
             rel = index_file.relative_to(frontend_dir).as_posix()
-            return serve(request, rel, document_root=str(frontend_dir))
+            res = serve(request, rel, document_root=str(frontend_dir))
+            res['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+            res['Pragma'] = 'no-cache'
+            res['Expires'] = '0'
+            return res
 
-    return serve(request, path, document_root=str(frontend_dir))
+    res = serve(request, path, document_root=str(frontend_dir))
+    res['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    res['Pragma'] = 'no-cache'
+    res['Expires'] = '0'
+    return res
