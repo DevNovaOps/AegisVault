@@ -728,10 +728,134 @@
             50% { opacity: 0.35; transform: scale(0.75); }
         }
 
+        /* 2FA Challenge View */
+        .twofa-challenge-box {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            text-align: center;
+            animation: cardFadeIn 0.3s ease;
+        }
+
+        .twofa-badge-icon {
+            width: 58px;
+            height: 58px;
+            margin: 0 auto;
+            border-radius: 50%;
+            background: rgba(244, 90, 31, 0.12);
+            border: 1px solid rgba(244, 90, 31, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brand-orange);
+            font-size: 26px;
+            box-shadow: 0 0 25px rgba(244, 90, 31, 0.25);
+            position: relative;
+        }
+
+        .twofa-title {
+            font-size: 19px;
+            font-weight: 800;
+            color: var(--auth-text-head);
+            letter-spacing: -0.3px;
+        }
+
+        .twofa-desc {
+            font-size: 13px;
+            color: var(--auth-text-body);
+            line-height: 1.5;
+        }
+
+        .twofa-desc strong {
+            color: var(--brand-orange);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            word-break: break-all;
+        }
+
+        .twofa-otp-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 4px 0 8px;
+        }
+
+        .otp-digit-input {
+            width: 48px;
+            height: 54px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1.5px solid var(--auth-border);
+            color: var(--auth-text-head);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        body.light-theme .otp-digit-input {
+            background: #FFFFFF;
+            border-color: #CBD5E1;
+            color: #0F172A;
+        }
+
+        .otp-digit-input:focus {
+            border-color: var(--brand-orange);
+            background: rgba(244, 90, 31, 0.08);
+            box-shadow: 0 0 0 3px rgba(244, 90, 31, 0.2);
+            transform: scale(1.05);
+        }
+
+        .otp-digit-input.filled {
+            border-color: rgba(244, 90, 31, 0.5);
+            background: rgba(244, 90, 31, 0.05);
+        }
+
+        .twofa-meta-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 12.5px;
+            color: var(--auth-text-muted);
+        }
+
+        .twofa-resend-btn {
+            background: none;
+            border: none;
+            color: var(--brand-orange);
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+            font-family: inherit;
+            font-size: 12.5px;
+            padding: 0;
+            transition: color 0.15s ease;
+        }
+
+        .twofa-resend-btn:disabled {
+            color: var(--auth-text-muted);
+            cursor: not-allowed;
+            text-decoration: none;
+        }
+
+        .shake-animation {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
         @media (max-width: 480px) {
             .auth-card-box { padding: 22px 18px; }
             .role-item-sub { display: none; }
             .quick-chips-row { grid-template-columns: 1fr; }
+            .otp-digit-input { width: 40px; height: 48px; font-size: 20px; }
+            .twofa-otp-row { gap: 6px; }
         }
     </style>
 </head>
@@ -886,6 +1010,52 @@
                     <span>🔑 Sign In with Passkey / WebAuthn Biometrics</span>
                 </button>
             </form>
+
+            <!-- ================= TWO-FACTOR AUTHENTICATION CHALLENGE ================= -->
+            <div class="auth-form-body twofa-challenge-box" id="form-2fa" style="display: none;">
+                <div class="twofa-badge-icon">
+                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        <path d="M9 12l2 2 4-4"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="twofa-title">Two-Factor Authentication</h2>
+                    <p class="twofa-desc" style="margin-top: 6px;">
+                        A 6-digit verification code has been dispatched to:<br>
+                        <strong id="twofa-email-display">user@example.com</strong>
+                    </p>
+                </div>
+
+                <div class="twofa-otp-row" id="twofa-otp-row">
+                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-digit-input" data-index="0" autocomplete="one-time-code" autofocus>
+                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-digit-input" data-index="1">
+                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-digit-input" data-index="2">
+                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-digit-input" data-index="3">
+                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-digit-input" data-index="4">
+                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-digit-input" data-index="5">
+                </div>
+
+                <button type="button" class="btn-submit-master owner-style" id="btn-submit-2fa">
+                    <span class="btn-loader-circle" aria-hidden="true"></span>
+                    <span class="btn-label-text">Verify & Enter Console</span>
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </button>
+
+                <div class="twofa-meta-actions">
+                    <div>
+                        Didn't receive code? 
+                        <button type="button" class="twofa-resend-btn" id="btn-resend-2fa">Resend Code</button>
+                        <span id="twofa-resend-timer" style="color: var(--auth-text-muted); display: none;"> (<span id="twofa-timer-sec">30</span>s)</span>
+                    </div>
+                    <button type="button" class="btn-passkey-quick" id="btn-cancel-2fa" style="margin-top: 6px;">
+                        ← Back to Sign In
+                    </button>
+                </div>
+            </div>
 
             <!-- ================= SIGN UP FORM ================= -->
             <form class="auth-form-body" id="form-signup" style="display: none;" novalidate>
@@ -1297,6 +1467,208 @@
                 });
             });
 
+            // ================= 2FA State & Controllers =================
+            let current2FATempToken = null;
+            let resendTimerInterval = null;
+            const form2FA = document.getElementById('form-2fa');
+            const twofaEmailDisplay = document.getElementById('twofa-email-display');
+            const btnSubmit2FA = document.getElementById('btn-submit-2fa');
+            const btnResend2FA = document.getElementById('btn-resend-2fa');
+            const btnCancel2FA = document.getElementById('btn-cancel-2fa');
+            const twofaOtpRow = document.getElementById('twofa-otp-row');
+            const twofaResendTimer = document.getElementById('twofa-resend-timer');
+            const twofaTimerSec = document.getElementById('twofa-timer-sec');
+            const authCardTabs = document.querySelector('.auth-card-tabs');
+            const roleNoticeBox = document.getElementById('role-notice-box');
+            const quickTestSection = document.querySelector('.quick-test-section');
+            const roleCardsGrid = document.querySelector('.role-cards-grid');
+            const otpInputs = Array.from(document.querySelectorAll('.otp-digit-input'));
+
+            function show2FAView(tempToken, maskedEmail) {
+                current2FATempToken = tempToken;
+                if (twofaEmailDisplay) twofaEmailDisplay.textContent = maskedEmail;
+
+                formSignIn.style.display = 'none';
+                formSignUp.style.display = 'none';
+                if (authCardTabs) authCardTabs.style.display = 'none';
+                if (roleNoticeBox) roleNoticeBox.style.display = 'none';
+                if (quickTestSection) quickTestSection.style.display = 'none';
+                if (roleCardsGrid) {
+                    roleCardsGrid.style.opacity = '0.35';
+                    roleCardsGrid.style.pointerEvents = 'none';
+                }
+
+                form2FA.style.display = 'flex';
+
+                // Style the 2FA verify button with the active role class
+                const cfg = roleConfig[activeRole] || roleConfig.owner;
+                btnSubmit2FA.className = `btn-submit-master ${cfg.btnClass}`;
+
+                // Clear and autofocus input
+                otpInputs.forEach(input => {
+                    input.value = '';
+                    input.classList.remove('filled');
+                });
+                setTimeout(() => otpInputs[0]?.focus(), 100);
+
+                start2FAResendCountdown(30);
+                showToast('2FA code dispatched! Please check your email.', 'info');
+            }
+
+            function hide2FAView() {
+                current2FATempToken = null;
+                if (resendTimerInterval) clearInterval(resendTimerInterval);
+
+                form2FA.style.display = 'none';
+                if (authCardTabs) authCardTabs.style.display = '';
+                if (roleNoticeBox) roleNoticeBox.style.display = '';
+                if (quickTestSection) quickTestSection.style.display = '';
+                if (roleCardsGrid) {
+                    roleCardsGrid.style.opacity = '';
+                    roleCardsGrid.style.pointerEvents = '';
+                }
+
+                setMode('signin');
+                btnSubmitSignIn.classList.remove('loading');
+                btnSubmitSignIn.disabled = false;
+                btnSubmit2FA.classList.remove('loading');
+                btnSubmit2FA.disabled = false;
+            }
+
+            function start2FAResendCountdown(seconds) {
+                if (resendTimerInterval) clearInterval(resendTimerInterval);
+                let remaining = seconds;
+                btnResend2FA.disabled = true;
+                if (twofaResendTimer) twofaResendTimer.style.display = 'inline';
+                if (twofaTimerSec) twofaTimerSec.textContent = remaining;
+
+                resendTimerInterval = setInterval(() => {
+                    remaining -= 1;
+                    if (twofaTimerSec) twofaTimerSec.textContent = remaining;
+                    if (remaining <= 0) {
+                        clearInterval(resendTimerInterval);
+                        btnResend2FA.disabled = false;
+                        if (twofaResendTimer) twofaResendTimer.style.display = 'none';
+                    }
+                }, 1000);
+            }
+
+            // OTP Input Handlers
+            otpInputs.forEach((input, index) => {
+                input.addEventListener('input', (e) => {
+                    const val = e.target.value.replace(/[^0-9]/g, '');
+                    e.target.value = val ? val[0] : '';
+                    if (e.target.value) {
+                        input.classList.add('filled');
+                        if (index < otpInputs.length - 1) {
+                            otpInputs[index + 1].focus();
+                        }
+                    } else {
+                        input.classList.remove('filled');
+                    }
+
+                    // Check if complete
+                    const code = otpInputs.map(i => i.value).join('');
+                    if (code.length === 6) {
+                        trigger2FASubmit();
+                    }
+                });
+
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !input.value && index > 0) {
+                        otpInputs[index - 1].focus();
+                        otpInputs[index - 1].value = '';
+                        otpInputs[index - 1].classList.remove('filled');
+                    } else if (e.key === 'ArrowLeft' && index > 0) {
+                        otpInputs[index - 1].focus();
+                    } else if (e.key === 'ArrowRight' && index < otpInputs.length - 1) {
+                        otpInputs[index + 1].focus();
+                    }
+                });
+
+                input.addEventListener('paste', (e) => {
+                    e.preventDefault();
+                    const pastedData = (e.clipboardData || window.clipboardData).getData('text');
+                    const digits = pastedData.replace(/[^0-9]/g, '').slice(0, 6);
+                    if (digits) {
+                        digits.split('').forEach((digit, i) => {
+                            if (otpInputs[i]) {
+                                otpInputs[i].value = digit;
+                                otpInputs[i].classList.add('filled');
+                            }
+                        });
+                        const nextFocus = Math.min(digits.length, otpInputs.length - 1);
+                        otpInputs[nextFocus].focus();
+                        if (digits.length === 6) {
+                            trigger2FASubmit();
+                        }
+                    }
+                });
+            });
+
+            async function trigger2FASubmit() {
+                const code = otpInputs.map(i => i.value).join('');
+                if (code.length !== 6) {
+                    showToast('Please enter the full 6-digit verification code.', 'error');
+                    twofaOtpRow.classList.add('shake-animation');
+                    setTimeout(() => twofaOtpRow.classList.remove('shake-animation'), 450);
+                    return;
+                }
+
+                if (!current2FATempToken) {
+                    showToast('Authentication session expired. Please sign in again.', 'error');
+                    hide2FAView();
+                    return;
+                }
+
+                btnSubmit2FA.classList.add('loading');
+                btnSubmit2FA.disabled = true;
+
+                try {
+                    const data = await window.AegisAPI.verify2FA(current2FATempToken, code);
+                    showToast('Two-Factor Authentication verified successfully!', 'success');
+                    setTimeout(() => {
+                        completeAuthentication(data.user, data.tokens);
+                    }, 500);
+                } catch (err) {
+                    showToast(err.message || 'Invalid or expired 2FA code. Please retry.', 'error');
+                    btnSubmit2FA.classList.remove('loading');
+                    btnSubmit2FA.disabled = false;
+                    twofaOtpRow.classList.add('shake-animation');
+                    setTimeout(() => twofaOtpRow.classList.remove('shake-animation'), 450);
+                    otpInputs.forEach(i => {
+                        i.value = '';
+                        i.classList.remove('filled');
+                    });
+                    otpInputs[0].focus();
+                }
+            }
+
+            btnSubmit2FA?.addEventListener('click', trigger2FASubmit);
+
+            btnCancel2FA?.addEventListener('click', () => {
+                hide2FAView();
+            });
+
+            btnResend2FA?.addEventListener('click', async () => {
+                if (btnResend2FA.disabled || !current2FATempToken) return;
+                btnResend2FA.disabled = true;
+                try {
+                    const data = await window.AegisAPI.resend2FA(current2FATempToken);
+                    current2FATempToken = data.temp_token;
+                    showToast(data.message || 'Fresh 2FA code dispatched to your email!', 'success');
+                    start2FAResendCountdown(30);
+                    otpInputs.forEach(i => {
+                        i.value = '';
+                        i.classList.remove('filled');
+                    });
+                    otpInputs[0].focus();
+                } catch (err) {
+                    showToast(err.message || 'Failed to resend code. Please try again.', 'error');
+                    btnResend2FA.disabled = false;
+                }
+            });
+
             // ================= Form 1: Sign In Submit =================
             formSignIn.addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -1314,6 +1686,12 @@
                 try {
                     if (window.AegisAPI) {
                         const data = await window.AegisAPI.login(email, pwd, activeRole);
+                        if (data.requires_2fa) {
+                            btnSubmitSignIn.classList.remove('loading');
+                            btnSubmitSignIn.disabled = false;
+                            show2FAView(data.temp_token, data.email_masked);
+                            return;
+                        }
                         completeAuthentication(data.user, data.tokens);
                         return;
                     } else {
@@ -1386,11 +1764,15 @@
                 try {
                     if (window.AegisAPI) {
                         const data = await window.AegisAPI.login(cfg.demoUser.email, 'DemoPass123!', activeRole);
+                        if (data.requires_2fa) {
+                            show2FAView(data.temp_token, data.email_masked);
+                            return;
+                        }
                         setTimeout(() => completeAuthentication(data.user, data.tokens), 400);
                         return;
                     }
                 } catch (e) {}
-                setTimeout(() => completeAuthentication(cfg.demoUser, null), 400);
+                completeAuthentication(cfg.demoUser, null);
             });
 
             // One-Click Persona Buttons
@@ -1401,6 +1783,10 @@
                 try {
                     if (window.AegisAPI) {
                         const data = await window.AegisAPI.login(roleConfig.owner.demoUser.email, 'DemoPass123!', 'owner');
+                        if (data.requires_2fa) {
+                            show2FAView(data.temp_token, data.email_masked);
+                            return;
+                        }
                         completeAuthentication(data.user, data.tokens);
                         return;
                     }
@@ -1415,6 +1801,10 @@
                 try {
                     if (window.AegisAPI) {
                         const data = await window.AegisAPI.login(roleConfig.trustee.demoUser.email, 'DemoPass123!', 'trustee');
+                        if (data.requires_2fa) {
+                            show2FAView(data.temp_token, data.email_masked);
+                            return;
+                        }
                         completeAuthentication(data.user, data.tokens);
                         return;
                     }
@@ -1429,6 +1819,10 @@
                 try {
                     if (window.AegisAPI) {
                         const data = await window.AegisAPI.login(roleConfig.admin.demoUser.email, 'Admin@123', 'admin');
+                        if (data.requires_2fa) {
+                            show2FAView(data.temp_token, data.email_masked);
+                            return;
+                        }
                         completeAuthentication(data.user, data.tokens);
                         return;
                     }

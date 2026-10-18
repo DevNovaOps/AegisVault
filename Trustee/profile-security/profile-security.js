@@ -59,7 +59,7 @@ function populateTrusteeProfileUI(user, trusteeProfiles) {
 
   // Member since
   const memberSince = document.getElementById('profMemberSince');
-  if (memberSince) memberSince.textContent = dateJoined;
+  if (memberSince) memberSince.value = dateJoined;
 
   // 2FA Status
   update2FAUI(is2fa);
@@ -94,13 +94,18 @@ function populateTrusteeProfileUI(user, trusteeProfiles) {
 function update2FAUI(isEnabled) {
   const tfaStatus = document.getElementById('tfa-status');
   if (tfaStatus) {
-    tfaStatus.textContent = isEnabled ? 'Enabled' : 'Disabled';
-    tfaStatus.className = isEnabled ? 'status-badge status-active' : 'status-badge status-inactive';
+    tfaStatus.className = `status-badge ${isEnabled ? 'verified' : 'declined'}`;
+    tfaStatus.innerHTML = `<span class="badge-dot" style="background-color: currentColor;"></span><span>${isEnabled ? 'Enabled' : 'Disabled'}</span>`;
   }
 
   const tfaBtn = document.getElementById('btnToggle2FA');
   if (tfaBtn) {
     tfaBtn.textContent = isEnabled ? 'Disable 2FA' : 'Enable 2FA';
+    if (isEnabled) {
+      tfaBtn.classList.add('btn-secondary-outline');
+    } else {
+      tfaBtn.classList.remove('btn-secondary-outline');
+    }
   }
 }
 
@@ -118,6 +123,14 @@ function initProfileForm() {
   const btnToggle2FA = document.getElementById('btnToggle2FA');
   if (btnToggle2FA) {
     btnToggle2FA.addEventListener('click', async () => {
+      btnToggle2FA.disabled = true;
+      const originalText = btnToggle2FA.textContent;
+      btnToggle2FA.innerHTML = `
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;">
+          <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+        </svg>
+        <span>Updating...</span>
+      `;
       try {
         const res = await window.AegisAPI.post('/trustee/profile/2fa/toggle/');
         const isEnabled = Boolean(res.is_2fa_enabled);
@@ -128,9 +141,12 @@ function initProfileForm() {
         stored.is_2fa_enabled = isEnabled;
         localStorage.setItem('aegis_user', JSON.stringify(stored));
 
-        showToast(`Two-Factor Authentication ${isEnabled ? 'enabled' : 'disabled'} successfully.`);
+        window.showToast(`Two-Factor Authentication is now ${isEnabled ? 'Enabled' : 'Disabled'}.`, isEnabled ? 'success' : 'warning');
       } catch (err) {
-        showToast(`Failed to toggle 2FA: ${err.message}`, 'error');
+        window.showToast(`Failed to toggle 2FA: ${err.message}`, 'error');
+        btnToggle2FA.textContent = originalText;
+      } finally {
+        btnToggle2FA.disabled = false;
       }
     });
   }
@@ -204,29 +220,74 @@ function initPasswordForm() {
   const currPw = document.getElementById('currPw');
   const newPw = document.getElementById('newPw');
   const confirmPw = document.getElementById('confirmPw');
+  const matchHint = document.getElementById('pwMatchHint');
+  const btnUpdate = document.getElementById('btnUpdatePassword');
 
   if (!form) return;
+
+  function checkPasswordMatch() {
+    if (!matchHint) return;
+    const p1 = newPw?.value || '';
+    const p2 = confirmPw?.value || '';
+
+    if (!p1 && !p2) {
+      matchHint.textContent = '';
+      return;
+    }
+    if (p1.length > 0 && p1.length < 8) {
+      matchHint.textContent = 'Password must be at least 8 characters.';
+      matchHint.style.color = 'var(--coral, #EF4444)';
+      return;
+    }
+    if (p2.length > 0) {
+      if (p1 === p2) {
+        matchHint.textContent = 'Passwords match.';
+        matchHint.style.color = 'var(--accent-emerald, #10B981)';
+      } else {
+        matchHint.textContent = 'Passwords do not match.';
+        matchHint.style.color = 'var(--coral, #EF4444)';
+      }
+    } else {
+      matchHint.textContent = '';
+    }
+  }
+
+  if (newPw) newPw.addEventListener('input', checkPasswordMatch);
+  if (confirmPw) confirmPw.addEventListener('input', checkPasswordMatch);
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     if (!currPw.value) {
-      showToast('Please enter your current password.', 'error');
+      window.showToast('Please enter your current password.', 'error');
+      currPw.focus();
       return;
     }
 
     if (newPw.value.length < 8) {
-      showToast('New password must be at least 8 characters long.', 'error');
+      window.showToast('New password must be at least 8 characters long.', 'error');
+      newPw.focus();
       return;
     }
 
     if (newPw.value !== confirmPw.value) {
-      showToast('New password and confirmation do not match.', 'error');
+      window.showToast('New password and confirmation do not match.', 'error');
+      confirmPw.focus();
       return;
     }
 
+    if (btnUpdate) {
+      btnUpdate.disabled = true;
+      btnUpdate.innerHTML = `
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;">
+          <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+        </svg>
+        <span>Updating Master Password...</span>
+      `;
+    }
+
     try {
-      await window.AegisAPI.post('/trustee/profile/change-password/', {
+      const res = await window.AegisAPI.post('/trustee/profile/change-password/', {
         current_password: currPw.value,
         new_password: newPw.value
       });
@@ -234,13 +295,32 @@ function initPasswordForm() {
       currPw.value = '';
       newPw.value = '';
       confirmPw.value = '';
-      showToast('Master password updated and encrypted successfully.');
+      if (matchHint) matchHint.textContent = '';
+      window.showToast(res.detail || 'Master password updated and encrypted successfully.', 'success');
     } catch (err) {
       console.error('Password change error:', err);
-      showToast(`Password update failed: ${err.message}`, 'error');
+      window.showToast(`Password update failed: ${err.message}`, 'error');
+    } finally {
+      if (btnUpdate) {
+        btnUpdate.disabled = false;
+        btnUpdate.innerHTML = 'Update Master Password';
+      }
     }
   });
 }
+
+/**
+ * Toggle Password Visibility Eye Button
+ */
+window.togglePasswordVisibility = function(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  const isPw = input.type === 'password';
+  input.type = isPw ? 'text' : 'password';
+  btn.innerHTML = isPw
+    ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>'
+    : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+};
 
 /**
  * Copy Trustee ID
@@ -249,6 +329,6 @@ window.copyTrusteeId = function() {
   const input = document.getElementById('profTrusteeId');
   if (input) {
     navigator.clipboard?.writeText(input.value);
-    showToast(`Trustee ID "${input.value}" copied to clipboard.`);
+    window.showToast(`Trustee ID "${input.value}" copied to clipboard.`, 'success');
   }
 };

@@ -6,7 +6,8 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 from .views import (
     RegisterView, LoginView, LogoutView, CurrentUserView,
-    ProfileUpdateView, ChangePasswordView, Toggle2FAView, ExportDataView
+    ProfileUpdateView, ChangePasswordView, Toggle2FAView, ExportDataView,
+    Verify2FAView, Resend2FAView
 )
 
 urlpatterns = [
@@ -17,9 +18,14 @@ urlpatterns = [
     path('me/', CurrentUserView.as_view(), name='auth-me'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
 
+    # Two-Factor Authentication
+    path('2fa/verify/', Verify2FAView.as_view(), name='auth-2fa-verify'),
+    path('2fa/resend/', Resend2FAView.as_view(), name='auth-2fa-resend'),
+
     # Profile & Security (also accessible via /api/v1/owner/profile/...)
     path('profile/update/', ProfileUpdateView.as_view(), name='profile-update'),
     path('profile/change-password/', ChangePasswordView.as_view(), name='change-password'),
     path('profile/2fa/toggle/', Toggle2FAView.as_view(), name='toggle-2fa'),
     path('profile/export-data/', ExportDataView.as_view(), name='export-data'),
 ]
+

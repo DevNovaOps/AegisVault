@@ -159,16 +159,36 @@ window.showToast = function (message, type = 'info') {
     document.body.appendChild(container);
   }
 
+  let iconSvg = '';
+  let iconColor = 'var(--brand-orange)';
+  let borderColor = 'var(--brand-orange-border)';
+
+  if (type === 'success') {
+    iconColor = 'var(--accent-emerald, #10B981)';
+    borderColor = 'var(--accent-emerald-border, rgba(16, 185, 129, 0.4))';
+    iconSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
+  } else if (type === 'error') {
+    iconColor = 'var(--coral, #EF4444)';
+    borderColor = 'rgba(239, 68, 68, 0.4)';
+    iconSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+  } else if (type === 'warning') {
+    iconColor = 'var(--accent-amber, #F59E0B)';
+    borderColor = 'rgba(245, 158, 11, 0.4)';
+    iconSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+  } else {
+    iconColor = 'var(--brand-orange, #F97316)';
+    borderColor = 'var(--brand-orange-border, rgba(249, 115, 22, 0.3))';
+    iconSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>';
+  }
+
   const toast = document.createElement('div');
   toast.className = `trustee-toast ${type}`;
+  toast.style.borderColor = borderColor;
   toast.innerHTML = `
-    <span style="display:flex;align-items:center;color:var(--brand-orange)">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
-        <path d="M12 16v-4"/><path d="M12 8h.01"/>
-      </svg>
+    <span style="display:flex;align-items:center;color:${iconColor};flex-shrink:0;">
+      ${iconSvg}
     </span>
-    <span>${message}</span>
+    <span style="color:var(--text-primary);font-weight:500;">${message}</span>
   `;
 
   container.appendChild(toast);

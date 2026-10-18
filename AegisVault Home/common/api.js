@@ -188,6 +188,27 @@
     return data;
   }
 
+  async function verify2FA(tempToken, code) {
+    const data = await apiRequest('/auth/2fa/verify/', {
+      method: 'POST',
+      body: { temp_token: tempToken, code: code }
+    });
+    if (data.tokens) {
+      setTokens(data.tokens.access, data.tokens.refresh);
+    }
+    if (data.user) {
+      setUser(data.user);
+    }
+    return data;
+  }
+
+  async function resend2FA(tempToken) {
+    return await apiRequest('/auth/2fa/resend/', {
+      method: 'POST',
+      body: { temp_token: tempToken }
+    });
+  }
+
   async function register(payload) {
     const data = await apiRequest('/auth/register/', { method: 'POST', body: payload });
     if (data.tokens) {
@@ -310,6 +331,8 @@
 
     // Auth
     login,
+    verify2FA,
+    resend2FA,
     register,
     logout,
     getCurrentUser,

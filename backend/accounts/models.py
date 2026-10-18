@@ -87,3 +87,33 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def is_admin_user(self):
         return self.role == self.Role.ADMIN
+
+
+class EmailOTP(models.Model):
+    """
+    Temporary One-Time Password (OTP) for Two-Factor Authentication via Email.
+    Valid for 5 minutes, single-use.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='email_otps')
+    code = models.CharField(max_length=6)
+    temp_token = models.CharField(max_length=128, unique=True, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    is_used = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = 'aegis_email_otps'
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['temp_token']),
+            models.Index(fields=['user', 'is_used']),
+        ]
+
+    def __str__(self):
+        return f"OTP({self.user.email}, expires={self.expires_at}, used={self.is_used})"
+
+    @property
+    def is_valid(self):
+        return not self.is_used and timezone.now() <= self.expires_at
+

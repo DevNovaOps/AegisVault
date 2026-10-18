@@ -282,6 +282,10 @@ AEGIS_INVITATION_EXPIRY_DAYS = config('INVITATION_EXPIRY_DAYS', default=14, cast
 VAULT_ENCRYPTION_KEY = config('VAULT_ENCRYPTION_KEY', default='')
 
 
+# Email Configuration (defaults to console for development)
+EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='no-reply@aegisvault.com')
+
 # CORS
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True

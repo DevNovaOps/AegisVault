@@ -272,7 +272,7 @@
 
               <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-md);">
                 <span style="font-size: 0.84rem; font-weight: 600; color: var(--text-primary);">Current Status:</span>
-                <span id="tfa-status" class="status-badge status-inactive">Disabled</span>
+                <span id="tfa-status" class="status-badge status-inactive"><span class="badge-dot" style="background-color: currentColor;"></span>Disabled</span>
               </div>
 
               <button type="button" class="btn-primary-save" id="btnToggle2FA" style="justify-content: center; width: 100%;">
@@ -291,15 +291,31 @@
               <form id="passwordForm" style="display: flex; flex-direction: column; gap: 0.75rem;">
                 <div class="profile-input-group">
                   <label class="profile-label" for="currPw">Current Password</label>
-                  <input type="password" class="profile-input" id="currPw" placeholder="••••••••••••" required>
+                  <div style="position: relative; display: flex; align-items: center;">
+                    <input type="password" class="profile-input" id="currPw" placeholder="Enter current password" required autocomplete="current-password" style="padding-right: 2.5rem;">
+                    <button type="button" class="pw-toggle-btn" onclick="togglePasswordVisibility('currPw', this)" title="Show/Hide password" style="position: absolute; right: 0.65rem; background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; padding: 0.25rem;">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+                  </div>
                 </div>
                 <div class="profile-input-group">
                   <label class="profile-label" for="newPw">New Secure Password</label>
-                  <input type="password" class="profile-input" id="newPw" placeholder="Min. 8 characters" required>
+                  <div style="position: relative; display: flex; align-items: center;">
+                    <input type="password" class="profile-input" id="newPw" placeholder="Min. 8 characters" required autocomplete="new-password" style="padding-right: 2.5rem;">
+                    <button type="button" class="pw-toggle-btn" onclick="togglePasswordVisibility('newPw', this)" title="Show/Hide password" style="position: absolute; right: 0.65rem; background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; padding: 0.25rem;">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+                  </div>
                 </div>
                 <div class="profile-input-group">
                   <label class="profile-label" for="confirmPw">Confirm New Password</label>
-                  <input type="password" class="profile-input" id="confirmPw" placeholder="Re-enter password" required>
+                  <div style="position: relative; display: flex; align-items: center;">
+                    <input type="password" class="profile-input" id="confirmPw" placeholder="Re-enter password" required autocomplete="new-password" style="padding-right: 2.5rem;">
+                    <button type="button" class="pw-toggle-btn" onclick="togglePasswordVisibility('confirmPw', this)" title="Show/Hide password" style="position: absolute; right: 0.65rem; background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; padding: 0.25rem;">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+                  </div>
+                  <span id="pwMatchHint" style="font-size: 0.72rem; min-height: 1rem; color: var(--text-muted); display: block; margin-top: 0.15rem;"></span>
                 </div>
                 <button type="submit" class="btn-primary-save" id="btnUpdatePassword" style="margin-top: 0.35rem; justify-content: center;">
                   Update Master Password

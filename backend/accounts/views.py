@@ -15,6 +15,7 @@ from .serializers import (
     ChangePasswordSerializer, ProfileUpdateSerializer
 )
 from .permissions import IsOwner
+from .otp_service import OTPService
 from audit.services import AuditService
 
 
@@ -63,6 +64,17 @@ class LoginView(APIView):
         serializer.is_valid(raise_exception=True)
 
         user = serializer.validated_data['user']
+
+        # Check if Two-Factor Authentication is enabled
+        if user.is_2fa_enabled:
+            otp, code, temp_token = OTPService.generate_and_send_otp(user, request=request)
+            return Response({
+                'requires_2fa': True,
+                'temp_token': temp_token,
+                'email_masked': OTPService.mask_email(user.email),
+                'message': 'Two-Factor Authentication is active. A 6-digit verification code has been dispatched to your email.'
+            }, status=status.HTTP_200_OK)
+
         user.last_login = timezone.now()
         user.save(update_fields=['last_login'])
 
@@ -88,6 +100,78 @@ class LoginView(APIView):
     def _get_ip(self, request):
         xff = request.META.get('HTTP_X_FORWARDED_FOR')
         return xff.split(',')[0].strip() if xff else request.META.get('REMOTE_ADDR')
+
+
+class Verify2FAView(APIView):
+    """
+    POST /api/v1/auth/2fa/verify/
+    Verifies 6-digit Email OTP and exchanges temp_token for JWT tokens.
+    """
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        temp_token = request.data.get('temp_token', '').strip()
+        code = request.data.get('code', '').strip()
+
+        if not temp_token or not code:
+            return Response(
+                {'detail': 'Both session token and 6-digit verification code are required.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        success, result = OTPService.verify_otp(temp_token, code, request=request)
+        if not success:
+            return Response({'detail': result}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = result
+        user.last_login = timezone.now()
+        user.save(update_fields=['last_login'])
+
+        refresh = RefreshToken.for_user(user)
+
+        AuditService.log(
+            user=user,
+            action_key='user_login_2fa',
+            action_title='2FA Login Verified',
+            details=f'{user.role.title()} signed in via Email 2FA from {self._get_ip(request)}',
+            category='auth',
+            ip_address=self._get_ip(request)
+        )
+
+        return Response({
+            'user': UserSerializer(user).data,
+            'tokens': {
+                'access': str(refresh.access_token),
+                'refresh': str(refresh),
+            }
+        }, status=status.HTTP_200_OK)
+
+    def _get_ip(self, request):
+        xff = request.META.get('HTTP_X_FORWARDED_FOR')
+        return xff.split(',')[0].strip() if xff else request.META.get('REMOTE_ADDR')
+
+
+class Resend2FAView(APIView):
+    """
+    POST /api/v1/auth/2fa/resend/
+    Dispatches a fresh 6-digit OTP code to the user's email.
+    """
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        temp_token = request.data.get('temp_token', '').strip()
+        if not temp_token:
+            return Response(
+                {'detail': 'Session token is required to resend verification code.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        success, result = OTPService.resend_otp(temp_token, request=request)
+        if not success:
+            return Response({'detail': result}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(result, status=status.HTTP_200_OK)
+
 
 
 class LogoutView(APIView):
