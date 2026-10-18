@@ -378,10 +378,6 @@
                         this.closeProfileDropdown();
                         this.openSecuritySettings();
                     });
-                } else if (text.includes('audit')) {
-                    item.addEventListener('click', (e) => {
-                        this.navigateToAuditLogs(e);
-                    });
                 } else if (text.includes('sign out') || text.includes('logout') || text.includes('log out')) {
                     item.addEventListener('click', (e) => {
                         e.preventDefault();
@@ -403,13 +399,7 @@
         navigateToAuditLogs(e) {
             if (e && e.preventDefault) e.preventDefault();
             this.closeProfileDropdown();
-            const currentPath = window.location.pathname.toLowerCase();
-            if (currentPath.includes('audit-logs.html')) {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                this.showToast('Already on Audit Logs Console', 'info');
-            } else {
-                window.location.href = '../Audit Logs/audit-logs.html';
-            }
+            window.location.href = '../Dashboard/admin.html';
         },
 
         signOut() {

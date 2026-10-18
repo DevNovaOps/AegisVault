@@ -611,7 +611,7 @@ const AegisSystemHealth = {
         if (linkAllEvents) {
             linkAllEvents.addEventListener('click', (e) => {
                 e.preventDefault();
-                window.location.href = '../Audit Logs/audit-logs.html';
+                this.showToast('All system events captured in real-time telemetry.', 'info');
             });
         }
     },

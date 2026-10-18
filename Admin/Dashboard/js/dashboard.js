@@ -982,11 +982,10 @@ const AegisDashboard = {
                     if (q.includes('user')) window.location.href = '../User Management/user-management.html';
                     else if (q.includes('trustee')) window.location.href = '../Trustee Management/trustee-management.html';
                     else if (q.includes('vault')) window.location.href = '../Vault Management/vault-management.html';
-                    else if (q.includes('audit') || q.includes('log') || q.includes('sec') || q.includes('threat')) window.location.href = '../Audit Logs/audit-logs.html';
-                    else if (q.includes('health')) window.location.href = '../System Health/system-health.html';
+                    else if (q.includes('audit') || q.includes('log') || q.includes('sec') || q.includes('threat') || q.includes('health')) window.location.href = '../System Health/system-health.html';
                     else if (q.includes('analytics')) window.location.href = '../Analytics/analytics.html';
                     else if (q.includes('report')) window.location.href = '../Reports/reports.html';
-                    else this.showToast(`Search for "${q}": navigating to Audit Logs...`, 'info');
+                    else this.showToast(`Search for "${q}": navigating to System Health...`, 'info');
                 }
             });
         }
@@ -1267,8 +1266,9 @@ const AegisDashboard = {
 
         const linkViewEvents = document.getElementById('link-view-all-events') || document.getElementById('btn-view-all-events');
         if (linkViewEvents) {
-            linkViewEvents.addEventListener('click', () => {
-                window.location.href = '../Audit Logs/audit-logs.html';
+            linkViewEvents.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.location.href = '../System Health/system-health.html';
             });
         }
 

@@ -794,12 +794,6 @@ const AegisVaultController = {
             });
         }
 
-        const quickAuditBtn = document.getElementById('action-audit-overview');
-        if (quickAuditBtn) {
-            quickAuditBtn.addEventListener('click', () => {
-                window.location.href = '../Audit Logs/audit-logs.html';
-            });
-        }
 
         const selectAllCb = document.getElementById('checkbox-select-all');
         if (selectAllCb) {
