@@ -207,7 +207,7 @@ function initPasswordStrengthMeter() {
             strengthText.style.color = 'var(--emerald, #10b981)';
         } else {
             strengthBar.style.background = 'linear-gradient(90deg, #10b981, #06b6d4)';
-            strengthText.textContent = 'Cryptographic Grade (Level 5)';
+            strengthText.textContent = 'Cryptographic Grade (Maximum)';
             strengthText.style.color = 'var(--cyan, #06b6d4)';
         }
     });
