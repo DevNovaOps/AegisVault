@@ -171,35 +171,84 @@ document.addEventListener('DOMContentLoaded', () => {
   // 4. Modals Helpers
   // =========================================================================
   function openModal(modal) {
-    if (modal) {
-      modal.style.display = 'flex';
-      modal.classList.add('active');
-    }
+    if (!modal) return;
+    modal.style.display = 'flex';
+    modal.classList.add('active');
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
   }
 
   function closeModal(modal) {
-    if (modal) {
-      modal.style.display = 'none';
-      modal.classList.remove('active');
-    }
+    if (!modal) return;
+    modal.style.display = 'none';
+    modal.classList.remove('active');
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
   }
 
+  function populateEditModalInputs() {
+    const user = currentUserData || (window.AegisAPI ? window.AegisAPI.getUser() : {}) || {};
+    const fullName = (user.first_name || user.last_name)
+      ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
+      : (user.name || user.email?.split('@')[0] || 'Dev Yagnik');
+    const email = user.email || 'yagnikdev20@gmail.com';
+    const phone = user.phone || '';
+    const timezone = user.timezone_preference || 'UTC';
+
+    const inputName = document.getElementById('inputFullName');
+    if (inputName) inputName.value = fullName;
+
+    const inputEmail = document.getElementById('inputEmail');
+    if (inputEmail) inputEmail.value = email;
+
+    const inputPhone = document.getElementById('inputPhone');
+    if (inputPhone) inputPhone.value = phone;
+
+    const inputTz = document.getElementById('inputTimezone');
+    if (inputTz && timezone) inputTz.value = timezone;
+  }
+
+  // Close buttons with [data-close]
   document.querySelectorAll('[data-close]').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
       const targetId = btn.getAttribute('data-close');
       const target = document.getElementById(targetId);
       closeModal(target);
     });
   });
 
+  // Close modals on clicking backdrop
+  [editProfileModal, changePasswordModal].forEach(m => {
+    if (m) {
+      m.addEventListener('click', (e) => {
+        if (e.target === m) closeModal(m);
+      });
+    }
+  });
+
+  // Close on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeModal(editProfileModal);
+      closeModal(changePasswordModal);
+    }
+  });
+
   // =========================================================================
   // 5. Edit Profile Submission
   // =========================================================================
-  if (btnEditOverview) btnEditOverview.addEventListener('click', () => openModal(editProfileModal));
-  if (btnEditPersonal) btnEditPersonal.addEventListener('click', () => openModal(editProfileModal));
+  function handleOpenEditProfile() {
+    populateEditModalInputs();
+    openModal(editProfileModal);
+  }
+
+  if (btnEditOverview) btnEditOverview.addEventListener('click', handleOpenEditProfile);
+  if (btnEditPersonal) btnEditPersonal.addEventListener('click', handleOpenEditProfile);
 
   if (btnSaveProfile) {
-    btnSaveProfile.addEventListener('click', async () => {
+    btnSaveProfile.addEventListener('click', async (e) => {
+      e.preventDefault();
       const fullName = document.getElementById('inputFullName')?.value.trim();
       const email = document.getElementById('inputEmail')?.value.trim();
       const phone = document.getElementById('inputPhone')?.value.trim();
@@ -228,6 +277,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const stored = window.AegisAPI.getUser() || {};
         Object.assign(stored, updatedUser, payload);
         localStorage.setItem('aegis_user', JSON.stringify(stored));
+        currentUserData = stored;
+
         if (window.AegisAPI.syncUserProfileUI) {
           window.AegisAPI.syncUserProfileUI();
         }
