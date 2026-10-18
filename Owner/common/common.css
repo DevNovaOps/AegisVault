@@ -1095,15 +1095,20 @@ input, select, textarea {
 /* --------------------------------------------------------------------------
    11. Buttons & Form Controls
    -------------------------------------------------------------------------- */
-.btn {
+.btn,
+.btn-primary,
+.btn-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   padding: 0.55rem 1.15rem;
   border-radius: var(--radius-md);
+  font-family: inherit;
   font-size: 0.85rem;
   font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
   transition: all var(--transition-fast);
   white-space: nowrap;
 }
