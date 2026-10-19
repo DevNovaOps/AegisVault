@@ -11,6 +11,8 @@ from .views_trustee import (
     TrusteeProfileView, TrusteeProfileUpdateView,
     TrusteeChangePasswordView, TrusteeToggle2FAView,
     TrusteeAuditLogView,
+    TrusteeVaultAssetsView, TrusteeVaultAssetPreviewView,
+    TrusteeVaultAssetDownloadView,
 )
 
 urlpatterns = [
@@ -33,6 +35,9 @@ urlpatterns = [
 
     # Assigned Vaults
     path('assigned-vaults/', TrusteeAssignedVaultsView.as_view(), name='trustee-assigned-vaults'),
+    path('vaults/<uuid:vault_id>/assets/', TrusteeVaultAssetsView.as_view(), name='trustee-vault-assets'),
+    path('vaults/<uuid:vault_id>/assets/<uuid:pk>/preview/', TrusteeVaultAssetPreviewView.as_view(), name='trustee-vault-asset-preview'),
+    path('vaults/<uuid:vault_id>/assets/<uuid:pk>/download/', TrusteeVaultAssetDownloadView.as_view(), name='trustee-vault-asset-download'),
 
     # Releases
     path('releases/', TrusteeReleasesView.as_view(), name='trustee-releases'),

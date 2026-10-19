@@ -197,17 +197,85 @@ class ReleaseCancelView(APIView):
     def post(self, request, pk):
         release = get_object_or_404(ReleaseRequest, pk=pk, owner=request.user)
 
-        if not release.cancel():
-            return Response(
-                {'detail': f'Cannot cancel release in "{release.status}" state.'},
-                status=status.HTTP_409_CONFLICT
+        if release.status != ReleaseRequest.ReleaseStatus.CANCELLED:
+            release.status = ReleaseRequest.ReleaseStatus.CANCELLED
+            release.cancelled_at = timezone.now()
+            release.save()
+
+            # Reset any VaultShare records for this vault that were in 'submitted' state back to 'active'
+            from vaults.models import VaultShare
+            VaultShare.objects.filter(vault=release.vault, status='submitted').update(status='active')
+
+            # Notify all participating trustees
+            for p in release.participants.all():
+                NotificationService.create(
+                    user=p.trustee,
+                    notification_type='release',
+                    title=f'Release Cancelled: {release.vault.name}',
+                    description=f'The release request for vault "{release.vault.name}" was cancelled by the owner.',
+                    vault_name=release.vault.name,
+                )
+
+            AuditService.log(
+                user=request.user,
+                action_key='release_cancelled',
+                action_title='Release Cancelled',
+                details=f'Cancelled release "{release.title}"',
+                category='release',
+                vault_name=release.vault.name,
+            )
+
+        return Response(ReleaseSerializer.to_dict(release))
+
+
+class ReleaseExecuteView(APIView):
+    """
+    POST /api/v1/owner/releases/{id}/release/
+    Immediately releases and transfers the vault to assigned trustees.
+    Unlocks all encrypted assets for viewing and downloading.
+    """
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def post(self, request, pk):
+        release = get_object_or_404(ReleaseRequest, pk=pk, owner=request.user)
+
+        release.status = ReleaseRequest.ReleaseStatus.RELEASED
+        release.released_at = timezone.now()
+        release.note = (release.note + " | Transferred & unlocked to trustees by owner.").strip(" |")
+        release.save()
+
+        # Update all participants to verified
+        for p in release.participants.all():
+            p.status = 'verified'
+            p.save(update_fields=['status'])
+
+        # Ensure all assigned shares for this vault are active with View & Download permissions
+        from vaults.models import VaultShare
+        shares = VaultShare.objects.filter(vault=release.vault)
+        for s in shares:
+            s.status = 'active'
+            if s.access_level == 'View Only':
+                s.access_level = 'View & Download'
+            s.save(update_fields=['status', 'access_level', 'updated_at'])
+
+        # Send instant notification to all participants
+        for p in release.participants.all():
+            NotificationService.create(
+                user=p.trustee,
+                notification_type='release',
+                title=f'Vault Released: {release.vault.name}',
+                description=(
+                    f'The legacy vault "{release.vault.name}" has been unlocked and released to you. '
+                    f'You now have direct access to view and download all decrypted documents and assets.'
+                ),
+                vault_name=release.vault.name,
             )
 
         AuditService.log(
             user=request.user,
-            action_key='release_cancelled',
-            action_title='Release Cancelled',
-            details=f'Cancelled release "{release.title}"',
+            action_key='vault_released',
+            action_title='Vault Released to Trustees',
+            details=f'Owner released vault "{release.vault.name}" to trustees. Direct asset access unlocked.',
             category='release',
             vault_name=release.vault.name,
         )

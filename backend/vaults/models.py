@@ -189,5 +189,12 @@ class VaultShare(models.Model):
         unique_together = ['vault', 'trustee']
         ordering = ['-created_at']
 
+    @property
+    def is_expired(self):
+        from django.utils import timezone
+        if self.expires_at and timezone.now() > self.expires_at:
+            return True
+        return False
+
     def __str__(self):
         return f"{self.vault.name} → {self.trustee.name} ({self.access_level})"

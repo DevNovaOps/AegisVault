@@ -866,14 +866,16 @@ body.light-theme .brand-shield-icon .brand-logo-light {
 
 .status-badge.verified,
 .status-badge.submitted,
-.status-badge.completed {
+.status-badge.completed,
+.status-badge.active {
   background-color: var(--accent-emerald-tint);
   color: var(--accent-emerald);
   border: 1px solid var(--accent-emerald-border);
 }
 .status-badge.verified .badge-dot,
 .status-badge.submitted .badge-dot,
-.status-badge.completed .badge-dot {
+.status-badge.completed .badge-dot,
+.status-badge.active .badge-dot {
   background-color: var(--accent-emerald);
 }
 
@@ -890,14 +892,18 @@ body.light-theme .brand-shield-icon .brand-logo-light {
 
 .status-badge.not-submitted,
 .status-badge.failed,
-.status-badge.declined {
+.status-badge.declined,
+.status-badge.revoked,
+.status-badge.denied {
   background-color: var(--accent-red-tint);
   color: var(--accent-red);
   border: 1px solid var(--accent-red-border);
 }
 .status-badge.not-submitted .badge-dot,
 .status-badge.failed .badge-dot,
-.status-badge.declined .badge-dot {
+.status-badge.declined .badge-dot,
+.status-badge.revoked .badge-dot,
+.status-badge.denied .badge-dot {
   background-color: var(--accent-red);
 }
 

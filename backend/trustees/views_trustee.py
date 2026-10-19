@@ -10,10 +10,12 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.http import FileResponse, HttpResponse, Http404
+import os
 
 from .models import TrusteeProfile, Invitation
 from .serializers import InvitationSerializer
-from vaults.models import VaultShare
+from vaults.models import Vault, VaultAsset, VaultShare
 from vaults.serializers import VaultShareSerializer
 from releases.models import ReleaseParticipant, ReleaseRequest
 from accounts.models import User
@@ -447,6 +449,11 @@ class TrusteeAssignedVaultsView(APIView):
 
         data = []
         for share in shares:
+            # Check expiration
+            if share.is_expired and share.status != 'expired':
+                share.status = 'expired'
+                share.save(update_fields=['status', 'updated_at'])
+
             # Check for any active release for this vault
             active_rel = ReleaseRequest.objects.filter(
                 vault=share.vault,
@@ -463,16 +470,23 @@ class TrusteeAssignedVaultsView(APIView):
             ).order_by('-created_at').first()
 
             release_status = 'No Release'
+            is_released = False
             if active_rel:
                 release_status = 'In Progress'
             elif latest_rel and latest_rel.status == 'cancelled':
                 release_status = 'Cancelled'
             elif latest_rel and latest_rel.status == 'released':
                 release_status = 'Completed'
+                is_released = True
 
             serialized = VaultShareSerializer(share).data
             serialized['release_status'] = release_status
             serialized['has_active_release'] = bool(active_rel)
+            serialized['is_released'] = is_released
+            serialized['is_revoked'] = (share.status == 'revoked')
+            serialized['is_expired'] = (share.status == 'expired' or share.is_expired)
+            serialized['can_view'] = not serialized['is_revoked'] and not serialized['is_expired']
+            serialized['can_download'] = is_released or (share.status == 'active' and share.access_level in ['View & Download', 'Full Access'] and not share.is_expired)
             data.append(serialized)
 
         return Response(data)
@@ -493,14 +507,41 @@ class TrusteeReleasesView(APIView):
 
         data = []
         for p in participations:
+            # Human readable status
+            rel_status = p.release.status
+            if rel_status == 'in_progress':
+                formatted_status = 'In Progress'
+            elif rel_status == 'cancelled':
+                formatted_status = 'Cancelled'
+            elif rel_status == 'released':
+                formatted_status = 'Released'
+            elif rel_status == 'authorized':
+                formatted_status = 'Authorized'
+            elif rel_status == 'scheduled':
+                formatted_status = 'Scheduled'
+            else:
+                formatted_status = rel_status.capitalize()
+
+            # Next step guidance
+            if rel_status == 'cancelled':
+                next_step = 'Cancelled by Owner'
+            elif rel_status == 'released':
+                next_step = 'Vault Unlocked'
+            elif p.status == 'pending':
+                next_step = 'Awaiting your submission'
+            else:
+                next_step = 'Verified'
+
             data.append({
                 'id': str(p.id),
                 'release_id': str(p.release.id),
                 'title': p.release.title,
                 'vault_name': p.release.vault.name,
                 'trigger_type': p.release.trigger_type,
-                'release_status': p.release.status,
+                'release_status': rel_status,
+                'release_status_display': formatted_status,
                 'participant_status': p.status,
+                'next_step': next_step,
                 'required_shares': p.release.required_shares,
                 'collected_shares': p.release.collected_shares,
                 'submitted_at': p.submitted_at,
@@ -508,5 +549,200 @@ class TrusteeReleasesView(APIView):
             })
 
         return Response(data)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+#  TRUSTEE VAULT ASSET VIEWING & DOWNLOADING
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class TrusteeVaultAssetsView(APIView):
+    """
+    GET /api/v1/trustee/vaults/{vault_id}/assets/
+    Lists decrypted assets / documents accessible to this trustee.
+    Enforces access level: 'View Only' vs 'View & Download' vs 'Full Access',
+    and blocks revoked / expired shares.
+    """
+    permission_classes = [IsAuthenticated, IsTrustee]
+
+    def get(self, request, vault_id):
+        vault = get_object_or_404(Vault, pk=vault_id)
+
+        # 1. Check if user is a valid trustee for this vault
+        share = VaultShare.objects.filter(vault=vault, trustee=request.user).first()
+        is_participant = ReleaseParticipant.objects.filter(release__vault=vault, trustee=request.user).exists()
+
+        if not share and not is_participant:
+            return Response(
+                {'detail': 'You do not have access rights to this vault.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        # 2. Check if vault is released (full legacy handover to trustee)
+        is_released = ReleaseRequest.objects.filter(
+            vault=vault, status__in=['released', 'authorized']
+        ).exists()
+
+        # 3. Check revocation status
+        if share and share.status == 'revoked' and not is_released:
+            return Response(
+                {'detail': 'Access to this vault has been revoked by the owner.', 'status': 'revoked'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        # 4. Check expiration policy
+        if share and share.is_expired and not is_released:
+            if share.status != 'expired':
+                share.status = 'expired'
+                share.save(update_fields=['status', 'updated_at'])
+            return Response(
+                {'detail': 'Access to this vault share has expired according to owner policy.', 'status': 'expired'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        # Determine download permission
+        can_download = is_released or (share and share.access_level in ['View & Download', 'Full Access'])
+        access_level = 'Full Access (Released)' if is_released else (share.access_level if share else 'View Only')
+
+        assets = VaultAsset.objects.filter(vault=vault).order_by('-created_at')
+        assets_data = []
+        for asset in assets:
+            is_note = bool(asset.encrypted_data and not asset.file)
+            assets_data.append({
+                'id': str(asset.id),
+                'name': asset.name,
+                'category': asset.category,
+                'sensitivity': asset.sensitivity,
+                'description': asset.description,
+                'file_size_bytes': asset.file_size_bytes,
+                'mime_type': asset.mime_type or ('text/plain' if is_note else 'application/octet-stream'),
+                'is_note': is_note,
+                'created_at': asset.created_at,
+                'can_view': True,
+                'can_download': can_download,
+                'preview_url': f'/api/v1/trustee/vaults/{vault_id}/assets/{asset.id}/preview/',
+                'download_url': f'/api/v1/trustee/vaults/{vault_id}/assets/{asset.id}/download/' if can_download else None,
+            })
+
+        AuditService.log(
+            user=request.user,
+            action_key='trustee_assets_viewed',
+            action_title='Trustee Viewed Vault Assets',
+            details=f'Trustee {request.user.name} viewed assets in "{vault.name}" ({len(assets_data)} items)',
+            category='vault',
+            vault_name=vault.name,
+        )
+
+        return Response({
+            'vault_id': str(vault.id),
+            'vault_name': vault.name,
+            'vault_description': vault.description,
+            'owner_name': vault.owner.name,
+            'owner_email': vault.owner.email,
+            'access_level': access_level,
+            'is_released': is_released,
+            'can_download': can_download,
+            'assets': assets_data
+        })
+
+
+class TrusteeVaultAssetPreviewView(APIView):
+    """
+    GET /api/v1/trustee/vaults/{vault_id}/assets/{pk}/preview/
+    Provides inline preview for text/notes, images, or PDFs.
+    """
+    permission_classes = [IsAuthenticated, IsTrustee]
+
+    def get(self, request, vault_id, pk):
+        vault = get_object_or_404(Vault, pk=vault_id)
+        share = VaultShare.objects.filter(vault=vault, trustee=request.user).first()
+        is_released = ReleaseRequest.objects.filter(vault=vault, status__in=['released', 'authorized']).exists()
+
+        if not share and not is_released:
+            return Response({'detail': 'No access permissions.'}, status=status.HTTP_403_FORBIDDEN)
+
+        if share and share.status == 'revoked' and not is_released:
+            return Response({'detail': 'Access revoked by vault owner.'}, status=status.HTTP_403_FORBIDDEN)
+
+        if share and share.is_expired and not is_released:
+            return Response({'detail': 'Access expired.'}, status=status.HTTP_403_FORBIDDEN)
+
+        asset = get_object_or_404(VaultAsset, pk=pk, vault=vault)
+
+        if asset.encrypted_data and not asset.file:
+            return Response({
+                'id': str(asset.id),
+                'name': asset.name,
+                'is_note': True,
+                'content': asset.encrypted_data,
+                'mime_type': 'text/plain'
+            })
+
+        if asset.file:
+            mime = asset.mime_type or 'application/octet-stream'
+            try:
+                response = FileResponse(asset.file.open('rb'), content_type=mime)
+                response['Content-Disposition'] = f'inline; filename="{os.path.basename(asset.file.name)}"'
+                return response
+            except Exception as e:
+                return Response({'detail': f'File preview unavailable: {str(e)}'}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response({'detail': 'No content available for this asset.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class TrusteeVaultAssetDownloadView(APIView):
+    """
+    GET /api/v1/trustee/vaults/{vault_id}/assets/{pk}/download/
+    Direct download of decrypted asset.
+    Enforces 'View & Download' or 'Full Access' (or Released state).
+    """
+    permission_classes = [IsAuthenticated, IsTrustee]
+
+    def get(self, request, vault_id, pk):
+        vault = get_object_or_404(Vault, pk=vault_id)
+        share = VaultShare.objects.filter(vault=vault, trustee=request.user).first()
+        is_released = ReleaseRequest.objects.filter(vault=vault, status__in=['released', 'authorized']).exists()
+
+        if not share and not is_released:
+            return Response({'detail': 'No access permissions.'}, status=status.HTTP_403_FORBIDDEN)
+
+        if share and share.status == 'revoked' and not is_released:
+            return Response({'detail': 'Access revoked by vault owner.'}, status=status.HTTP_403_FORBIDDEN)
+
+        if share and share.is_expired and not is_released:
+            return Response({'detail': 'Access expired.'}, status=status.HTTP_403_FORBIDDEN)
+
+        can_download = is_released or (share and share.access_level in ['View & Download', 'Full Access'])
+        if not can_download:
+            return Response(
+                {'detail': 'Permission Denied: Your access level is "View Only". Downloading is restricted by the owner.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        asset = get_object_or_404(VaultAsset, pk=pk, vault=vault)
+
+        AuditService.log(
+            user=request.user,
+            action_key='asset_downloaded',
+            action_title='Asset Downloaded by Trustee',
+            details=f'Trustee {request.user.name} downloaded "{asset.name}" from "{vault.name}"',
+            category='vault',
+            vault_name=vault.name,
+        )
+
+        if asset.file:
+            try:
+                filename = os.path.basename(asset.file.name)
+                response = FileResponse(asset.file.open('rb'), as_attachment=True, filename=filename)
+                return response
+            except Exception as e:
+                return Response({'detail': f'File unavailable: {str(e)}'}, status=status.HTTP_404_NOT_FOUND)
+
+        if asset.encrypted_data:
+            filename = f"{asset.name.replace(' ', '_')}.txt"
+            response = HttpResponse(asset.encrypted_data, content_type='text/plain; charset=utf-8')
+            response['Content-Disposition'] = f'attachment; filename="{filename}"'
+            return response
+
+        return Response({'detail': 'No downloadable content found.'}, status=status.HTTP_404_NOT_FOUND)
 
 

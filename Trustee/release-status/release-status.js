@@ -52,18 +52,31 @@ function renderReleaseTable() {
     let badgeClass = 'pending';
     let badgeIcon = '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/>';
     const statusLower = (req.release_status || '').toLowerCase();
-    if (statusLower.includes('review') || statusLower.includes('progress')) {
+    let displayStatus = req.release_status_display || req.release_status || 'Pending';
+    let nextStepText = req.next_step || (req.participant_status === 'pending' ? 'Awaiting your submission' : 'Verified');
+
+    if (statusLower.includes('cancel')) {
+      badgeClass = 'denied';
+      badgeIcon = '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>';
+      displayStatus = 'Cancelled';
+      nextStepText = 'Cancelled by Owner';
+    } else if (statusLower.includes('review') || statusLower.includes('progress')) {
       badgeClass = 'in-review';
       badgeIcon = '<circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>';
-    } else if (statusLower.includes('approved') || statusLower.includes('authorized')) {
-      badgeClass = 'approved';
-      badgeIcon = '<circle cx="12" cy="12" r="10"/><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>';
+      displayStatus = 'In Progress';
     } else if (statusLower.includes('released')) {
       badgeClass = 'approved';
       badgeIcon = '<circle cx="12" cy="12" r="10"/><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>';
-    } else if (statusLower.includes('denied') || statusLower.includes('fail') || statusLower.includes('cancel')) {
+      displayStatus = 'Released';
+      nextStepText = 'Vault Unlocked & Transferred';
+    } else if (statusLower.includes('approved') || statusLower.includes('authorized')) {
+      badgeClass = 'approved';
+      badgeIcon = '<circle cx="12" cy="12" r="10"/><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>';
+      displayStatus = 'Authorized';
+    } else if (statusLower.includes('denied') || statusLower.includes('fail')) {
       badgeClass = 'denied';
       badgeIcon = '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>';
+      displayStatus = 'Denied';
     }
 
     const dateObj = req.created_at ? new Date(req.created_at) : new Date();
@@ -90,12 +103,12 @@ function renderReleaseTable() {
       <td>
         <span class="status-badge ${badgeClass}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">${badgeIcon}</svg>
-          <span>${req.release_status || 'Pending'}</span>
+          <span>${displayStatus}</span>
         </span>
       </td>
-      <td class="next-step-cell">${req.participant_status === 'pending' ? 'Awaiting your submission' : 'Verified'}</td>
+      <td class="next-step-cell">${nextStepText}</td>
       <td style="text-align: right;">
-        <button type="button" class="view-details-link" onclick="openReleaseDetails('${req.release_id || 'REQ-000'}', '${req.vault_name || 'Vault'}', '${req.trigger_type || 'Release'}', '${dateStr}, ${timeStr}', '${req.release_status || 'Pending'}', 'Next step', 'Owner', '${req.collected_shares || 0} of ${req.required_shares || 0} Shares Received', 1)">
+        <button type="button" class="view-details-link" onclick="openReleaseDetails('${req.release_id || 'REQ-000'}', '${req.vault_name || 'Vault'}', '${req.trigger_type || 'Release'}', '${dateStr}, ${timeStr}', '${displayStatus}', '${nextStepText}', 'Owner', '${req.collected_shares || 0} of ${req.required_shares || 0} Shares Received', ${statusLower.includes('cancel') ? 1 : (statusLower.includes('released') ? 4 : 2)})">
           <span>View Details</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </button>

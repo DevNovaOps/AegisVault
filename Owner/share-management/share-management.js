@@ -310,10 +310,10 @@
         <div style="margin-bottom: 1.15rem;">
           <label style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Expiration Policy</label>
           <select id="editExpirySelect" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
-            <option value="Never" ${item.expiresOn === 'Never' ? 'selected' : ''}>Never (Permanent)</option>
-            <option value="30 Days">30 Days</option>
-            <option value="90 Days">90 Days</option>
-            <option value="1 Year">1 Year</option>
+            <option value="Never" ${!item.expiresOn || item.expiresOn === 'Never' ? 'selected' : ''}>Never (Permanent)</option>
+            <option value="30 Days" ${item.expiresOn && item.expiresOn.includes('30') ? 'selected' : ''}>30 Days</option>
+            <option value="90 Days" ${item.expiresOn && item.expiresOn.includes('90') ? 'selected' : ''}>90 Days</option>
+            <option value="1 Year" ${item.expiresOn && (item.expiresOn.includes('Year') || item.expiresOn.includes('365')) ? 'selected' : ''}>1 Year</option>
           </select>
         </div>
 
@@ -321,6 +321,18 @@
           <label style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Access Note / Directives</label>
           <textarea id="editShareNote" rows="2" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary); resize: none;">${item.note || ''}</textarea>
         </div>`;
+    }
+
+    if (btnRevokeAccess) {
+      if (item.status === 'revoked') {
+        btnRevokeAccess.textContent = 'Restore Access';
+        btnRevokeAccess.className = 'btn btn-primary';
+        btnRevokeAccess.style.background = 'var(--status-success)';
+      } else {
+        btnRevokeAccess.textContent = 'Revoke Access';
+        btnRevokeAccess.className = 'btn btn-danger';
+        btnRevokeAccess.style.background = '';
+      }
     }
 
     if (editShareModal) {
@@ -645,13 +657,22 @@
         const emailMatch = trusteeText.match(/\(([^)]+)\)/);
         const email = (trusteeOpt && trusteeOpt.dataset.email) ? trusteeOpt.dataset.email : (emailMatch ? emailMatch[1] : `${trusteeName.toLowerCase().replace(/\s+/g, '.')}@email.com`);
 
+        function computeExpiryIso(val) {
+          if (!val || val === 'Never') return null;
+          const now = Date.now();
+          if (val === '30 Days') return new Date(now + 30 * 24 * 60 * 60 * 1000).toISOString();
+          if (val === '90 Days') return new Date(now + 90 * 24 * 60 * 60 * 1000).toISOString();
+          if (val === '1 Year') return new Date(now + 365 * 24 * 60 * 60 * 1000).toISOString();
+          return null;
+        }
+
         if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
           const payload = {
             vault_id: vaultVal,
             trustee_email: email,
             access_level: access,
             note: note,
-            expires_at: expiry === 'Never' ? null : new Date(Date.now() + 30*24*60*60*1000).toISOString()
+            expires_at: computeExpiryIso(expiry)
           };
           window.AegisAPI.post('/owner/shares/', payload).then(s => {
             const newShare = {
@@ -689,7 +710,7 @@
             id: newId, vault: vaultVal, vaultDesc: 'Encrypted assets...', vaultThumb: '../assets/images/vault-thumb-1.png',
             trusteeName: trusteeName, trusteeEmail: email, avatarType: 'img', avatar: '../assets/images/trustee-avatar-2.png',
             accessLevel: access, status: 'active', sharedDate: sharedDate, sharedTime: sharedTime,
-            expiresOn: expiry === 'Never' ? 'Never' : '30 Days', note: note
+            expiresOn: expiry === 'Never' ? 'Never' : expiry, note: note
           };
           shares.unshift(newShare);
           updateKPIs();
@@ -712,14 +733,23 @@
         const noteInput = document.getElementById('editShareNote');
 
         const newAccess = accessSelect ? accessSelect.value : activeShareItem.accessLevel;
-        const newExpiry = expirySelect ? expirySelect.value : activeShareItem.expiresOn;
+        const newExpiry = expirySelect ? expirySelect.value : 'Never';
         const newNote = noteInput ? noteInput.value.trim() : activeShareItem.note;
+
+        function computeExpiryIso(val) {
+          if (!val || val === 'Never') return null;
+          const now = Date.now();
+          if (val === '30 Days') return new Date(now + 30 * 24 * 60 * 60 * 1000).toISOString();
+          if (val === '90 Days') return new Date(now + 90 * 24 * 60 * 60 * 1000).toISOString();
+          if (val === '1 Year') return new Date(now + 365 * 24 * 60 * 60 * 1000).toISOString();
+          return null;
+        }
 
         if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
           window.AegisAPI.put(`/owner/shares/${activeShareItem.id}/`, {
             access_level: newAccess,
             note: newNote,
-            expires_at: newExpiry === 'Never' ? null : new Date(Date.now() + 30*24*60*60*1000).toISOString()
+            expires_at: computeExpiryIso(newExpiry)
           }).then(s => {
             activeShareItem.accessLevel = s.access_level;
             activeShareItem.expiresOn = s.expires_at ? new Date(s.expires_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }) : 'Never';
@@ -745,28 +775,35 @@
       });
     }
 
-    // Revoke Access Button in Edit Modal
+    // Revoke / Restore Access Button in Edit Modal
     if (btnRevokeAccess) {
       btnRevokeAccess.addEventListener('click', function() {
         if (!activeShareItem) return;
+        const endpoint = activeShareItem.status === 'revoked' ? 'restore' : 'revoke';
         if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-          window.AegisAPI.post(`/owner/shares/${activeShareItem.id}/revoke/`).then(() => {
-            activeShareItem.status = 'revoked';
+          window.AegisAPI.post(`/owner/shares/${activeShareItem.id}/${endpoint}/`).then(res => {
+            activeShareItem.status = res.status || (endpoint === 'restore' ? 'active' : 'revoked');
             updateKPIs();
             renderTable();
             if (editShareModal) editShareModal.classList.remove('show', 'active');
             document.body.style.overflow = '';
-            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Access to ${activeShareItem.vault} revoked for ${activeShareItem.trusteeName}.`, 'warning');
+            const msg = endpoint === 'restore'
+              ? `Access restored for ${activeShareItem.trusteeName} on ${activeShareItem.vault}!`
+              : `Access revoked for ${activeShareItem.trusteeName} on ${activeShareItem.vault}.`;
+            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(msg, endpoint === 'restore' ? 'success' : 'warning');
           }).catch(err => {
-            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Failed to revoke access: ${err.message}`, 'error');
+            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Failed to update access: ${err.message}`, 'error');
           });
         } else {
-          activeShareItem.status = 'revoked';
+          activeShareItem.status = activeShareItem.status === 'revoked' ? 'active' : 'revoked';
           updateKPIs();
           renderTable();
           if (editShareModal) editShareModal.classList.remove('show', 'active');
           document.body.style.overflow = '';
-          if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Access to ${activeShareItem.vault} revoked for ${activeShareItem.trusteeName}.`, 'warning');
+          const msg = activeShareItem.status === 'active'
+            ? `Access restored for ${activeShareItem.trusteeName} on ${activeShareItem.vault}!`
+            : `Access revoked for ${activeShareItem.trusteeName} on ${activeShareItem.vault}.`;
+          if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(msg, activeShareItem.status === 'active' ? 'success' : 'warning');
         }
       });
     }

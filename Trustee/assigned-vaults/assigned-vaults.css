@@ -792,3 +792,16 @@
   }
 }
 
+.assigned-vault-card.vault-card-revoked {
+  border-left: 3px solid #ef4444 !important;
+  background: rgba(239, 68, 68, 0.04);
+}
+
+.asset-item-card:hover {
+  border-color: var(--brand-orange) !important;
+}
+
+.btn-asset-action:hover {
+  filter: brightness(1.1);
+}
+

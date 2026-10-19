@@ -507,6 +507,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         <span>Simulate Trigger Ping</span>
       </button>
+      <button class="dropdown-item" data-action="release-now" style="width:100%; border:none; background:none; text-align:left; cursor:pointer; color:var(--status-success);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>Release Vault to Trustees</span>
+      </button>
       <div class="dropdown-divider"></div>
       <button class="dropdown-item" data-action="toggle-status" style="width:100%; border:none; background:none; text-align:left; cursor:pointer; color:var(--status-danger);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
@@ -532,6 +536,24 @@
       closeReleaseMenu();
       window.AegisOwner?.showToast(`Dead-man heartbeat test dispatched for "${item.title}". Ping received: OK!`, 'success');
     });
+
+    const btnReleaseNow = menu.querySelector('[data-action="release-now"]');
+    if (btnReleaseNow) {
+      btnReleaseNow.addEventListener('click', () => {
+        closeReleaseMenu();
+        if (!confirm(`Are you sure you want to release and unlock "${item.title}" directly to assigned trustees now? All vault assets will become immediately accessible.`)) return;
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+          window.AegisAPI.post(`/owner/releases/${id}/release/`).then(() => {
+            item.status = 'released';
+            updateKPIsAndDonut();
+            renderTable();
+            window.AegisOwner?.showToast(`Vault successfully released to trustees! All assets are now unlocked.`, 'success');
+          }).catch(err => {
+            window.AegisOwner?.showToast(`Failed to release vault: ${err.message}`, 'error');
+          });
+        }
+      });
+    }
 
     menu.querySelector('[data-action="toggle-status"]').addEventListener('click', () => {
       closeReleaseMenu();
@@ -793,6 +815,8 @@
 
         if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
           window.AegisAPI.put(`/owner/releases/${activeReleaseItem.id}/`, {
+            title: activeReleaseItem.title,
+            status: activeReleaseItem.status,
             trigger_type: activeReleaseItem.trigger,
             trigger_detail: activeReleaseItem.triggerDetail,
             note: activeReleaseItem.note
