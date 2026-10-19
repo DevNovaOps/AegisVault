@@ -46,11 +46,11 @@ class TrusteeDashboardView(APIView):
         ).count()
 
         pending_releases = ReleaseParticipant.objects.filter(
-            trustee=user, status='pending'
+            trustee=user, status='pending', release__status__in=['pending', 'in_progress', 'authorized']
         ).count()
 
         completed_releases = ReleaseParticipant.objects.filter(
-            trustee=user, status='verified'
+            trustee=user, status='verified', release__status='released'
         ).count()
 
         # Auto-reconcile VaultShare for any accepted invitations
@@ -70,6 +70,9 @@ class TrusteeDashboardView(APIView):
             has_release = ReleaseRequest.objects.filter(
                 vault=s.vault, status__in=['pending', 'in_progress', 'authorized']
             ).exists()
+            if not has_release and s.status == 'submitted':
+                s.status = 'active'
+                s.save(update_fields=['status', 'updated_at'])
             assigned_vaults.append({
                 'id': str(s.vault.id),
                 'name': s.vault.name,
@@ -441,8 +444,38 @@ class TrusteeAssignedVaultsView(APIView):
         shares = VaultShare.objects.filter(
             trustee=request.user
         ).select_related('vault', 'vault__owner')
-        serializer = VaultShareSerializer(shares, many=True)
-        return Response(serializer.data)
+
+        data = []
+        for share in shares:
+            # Check for any active release for this vault
+            active_rel = ReleaseRequest.objects.filter(
+                vault=share.vault,
+                status__in=['pending', 'in_progress', 'authorized']
+            ).first()
+
+            # If no active release exists, ensure share.status is NOT stuck in 'submitted'
+            if not active_rel and share.status == 'submitted':
+                share.status = 'active'
+                share.save(update_fields=['status', 'updated_at'])
+
+            latest_rel = ReleaseRequest.objects.filter(
+                vault=share.vault
+            ).order_by('-created_at').first()
+
+            release_status = 'No Release'
+            if active_rel:
+                release_status = 'In Progress'
+            elif latest_rel and latest_rel.status == 'cancelled':
+                release_status = 'Cancelled'
+            elif latest_rel and latest_rel.status == 'released':
+                release_status = 'Completed'
+
+            serialized = VaultShareSerializer(share).data
+            serialized['release_status'] = release_status
+            serialized['has_active_release'] = bool(active_rel)
+            data.append(serialized)
+
+        return Response(data)
 
 
 class TrusteeReleasesView(APIView):
@@ -450,14 +483,13 @@ class TrusteeReleasesView(APIView):
     permission_classes = [IsAuthenticated, IsTrustee]
 
     def get(self, request):
-        include_cancelled = request.query_params.get('include_cancelled', 'false').lower() == 'true'
+        status_param = request.query_params.get('status')
         participations = ReleaseParticipant.objects.filter(
             trustee=request.user
         ).select_related('release', 'release__vault')
 
-        if not include_cancelled:
-            participations = participations.exclude(release__status='cancelled')
-
+        if status_param and status_param != 'all':
+            participations = participations.filter(release__status__iexact=status_param)
 
         data = []
         for p in participations:

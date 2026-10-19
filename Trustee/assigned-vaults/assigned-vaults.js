@@ -13,18 +13,28 @@ document.addEventListener('DOMContentLoaded', () => {
     window.AegisAPI.get('/trustee/assigned-vaults/').then(data => {
       VAULT_ITEMS = (data || []).map(share => {
         const statusLower = (share.status || 'pending').toLowerCase();
+        const hasActiveRelease = Boolean(share.has_active_release || (share.release_status && share.release_status.toLowerCase() === 'in progress'));
+        const isVerified = statusLower === 'active' || statusLower === 'submitted';
+        const isShardSubmitted = Boolean(hasActiveRelease && statusLower === 'submitted');
+
         let categories = ['all'];
-        if (statusLower === 'active') {
+        if (isVerified) {
           categories.push('active');
-        } else if (statusLower === 'submitted') {
-          categories.push('active');
-          categories.push('release_in_progress');
         } else if (statusLower === 'pending' || statusLower === 'pending_verification') {
           categories.push('pending_verification');
         }
+        if (hasActiveRelease) {
+          categories.push('release_in_progress');
+        }
 
-        const isVerified = statusLower === 'active' || statusLower === 'submitted';
-        const isSubmitted = statusLower === 'submitted';
+        const rawReleaseStatus = share.release_status || (hasActiveRelease ? 'In Progress' : 'No Release');
+        const displayReleaseStatus = hasActiveRelease ? 'In Progress' : (rawReleaseStatus === 'Cancelled' ? 'Cancelled' : 'No Release');
+        const displayReleaseSub = hasActiveRelease 
+          ? (isShardSubmitted ? 'Shard Deposited' : 'Awaiting Shard') 
+          : (rawReleaseStatus === 'Cancelled' ? 'Cancelled by Owner' : 'Not initiated');
+
+        const displayShareStatus = isShardSubmitted ? 'Submitted' : (isVerified ? 'Active' : 'Pending');
+        const displayShareDate = isShardSubmitted ? 'Share Submitted' : (isVerified ? 'Active Custody' : 'Pending');
 
         return {
           id: String(share.vault || share.id || 'vault-' + Math.random()),
@@ -34,11 +44,11 @@ document.addEventListener('DOMContentLoaded', () => {
           assignedOn: new Date(share.created_at || Date.now()).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }),
           verificationStatus: isVerified ? 'Verified' : 'Pending',
           verificationSub: isVerified ? 'Cryptographically confirmed' : 'Requires verification',
-          shareStatus: isSubmitted ? 'Submitted' : (isVerified ? 'Active' : 'Pending'),
-          shareDate: isSubmitted ? 'Share Submitted' : (isVerified ? 'Active Custody' : 'Pending'),
-          releaseStatus: isSubmitted ? 'In Progress' : 'No Release',
-          releaseSub: isSubmitted ? 'Shard Deposited' : 'Not initiated',
-          tags: ['Assigned', isSubmitted ? 'Submitted' : (isVerified ? 'Active' : 'Pending')],
+          shareStatus: displayShareStatus,
+          shareDate: displayShareDate,
+          releaseStatus: displayReleaseStatus,
+          releaseSub: displayReleaseSub,
+          tags: ['Assigned', displayShareStatus],
           categories: categories,
           lockColor: isVerified ? 'blue' : 'amber',
           requiresAction: !isVerified,
@@ -276,7 +286,7 @@ function openVaultModal(vault) {
   shareBadge.innerHTML = `<span class="badge-dot"></span>${vault.shareStatus}`;
 
   const releaseBadge = document.getElementById('modalVaultReleaseBadge');
-  releaseBadge.className = `status-badge ${vault.releaseStatus === 'No Release' ? 'no-release' : 'in-progress'}`;
+  releaseBadge.className = `status-badge ${vault.releaseStatus === 'In Progress' ? 'in-progress' : 'no-release'}`;
   releaseBadge.innerHTML = `<span class="badge-dot"></span>${vault.releaseStatus}`;
 
   window.openModal('vaultDetailModal');

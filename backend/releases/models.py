@@ -89,6 +89,11 @@ class ReleaseRequest(models.Model):
         self.status = self.ReleaseStatus.CANCELLED
         self.cancelled_at = timezone.now()
         self.save()
+
+        # Reset any VaultShare records for this vault that were in 'submitted' state back to 'active'
+        from vaults.models import VaultShare
+        VaultShare.objects.filter(vault=self.vault, status='submitted').update(status='active')
+
         return True
 
     def check_threshold(self):

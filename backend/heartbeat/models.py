@@ -119,6 +119,9 @@ class HeartbeatConfig(models.Model):
             rel.note = f"{rel.note} | {note_msg}".strip(" |")
             rel.save()
 
+            from vaults.models import VaultShare
+            VaultShare.objects.filter(vault=rel.vault, status='submitted').update(status='active')
+
 
     def enter_grace_period(self):
         """Transition to grace period after missed heartbeat."""
