@@ -90,16 +90,28 @@
         // Release status donut data
         if (releaseData.status === 'fulfilled' && releaseData.value) {
            const releases = Array.isArray(releaseData.value) ? releaseData.value : (releaseData.value.results || []);
+           const vaults = (healthData && healthData.length > 0) ? healthData : (Array.isArray(health.value) ? health.value : (health.value?.results || []));
+           const totalVaultCount = vaults.length || releases.length || 0;
+
            let completed = 0, in_progress = 0, scheduled = 0, not_started = 0;
            releases.forEach(r => {
               const st = (r.status || '').toLowerCase();
               if (st === 'completed' || st === 'released') completed++;
-              else if (st === 'in_progress' || st === 'pending') in_progress++;
+              else if (st === 'in_progress' || st === 'pending' || st === 'authorized') in_progress++;
               else if (st === 'scheduled') scheduled++;
+              else if (st === 'cancelled') not_started++;
               else not_started++;
            });
+
+           // If owner has vaults without any releases configured, count them as not_started
+           if (vaults.length > releases.length) {
+              not_started += (vaults.length - releases.length);
+           }
+
+           const effectiveTotal = Math.max(totalVaultCount, (completed + in_progress + scheduled + not_started));
+
            window.API_RELEASE_DATA = {
-             total: releases.length,
+             total: effectiveTotal,
              segments: [
                { label: 'Completed', count: completed, color: '#10b981', key: 'completed' },
                { label: 'In Progress', count: in_progress, color: '#0284c7', key: 'in_progress' },
@@ -107,6 +119,29 @@
                { label: 'Not Started', count: not_started, color: '#ef4444', key: 'not_started' }
              ]
            };
+
+           // Map releases to upcoming events
+           if (releases.length > 0) {
+              const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+              const mappedEvents = releases.map(r => {
+                 const dt = r.scheduled_at ? new Date(r.scheduled_at) : (r.created_at ? new Date(r.created_at) : new Date());
+                 const isInProg = r.status === 'in_progress' || r.status === 'pending';
+                 const isComp = r.status === 'completed' || r.status === 'released';
+                 return {
+                    id: r.id,
+                    day: String(dt.getDate()).padStart(2, '0'),
+                    month: months[dt.getMonth()],
+                    title: r.title,
+                    vault: r.vault_name || 'Protected Vault',
+                    dotColor: isComp ? '#10b981' : (isInProg ? '#0284c7' : '#f59e0b'),
+                    isWarm: isInProg,
+                    countdown: isInProg ? 'Active Quorum' : (isComp ? 'Executed' : 'Scheduled'),
+                    pillType: isInProg ? 'urgent' : 'normal',
+                    description: r.description || `Trigger: ${r.trigger_type}. Protocol under zero-knowledge custody verification.`
+                 };
+              });
+              dashboardUpcomingEvents.splice(0, dashboardUpcomingEvents.length, ...mappedEvents);
+           }
         }
 
         console.log('[AegisVault] Dashboard data loaded from API');
@@ -322,43 +357,61 @@
     if (!svg) return;
 
     const sourceData = window.API_RELEASE_DATA || dashboardReleaseStatus;
-    const segments = sourceData.segments;
-    const total = sourceData.total > 0 ? sourceData.total : 1;
+    const segments = sourceData.segments || [];
+    const totalCount = sourceData.total !== undefined ? sourceData.total : 0;
+    const total = totalCount > 0 ? totalCount : 1;
     const radius = 54;
     const circumference = 2 * Math.PI * radius; // ~339.29
 
     let accumulatedAngle = 0;
     svg.innerHTML = '';
 
-    segments.forEach((seg, idx) => {
-      const percentage = seg.count / total;
-      const strokeLength = percentage * circumference;
-      const gapLength = circumference - strokeLength;
+    // Subtle background track circle
+    const trackCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    trackCircle.setAttribute('cx', '75');
+    trackCircle.setAttribute('cy', '75');
+    trackCircle.setAttribute('r', radius);
+    trackCircle.setAttribute('fill', 'transparent');
+    trackCircle.setAttribute('stroke', 'rgba(148, 163, 184, 0.15)');
+    trackCircle.setAttribute('stroke-width', '14');
+    svg.appendChild(trackCircle);
 
-      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      circle.setAttribute('class', 'donut-segment');
-      circle.setAttribute('cx', '75');
-      circle.setAttribute('cy', '75');
-      circle.setAttribute('r', radius);
-      circle.setAttribute('stroke', seg.color);
-      circle.setAttribute('stroke-dasharray', `${strokeLength} ${gapLength}`);
-      circle.setAttribute('stroke-dashoffset', -accumulatedAngle);
+    if (totalCount > 0) {
+      segments.forEach((seg) => {
+        if (seg.count <= 0) return;
+        const percentage = seg.count / total;
+        const strokeLength = percentage * circumference;
+        const gapLength = circumference - strokeLength;
 
-      circle.addEventListener('mouseenter', () => {
-        window.AegisOwner.showToast(`Release Status: ${seg.label} (${seg.count} Vaults)`);
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('class', 'donut-segment');
+        circle.setAttribute('cx', '75');
+        circle.setAttribute('cy', '75');
+        circle.setAttribute('r', radius);
+        circle.setAttribute('fill', 'transparent');
+        circle.setAttribute('stroke', seg.color);
+        circle.setAttribute('stroke-width', '14');
+        circle.setAttribute('stroke-dasharray', `${strokeLength.toFixed(1)} ${gapLength.toFixed(1)}`);
+        circle.setAttribute('stroke-dashoffset', (-accumulatedAngle).toFixed(1));
+
+        circle.addEventListener('mouseenter', () => {
+          window.AegisOwner?.showToast(`Release Status: ${seg.label} (${seg.count} Vaults)`);
+        });
+
+        svg.appendChild(circle);
+        accumulatedAngle += strokeLength;
       });
-
-      svg.appendChild(circle);
-      accumulatedAngle += strokeLength;
-    });
+    }
     
-    // Update center count
+    // Update center count and subtext
     const centerCount = document.querySelector('.donut-count');
-    if (centerCount) centerCount.textContent = total;
+    if (centerCount) centerCount.textContent = totalCount;
+    const centerSub = document.querySelector('.donut-sub');
+    if (centerSub) centerSub.textContent = totalCount === 1 ? 'Total Vault' : 'Total Vaults';
 
     // Update legend
     const legendList = document.querySelector('.donut-legend-list');
-    if (legendList) {
+    if (legendList && segments.length > 0) {
       legendList.innerHTML = '';
       segments.forEach(seg => {
         let colorClass = 'blue';
@@ -367,11 +420,18 @@
         if (seg.key === 'not_started') colorClass = 'red';
         
         legendList.innerHTML += `
-          <div class="donut-legend-row">
+          <div class="donut-legend-row" style="cursor: pointer;" title="Filter by ${seg.label}">
             <span class="donut-dot ${colorClass}"></span>
             <span>${seg.count} ${seg.label}</span>
           </div>
         `;
+      });
+
+      legendList.querySelectorAll('.donut-legend-row').forEach(row => {
+        row.addEventListener('click', () => {
+          const statusText = row.querySelector('span:last-child').textContent.trim();
+          window.location.href = `../release-management/release-management.html?filter=${encodeURIComponent(statusText)}`;
+        });
       });
     }
   }

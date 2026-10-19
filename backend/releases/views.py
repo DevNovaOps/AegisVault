@@ -157,7 +157,7 @@ class ReleaseDetailView(APIView):
         release = get_object_or_404(ReleaseRequest, pk=pk, owner=request.user)
 
         for field in ['title', 'description', 'trigger_type', 'trigger_detail',
-                      'note', 'required_shares', 'total_shares', 'scheduled_at']:
+                      'note', 'required_shares', 'total_shares', 'scheduled_at', 'status']:
             if field in request.data:
                 setattr(release, field, request.data[field])
 

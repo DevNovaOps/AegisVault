@@ -537,11 +537,20 @@
       closeReleaseMenu();
       if (item.status === 'cancelled') {
         item.status = 'scheduled';
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+          window.AegisAPI.put(`/owner/releases/${id}/`, { status: 'scheduled' }).catch(err => console.warn('Resume release API error:', err));
+        }
         window.AegisOwner?.showToast(`Release "${item.title}" resumed as scheduled.`, 'success');
       } else {
         item.status = 'cancelled';
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+          window.AegisAPI.post(`/owner/releases/${id}/cancel/`).catch(() => {
+            window.AegisAPI.put(`/owner/releases/${id}/`, { status: 'cancelled' }).catch(e => console.warn('Cancel release API error:', e));
+          });
+        }
         window.AegisOwner?.showToast(`Release "${item.title}" has been cancelled.`, 'warning');
       }
+      updateKPIsAndDonut();
       renderTable();
     });
 

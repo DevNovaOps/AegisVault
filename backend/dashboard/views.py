@@ -24,17 +24,27 @@ class OwnerDashboardKPIView(APIView):
         user = request.user
 
         total_vaults = Vault.objects.filter(owner=user).count()
-        active_vaults = Vault.objects.filter(owner=user, status='Active').count()
+        active_vaults = Vault.objects.filter(owner=user, status__iexact='active').count()
         
         # Trustees (active)
-        trustees = TrusteeProfile.objects.filter(owner=user, status='Active').count()
+        trustees = TrusteeProfile.objects.filter(owner=user, status__iexact='active').count()
         
-        # Pending Invitations
-        pending_invitations = TrusteeProfile.objects.filter(owner=user, status='Pending').count()
+        # Pending Invitations: Check Invitation table (status='pending') and TrusteeProfile (status='Invited')
+        from django.db.models import Q
+        pending_invitations = Invitation.objects.filter(owner=user, status__iexact='pending').count()
+        if pending_invitations == 0:
+            pending_invitations = TrusteeProfile.objects.filter(owner=user, status__iexact='invited').count()
         
-        # Release Requests (pending or in progress releases)
+        # Release Requests (pending, in_progress, scheduled, or authorized releases)
         from releases.models import ReleaseRequest
-        release_requests = ReleaseRequest.objects.filter(vault__owner=user, status__in=['pending', 'in_progress']).count()
+        release_requests = ReleaseRequest.objects.filter(
+            Q(owner=user) | Q(vault__owner=user),
+            status__in=['pending', 'in_progress', 'scheduled', 'authorized']
+        ).count()
+        if release_requests == 0:
+            release_requests = ReleaseRequest.objects.filter(
+                Q(owner=user) | Q(vault__owner=user)
+            ).count()
 
         return Response({
             'total_vaults': total_vaults,

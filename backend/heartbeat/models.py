@@ -106,13 +106,14 @@ class HeartbeatConfig(models.Model):
         self.reminders_sent = []  # Reset milestone tracker for new cycle
         self.save()
 
-        # Abort / Cancel any active release requests for this owner (proof of life received)
+        # Abort / Cancel only inactivity-based release requests for this owner (proof of life received)
         from releases.models import ReleaseRequest
-        active_releases = ReleaseRequest.objects.filter(
+        active_inactivity_releases = ReleaseRequest.objects.filter(
             owner=self.owner,
+            trigger_type=ReleaseRequest.TriggerType.INACTIVITY,
             status__in=['pending', 'in_progress', 'scheduled', 'authorized']
         )
-        for rel in active_releases:
+        for rel in active_inactivity_releases:
             rel.status = ReleaseRequest.ReleaseStatus.CANCELLED
             rel.cancelled_at = now
             note_msg = "Auto-cancelled: Owner checked in (Dead Man's Switch reset / Proof of life received)."
