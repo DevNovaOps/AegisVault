@@ -112,16 +112,62 @@ class ReportService:
 
     @staticmethod
     def generate_vault_report():
-        """Vault statistics report."""
+        """Vault statistics and reports."""
         from vaults.models import Vault, VaultAsset, VaultShare
+        from audit.models import AuditLog
 
         total_vaults = Vault.objects.count()
-        active_vaults = Vault.objects.filter(status='Active').count()
+        active_vaults = Vault.objects.filter(status__iexact='active').count()
         total_items = VaultAsset.objects.count()
         total_shares = VaultShare.objects.count()
         active_shares = VaultShare.objects.filter(status='active').count()
 
         by_status = Vault.objects.values('status').annotate(count=Count('id')).order_by('-count')
+
+        vaults_data = []
+        for v in Vault.objects.select_related('owner').all().order_by('-updated_at'):
+            vaults_data.append({
+                'id': str(v.id),
+                'name': v.name,
+                'type': v.vault_type,
+                'owner_name': v.owner.name if v.owner else '',
+                'owner_email': v.owner.email if v.owner else '',
+                'status': v.status,
+                'items_count': v.assets.count(),
+                'shares_count': v.shares.count(),
+                'required_shares': v.required_shares,
+                'total_shares': v.total_shares,
+                'encryption': v.encryption_algorithm,
+                'created_at': v.created_at.isoformat(),
+                'updated_at': v.updated_at.isoformat(),
+            })
+
+        # Recent vault and release audit logs
+        vault_logs_qs = AuditLog.objects.filter(
+            category__in=['vault', 'release']
+        ).select_related('user').order_by('-timestamp')[:50]
+
+        vault_logs = []
+        for vl in vault_logs_qs:
+            vault_name = vl.vault_name
+            if not vault_name and '"' in (vl.details or ''):
+                try:
+                    vault_name = vl.details.split('"')[1]
+                except Exception:
+                    vault_name = ''
+            vault_logs.append({
+                'id': f"LOG-{str(vl.id)[:8].upper()}",
+                'raw_id': str(vl.id),
+                'action_key': vl.action_key,
+                'action_title': vl.action_title,
+                'actionLabel': vl.action_title or (vl.action_key or 'Vault Activity').replace('_', ' ').title(),
+                'details': vl.details,
+                'vault_name': vault_name or 'Custody Vault',
+                'user': vl.user.name if vl.user else 'System',
+                'user_email': vl.user.email if vl.user else '',
+                'timestamp': vl.timestamp.isoformat(),
+                'status': vl.status or 'Completed'
+            })
 
         return {
             'report_type': 'vault_report',
@@ -131,6 +177,8 @@ class ReportService:
             'total_shares': total_shares,
             'active_shares': active_shares,
             'by_status': list(by_status),
+            'vaults': vaults_data,
+            'vault_logs': vault_logs,
             'generated_at': timezone.now().isoformat(),
         }
 
