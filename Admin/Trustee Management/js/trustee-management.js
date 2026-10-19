@@ -22,15 +22,7 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
     },
     verificationOverview: [],
     trusteeTypes: [],
-    trustees: [],
-    invitations: [],
-    permissionMatrix: [
-        { action: "Vault Key Shard Decryption", primary: "Allowed", coTrustee: "Allowed", backup: "Conditional" },
-        { action: "Heartbeat Pulse Verification", primary: "Allowed", coTrustee: "Allowed", backup: "Not Allowed" },
-        { action: "Quorum Consensus Initiation", primary: "Allowed", coTrustee: "Conditional", backup: "Conditional" },
-        { action: "Emergency Custody Override", primary: "Conditional", coTrustee: "Not Allowed", backup: "Not Allowed" }
-    ],
-    vaultAccessAssignments: []
+    trustees: []
 };
 
 (function () {
@@ -47,8 +39,7 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
         currentPage: 1,
         pageSize: 10,
         selectedTrusteeIds: new Set(),
-        trustees: [],
-        invitations: []
+        trustees: []
     };
 
     // DOM Elements Cache
@@ -68,7 +59,6 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
         el.selectAllCheckbox = document.getElementById('select-all-trustees');
         el.donutSvg = document.getElementById('verification-donut-svg');
         el.donutLegend = document.getElementById('donut-legend-container');
-        el.progressContainer = document.getElementById('trustee-types-progress-container');
         el.toastContainer = document.getElementById('toast-container');
         el.tooltip = document.getElementById('aegis-tooltip');
         el.globalSearch = document.getElementById('global-header-search');
@@ -85,11 +75,6 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
         // Views
         el.mainGrid = document.getElementById('trustees-main-section');
         el.filterRow = document.getElementById('trustees-filter-row');
-        el.invitationsView = document.getElementById('invitations-view-section');
-        el.invitationsTableBody = document.getElementById('invitations-table-body');
-        el.permissionsView = document.getElementById('permissions-view-section');
-        el.matrixTbody = document.getElementById('matrix-tbody');
-        el.accessTbody = document.getElementById('access-tbody');
 
         // Modals
         el.modalAddTrustee = document.getElementById('modal-add-trustee');
@@ -102,9 +87,6 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
         el.modalDeactivate = document.getElementById('modal-deactivate-trustee');
         el.btnConfirmDeactivate = document.getElementById('btn-confirm-deactivate');
         el.deactTrusteeName = document.getElementById('deact-trustee-name');
-        el.modalInvite = document.getElementById('modal-invite-trustee');
-        el.formInvite = document.getElementById('form-invite-trustee');
-        el.btnOpenInviteTrustee = document.getElementById('btn-open-invite-trustee');
 
         // Reject Modal
         el.modalReject = document.getElementById('modal-reject-trustee');
@@ -119,10 +101,6 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
         el.permTrusteeName = document.getElementById('perm-trustee-name');
         el.permTrusteeSub = document.getElementById('perm-trustee-sub');
         el.permTrusteeBadge = document.getElementById('perm-trustee-badge');
-
-        // Quick Actions
-        el.quickVerifyDocs = document.getElementById('quick-action-verify-docs');
-        el.quickManagePerms = document.getElementById('quick-action-manage-perms');
     }
 
     // =========================================================================
@@ -141,22 +119,22 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
     // =========================================================================
     function updateDynamicKPIs() {
         const total = state.trustees ? state.trustees.length : 0;
-        const verified = state.trustees ? state.trustees.filter(t => t.status === 'Verified').length : 0;
-        const pending = state.trustees ? state.trustees.filter(t => t.status === 'Pending').length : 0;
-        const rejected = state.trustees ? state.trustees.filter(t => t.status === 'Rejected' || t.status === 'Inactive' || t.status === 'Suspended').length : 0;
+        const verified = state.trustees ? state.trustees.filter(t => (t.status || '').toLowerCase() === 'verified').length : 0;
+        const pending = state.trustees ? state.trustees.filter(t => (t.status || '').toLowerCase() === 'pending').length : 0;
+        const rejected = state.trustees ? state.trustees.filter(t => (t.status || '').toLowerCase() === 'rejected').length : 0;
+        const inactive = state.trustees ? state.trustees.filter(t => ['inactive', 'suspended'].includes((t.status || '').toLowerCase())).length : 0;
 
         const setTxt = (id, val) => { const elem = document.getElementById(id); if (elem) elem.textContent = val; };
         setTxt('kpi-total-trustees', total.toLocaleString());
         setTxt('kpi-verified-trustees', verified.toLocaleString());
         setTxt('kpi-pending-trustees', pending.toLocaleString());
-        setTxt('kpi-rejected-trustees', rejected.toLocaleString());
+        setTxt('kpi-rejected-trustees', (rejected + inactive).toLocaleString());
 
         setTxt('tab-count-all', total.toLocaleString());
         setTxt('tab-count-pending', pending.toLocaleString());
         setTxt('tab-count-verified', verified.toLocaleString());
         setTxt('tab-count-rejected', rejected.toLocaleString());
-        setTxt('tab-count-inactive', '0');
-        setTxt('tab-count-invitations', (state.invitations ? state.invitations.length : 0).toLocaleString());
+        setTxt('tab-count-inactive', inactive.toLocaleString());
 
         if (el.paginationInfo) {
             el.paginationInfo.textContent = `Showing ${total === 0 ? 0 : 1}-${Math.min(state.pageSize, total)} of ${total} trustees`;
@@ -168,27 +146,45 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
             await AegisAdminCommon.ensureAdminToken();
         }
 
-        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+        async function fetchTrusteesData() {
+            if (!window.AegisAPI) return [];
             try {
-                const [trusteesData, invRes] = await Promise.all([
-                    window.AegisAPI.get('/admin/trustees/').catch(err => {
-                        console.warn('Failed to fetch trustees:', err);
+                return await window.AegisAPI.get('/admin/trustees/');
+            } catch (err) {
+                if (err && (err.status === 401 || err.status === 403) && window.AegisAdminCommon) {
+                    await AegisAdminCommon.ensureAdminToken(true);
+                    return await window.AegisAPI.get('/admin/trustees/').catch(e => {
+                        console.warn('Retry fetch trustees error:', e);
                         return [];
-                    }),
-                    window.AegisAPI.get('/admin/trustees/invitations/').catch(err => {
-                        console.warn('Failed to fetch invitations:', err);
-                        return { kpis: {}, invitations: [] };
-                    })
-                ]);
+                    });
+                }
+                console.warn('Failed to fetch trustees:', err);
+                return [];
+            }
+        }
 
-                state.trustees = (trusteesData || []).map((t, i) => ({
-                    id: t.id,
+        try {
+            const trusteesData = await fetchTrusteesData();
+            state.trustees = (trusteesData || []).map((t, i) => {
+                const rawStatus = (t.status || (t.is_active ? 'Verified' : 'Pending')).trim();
+                let normalizedStatus = 'Pending';
+                const lowerStatus = rawStatus.toLowerCase();
+                if (lowerStatus === 'verified' || lowerStatus === 'active') {
+                    normalizedStatus = 'Verified';
+                } else if (lowerStatus === 'rejected') {
+                    normalizedStatus = 'Rejected';
+                } else if (lowerStatus === 'inactive' || lowerStatus === 'suspended') {
+                    normalizedStatus = 'Inactive';
+                }
+
+                return {
+                    id: String(t.id),
                     index: i + 1,
                     name: t.name || 'Unnamed Trustee',
                     email: t.email,
                     phone: t.phone || '+1 (555) 234-8901',
                     trusteeType: t.trusteeType || 'Primary',
-                    status: t.status || (t.is_active ? 'Verified' : 'Pending'),
+                    status: normalizedStatus,
                     linkedVaultsCount: t.vaults_assigned || (t.linked_vaults ? t.linked_vaults.length : 0),
                     linkedVaults: t.linked_vaults || [],
                     ownerName: t.owner_name || '',
@@ -198,59 +194,19 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
                     addedOn: t.joined || 'Recent',
                     initials: (t.name || t.email || 'TR').split(' ').map(n=>n[0]).join('').substring(0, 2).toUpperCase(),
                     avatarColor: '#1E40AF',
-                    documentsVerified: (t.status === 'Verified')
-                }));
-
-                const invList = (invRes && invRes.invitations) ? invRes.invitations : (Array.isArray(invRes) ? invRes : []);
-                state.invitations = invList.map(inv => ({
-                    id: inv.id,
-                    recipient: inv.recipient || 'Trustee Candidate',
-                    email: inv.email,
-                    trusteeType: inv.trusteeType || 'Co-Trustee',
-                    vault: inv.vault || 'Primary Vault',
-                    invitedBy: inv.invitedBy || 'Admin',
-                    sentOn: inv.sentOn || 'Recent',
-                    expiresOn: inv.expiresOn || 'In 14 Days',
-                    status: inv.status || 'Pending',
-                    message: inv.message || 'Nomination link for AegisVault custody protocol.'
-                }));
-
-                // Update invitation KPI cards
-                const invKpis = (invRes && invRes.kpis) ? invRes.kpis : {
-                    pending: state.invitations.filter(i => i.status.toLowerCase() === 'pending').length,
-                    accepted: state.invitations.filter(i => i.status.toLowerCase() === 'accepted').length,
-                    expired: state.invitations.filter(i => i.status.toLowerCase() === 'expired').length,
-                    cancelled: state.invitations.filter(i => i.status.toLowerCase() === 'cancelled' || i.status.toLowerCase() === 'revoked').length,
+                    documentsVerified: (normalizedStatus === 'Verified')
                 };
-                const setTxt = (id, val) => { const elem = document.getElementById(id); if (elem) elem.textContent = val; };
-                setTxt('inv-kpi-pending', invKpis.pending ?? 0);
-                setTxt('inv-kpi-accepted', invKpis.accepted ?? 0);
-                setTxt('inv-kpi-expired', invKpis.expired ?? 0);
-                setTxt('inv-kpi-cancelled', invKpis.cancelled ?? 0);
+            });
 
-                updateDynamicKPIs();
-                renderTrusteeTable();
-                renderInvitationsTable();
-                renderDonutChart();
-                renderTrusteeTypesProgress();
-            } catch (err) {
-                console.warn('initData error:', err);
-                state.trustees = [];
-                state.invitations = [];
-                updateDynamicKPIs();
-                renderTrusteeTable();
-                renderInvitationsTable();
-                renderDonutChart();
-                renderTrusteeTypesProgress();
-            }
-        } else {
-            state.trustees = [];
-            state.invitations = [];
             updateDynamicKPIs();
             renderTrusteeTable();
-            renderInvitationsTable();
             renderDonutChart();
-            renderTrusteeTypesProgress();
+        } catch (err) {
+            console.warn('initData error:', err);
+            state.trustees = [];
+            updateDynamicKPIs();
+            renderTrusteeTable();
+            renderDonutChart();
         }
     }
 
@@ -259,24 +215,25 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
     // =========================================================================
     function getFilteredTrustees() {
         return state.trustees.filter(item => {
+            const st = (item.status || '').toLowerCase();
             // Tab filter
-            if (state.activeTab === 'pending' && item.status !== 'Pending') return false;
-            if (state.activeTab === 'verified' && item.status !== 'Verified') return false;
-            if (state.activeTab === 'rejected' && item.status !== 'Rejected') return false;
-            if (state.activeTab === 'inactive' && item.status !== 'Inactive') return false;
+            if (state.activeTab === 'pending' && st !== 'pending') return false;
+            if (state.activeTab === 'verified' && st !== 'verified') return false;
+            if (state.activeTab === 'rejected' && st !== 'rejected') return false;
+            if (state.activeTab === 'inactive' && st !== 'inactive') return false;
 
             // Search query filter
             if (state.searchQuery) {
                 const q = state.searchQuery.toLowerCase();
-                const matchName = item.name.toLowerCase().includes(q);
-                const matchEmail = item.email.toLowerCase().includes(q);
-                const matchId = item.id.toLowerCase().includes(q);
+                const matchName = (item.name || '').toLowerCase().includes(q);
+                const matchEmail = (item.email || '').toLowerCase().includes(q);
+                const matchId = (item.id || '').toLowerCase().includes(q);
                 if (!matchName && !matchEmail && !matchId) return false;
             }
 
             // Dropdown filters
             if (state.filterType !== 'all' && item.trusteeType !== state.filterType) return false;
-            if (state.filterStatus !== 'all' && item.status !== state.filterStatus) return false;
+            if (state.filterStatus !== 'all' && st !== state.filterStatus.toLowerCase()) return false;
             if (state.filterVault !== 'all' && !item.linkedVaults.includes(state.filterVault)) return false;
 
             return true;
@@ -439,83 +396,6 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
         });
     }
 
-    // =========================================================================
-    // 4. Invitations Table Rendering
-    // =========================================================================
-    function renderInvitationsTable() {
-        if (!el.invitationsTableBody) return;
-
-        el.invitationsTableBody.innerHTML = state.invitations.map(inv => {
-            const statusClass = inv.status.toLowerCase();
-            return `
-                <tr>
-                    <td style="font-weight: 600; color: var(--text-heading);">${inv.recipient}</td>
-                    <td style="font-family: var(--font-mono); color: var(--text-secondary); font-size: 0.74rem;">${inv.email}</td>
-                    <td><span class="badge-pill ${inv.trusteeType.toLowerCase().replace(' ', '-')}">${inv.trusteeType}</span></td>
-                    <td style="color: var(--text-heading);">${inv.vault}</td>
-                    <td style="color: var(--text-secondary);">${inv.invitedBy}</td>
-                    <td style="color: var(--text-muted);">${inv.sentOn}</td>
-                    <td style="color: var(--text-muted);">${inv.expiresOn}</td>
-                    <td><span class="badge-pill ${statusClass}">${inv.status}</span></td>
-                    <td style="text-align: right;">
-                        <div class="table-action-btns-group" style="justify-content: flex-end;">
-                            ${inv.status === 'Pending' ? `
-                                <button class="action-icon-btn btn-resend-inv" data-id="${inv.id}" title="Resend Invitation">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
-                                </button>
-                                <button class="action-icon-btn btn-cancel-inv" data-id="${inv.id}" title="Cancel Invitation">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                                </button>
-                            ` : ''}
-                            <button class="action-icon-btn btn-view-inv" data-id="${inv.id}" title="View Invitation Message">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `;
-        }).join('');
-
-        attachInvitationActionListeners();
-    }
-
-    // =========================================================================
-    // 4b. Roles & Permissions Matrix Rendering (Unified View)
-    // =========================================================================
-    function renderPermissionsSection() {
-        if (!el.matrixTbody || !el.accessTbody) return;
-
-        // Render Permission Matrix Table
-        const matrix = window.AegisTrusteeData ? window.AegisTrusteeData.permissionMatrix : [];
-        el.matrixTbody.innerHTML = matrix.map(row => {
-            const getBadge = (val) => {
-                if (val === 'Allowed') return '<span class="matrix-badge allowed">✓ Allowed</span>';
-                if (val === 'Conditional') return '<span class="matrix-badge conditional">⚠ Conditional</span>';
-                return '<span class="matrix-badge not-allowed">✕ Not Allowed</span>';
-            };
-            return `
-                <tr>
-                    <td style="font-weight: 600; color: var(--text-heading);">${row.action}</td>
-                    <td>${getBadge(row.primary)}</td>
-                    <td>${getBadge(row.coTrustee)}</td>
-                    <td>${getBadge(row.backup)}</td>
-                </tr>
-            `;
-        }).join('');
-
-        // Render Vault Access Assignments Table
-        const access = window.AegisTrusteeData ? window.AegisTrusteeData.vaultAccessAssignments : [];
-        el.accessTbody.innerHTML = access.map(a => `
-            <tr>
-                <td style="font-weight: 600; color: var(--text-heading);">${a.trustee}</td>
-                <td><span class="badge-pill ${a.role.toLowerCase().replace(' ', '-')}">${a.role}</span></td>
-                <td style="color: var(--text-heading);">${a.vault}</td>
-                <td style="font-size: 0.76rem; color: var(--text-secondary);">${a.accessLevel}</td>
-                <td><span class="badge-pill ${a.status.toLowerCase().includes('pending') ? 'pending' : 'verified'}">${a.status}</span></td>
-            </tr>
-        `).join('');
-    }
-
     // Dynamic KPI & Verification Overview Counter Updater
     function updateKpiCounters(fromStatus, toStatus) {
         if (fromStatus === toStatus) return;
@@ -602,14 +482,14 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
         const totalValEl = document.getElementById('donut-total-val');
         if (totalValEl) totalValEl.textContent = total;
 
-        const verified = state.trustees ? state.trustees.filter(t => t.status === 'Verified').length : 0;
-        const pending = state.trustees ? state.trustees.filter(t => t.status === 'Pending').length : 0;
-        const rejected = state.trustees ? state.trustees.filter(t => t.status === 'Rejected' || t.status === 'Inactive').length : 0;
+        const verified = state.trustees ? state.trustees.filter(t => (t.status || '').toLowerCase() === 'verified').length : 0;
+        const pending = state.trustees ? state.trustees.filter(t => (t.status || '').toLowerCase() === 'pending').length : 0;
+        const rejected = state.trustees ? state.trustees.filter(t => ['rejected', 'inactive', 'suspended'].includes((t.status || '').toLowerCase())).length : 0;
 
         const overview = total === 0 ? [] : [
-            { label: 'Verified', count: verified, percent: Math.round((verified / total) * 100), color: '#10B981', darkColor: '#10B981' },
-            { label: 'Pending', count: pending, percent: Math.round((pending / total) * 100), color: '#F59E0B', darkColor: '#F59E0B' },
-            { label: 'Rejected', count: rejected, percent: Math.round((rejected / total) * 100), color: '#EF4444', darkColor: '#EF4444' }
+            { label: 'Verified', count: verified, percent: total > 0 ? Math.round((verified / total) * 100) : 0, color: '#10B981', darkColor: '#10B981' },
+            { label: 'Pending', count: pending, percent: total > 0 ? Math.round((pending / total) * 100) : 0, color: '#F59E0B', darkColor: '#F59E0B' },
+            { label: 'Rejected', count: rejected, percent: total > 0 ? Math.round((rejected / total) * 100) : 0, color: '#EF4444', darkColor: '#EF4444' }
         ];
 
         const isDark = state.theme === 'dark';
@@ -683,41 +563,6 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
     }
 
     // =========================================================================
-    // 6. Progress Bars: Trustee Types Breakdown
-    // =========================================================================
-    function renderTrusteeTypesProgress() {
-        if (!el.progressContainer) return;
-
-        const total = state.trustees ? state.trustees.length : 0;
-        const primary = state.trustees ? state.trustees.filter(t => t.trusteeType === 'Primary').length : 0;
-        const co = state.trustees ? state.trustees.filter(t => t.trusteeType === 'Co-Trustee').length : 0;
-        const backup = state.trustees ? state.trustees.filter(t => t.trusteeType === 'Backup').length : 0;
-
-        const types = total === 0 ? [] : [
-            { type: 'Primary Trustee', count: primary, percent: Math.round((primary / total) * 100), class: 'blue' },
-            { type: 'Co-Trustee', count: co, percent: Math.round((co / total) * 100), class: 'teal' },
-            { type: 'Backup Trustee', count: backup, percent: Math.round((backup / total) * 100), class: 'orange' }
-        ];
-
-        if (types.length === 0) {
-            el.progressContainer.innerHTML = '<div style="font-size:0.75rem; color:var(--text-muted); padding:0.5rem 0;">No assigned trustee types.</div>';
-            return;
-        }
-
-        el.progressContainer.innerHTML = types.map(item => `
-            <div class="progress-item-block">
-                <div class="progress-labels-row">
-                    <span class="progress-type-name">${item.type}</span>
-                    <span class="progress-type-stat">${item.percent}% (${item.count})</span>
-                </div>
-                <div class="progress-bar-track">
-                    <div class="progress-bar-fill ${item.class}" style="width: ${item.percent}%;"></div>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    // =========================================================================
     // 7. Event Listeners & Interactive Workflows
     // =========================================================================
     function attachEventListeners() {
@@ -731,25 +576,9 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
                 state.activeTab = tab;
                 state.currentPage = 1;
 
-                if (tab === 'invitations') {
-                    if (el.mainGrid) el.mainGrid.style.display = 'none';
-                    if (el.filterRow) el.filterRow.style.display = 'none';
-                    if (el.permissionsView) el.permissionsView.classList.remove('active');
-                    if (el.invitationsView) el.invitationsView.classList.add('active');
-                    renderInvitationsTable();
-                } else if (tab === 'permissions') {
-                    if (el.mainGrid) el.mainGrid.style.display = 'none';
-                    if (el.filterRow) el.filterRow.style.display = 'none';
-                    if (el.invitationsView) el.invitationsView.classList.remove('active');
-                    if (el.permissionsView) el.permissionsView.classList.add('active');
-                    renderPermissionsSection();
-                } else {
-                    if (el.mainGrid) el.mainGrid.style.display = 'grid';
-                    if (el.filterRow) el.filterRow.style.display = 'flex';
-                    if (el.invitationsView) el.invitationsView.classList.remove('active');
-                    if (el.permissionsView) el.permissionsView.classList.remove('active');
-                    renderTrusteeTable();
-                }
+                if (el.mainGrid) el.mainGrid.style.display = 'grid';
+                if (el.filterRow) el.filterRow.style.display = 'flex';
+                renderTrusteeTable();
             });
         });
 
@@ -845,29 +674,6 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
             });
         }
 
-        // Quick Actions Handlers
-        const quickAdd = document.getElementById('quick-action-add-trustee');
-        if (quickAdd && el.modalAddTrustee) {
-            quickAdd.addEventListener('click', () => openModal(el.modalAddTrustee));
-        }
-        const quickReminder = document.getElementById('quick-action-send-reminder');
-        if (quickReminder) {
-            quickReminder.addEventListener('click', () => {
-                showToast('Automatic verification reminders queued for 126 pending trustees', 'info');
-            });
-        }
-        if (el.quickVerifyDocs) {
-            el.quickVerifyDocs.addEventListener('click', () => {
-                const targetBtn = document.getElementById('tab-btn-pending');
-                if (targetBtn) targetBtn.click();
-            });
-        }
-        if (el.quickManagePerms) {
-            el.quickManagePerms.addEventListener('click', () => {
-                const targetBtn = document.getElementById('tab-btn-permissions');
-                if (targetBtn) targetBtn.click();
-            });
-        }
 
         // Open Add Trustee Modal
         if (el.btnOpenAddTrustee && el.modalAddTrustee) {
@@ -927,80 +733,6 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
                 renderTrusteeTable();
                 renderDonutChart();
                 showToast(`Trustee "${name}" created and invited in database`, 'success');
-            });
-        }
-
-        // Open Invite Modal
-        if (el.btnOpenInviteTrustee && el.modalInvite) {
-            el.btnOpenInviteTrustee.addEventListener('click', () => openModal(el.modalInvite));
-        }
-
-        // Form Submit: Invite Trustee
-        if (el.formInvite) {
-            el.formInvite.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const recipient = document.getElementById('inv-name').value.trim();
-                const email = document.getElementById('inv-email').value.trim();
-                const type = document.getElementById('inv-type').value;
-                const vault = document.getElementById('inv-vault').value;
-                const expiry = document.getElementById('inv-expiry').value;
-                const message = document.getElementById('inv-message').value.trim();
-
-                const submitBtn = el.formInvite.querySelector('button[type="submit"]');
-                const origText = submitBtn ? submitBtn.textContent : 'Send Invitation';
-                if (submitBtn) {
-                    submitBtn.disabled = true;
-                    submitBtn.textContent = 'Dispatching...';
-                }
-
-                if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-                    window.AegisAPI.post('/admin/trustees/invitations/', {
-                        name: recipient,
-                        email: email,
-                        trustee_type: type,
-                        vault: vault,
-                        expiry: expiry,
-                        message: message
-                    }).then(res => {
-                        closeModal(el.modalInvite);
-                        el.formInvite.reset();
-                        if (res && res.email_sent) {
-                            showToast(`Invitation dispatched and email delivered to ${recipient} (${email})!`, 'success');
-                        } else {
-                            showToast(`Invitation dispatched to ${recipient} (${email}).`, 'info');
-                        }
-                        initData();
-                    }).catch(err => {
-                        showToast(`Failed to dispatch invitation: ${err.message || 'Error'}`, 'error');
-                    }).finally(() => {
-                        if (submitBtn) {
-                            submitBtn.disabled = false;
-                            submitBtn.textContent = origText;
-                        }
-                    });
-                } else {
-                    const newInv = {
-                        id: `INV-${Math.floor(700 + Math.random() * 200)}`,
-                        recipient,
-                        email,
-                        trusteeType: type,
-                        vault,
-                        invitedBy: 'Admin Officer',
-                        sentOn: 'Today',
-                        expiresOn: `In ${expiry}`,
-                        status: 'Pending',
-                        message: message || 'Nomination link for AegisVault custody protocol.'
-                    };
-                    state.invitations.unshift(newInv);
-                    closeModal(el.modalInvite);
-                    el.formInvite.reset();
-                    renderInvitationsTable();
-                    showToast(`Invitation dispatched to ${recipient} (${email})`, 'success');
-                    if (submitBtn) {
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = origText;
-                    }
-                }
             });
         }
 
@@ -1339,74 +1071,6 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
         openModal(el.modalEditTrustee);
     }
 
-    function attachInvitationActionListeners() {
-        // Resend Invitation
-        document.querySelectorAll('.btn-resend-inv').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const id = btn.getAttribute('data-id');
-                const inv = state.invitations.find(i => i.id === id);
-                if (!inv) return;
-
-                btn.disabled = true;
-                if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-                    window.AegisAPI.post(`/admin/trustees/invitations/${id}/resend/`, {}).then(res => {
-                        if (res && res.email_sent) {
-                            showToast(`Invitation refreshed and email delivered to ${inv.email}!`, 'success');
-                        } else {
-                            showToast(`Invitation token refreshed for ${inv.email}.`, 'info');
-                        }
-                        initData();
-                    }).catch(err => {
-                        showToast(`Failed to resend invitation: ${err.message || 'Error'}`, 'error');
-                        btn.disabled = false;
-                    });
-                } else {
-                    showToast(`Invitation dispatch refreshed for ${inv.email}`, 'info');
-                    btn.disabled = false;
-                }
-            });
-        });
-
-        // Cancel Invitation
-        document.querySelectorAll('.btn-cancel-inv').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const id = btn.getAttribute('data-id');
-                const inv = state.invitations.find(i => i.id === id);
-                if (!inv) return;
-
-                if (!confirm(`Are you sure you want to cancel the invitation for ${inv.recipient} (${inv.email})?`)) {
-                    return;
-                }
-
-                btn.disabled = true;
-                if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-                    window.AegisAPI.post(`/admin/trustees/invitations/${id}/cancel/`, {}).then(() => {
-                        showToast(`Invitation for ${inv.recipient} cancelled`, 'warning');
-                        initData();
-                    }).catch(err => {
-                        showToast(`Failed to cancel invitation: ${err.message || 'Error'}`, 'error');
-                        btn.disabled = false;
-                    });
-                } else {
-                    inv.status = 'Cancelled';
-                    renderInvitationsTable();
-                    showToast(`Invitation for ${inv.recipient} cancelled`, 'warning');
-                }
-            });
-        });
-
-        // View Invitation
-        document.querySelectorAll('.btn-view-inv').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const id = btn.getAttribute('data-id');
-                const inv = state.invitations.find(i => i.id === id);
-                if (inv) {
-                    alert(`Invitation Details:\nRecipient: ${inv.recipient} (${inv.email})\nRole: ${inv.trusteeType}\nVault: ${inv.vault}\nStatus: ${inv.status}\nMessage: "${inv.message}"`);
-                }
-            });
-        });
-    }
-
     // Modal Helpers
     function openModal(modalEl) {
         if (!modalEl) return;
@@ -1459,19 +1123,12 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
         initData();
         renderTrusteeTable();
         renderDonutChart();
-        renderTrusteeTypesProgress();
         attachEventListeners();
 
         // Hash navigation support on initial page load
         const hash = (window.location.hash || '').toLowerCase();
         if (hash === '#pending' || hash === '#pending-verification') {
             const btn = document.getElementById('tab-btn-pending');
-            if (btn) btn.click();
-        } else if (hash === '#permissions' || hash === '#roles') {
-            const btn = document.getElementById('tab-btn-permissions');
-            if (btn) btn.click();
-        } else if (hash === '#invitations') {
-            const btn = document.getElementById('tab-btn-invitations');
             if (btn) btn.click();
         } else if (hash === '#verified') {
             const btn = document.getElementById('tab-btn-verified');

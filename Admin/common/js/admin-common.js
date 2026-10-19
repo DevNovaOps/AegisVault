@@ -57,14 +57,14 @@
             return true;
         },
 
-        async ensureAdminToken() {
+        async ensureAdminToken(force = false) {
             let token = localStorage.getItem('aegis_access_token');
             const raw = localStorage.getItem('aegis_user');
             let user = null;
             try { user = raw ? JSON.parse(raw) : null; } catch (e) {}
 
-            // If already authenticated as admin, return the token
-            if (token && user && user.role === 'admin') return token;
+            // If already authenticated as admin and force is false, return the token
+            if (!force && token && user && user.role === 'admin') return token;
 
             const email = (user && user.role === 'admin' && user.email) ? user.email : 'admin123@gmail.com';
             const password = (email === 'admin123@gmail.com') ? 'Admin@123' : 'DemoPass123!';
