@@ -9,6 +9,16 @@ let VAULT_ITEMS = [];
 let currentFilter = 'all';
 let currentSearch = '';
 
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   loadAssignedVaults();
 });
@@ -257,11 +267,11 @@ function renderFilteredVaults() {
       card.setAttribute('role', 'button');
       card.setAttribute('tabindex', '0');
 
-      let accessPillStyle = 'background: rgba(59, 130, 246, 0.15); color: #3b82f6;';
-      if (vault.accessLevel === 'View & Download') {
+      let accessPillStyle = 'background: rgba(59, 130, 246, 0.15); color: #3b82f6;'; // View Only
+      if (vault.accessLevel === 'View & Download' || vault.isReleased) {
         accessPillStyle = 'background: rgba(16, 185, 129, 0.15); color: #10b981;';
-      } else if (vault.accessLevel === 'Full Access') {
-        accessPillStyle = 'background: rgba(249, 115, 22, 0.15); color: #f97316;';
+      } else if (vault.accessLevel === 'No Access') {
+        accessPillStyle = 'background: rgba(239, 68, 68, 0.15); color: #ef4444;';
       }
 
       let shareStatusPill = vault.shareStatus.toLowerCase();
@@ -406,7 +416,7 @@ function openVaultModal(vault) {
   if (accessBadge) {
     let accessClass = 'verified';
     if (vault.accessLevel === 'View Only') accessClass = 'pending';
-    else if (vault.accessLevel === 'Full Access') accessClass = 'in-progress';
+    else if (vault.accessLevel === 'No Access') accessClass = 'denied';
     accessBadge.className = `status-badge ${accessClass}`;
     accessBadge.innerHTML = `<span class="badge-dot"></span>${vault.accessLevel}`;
   }
@@ -417,7 +427,10 @@ function openVaultModal(vault) {
       hintEl.textContent = 'Vault Released: Full Download Access Granted';
       hintEl.style.color = 'var(--status-success)';
     } else if (vault.isRevoked) {
-      hintEl.textContent = 'Access Revoked';
+      hintEl.textContent = 'Access Revoked by Owner';
+      hintEl.style.color = 'var(--status-danger)';
+    } else if (vault.accessLevel === 'No Access') {
+      hintEl.textContent = 'Permissions: No Access (Assets Hidden)';
       hintEl.style.color = 'var(--status-danger)';
     } else if (vault.accessLevel === 'View & Download') {
       hintEl.textContent = 'Permissions: Preview & Direct Download Enabled';
@@ -448,7 +461,27 @@ function loadVaultAssets(vault) {
     if (loadingEl) loadingEl.style.display = 'none';
     if (emptyEl) {
       emptyEl.style.display = 'block';
-      emptyEl.textContent = 'Access to this vault has been revoked by the owner. Assets cannot be accessed.';
+      emptyEl.innerHTML = `
+        <div style="padding: 1.25rem; text-align: center; color: var(--status-danger);">
+          Access to this vault has been revoked by the owner. Assets cannot be accessed.
+        </div>`;
+    }
+    if (countBadge) countBadge.textContent = '0';
+    return;
+  }
+
+  if (vault.accessLevel === 'No Access' && !vault.isReleased) {
+    if (loadingEl) loadingEl.style.display = 'none';
+    if (emptyEl) {
+      emptyEl.style.display = 'block';
+      emptyEl.innerHTML = `
+        <div style="padding: 1.5rem; text-align: center; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: var(--radius-md);">
+          <div style="font-size: 1.5rem; margin-bottom: 0.4rem;">🔒</div>
+          <div style="font-weight: 700; color: #ef4444; margin-bottom: 0.25rem;">No Access Granted</div>
+          <div style="font-size: 0.82rem; color: var(--text-muted); max-width: 360px; margin: 0 auto;">
+            The vault owner has assigned you to this vault with <strong>No Access</strong> permissions. You cannot view or download assets inside this vault unless the owner updates permissions or completes a vault release.
+          </div>
+        </div>`;
     }
     if (countBadge) countBadge.textContent = '0';
     return;
@@ -506,10 +539,10 @@ function renderAssetItems(assets, vault) {
           ${iconSvg}
         </div>
         <div style="min-width: 0;">
-          <div style="font-weight: 600; font-size: 0.86rem; color: var(--text-primary); text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${asset.name}</div>
+          <div style="font-weight: 600; font-size: 0.86rem; color: var(--text-primary); text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${escapeHtml(asset.name)}</div>
           <div style="font-size: 0.72rem; color: var(--text-muted); display: flex; gap: 0.4rem; align-items: center; margin-top: 0.15rem;">
             <span>${sizeStr}</span>
-            <span>&bull;</span>
+            <span>•</span>
             <span>${categoryStr}</span>
             ${asset.sensitivity ? `<span style="font-size: 0.65rem; padding: 0.05rem 0.35rem; border-radius: 3px; background: rgba(249, 115, 22, 0.12); color: var(--brand-orange); font-weight: 600;">${asset.sensitivity}</span>` : ''}
           </div>
@@ -521,11 +554,11 @@ function renderAssetItems(assets, vault) {
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           <span>Preview</span>
         </button>
-        ${asset.can_download && asset.download_url ? `
-          <a href="${asset.download_url}" download="${asset.name}" class="btn-asset-action btn-download" style="padding: 0.38rem 0.7rem; font-size: 0.76rem; border-radius: var(--radius-sm); background: var(--brand-orange); color: #fff; text-decoration: none; display: flex; align-items: center; gap: 0.3rem; font-weight: 600;">
+        ${asset.can_download ? `
+          <button type="button" class="btn-asset-action btn-download" style="padding: 0.38rem 0.7rem; font-size: 0.76rem; border-radius: var(--radius-sm); background: var(--brand-orange); color: #fff; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.3rem; font-weight: 600;">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             <span>Download</span>
-          </a>
+          </button>
         ` : `
           <button type="button" disabled title="Download restricted by vault owner (View Only access)" style="padding: 0.38rem 0.7rem; font-size: 0.76rem; border-radius: var(--radius-sm); background: var(--bg-surface); color: var(--text-muted); border: 1px solid var(--border-subtle); cursor: not-allowed; display: flex; align-items: center; gap: 0.3rem; opacity: 0.5;">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -544,8 +577,56 @@ function renderAssetItems(assets, vault) {
       });
     }
 
+    // Click handler for Download
+    const btnDl = itemCard.querySelector('.btn-download');
+    if (btnDl && asset.can_download) {
+      btnDl.addEventListener('click', (e) => {
+        e.stopPropagation();
+        downloadTrusteeAsset(vault.vaultId, asset.id, asset.name);
+      });
+    }
+
     listEl.appendChild(itemCard);
   });
+}
+
+// Authenticated Asset Downloader
+async function downloadTrusteeAsset(vaultId, assetId, filename) {
+  try {
+    const token = (window.AegisAPI && window.AegisAPI.getAccessToken()) || localStorage.getItem('aegis_token');
+    const apiBase = (window.AegisAPI && window.AegisAPI.API_BASE) || '/api/v1';
+    const url = `${apiBase}/trustee/vaults/${vaultId}/assets/${assetId}/download/`;
+
+    window.showToast?.(`Preparing download for "${filename}"...`, 'info');
+
+    const headers = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const res = await fetch(url, { headers });
+    if (!res.ok) {
+      let detail = 'Download failed.';
+      try {
+        const errJson = await res.json();
+        detail = errJson.detail || detail;
+      } catch(e) {}
+      window.showToast?.(detail, 'error');
+      return;
+    }
+
+    const blob = await res.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename || 'vault_asset';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 15000);
+    window.showToast?.(`File "${filename}" downloaded successfully.`, 'success');
+  } catch (err) {
+    console.error('Download error:', err);
+    window.showToast?.(`Download failed: ${err.message}`, 'error');
+  }
 }
 
 function openAssetPreview(asset, vault) {
@@ -559,17 +640,19 @@ function openAssetPreview(asset, vault) {
   if (!modal || !bodyEl) return;
 
   if (titleEl) titleEl.textContent = asset.name;
-  if (subEl) subEl.textContent = `${vault.name} &bull; ${formatBytes(asset.file_size_bytes)}`;
+  if (subEl) subEl.textContent = `${vault.name} • ${formatBytes(asset.file_size_bytes)}`;
 
   if (accessNoteEl) {
     accessNoteEl.textContent = asset.can_download ? 'Direct download enabled for this asset.' : 'View Only permission: downloads restricted by owner.';
   }
 
   if (downloadBtn) {
-    if (asset.can_download && asset.download_url) {
-      downloadBtn.href = asset.download_url;
-      downloadBtn.setAttribute('download', asset.name);
+    if (asset.can_download) {
       downloadBtn.style.display = 'inline-flex';
+      downloadBtn.onclick = (e) => {
+        e.preventDefault();
+        downloadTrusteeAsset(vault.vaultId, asset.id, asset.name);
+      };
     } else {
       downloadBtn.style.display = 'none';
     }
@@ -577,51 +660,93 @@ function openAssetPreview(asset, vault) {
 
   bodyEl.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-muted);">Decrypting and rendering asset preview...</div>';
 
-  const previewUrl = `/trustee/vaults/${vault.vaultId}/assets/${asset.id}/preview/`;
+  const token = (window.AegisAPI && window.AegisAPI.getAccessToken()) || localStorage.getItem('aegis_token');
+  const apiBase = (window.AegisAPI && window.AegisAPI.API_BASE) || '/api/v1';
+  const previewUrl = `${apiBase}/trustee/vaults/${vault.vaultId}/assets/${asset.id}/preview/`;
+  const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
 
-  if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-    if (asset.is_note) {
-      // Fetch Note text
-      window.AegisAPI.get(previewUrl).then(data => {
+  if (asset.is_note) {
+    fetch(previewUrl, { headers })
+      .then(async res => {
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.detail || 'Failed to decrypt note');
+        }
+        return res.json();
+      })
+      .then(data => {
         bodyEl.innerHTML = `
           <div style="background: var(--bg-surface); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
             <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Decrypted Note Content</div>
-            <pre style="white-space: pre-wrap; word-break: break-word; font-family: inherit; font-size: 0.92rem; color: var(--text-primary); line-height: 1.6; margin: 0;">${data.content || ''}</pre>
+            <pre style="white-space: pre-wrap; word-break: break-word; font-family: inherit; font-size: 0.92rem; color: var(--text-primary); line-height: 1.6; margin: 0;">${escapeHtml(data.content || '')}</pre>
           </div>
         `;
-      }).catch(err => {
+      })
+      .catch(err => {
         bodyEl.innerHTML = `<div style="padding: 1.5rem; color: var(--status-danger); text-align: center;">Failed to decrypt note: ${err.message}</div>`;
       });
-    } else {
-      const mime = (asset.mime_type || '').toLowerCase();
-      if (mime.includes('image')) {
-        bodyEl.innerHTML = `
-          <div style="text-align: center; background: var(--bg-surface); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
-            <img src="${window.AegisAPI.baseUrl || '/api/v1'}${previewUrl}" alt="${asset.name}" style="max-width: 100%; max-height: 55vh; object-fit: contain; border-radius: var(--radius-sm);" onerror="this.parentElement.innerHTML='<div style=\'padding: 1rem; color: var(--text-muted);\'>Preview image could not be loaded directly. Please use Download.</div>'" />
-          </div>
-        `;
-      } else if (mime.includes('pdf')) {
-        bodyEl.innerHTML = `
-          <div style="background: var(--bg-surface); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); overflow: hidden;">
-            <iframe src="${window.AegisAPI.baseUrl || '/api/v1'}${previewUrl}" style="width: 100%; height: 50vh; border: none;"></iframe>
-          </div>
-        `;
-      } else {
-        bodyEl.innerHTML = `
-          <div style="text-align: center; padding: 2.5rem 1rem; background: var(--bg-surface); border-radius: var(--radius-md); border: 1px dashed var(--border-subtle);">
-            <div style="width: 44px; height: 44px; border-radius: var(--radius-md); background: var(--brand-orange-tint); color: var(--brand-orange); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem;">
-              ${getAssetIconSvg(asset.mime_type, false)}
+  } else {
+    const mime = (asset.mime_type || '').toLowerCase();
+
+    if (mime.includes('pdf')) {
+      fetch(previewUrl, { headers })
+        .then(async res => {
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.detail || 'Preview unavailable');
+          }
+          return res.blob();
+        })
+        .then(blob => {
+          const blobUrl = URL.createObjectURL(new Blob([blob], { type: 'application/pdf' }));
+          bodyEl.innerHTML = `
+            <div style="background: var(--bg-surface); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); overflow: hidden;">
+              <iframe src="${blobUrl}" style="width: 100%; height: 52vh; border: none;"></iframe>
             </div>
-            <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">${asset.name}</div>
-            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">Direct browser preview is not supported for this file type (${asset.mime_type || 'binary'}).</div>
-            ${asset.can_download && asset.download_url ? `
-              <a href="${asset.download_url}" download="${asset.name}" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1rem; font-size: 0.84rem; text-decoration: none;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Download Encrypted File
-              </a>
-            ` : `<div style="font-size: 0.78rem; color: var(--text-muted);">Downloading is restricted (View Only access).</div>`}
+          `;
+        })
+        .catch(err => {
+          bodyEl.innerHTML = `<div style="padding: 1.5rem; color: var(--status-danger); text-align: center;">Failed to load PDF preview: ${err.message}</div>`;
+        });
+    } else if (mime.includes('image')) {
+      fetch(previewUrl, { headers })
+        .then(async res => {
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.detail || 'Preview unavailable');
+          }
+          return res.blob();
+        })
+        .then(blob => {
+          const blobUrl = URL.createObjectURL(blob);
+          bodyEl.innerHTML = `
+            <div style="text-align: center; background: var(--bg-surface); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+              <img src="${blobUrl}" alt="${escapeHtml(asset.name)}" style="max-width: 100%; max-height: 52vh; object-fit: contain; border-radius: var(--radius-sm);" />
+            </div>
+          `;
+        })
+        .catch(err => {
+          bodyEl.innerHTML = `<div style="padding: 1.5rem; color: var(--status-danger); text-align: center;">Failed to load image preview: ${err.message}</div>`;
+        });
+    } else {
+      bodyEl.innerHTML = `
+        <div style="text-align: center; padding: 2.5rem 1rem; background: var(--bg-surface); border-radius: var(--radius-md); border: 1px dashed var(--border-subtle);">
+          <div style="width: 44px; height: 44px; border-radius: var(--radius-md); background: var(--brand-orange-tint); color: var(--brand-orange); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem;">
+            ${getAssetIconSvg(asset.mime_type, false)}
           </div>
-        `;
+          <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.25rem;">${escapeHtml(asset.name)}</div>
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">Direct browser preview is not supported for this file type (${asset.mime_type || 'binary'}).</div>
+          ${asset.can_download ? `
+            <button type="button" class="btn btn-primary btn-modal-fallback-dl" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1rem; font-size: 0.84rem; cursor: pointer; border: none; border-radius: var(--radius-sm); background: var(--brand-orange); color: #fff; font-weight: 600;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download Encrypted File
+            </button>
+          ` : `<div style="font-size: 0.78rem; color: var(--text-muted);">Downloading is restricted (View Only access).</div>`}
+        </div>
+      `;
+      const fallbackBtn = bodyEl.querySelector('.btn-modal-fallback-dl');
+      if (fallbackBtn) {
+        fallbackBtn.onclick = () => downloadTrusteeAsset(vault.vaultId, asset.id, asset.name);
       }
     }
   }

@@ -50,6 +50,13 @@
   // 3. Helper Render Functions
   // =========================================================================
   function getAccessLevelPill(level) {
+    if (level === 'No Access') {
+      return `
+        <span class="access-pill no-access" style="background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.25);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+          No Access
+        </span>`;
+    }
     if (level === 'View Only') {
       return `
         <span class="access-pill view-only">
@@ -57,17 +64,10 @@
           View Only
         </span>`;
     }
-    if (level === 'View & Download') {
-      return `
-        <span class="access-pill view-download">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          View &amp; Download
-        </span>`;
-    }
     return `
-      <span class="access-pill full-access">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        Full Access
+      <span class="access-pill view-download">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        View &amp; Download
       </span>`;
   }
 
@@ -301,9 +301,9 @@
         <div style="margin-bottom: 1.15rem;">
           <label style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Permission Level</label>
           <select id="editAccessLevelSelect" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
+            <option value="No Access" ${item.accessLevel === 'No Access' ? 'selected' : ''}>No Access</option>
             <option value="View Only" ${item.accessLevel === 'View Only' ? 'selected' : ''}>View Only</option>
             <option value="View & Download" ${item.accessLevel === 'View & Download' ? 'selected' : ''}>View & Download</option>
-            <option value="Full Access" ${item.accessLevel === 'Full Access' ? 'selected' : ''}>Full Access</option>
           </select>
         </div>
 
@@ -602,10 +602,10 @@
         if (moreFiltersState) {
           btnMoreFilters.style.borderColor = 'var(--brand-orange)';
           btnMoreFilters.style.color = 'var(--brand-orange)';
-          btnMoreFilters.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="20 6 9 17 4 12"/></svg> Full Access`;
-          if (accessFilter) accessFilter.value = 'Full Access';
+          btnMoreFilters.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="20 6 9 17 4 12"/></svg> View &amp; Download`;
+          if (accessFilter) accessFilter.value = 'View & Download';
           renderTable();
-          window.AegisOwner?.showToast('Advanced Filter: Showing Full Access Delegations');
+          window.AegisOwner?.showToast('Advanced Filter: Showing View & Download Delegations');
         } else {
           btnMoreFilters.style.borderColor = '';
           btnMoreFilters.style.color = '';

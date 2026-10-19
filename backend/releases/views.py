@@ -254,8 +254,7 @@ class ReleaseExecuteView(APIView):
         shares = VaultShare.objects.filter(vault=release.vault)
         for s in shares:
             s.status = 'active'
-            if s.access_level == 'View Only':
-                s.access_level = 'View & Download'
+            s.access_level = 'View & Download'
             s.save(update_fields=['status', 'access_level', 'updated_at'])
 
         # Send instant notification to all participants

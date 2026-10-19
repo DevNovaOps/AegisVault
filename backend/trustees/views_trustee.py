@@ -478,15 +478,29 @@ class TrusteeAssignedVaultsView(APIView):
             elif latest_rel and latest_rel.status == 'released':
                 release_status = 'Completed'
                 is_released = True
+            is_revoked = (share.status == 'revoked')
+            is_expired = (share.status == 'expired' or share.is_expired)
+            is_no_access = (share.access_level == 'No Access')
+
+            if is_released:
+                can_view = True
+                can_download = True
+                access_level_display = 'View & Download (Released)'
+            else:
+                can_view = not is_revoked and not is_expired and not is_no_access
+                can_download = (share.status == 'active' and share.access_level == 'View & Download' and not is_expired and not is_revoked)
+                access_level_display = share.access_level
 
             serialized = VaultShareSerializer(share).data
             serialized['release_status'] = release_status
             serialized['has_active_release'] = bool(active_rel)
             serialized['is_released'] = is_released
-            serialized['is_revoked'] = (share.status == 'revoked')
-            serialized['is_expired'] = (share.status == 'expired' or share.is_expired)
-            serialized['can_view'] = not serialized['is_revoked'] and not serialized['is_expired']
-            serialized['can_download'] = is_released or (share.status == 'active' and share.access_level in ['View & Download', 'Full Access'] and not share.is_expired)
+            serialized['is_revoked'] = is_revoked
+            serialized['is_expired'] = is_expired
+            serialized['is_no_access'] = is_no_access and not is_released
+            serialized['can_view'] = can_view
+            serialized['can_download'] = can_download
+            serialized['access_level'] = access_level_display
             data.append(serialized)
 
         return Response(data)
@@ -559,7 +573,7 @@ class TrusteeVaultAssetsView(APIView):
     """
     GET /api/v1/trustee/vaults/{vault_id}/assets/
     Lists decrypted assets / documents accessible to this trustee.
-    Enforces access level: 'View Only' vs 'View & Download' vs 'Full Access',
+    Enforces access level: 'No Access' vs 'View Only' vs 'View & Download',
     and blocks revoked / expired shares.
     """
     permission_classes = [IsAuthenticated, IsTrustee]
@@ -599,9 +613,16 @@ class TrusteeVaultAssetsView(APIView):
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        # Determine download permission
-        can_download = is_released or (share and share.access_level in ['View & Download', 'Full Access'])
-        access_level = 'Full Access (Released)' if is_released else (share.access_level if share else 'View Only')
+        # 5. Check No Access permission
+        if share and share.access_level == 'No Access' and not is_released:
+            return Response(
+                {'detail': 'Access Denied: You have "No Access" to this vault assets. Please contact the vault owner.', 'status': 'no_access'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        # Determine download permission & access level display
+        can_download = is_released or (share and share.status == 'active' and share.access_level == 'View & Download' and not share.is_expired)
+        access_level = 'View & Download (Released)' if is_released else (share.access_level if share else 'View Only')
 
         assets = VaultAsset.objects.filter(vault=vault).order_by('-created_at')
         assets_data = []
@@ -666,6 +687,9 @@ class TrusteeVaultAssetPreviewView(APIView):
         if share and share.is_expired and not is_released:
             return Response({'detail': 'Access expired.'}, status=status.HTTP_403_FORBIDDEN)
 
+        if share and share.access_level == 'No Access' and not is_released:
+            return Response({'detail': 'Access Denied: You have "No Access" to this vault.'}, status=status.HTTP_403_FORBIDDEN)
+
         asset = get_object_or_404(VaultAsset, pk=pk, vault=vault)
 
         if asset.encrypted_data and not asset.file:
@@ -693,7 +717,7 @@ class TrusteeVaultAssetDownloadView(APIView):
     """
     GET /api/v1/trustee/vaults/{vault_id}/assets/{pk}/download/
     Direct download of decrypted asset.
-    Enforces 'View & Download' or 'Full Access' (or Released state).
+    Enforces 'View & Download' (or Released state).
     """
     permission_classes = [IsAuthenticated, IsTrustee]
 
@@ -705,18 +729,18 @@ class TrusteeVaultAssetDownloadView(APIView):
         if not share and not is_released:
             return Response({'detail': 'No access permissions.'}, status=status.HTTP_403_FORBIDDEN)
 
-        if share and share.status == 'revoked' and not is_released:
-            return Response({'detail': 'Access revoked by vault owner.'}, status=status.HTTP_403_FORBIDDEN)
+        if not is_released:
+            if share and share.status == 'revoked':
+                return Response({'detail': 'Access revoked by vault owner.'}, status=status.HTTP_403_FORBIDDEN)
+            if share and share.is_expired:
+                return Response({'detail': 'Access expired.'}, status=status.HTTP_403_FORBIDDEN)
+            if share and share.access_level == 'No Access':
+                return Response({'detail': 'Access Denied: You have "No Access" to this vault.'}, status=status.HTTP_403_FORBIDDEN)
 
-        if share and share.is_expired and not is_released:
-            return Response({'detail': 'Access expired.'}, status=status.HTTP_403_FORBIDDEN)
-
-        can_download = is_released or (share and share.access_level in ['View & Download', 'Full Access'])
+        can_download = is_released or (share and share.status == 'active' and share.access_level == 'View & Download' and not share.is_expired)
         if not can_download:
-            return Response(
-                {'detail': 'Permission Denied: Your access level is "View Only". Downloading is restricted by the owner.'},
-                status=status.HTTP_403_FORBIDDEN
-            )
+            detail = 'Permission Denied: Your access level is "View Only". Downloading is restricted by the owner.' if (share and share.access_level == 'View Only') else 'Permission Denied: You do not have download permissions for this vault.'
+            return Response({'detail': detail}, status=status.HTTP_403_FORBIDDEN)
 
         asset = get_object_or_404(VaultAsset, pk=pk, vault=vault)
 

@@ -381,9 +381,9 @@
                   <!-- Access Level Filter -->
                   <select class="filter-select" id="accessFilterSelect" aria-label="Filter by Access Level">
                     <option value="all">All Access Levels</option>
+                    <option value="No Access">No Access</option>
                     <option value="View Only">View Only</option>
                     <option value="View &amp; Download">View &amp; Download</option>
-                    <option value="Full Access">Full Access</option>
                   </select>
 
                   <!-- Status Filter -->
@@ -519,7 +519,21 @@
               </div>
 
               <div class="access-guide-list">
-                <!-- Item 1: View Only -->
+                <!-- Item 1: No Access -->
+                <div class="guide-item">
+                  <div class="guide-icon-box" style="background: rgba(239, 68, 68, 0.12); color: #ef4444;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"/>
+                      <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+                    </svg>
+                  </div>
+                  <div class="guide-texts">
+                    <span class="guide-title" style="color: #ef4444;">No Access</span>
+                    <span class="guide-desc">Cannot view or download vault assets</span>
+                  </div>
+                </div>
+
+                <!-- Item 2: View Only -->
                 <div class="guide-item">
                   <div class="guide-icon-box blue">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -529,11 +543,11 @@
                   </div>
                   <div class="guide-texts">
                     <span class="guide-title">View Only</span>
-                    <span class="guide-desc">Can view files but cannot download</span>
+                    <span class="guide-desc">Can view &amp; preview files, cannot download</span>
                   </div>
                 </div>
 
-                <!-- Item 2: View & Download -->
+                <!-- Item 3: View & Download -->
                 <div class="guide-item">
                   <div class="guide-icon-box green">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -544,21 +558,7 @@
                   </div>
                   <div class="guide-texts">
                     <span class="guide-title">View &amp; Download</span>
-                    <span class="guide-desc">Can view and download files</span>
-                  </div>
-                </div>
-
-                <!-- Item 3: Full Access -->
-                <div class="guide-item">
-                  <div class="guide-icon-box orange">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                    </svg>
-                  </div>
-                  <div class="guide-texts">
-                    <span class="guide-title">Full Access</span>
-                    <span class="guide-desc">Can view, download, and manage (shared admin rights)</span>
+                    <span class="guide-desc">Can view, preview, and download files</span>
                   </div>
                 </div>
               </div>
@@ -643,9 +643,9 @@
             <div>
               <label for="shareAccessLevel" style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Access Level</label>
               <select id="shareAccessLevel" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
-                <option value="View &amp; Download">View &amp; Download</option>
+                <option value="No Access">No Access</option>
                 <option value="View Only">View Only</option>
-                <option value="Full Access">Full Access</option>
+                <option value="View &amp; Download" selected>View &amp; Download</option>
               </select>
             </div>
             <div>

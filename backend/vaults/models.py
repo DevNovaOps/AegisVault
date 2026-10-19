@@ -156,9 +156,9 @@ class VaultShare(models.Model):
     """
 
     class AccessLevel(models.TextChoices):
+        NO_ACCESS = 'No Access', 'No Access'
         VIEW_ONLY = 'View Only', 'View Only'
         VIEW_DOWNLOAD = 'View & Download', 'View & Download'
-        FULL_ACCESS = 'Full Access', 'Full Access'
 
     class ShareStatus(models.TextChoices):
         ACTIVE = 'active', 'Active'
