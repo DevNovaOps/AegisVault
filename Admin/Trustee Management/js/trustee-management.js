@@ -33,7 +33,6 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
         theme: 'light',
         activeTab: 'all',
         searchQuery: '',
-        filterType: 'all',
         filterStatus: 'all',
         filterVault: 'all',
         currentPage: 1,
@@ -51,7 +50,6 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
         el.themeToggleBtn = document.getElementById('btn-theme-toggle');
         el.tableBody = document.getElementById('trustee-table-body');
         el.tableSearch = document.getElementById('trustee-table-search');
-        el.filterType = document.getElementById('filter-trustee-type');
         el.filterStatus = document.getElementById('filter-verification-status');
         el.filterVault = document.getElementById('filter-vault');
         el.paginationInfo = document.getElementById('pagination-info');
@@ -232,7 +230,6 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
             }
 
             // Dropdown filters
-            if (state.filterType !== 'all' && item.trusteeType !== state.filterType) return false;
             if (state.filterStatus !== 'all' && st !== state.filterStatus.toLowerCase()) return false;
             if (state.filterVault !== 'all' && !item.linkedVaults.includes(state.filterVault)) return false;
 
@@ -256,7 +253,7 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
         if (pageItems.length === 0) {
             el.tableBody.innerHTML = `
                 <tr>
-                    <td colspan="9" style="text-align: center; padding: 2.5rem 1rem; color: var(--text-muted);">
+                    <td colspan="8" style="text-align: center; padding: 2.5rem 1rem; color: var(--text-muted);">
                         <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 0.5rem; opacity: 0.6;">
                             <circle cx="11" cy="11" r="8"></circle>
                             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -267,7 +264,6 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
             `;
         } else {
             el.tableBody.innerHTML = pageItems.map(t => {
-                const typeClass = t.trusteeType.toLowerCase().replace(' ', '-');
                 const statusClass = t.status.toLowerCase();
                 const isChecked = state.selectedTrusteeIds.has(t.id) ? 'checked' : '';
 
@@ -296,7 +292,6 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
                             </div>
                         </td>
                         <td style="color: var(--text-secondary); font-family: var(--font-mono); font-size: 0.74rem;">${t.email}</td>
-                        <td><span class="badge-pill ${typeClass}">${t.trusteeType}</span></td>
                         <td><span class="badge-pill ${statusClass}">${statusIconSvg} ${t.status}</span></td>
                         <td style="text-align: center; font-weight: 600; color: var(--text-heading);">${t.linkedVaultsCount}</td>
                         <td style="color: var(--text-secondary); white-space: nowrap;">${t.addedOn}</td>
@@ -615,13 +610,6 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
         }
 
         // Filter Dropdowns
-        if (el.filterType) {
-            el.filterType.addEventListener('change', (e) => {
-                state.filterType = e.target.value;
-                state.currentPage = 1;
-                renderTrusteeTable();
-            });
-        }
         if (el.filterStatus) {
             el.filterStatus.addEventListener('change', (e) => {
                 state.filterStatus = e.target.value;
@@ -663,8 +651,8 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
         if (el.btnExport) {
             el.btnExport.addEventListener('click', () => {
                 const filtered = getFilteredTrustees();
-                const csvHeader = "ID,Name,Email,Type,Status,LinkedVaults,AddedOn\n";
-                const csvRows = filtered.map(t => `"${t.id}","${t.name}","${t.email}","${t.trusteeType}","${t.status}",${t.linkedVaultsCount},"${t.addedOn}"`).join("\n");
+                const csvHeader = "ID,Name,Email,Status,LinkedVaults,AddedOn\n";
+                const csvRows = filtered.map(t => `"${t.id}","${t.name}","${t.email}","${t.status}",${t.linkedVaultsCount},"${t.addedOn}"`).join("\n");
                 const blob = new Blob([csvHeader + csvRows], { type: 'text/csv;charset=utf-8;' });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
@@ -687,7 +675,6 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
                 const name = document.getElementById('add-name').value.trim();
                 const email = document.getElementById('add-email').value.trim();
                 const phone = document.getElementById('add-phone').value.trim();
-                const type = document.getElementById('add-type').value;
                 const vault = document.getElementById('add-vault').value;
                 const notes = document.getElementById('add-notes').value.trim();
 
@@ -703,7 +690,6 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
                     avatarColor,
                     email,
                     phone,
-                    trusteeType: type,
                     status: 'Pending',
                     linkedVaultsCount: 1,
                     linkedVaults: [vault],
@@ -744,7 +730,6 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
                 const name = document.getElementById('edit-name').value.trim();
                 const email = document.getElementById('edit-email').value.trim();
                 const phone = document.getElementById('edit-phone').value.trim();
-                const type = document.getElementById('edit-type').value;
                 const status = document.getElementById('edit-status').value;
 
                 const target = state.trustees.find(t => t.id === id);
@@ -753,7 +738,6 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
                     target.name = name;
                     target.email = email;
                     target.phone = phone;
-                    target.trusteeType = type;
                     target.status = status;
                     if (status !== oldStatus) {
                         updateKpiCounters(oldStatus, status);
@@ -921,8 +905,8 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
 
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; font-size: 0.78rem;">
                             <div>
-                                <span style="color: var(--text-muted); display: block; font-size: 0.7rem;">Trustee Type:</span>
-                                <span class="badge-pill ${t.trusteeType.toLowerCase().replace(' ', '-')}" style="margin-top: 3px;">${t.trusteeType}</span>
+                                <span style="color: var(--text-muted); display: block; font-size: 0.7rem;">Relationship:</span>
+                                <strong style="color: var(--text-heading);">${t.relationship || 'Designated Trustee'}</strong>
                             </div>
                             <div>
                                 <span style="color: var(--text-muted); display: block; font-size: 0.7rem;">Verification Status:</span>
@@ -1023,8 +1007,8 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
                     if (el.permTrusteeName) el.permTrusteeName.textContent = t.name;
                     if (el.permTrusteeSub) el.permTrusteeSub.textContent = `${t.id} • ${t.email}`;
                     if (el.permTrusteeBadge) {
-                        el.permTrusteeBadge.className = `badge-pill ${t.trusteeType.toLowerCase().replace(' ', '-')}`;
-                        el.permTrusteeBadge.textContent = t.trusteeType;
+                        el.permTrusteeBadge.className = `badge-pill ${t.status.toLowerCase()}`;
+                        el.permTrusteeBadge.textContent = t.status;
                     }
 
                     // Pre-check trustee's linked vaults
@@ -1066,7 +1050,6 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
         document.getElementById('edit-name').value = t.name;
         document.getElementById('edit-email').value = t.email;
         document.getElementById('edit-phone').value = t.phone;
-        document.getElementById('edit-type').value = t.trusteeType;
         document.getElementById('edit-status').value = t.status;
         openModal(el.modalEditTrustee);
     }

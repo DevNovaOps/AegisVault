@@ -425,12 +425,6 @@
                             </svg>
                             <input type="text" id="trustee-table-search" class="table-search-input" placeholder="Search trustees by name, email, or ID...">
                         </div>
-                        <select class="filter-select" id="filter-trustee-type" aria-label="Filter by Trustee Type">
-                            <option value="all">All Trustee Types</option>
-                            <option value="Primary">Primary</option>
-                            <option value="Co-Trustee">Co-Trustee</option>
-                            <option value="Backup">Backup</option>
-                        </select>
                         <select class="filter-select" id="filter-verification-status" aria-label="Filter by Verification Status">
                             <option value="all">All Verification Status</option>
                             <option value="Verified">Verified</option>
@@ -456,7 +450,6 @@
                                         <th style="width: 40px;">#</th>
                                         <th>Name</th>
                                         <th>Email / Contact</th>
-                                        <th>Trustee Type</th>
                                         <th>Verification Status</th>
                                         <th>Linked Vaults</th>
                                         <th>Added On</th>
@@ -556,14 +549,6 @@
                         <input type="tel" id="add-phone" class="form-input" placeholder="e.g. +1 (555) 000-0000" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="add-type">Trustee Type *</label>
-                        <select id="add-type" class="form-select" required>
-                            <option value="Primary">Primary Trustee</option>
-                            <option value="Co-Trustee" selected>Co-Trustee</option>
-                            <option value="Backup">Backup Trustee</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
                         <label class="form-label" for="add-vault">Vault Assignment *</label>
                         <select id="add-vault" class="form-select" required>
                             <option value="General">General / All Assigned Vaults</option>
@@ -626,14 +611,6 @@
                     <div class="form-group">
                         <label class="form-label" for="edit-phone">Contact Number *</label>
                         <input type="tel" id="edit-phone" class="form-input" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="edit-type">Trustee Type *</label>
-                        <select id="edit-type" class="form-select" required>
-                            <option value="Primary">Primary Trustee</option>
-                            <option value="Co-Trustee">Co-Trustee</option>
-                            <option value="Backup">Backup Trustee</option>
-                        </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="edit-status">Verification Status *</label>
