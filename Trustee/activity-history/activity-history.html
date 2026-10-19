@@ -279,12 +279,6 @@
                     </select>
                     <svg class="activity-filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
                   </div>
-
-                  <!-- Date Range Badge -->
-                  <div class="activity-date-badge" onclick="showToast('Date range: 1 Aug 2025 &mdash;� 12 Sep 2025 (Active)')" title="Filter by date range">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                    <span>1 Aug 2025 &mdash;� 12 Sep 2025</span>
-                  </div>
                 </div>
               </div>
 
@@ -398,15 +392,6 @@
                 </div>
               </div>
 
-              <!-- Date Range -->
-              <div class="filter-group">
-                <label class="filter-label">Date Range</label>
-                <div class="filter-date-box" onclick="showToast('Date Range picker active (1 Aug 2025 - 12 Sep 2025)')">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                  <span>1 Aug 2025 &mdash;� 12 Sep 2025</span>
-                </div>
-              </div>
-
               <div class="filter-actions-row">
                 <button type="button" class="btn-apply-filter" id="btnApplyFilter">
                   Apply Filters
@@ -414,69 +399,6 @@
                 <button type="button" class="btn-reset-filter" id="btnResetFilter">
                   Reset
                 </button>
-              </div>
-            </section>
-
-            <!-- Card 2: Activity Insights -->
-            <section class="insights-card" aria-labelledby="insightsHeading">
-              <div class="insights-header">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <path d="M18 20V10M12 20V4M6 20v-6"/>
-                </svg>
-                <h2 id="insightsHeading" style="font-size: 1.05rem; font-weight: 700; margin: 0;">Activity Insights</h2>
-              </div>
-
-              <div class="insights-list">
-                <div class="insight-item">
-                  <div class="insight-left">
-                    <div class="insight-icon-box">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    </div>
-                    <div class="insight-label-group">
-                      <span class="insight-label-sub">Most Active Vault</span>
-                      <span class="insight-label-main">Personal Vault</span>
-                    </div>
-                  </div>
-                  <span class="insight-val-badge">48</span>
-                </div>
-
-                <div class="insight-item">
-                  <div class="insight-left">
-                    <div class="insight-icon-box">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-                    </div>
-                    <div class="insight-label-group">
-                      <span class="insight-label-sub">Most Frequent Action</span>
-                      <span class="insight-label-main">Share Submitted</span>
-                    </div>
-                  </div>
-                  <span class="insight-val-badge">52</span>
-                </div>
-
-                <div class="insight-item">
-                  <div class="insight-left">
-                    <div class="insight-icon-box">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                    </div>
-                    <div class="insight-label-group">
-                      <span class="insight-label-sub">Active Users</span>
-                      <span class="insight-label-main">Trustees & Owners</span>
-                    </div>
-                  </div>
-                  <span class="insight-val-badge">8</span>
-                </div>
-
-                <div class="insight-item">
-                  <div class="insight-left">
-                    <div class="insight-icon-box">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    </div>
-                    <div class="insight-label-group">
-                      <span class="insight-label-sub">Peak Activity Time</span>
-                      <span class="insight-label-main">10 AM &mdash;� 12 PM</span>
-                    </div>
-                  </div>
-                </div>
               </div>
             </section>
 
