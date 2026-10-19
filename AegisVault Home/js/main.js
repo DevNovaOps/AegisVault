@@ -47,6 +47,17 @@
 
         localStorage.setItem(THEME_STORAGE_KEY, theme);
 
+        // Dynamically update tab favicon to match active theme
+        const iconLinks = document.querySelectorAll('link[rel="icon"]');
+        iconLinks.forEach(link => {
+            const isLight = theme === THEME_LIGHT;
+            if (link.href.includes('favicon-32x32') || link.href.includes('favicon-light-32x32')) {
+                link.href = isLight ? 'assets/logo/favicon-light-32x32.png' : 'assets/logo/favicon-32x32.png';
+            } else if (link.href.endsWith('.ico')) {
+                link.href = isLight ? 'assets/logo/favicon-light.ico' : 'favicon.ico';
+            }
+        });
+
         // Dispatch custom event for modules that need to adjust colors/effects
         window.dispatchEvent(new CustomEvent('aegisThemeChanged', { detail: { theme } }));
     }

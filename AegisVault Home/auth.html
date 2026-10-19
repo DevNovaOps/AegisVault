@@ -12,6 +12,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
+    <!-- Favicon & Brand Icons -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/logo/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/logo/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/logo/apple-touch-icon.png">
+
     <!-- Self-Contained Complete Stylesheet (Guaranteed to load in any environment) -->
     <style>
         :root {
@@ -136,6 +142,46 @@
             align-items: center;
             gap: 10px;
             text-decoration: none;
+        }
+
+        .auth-brand-badge .brand-shield-icon {
+            width: 34px;
+            height: 34px;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-brand-badge .brand-shield-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            filter: drop-shadow(0 2px 8px rgba(244, 90, 31, 0.35));
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+
+        .auth-brand-badge:hover .brand-shield-icon img {
+            transform: scale(1.08);
+            filter: drop-shadow(0 4px 14px rgba(244, 90, 31, 0.55));
+        }
+
+        .auth-brand-badge .brand-logo-light {
+            display: none !important;
+        }
+        .auth-brand-badge .brand-logo-dark {
+            display: block !important;
+        }
+
+        [data-theme="light"] .auth-brand-badge .brand-logo-dark,
+        body.light-theme .auth-brand-badge .brand-logo-dark {
+            display: none !important;
+        }
+
+        [data-theme="light"] .auth-brand-badge .brand-logo-light,
+        body.light-theme .auth-brand-badge .brand-logo-light {
+            display: block !important;
         }
 
         .auth-brand-name {
@@ -875,13 +921,11 @@
             <span>Back to Home</span>
         </a>
 
-        <a href="index.html" class="auth-brand-badge">
-            <svg viewBox="0 0 36 36" fill="none" width="30" height="30">
-                <path d="M18 2L5 7.5V17C5 25.5 10.5 32.5 18 34.5C25.5 32.5 31 25.5 31 17V7.5L18 2Z" fill="#F45A1F"/>
-                <path d="M18 5L7.5 9.4V17C7.5 24 12 29.8 18 31.6C24 29.8 28.5 24 28.5 17V9.4L18 5Z" fill="#FF7A2F"/>
-                <rect x="13" y="15" width="10" height="9" rx="2" fill="#FFFFFF"/>
-                <circle cx="18" cy="18.5" r="1.3" fill="#F45A1F"/>
-            </svg>
+        <a href="index.html" class="auth-brand-badge" aria-label="AegisVault Home">
+            <div class="brand-shield-icon">
+                <img src="assets/logo/ageis_dark.png" alt="AegisVault Shield" class="brand-logo-dark">
+                <img src="assets/logo/ageis_light.png" alt="AegisVault Shield" class="brand-logo-light">
+            </div>
             <span class="auth-brand-name">Aegis<span>Vault</span></span>
         </a>
 

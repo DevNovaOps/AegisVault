@@ -1227,14 +1227,48 @@ body.light-theme .app-sidebar,
 }
 
 .brand-shield-icon {
-    width: 34px;
-    height: 38px;
+    width: 38px;
+    height: 40px;
     flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.brand-shield-icon svg {
+.brand-shield-icon svg,
+.brand-shield-icon img {
     width: 100%;
     height: 100%;
+    object-fit: contain;
+    display: block;
+    transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+.brand-shield-icon img {
+    filter: drop-shadow(0 2px 8px rgba(249, 115, 22, 0.35));
+}
+
+.sidebar-brand:hover .brand-shield-icon img {
+    transform: scale(1.08);
+    filter: drop-shadow(0 4px 14px rgba(249, 115, 22, 0.55));
+}
+
+/* Theme switching for dark and light logo variants */
+.brand-shield-icon .brand-logo-light {
+    display: none !important;
+}
+.brand-shield-icon .brand-logo-dark {
+    display: block !important;
+}
+
+[data-theme="light"] .brand-shield-icon .brand-logo-dark,
+body.light-theme .brand-shield-icon .brand-logo-dark {
+    display: none !important;
+}
+
+[data-theme="light"] .brand-shield-icon .brand-logo-light,
+body.light-theme .brand-shield-icon .brand-logo-light {
+    display: block !important;
 }
 
 .brand-text {
@@ -2749,13 +2783,18 @@ table th,
 
 .footer-brand .brand-shield-icon {
     width: 24px;
-    height: 27px;
+    height: 26px;
     flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.footer-brand .brand-shield-icon svg {
+.footer-brand .brand-shield-icon svg,
+.footer-brand .brand-shield-icon img {
     width: 100%;
     height: 100%;
+    object-fit: contain;
 }
 
 .footer-brand .brand-title {

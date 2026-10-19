@@ -344,14 +344,48 @@ svg {
 }
 
 .brand-shield-icon {
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
     flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.brand-shield-icon svg {
+.brand-shield-icon svg,
+.brand-shield-icon img {
     width: 100%;
     height: 100%;
+    object-fit: contain;
+    display: block;
+    transition: transform var(--transition-fast), filter var(--transition-fast);
+}
+
+.brand-shield-icon img {
+    filter: drop-shadow(0 2px 8px rgba(244, 90, 31, 0.35));
+}
+
+.brand-wrapper:hover .brand-shield-icon img {
+    transform: scale(1.08);
+    filter: drop-shadow(0 4px 14px rgba(244, 90, 31, 0.55));
+}
+
+/* Theme switching for dark and light logo variants */
+.brand-shield-icon .brand-logo-light {
+    display: none !important;
+}
+.brand-shield-icon .brand-logo-dark {
+    display: block !important;
+}
+
+[data-theme="light"] .brand-shield-icon .brand-logo-dark,
+body.light-theme .brand-shield-icon .brand-logo-dark {
+    display: none !important;
+}
+
+[data-theme="light"] .brand-shield-icon .brand-logo-light,
+body.light-theme .brand-shield-icon .brand-logo-light {
+    display: block !important;
 }
 
 .brand-text-col {
@@ -2324,9 +2358,37 @@ body.dark-theme .icon-blue {
 }
 
 .video-brand-shield {
-    width: 44px;
-    height: 44px;
+    width: 52px;
+    height: 52px;
     margin: 0 auto 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.video-brand-shield svg,
+.video-brand-shield img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 14px rgba(244, 90, 31, 0.5));
+}
+
+.video-brand-shield .brand-logo-light {
+    display: none !important;
+}
+.video-brand-shield .brand-logo-dark {
+    display: block !important;
+}
+
+[data-theme="light"] .video-brand-shield .brand-logo-dark,
+body.light-theme .video-brand-shield .brand-logo-dark {
+    display: none !important;
+}
+
+[data-theme="light"] .video-brand-shield .brand-logo-light,
+body.light-theme .video-brand-shield .brand-logo-light {
+    display: block !important;
 }
 
 .poster-title {

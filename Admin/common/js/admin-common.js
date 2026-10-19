@@ -158,6 +158,16 @@
             localStorage.setItem(this.THEME_KEY, theme);
             localStorage.setItem('aegis_theme', theme);
 
+            // Dynamically update tab favicon to match active theme
+            const iconLinks = document.querySelectorAll('link[rel="icon"]');
+            iconLinks.forEach(link => {
+                if (link.href.includes('favicon-32x32') || link.href.includes('favicon-light-32x32')) {
+                    link.href = isDark ? '../assets/logo/favicon-32x32.png' : '../assets/logo/favicon-light-32x32.png';
+                } else if (link.href.endsWith('.ico')) {
+                    link.href = isDark ? '../favicon.ico' : '../assets/logo/favicon-light.ico';
+                }
+            });
+
             // Dispatch custom event for module charts/listeners
             const event = new CustomEvent('aegis:themechange', {
                 detail: { theme, isDark }

@@ -9,6 +9,11 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from web.views import frontend_serve
 
+# Django framework admin custom branding
+admin.site.site_header = "AegisVault Administration"
+admin.site.site_title = "AegisVault Admin Portal"
+admin.site.index_title = "AegisVault Control Center"
+
 urlpatterns = [
     # Django framework admin (developer database console)
     path('admin/', admin.site.urls),
