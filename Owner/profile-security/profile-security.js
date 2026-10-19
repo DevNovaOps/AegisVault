@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const editProfileModal = document.getElementById('editProfileModal');
   const changePasswordModal = document.getElementById('changePasswordModal');
 
-  const btnEditOverview = document.getElementById('btnEditOverview');
   const btnEditPersonal = document.getElementById('btnEditPersonal');
   const btnSaveProfile = document.getElementById('btnSaveProfile');
 
@@ -243,7 +242,6 @@ document.addEventListener('DOMContentLoaded', () => {
     openModal(editProfileModal);
   }
 
-  if (btnEditOverview) btnEditOverview.addEventListener('click', handleOpenEditProfile);
   if (btnEditPersonal) btnEditPersonal.addEventListener('click', handleOpenEditProfile);
 
   if (btnSaveProfile) {

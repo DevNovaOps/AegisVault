@@ -779,7 +779,7 @@
   outline: none;
   border-color: var(--brand-orange, #f97316);
   box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
-  background-color: #0b142c;
+  background-color: var(--bg-surface, #0b142c);
 }
 
 .form-input::placeholder {
@@ -797,8 +797,8 @@ select.form-input {
 }
 
 select.form-input option {
-  background-color: #0f172a;
-  color: #f8fafc;
+  background-color: var(--bg-card, #0f172a);
+  color: var(--text-primary, #f8fafc);
   padding: 8px 12px;
 }
 
@@ -898,7 +898,7 @@ select.form-input option {
   align-items: center;
   justify-content: flex-end;
   gap: 0.85rem;
-  background-color: rgba(15, 23, 42, 0.6);
+  background-color: var(--bg-card-elevated, rgba(15, 23, 42, 0.6));
 }
 
 /* Modal Action Buttons */
@@ -1000,4 +1000,95 @@ select.form-input option {
   .profile-three-col-row {
     grid-template-columns: 1fr;
   }
+}
+
+/* ==========================================================================
+   Light Theme Overrides for Modals & Form Controls
+   ========================================================================== */
+[data-theme="light"] .modal-backdrop {
+  background-color: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+[data-theme="light"] .modal-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 20px 45px -5px rgba(15, 23, 42, 0.18);
+}
+
+[data-theme="light"] .modal-header {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+[data-theme="light"] .modal-title {
+  color: #0f172a;
+}
+
+[data-theme="light"] .modal-close {
+  color: #64748b;
+}
+
+[data-theme="light"] .modal-close:hover {
+  color: #f97316;
+  background-color: rgba(249, 115, 22, 0.08);
+}
+
+[data-theme="light"] .form-label {
+  color: #334155;
+}
+
+[data-theme="light"] .form-input {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+}
+
+[data-theme="light"] .form-input:focus {
+  background-color: #ffffff !important;
+  border-color: #f97316 !important;
+  color: #0f172a !important;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2) !important;
+}
+
+[data-theme="light"] .form-input::placeholder {
+  color: #94a3b8;
+}
+
+[data-theme="light"] select.form-input {
+  background-color: #ffffff;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+[data-theme="light"] select.form-input option {
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+[data-theme="light"] .modal-footer {
+  background-color: #f8fafc !important;
+  border-top: 1px solid #e2e8f0 !important;
+}
+
+[data-theme="light"] .btn-modal-cancel,
+[data-theme="light"] .modal-footer .btn-modal-cancel,
+[data-theme="light"] .modal-footer .btn-secondary,
+[data-theme="light"] .modal-footer button.btn-secondary,
+[data-theme="light"] .modal-footer button.btn-modal-cancel {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #334155 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="light"] .btn-modal-cancel:hover,
+[data-theme="light"] .modal-footer .btn-modal-cancel:hover,
+[data-theme="light"] .modal-footer .btn-secondary:hover,
+[data-theme="light"] .modal-footer button.btn-secondary:hover,
+[data-theme="light"] .modal-footer button.btn-modal-cancel:hover {
+  background-color: #f1f5f9 !important;
+  border-color: #94a3b8 !important;
+  color: #0f172a !important;
 }

@@ -984,7 +984,7 @@ body.light-theme .brand-shield-icon .brand-logo-light {
 }
 
 .dashboard-row.row-1 {
-  grid-template-columns: 1.25fr 0.95fr 1fr;
+  grid-template-columns: 1.4fr 1fr;
 }
 
 .dashboard-row.row-2 {
