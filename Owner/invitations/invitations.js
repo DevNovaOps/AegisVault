@@ -833,24 +833,30 @@
       }).catch(e=>{});
 
       window.AegisAPI.get('/owner/invitations/').then(data => {
-        invitations = data.map(inv => ({
-          id: inv.id,
-          name: inv.invitee_name,
-          email: inv.invitee_email,
-          rel: inv.relationship || 'Guardian',
-          relClass: (inv.relationship || 'guardian').toLowerCase().replace(' ', '-'),
-          vault: inv.vault_name || 'Designated Vault',
-          status: (inv.status || 'pending').toLowerCase(),
-          token: inv.token,
-          sentDate: new Date(inv.sent_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }),
-          sentTime: new Date(inv.sent_at).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }),
-          avatar: '../assets/images/trustee-avatar-1.png',
-          avatarType: 'img',
-          expiryDays: inv.expiry_days || 14,
-          isRecent: true,
-          note: inv.note || '',
-          acceptedDate: inv.accepted_at ? new Date(inv.accepted_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : undefined
-        }));
+        invitations = data.map(inv => {
+          const invName = inv.invitee_name || 'Designated Trustee';
+          const parts = invName.trim().split(/\s+/);
+          const initials = parts.length > 1 ? (parts[0][0] + parts[1][0]).toUpperCase() : invName.substring(0, 2).toUpperCase();
+          return {
+            id: inv.id,
+            name: invName,
+            email: inv.invitee_email,
+            rel: inv.relationship || 'Guardian',
+            relClass: (inv.relationship || 'guardian').toLowerCase().replace(' ', '-'),
+            vault: inv.vault_name || 'Designated Vault',
+            status: (inv.status || 'pending').toLowerCase(),
+            token: inv.token,
+            sentDate: new Date(inv.sent_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }),
+            sentTime: new Date(inv.sent_at).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }),
+            initials: initials,
+            avatarType: 'initials',
+            avatarClass: 'avatar-gradient-sky',
+            expiryDays: inv.expiry_days || 14,
+            isRecent: true,
+            note: inv.note || '',
+            acceptedDate: inv.accepted_at ? new Date(inv.accepted_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : undefined
+          };
+        });
         updateKPIsAndDonut();
         renderTable();
       }).catch(err => {

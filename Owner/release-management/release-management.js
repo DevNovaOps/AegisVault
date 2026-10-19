@@ -48,6 +48,25 @@
   // =========================================================================
   // 3. Helper Render Functions
   // =========================================================================
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function getInitials(name) {
+    if (!name) return 'TR';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length > 1) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  }
+
   function getReleaseIcon(type) {
     if (type === 'camera') {
       return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>`;
@@ -174,33 +193,31 @@
         </a>`;
 
       // Recipient(s)
+      const rName = item.recipientName || 'Designated Trustee';
+      const rEmail = item.recipientEmail || '';
+      const initials = item.initials || getInitials(rName);
       let recipientHtml = '';
       if (item.recipientType === 'multi') {
         recipientHtml = `
           <div class="recipient-cell-content">
             <div class="stacked-avatars-wrap">
-              <div class="stacked-avatar" style="background-image: url('${item.multiAvatars[0]}');"></div>
-              <div class="stacked-avatar" style="background-image: url('${item.multiAvatars[1]}');"></div>
+              <div class="stacked-avatar" style="background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%); display:flex; align-items:center; justify-content:center; color:#ffffff; font-size:0.65rem; font-weight:700;">${initials}</div>
+              <div class="stacked-avatar" style="background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%); display:flex; align-items:center; justify-content:center; color:#ffffff; font-size:0.65rem; font-weight:700;">TR</div>
               <span class="stacked-badge">+2</span>
             </div>
             <div class="recipient-meta-box">
-              <span class="recipient-name-text">${item.recipientName}</span>
-              <span class="recipient-email-text" title="${item.recipientEmail}">${item.recipientEmail}</span>
+              <span class="recipient-name-text">${escapeHtml(rName)}</span>
+              <span class="recipient-email-text" title="${escapeHtml(rEmail)}">${escapeHtml(rEmail)}</span>
             </div>
           </div>`;
       } else {
-        let avatarHtml = '';
-        if (item.avatarType === 'img') {
-          avatarHtml = `<div class="recipient-avatar-img" style="background-image: url('${item.avatar}');"></div>`;
-        } else {
-          avatarHtml = `<div class="recipient-avatar-initials ${item.avatarClass || ''}">${item.initials}</div>`;
-        }
+        const avatarHtml = `<div class="recipient-avatar-initials" style="background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%); width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; color: #ffffff; border: 1.5px solid var(--border-subtle); flex-shrink: 0;" title="${escapeHtml(rName)}">${initials}</div>`;
         recipientHtml = `
           <div class="recipient-cell-content">
             ${avatarHtml}
             <div class="recipient-meta-box">
-              <span class="recipient-name-text">${item.recipientName}</span>
-              <span class="recipient-email-text" title="${item.recipientEmail}">${item.recipientEmail}</span>
+              <span class="recipient-name-text">${escapeHtml(rName)}</span>
+              <span class="recipient-email-text" title="${escapeHtml(rEmail)}">${escapeHtml(rEmail)}</span>
             </div>
           </div>`;
       }
@@ -231,7 +248,7 @@
           <button class="btn-action-icon" onclick="window.AegisReleases.openEditModal('${item.id}')" title="Edit Release">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           </button>
-          <button class="btn-action-icon more-dots" onclick="window.AegisReleases.openMoreOptions('${item.id}')" title="More Options">
+          <button class="btn-action-icon more-dots" data-action="more" data-id="${item.id}" onclick="window.AegisReleases.openMoreOptions('${item.id}', event)" title="More Options" aria-label="More options for ${escapeHtml(item.title)}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/><circle cx="5" cy="12" r="1.5"/></svg>
           </button>
         </div>`;
@@ -475,44 +492,58 @@
 
   document.addEventListener('click', closeReleaseMenu);
 
-  function openMoreOptions(id) {
+  function openMoreOptions(id, e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     const item = releases.find(r => r.id === id);
     if (!item) return;
 
     closeReleaseMenu();
 
-    const anchorEl = document.querySelector(`[data-action="more"][data-id="${id}"]`);
+    const anchorEl = (e && e.currentTarget) || document.querySelector(`[data-action="more"][data-id="${id}"]`);
     if (!anchorEl) return;
 
     const menu = document.createElement('div');
-    menu.className = 'dropdown-panel';
+    menu.className = 'dropdown-panel show';
     menu.style.position = 'fixed';
+    menu.style.display = 'flex';
+    menu.style.flexDirection = 'column';
     menu.style.zIndex = '9999';
-    menu.style.minWidth = '210px';
+    menu.style.minWidth = '220px';
     menu.style.boxShadow = 'var(--shadow-dropdown)';
+    menu.style.backgroundColor = 'var(--bg-surface)';
+    menu.style.border = '1px solid var(--border-subtle)';
+    menu.style.borderRadius = 'var(--radius-lg)';
+    menu.style.padding = '0.5rem';
+
+    menu.addEventListener('click', (ev) => ev.stopPropagation());
 
     const isCancelled = item.status === 'cancelled';
 
     menu.innerHTML = `
-      <div class="dropdown-header">${item.title}</div>
-      <button class="dropdown-item" data-action="view" style="width:100%; border:none; background:none; text-align:left; cursor:pointer;">
+      <div class="dropdown-header" style="padding: 0.4rem 0.6rem 0.25rem; font-size: 0.74rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
+        ${escapeHtml(item.title)} • ${escapeHtml(item.vault)}
+      </div>
+      <button class="dropdown-item" data-action="view" style="width:100%; border:none; background:none; text-align:left; cursor:pointer; display:flex; align-items:center; gap:0.6rem; padding:0.55rem 0.75rem; font-size:0.84rem; color:var(--text-primary); border-radius:var(--radius-md);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         <span>View Details</span>
       </button>
-      <button class="dropdown-item" data-action="edit" style="width:100%; border:none; background:none; text-align:left; cursor:pointer;">
+      <button class="dropdown-item" data-action="edit" style="width:100%; border:none; background:none; text-align:left; cursor:pointer; display:flex; align-items:center; gap:0.6rem; padding:0.55rem 0.75rem; font-size:0.84rem; color:var(--text-primary); border-radius:var(--radius-md);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         <span>Edit Parameters</span>
       </button>
-      <button class="dropdown-item" data-action="test" style="width:100%; border:none; background:none; text-align:left; cursor:pointer;">
+      <button class="dropdown-item" data-action="test" style="width:100%; border:none; background:none; text-align:left; cursor:pointer; display:flex; align-items:center; gap:0.6rem; padding:0.55rem 0.75rem; font-size:0.84rem; color:var(--text-primary); border-radius:var(--radius-md);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         <span>Simulate Trigger Ping</span>
       </button>
-      <button class="dropdown-item" data-action="release-now" style="width:100%; border:none; background:none; text-align:left; cursor:pointer; color:var(--status-success);">
+      <button class="dropdown-item" data-action="release-now" style="width:100%; border:none; background:none; text-align:left; cursor:pointer; display:flex; align-items:center; gap:0.6rem; padding:0.55rem 0.75rem; font-size:0.84rem; color:var(--status-success); border-radius:var(--radius-md);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="20 6 9 17 4 12"/></svg>
         <span>Release Vault to Trustees</span>
       </button>
-      <div class="dropdown-divider"></div>
-      <button class="dropdown-item" data-action="toggle-status" style="width:100%; border:none; background:none; text-align:left; cursor:pointer; color:var(--status-danger);">
+      <div style="height:1px; background:var(--border-subtle); margin:0.35rem 0;"></div>
+      <button class="dropdown-item" data-action="toggle-status" style="width:100%; border:none; background:none; text-align:left; cursor:pointer; display:flex; align-items:center; gap:0.6rem; padding:0.55rem 0.75rem; font-size:0.84rem; color:var(--status-danger); border-radius:var(--radius-md);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
         <span>${isCancelled ? 'Resume Schedule' : 'Cancel Release'}</span>
       </button>
@@ -520,11 +551,11 @@
 
     const rect = anchorEl.getBoundingClientRect();
     menu.style.top = `${rect.bottom + 6}px`;
-    menu.style.left = `${Math.min(window.innerWidth - 230, rect.left - 160)}px`;
+    menu.style.left = `${Math.min(window.innerWidth - 235, Math.max(10, rect.right - 220))}px`;
 
     menu.querySelector('[data-action="view"]').addEventListener('click', () => {
       closeReleaseMenu();
-      openDetailsModal(id);
+      openViewModal(id);
     });
 
     menu.querySelector('[data-action="edit"]').addEventListener('click', () => {
@@ -760,7 +791,7 @@
               id: r.id, title: r.title, subtext: r.description || 'Encrypted Release Workflow',
               iconTheme: 'blue', iconType: 'file-text', vault: vaultName,
               recipientType: 'single', recipientName: recipientName, recipientEmail: recipientEmail || `${recipientName.toLowerCase().replace(/ /g, '.')}@email.com`,
-              avatarType: 'img', avatar: '../assets/images/trustee-avatar-2.png',
+              avatarType: 'initials', initials: getInitials(recipientName),
               trigger: r.trigger_type, triggerDetail: r.trigger_detail, status: r.status.toLowerCase(),
               scheduledDate: r.scheduled_at ? new Date(r.scheduled_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }) : sDate,
               scheduledTime: r.scheduled_at ? new Date(r.scheduled_at).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }) : sTime, note: r.note || ''
@@ -779,7 +810,7 @@
             id: newId, title: title, subtext: 'Encrypted Release Workflow',
             iconTheme: 'blue', iconType: 'file-text', vault: vaultName,
             recipientType: 'single', recipientName: recipientName, recipientEmail: recipientEmail || `${recipientName.toLowerCase().replace(/ /g, '.')}@email.com`,
-            avatarType: 'img', avatar: '../assets/images/trustee-avatar-2.png',
+            avatarType: 'initials', initials: getInitials(recipientName),
             trigger: triggerType, triggerDetail: triggerDetail, status: 'scheduled',
             scheduledDate: sDate, scheduledTime: sTime, note: note
           };
@@ -922,8 +953,8 @@
           recipientType: 'single',
           recipientName: r.participants && r.participants.length > 0 ? r.participants[0].trustee_name : 'No participants',
           recipientEmail: r.participants && r.participants.length > 0 ? r.participants[0].trustee_email : '',
-          avatarType: 'img',
-          avatar: '../assets/images/trustee-avatar-2.png',
+          avatarType: 'initials',
+          initials: getInitials(r.participants && r.participants.length > 0 ? r.participants[0].trustee_name : 'Designated Trustee'),
           trigger: r.trigger_type,
           triggerDetail: r.trigger_detail,
           status: r.status.toLowerCase(),

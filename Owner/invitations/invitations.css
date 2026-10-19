@@ -253,6 +253,10 @@
   background: linear-gradient(135deg, #475569, #64748b);
 }
 
+.avatar-gradient-sky {
+  background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+}
+
 /* Name & Email Cell */
 .invitee-name-box {
   display: flex;

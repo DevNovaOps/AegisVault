@@ -49,6 +49,25 @@
   // =========================================================================
   // 3. Helper Render Functions
   // =========================================================================
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function getInitials(name) {
+    if (!name) return 'TR';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length > 1) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  }
+
   function getAccessLevelPill(level) {
     if (level === 'No Access') {
       return `
@@ -116,7 +135,7 @@
     }
 
     const moreBtn = `
-      <button class="btn-table-more" onclick="window.AegisShares.openMoreOptions('${item.id}')" title="More Options" aria-label="More options for ${item.vault}">
+      <button class="btn-table-more" data-action="more" data-id="${item.id}" onclick="window.AegisShares.openMoreOptions('${item.id}', event)" title="More Options" aria-label="More options for ${escapeHtml(item.vault)}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/><circle cx="5" cy="12" r="1.5"/></svg>
       </button>`;
 
@@ -176,18 +195,14 @@
         </div>`;
 
       // Trustee cell
-      let avatarHtml = '';
-      if (item.avatarType === 'img') {
-        avatarHtml = `<div class="trustee-avatar-img" style="background-image: url('${item.avatar}');" title="${item.trusteeName}"></div>`;
-      } else {
-        avatarHtml = `<div class="trustee-avatar-initials ${item.avatarClass || ''}" title="${item.trusteeName}">${item.initials}</div>`;
-      }
+      const initials = item.initials || getInitials(item.trusteeName);
+      const avatarHtml = `<div class="trustee-avatar-initials" style="background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%); width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; color: #ffffff; border: 1.5px solid var(--border-subtle); flex-shrink: 0;" title="${escapeHtml(item.trusteeName)}">${initials}</div>`;
       const trusteeHtml = `
         <div class="trustee-cell-content">
           ${avatarHtml}
           <div class="trustee-meta-box">
-            <span class="trustee-name-text">${item.trusteeName}</span>
-            <span class="trustee-email-text" title="${item.trusteeEmail}">${item.trusteeEmail}</span>
+            <span class="trustee-name-text">${escapeHtml(item.trusteeName)}</span>
+            <span class="trustee-email-text" title="${escapeHtml(item.trusteeEmail)}">${escapeHtml(item.trusteeEmail)}</span>
           </div>
         </div>`;
 
@@ -341,6 +356,63 @@
     }
   }
 
+  function openDetailsModal(id) {
+    const item = shares.find(s => s.id === id);
+    if (!item) return;
+    activeShareItem = item;
+
+    if (confirmActionModalTitle) confirmActionModalTitle.textContent = `Share Details: ${item.vault}`;
+    if (confirmActionModalBody) {
+      confirmActionModalBody.innerHTML = `
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem; padding-bottom:0.75rem; border-bottom:1px solid var(--border-subtle);">
+          <div style="background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem; color: #fff;">${item.initials || getInitials(item.trusteeName)}</div>
+          <div>
+            <h4 style="margin:0; font-size:1rem; font-weight:700; color:var(--text-primary);">${escapeHtml(item.trusteeName)}</h4>
+            <span style="font-size:0.8rem; color:var(--text-muted);">${escapeHtml(item.trusteeEmail)}</span>
+          </div>
+          <div style="margin-left:auto;">
+            ${getAccessLevelPill(item.accessLevel)}
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; margin-bottom:1rem;">
+          <div style="background:var(--bg-surface); padding:0.65rem; border-radius:var(--radius-md); border:1px solid var(--border-subtle);">
+            <span style="font-size:0.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; display:block; margin-bottom:0.25rem;">Vault</span>
+            <span style="font-size:0.85rem; font-weight:600; color:var(--text-primary);">${escapeHtml(item.vault)}</span>
+          </div>
+          <div style="background:var(--bg-surface); padding:0.65rem; border-radius:var(--radius-md); border:1px solid var(--border-subtle);">
+            <span style="font-size:0.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; display:block; margin-bottom:0.25rem;">Status</span>
+            <span style="font-size:0.85rem; font-weight:600; color:var(--text-primary); text-transform:capitalize;">${item.status}</span>
+          </div>
+          <div style="background:var(--bg-surface); padding:0.65rem; border-radius:var(--radius-md); border:1px solid var(--border-subtle);">
+            <span style="font-size:0.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; display:block; margin-bottom:0.25rem;">Shared On</span>
+            <span style="font-size:0.85rem; font-weight:600; color:var(--text-primary);">${item.sharedDate} ${item.sharedTime}</span>
+          </div>
+          <div style="background:var(--bg-surface); padding:0.65rem; border-radius:var(--radius-md); border:1px solid var(--border-subtle);">
+            <span style="font-size:0.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; display:block; margin-bottom:0.25rem;">Expires On</span>
+            <span style="font-size:0.85rem; font-weight:600; color:var(--text-primary);">${item.expiresOn}</span>
+          </div>
+        </div>
+        ${item.note ? `
+          <div style="margin-bottom:0.5rem;">
+            <span style="font-size:0.72rem; color:var(--text-muted); font-weight:700; text-transform:uppercase; display:block; margin-bottom:0.25rem;">Directives</span>
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin:0; background:var(--bg-surface); padding:0.65rem; border-radius:var(--radius-md); border:1px solid var(--border-subtle);">&ldquo;${escapeHtml(item.note)}&rdquo;</p>
+          </div>
+        ` : ''}
+      `;
+    }
+    if (btnConfirmAction) {
+      btnConfirmAction.textContent = 'Edit Permissions';
+      btnConfirmAction.onclick = function() {
+        if (confirmActionModal) confirmActionModal.classList.remove('show', 'active');
+        openEditModal(id);
+      };
+    }
+    if (confirmActionModal) {
+      confirmActionModal.classList.add('show', 'active');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
   function openRemindModal(id) {
     const item = shares.find(s => s.id === id);
     if (!item) return;
@@ -437,40 +509,54 @@
 
   document.addEventListener('click', closeShareMenu);
 
-  function openMoreOptions(id) {
+  function openMoreOptions(id, e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     const item = shares.find(s => s.id === id);
     if (!item) return;
 
     closeShareMenu();
 
-    const anchorEl = document.querySelector(`[data-action="more"][data-id="${id}"]`);
+    const anchorEl = (e && e.currentTarget) || document.querySelector(`[data-action="more"][data-id="${id}"]`);
     if (!anchorEl) return;
 
     const menu = document.createElement('div');
-    menu.className = 'dropdown-panel';
+    menu.className = 'dropdown-panel show';
     menu.style.position = 'fixed';
+    menu.style.display = 'flex';
+    menu.style.flexDirection = 'column';
     menu.style.zIndex = '9999';
-    menu.style.minWidth = '200px';
+    menu.style.minWidth = '210px';
     menu.style.boxShadow = 'var(--shadow-dropdown)';
+    menu.style.backgroundColor = 'var(--bg-surface)';
+    menu.style.border = '1px solid var(--border-subtle)';
+    menu.style.borderRadius = 'var(--radius-lg)';
+    menu.style.padding = '0.5rem';
+
+    menu.addEventListener('click', (ev) => ev.stopPropagation());
 
     const isRevoked = item.status === 'revoked';
 
     menu.innerHTML = `
-      <div class="dropdown-header">${item.trusteeName} &bull; ${item.vault}</div>
-      <button class="dropdown-item" data-action="view" style="width:100%; border:none; background:none; text-align:left; cursor:pointer;">
+      <div class="dropdown-header" style="padding: 0.4rem 0.6rem 0.25rem; font-size: 0.74rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
+        ${escapeHtml(item.trusteeName)} • ${escapeHtml(item.vault)}
+      </div>
+      <button class="dropdown-item" data-action="view" style="width:100%; border:none; background:none; text-align:left; cursor:pointer; display:flex; align-items:center; gap:0.6rem; padding:0.55rem 0.75rem; font-size:0.84rem; color:var(--text-primary); border-radius:var(--radius-md);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         <span>View Details</span>
       </button>
-      <button class="dropdown-item" data-action="edit" style="width:100%; border:none; background:none; text-align:left; cursor:pointer;">
+      <button class="dropdown-item" data-action="edit" style="width:100%; border:none; background:none; text-align:left; cursor:pointer; display:flex; align-items:center; gap:0.6rem; padding:0.55rem 0.75rem; font-size:0.84rem; color:var(--text-primary); border-radius:var(--radius-md);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         <span>Edit Permissions</span>
       </button>
-      <button class="dropdown-item" data-action="toggle-status" style="width:100%; border:none; background:none; text-align:left; cursor:pointer;">
+      <button class="dropdown-item" data-action="toggle-status" style="width:100%; border:none; background:none; text-align:left; cursor:pointer; display:flex; align-items:center; gap:0.6rem; padding:0.55rem 0.75rem; font-size:0.84rem; color:var(--text-primary); border-radius:var(--radius-md);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
-        <span>${isRevoked ? 'Reactivate Share' : 'Revoke Access'}</span>
+        <span>${isRevoked ? 'Restore Access' : 'Revoke Access'}</span>
       </button>
-      <div class="dropdown-divider"></div>
-      <button class="dropdown-item" data-action="delete" style="width:100%; border:none; background:none; text-align:left; cursor:pointer; color:var(--status-danger);">
+      <div style="height:1px; background:var(--border-subtle); margin:0.35rem 0;"></div>
+      <button class="dropdown-item" data-action="delete" style="width:100%; border:none; background:none; text-align:left; cursor:pointer; display:flex; align-items:center; gap:0.6rem; padding:0.55rem 0.75rem; font-size:0.84rem; color:var(--status-danger); border-radius:var(--radius-md);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
         <span>Remove Share</span>
       </button>
@@ -478,7 +564,7 @@
 
     const rect = anchorEl.getBoundingClientRect();
     menu.style.top = `${rect.bottom + 6}px`;
-    menu.style.left = `${Math.min(window.innerWidth - 220, rect.left - 150)}px`;
+    menu.style.left = `${Math.min(window.innerWidth - 225, Math.max(10, rect.right - 210))}px`;
 
     menu.querySelector('[data-action="view"]').addEventListener('click', () => {
       closeShareMenu();
@@ -526,13 +612,6 @@
         updateKPIs();
         renderTable();
       }
-    });
-
-    menu.querySelector('[data-action="copy"]').addEventListener('click', () => {
-      closeShareMenu();
-      const token = `aegis://share-audit/v1/${item.id}/${Date.now()}`;
-      navigator.clipboard?.writeText(token);
-      window.AegisOwner?.showToast(`Cryptographic audit token copied to clipboard!`, 'success');
     });
 
     document.body.appendChild(menu);
@@ -682,8 +761,8 @@
               vaultThumb: '../assets/images/vault-thumb-1.png',
               trusteeName: s.trustee_name,
               trusteeEmail: s.trustee_email,
-              avatarType: 'img',
-              avatar: '../assets/images/trustee-avatar-2.png',
+              initials: getInitials(s.trustee_name),
+              avatarType: 'initials',
               accessLevel: s.access_level,
               status: s.status,
               sharedDate: new Date(s.created_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }),
@@ -708,7 +787,7 @@
           const sharedTime = now.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' });
           const newShare = {
             id: newId, vault: vaultVal, vaultDesc: 'Encrypted assets...', vaultThumb: '../assets/images/vault-thumb-1.png',
-            trusteeName: trusteeName, trusteeEmail: email, avatarType: 'img', avatar: '../assets/images/trustee-avatar-2.png',
+            trusteeName: trusteeName, trusteeEmail: email, avatarType: 'initials', initials: getInitials(trusteeName),
             accessLevel: access, status: 'active', sharedDate: sharedDate, sharedTime: sharedTime,
             expiresOn: expiry === 'Never' ? 'Never' : expiry, note: note
           };
@@ -813,6 +892,7 @@
   // 8. Public API
   // =========================================================================
   window.AegisShares = {
+    openDetailsModal: openDetailsModal,
     openEditModal: openEditModal,
     openRemindModal: openRemindModal,
     openRestoreModal: openRestoreModal,
@@ -842,8 +922,8 @@
           vaultThumb: '../assets/images/vault-thumb-1.png',
           trusteeName: s.trustee_name,
           trusteeEmail: s.trustee_email,
-          avatarType: 'img',
-          avatar: '../assets/images/trustee-avatar-2.png',
+          initials: getInitials(s.trustee_name),
+          avatarType: 'initials',
           accessLevel: s.access_level,
           status: s.status,
           sharedDate: new Date(s.created_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }),
