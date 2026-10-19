@@ -87,9 +87,9 @@ const AegisVaultController = {
                     trusteesCount: v.total_shares || 0,
                     verifiedTrustees: v.active_shares || 0,
                     threshold: `${v.required_shares || 2} of ${v.total_shares || 3}`,
-                    heartbeatInterval: '30 Days',
-                    lastHeartbeat: 'Healthy',
-                    heartbeatStatus: 'Healthy',
+                    heartbeatInterval: v.heartbeat_schedule || (v.inactivity_days ? `${v.inactivity_days} Days` : '7 Days'),
+                    lastHeartbeat: v.heartbeat_status || 'Healthy',
+                    heartbeatStatus: v.heartbeat_status || 'Healthy',
                     encryption: v.encryption || 'AES-256-GCM',
                     releaseCondition: `Threshold Verification (${v.required_shares || 2}-of-${v.total_shares || 3})`,
                     itemCount: v.items_count || 0,
@@ -729,6 +729,20 @@ const AegisVaultController = {
         }
 
         this.openModal('vault-details-modal');
+
+        // Fetch fresh detail from API to ensure accurate real-time values
+        const apiVaultId = vault.rawId || vault.id;
+        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+            window.AegisAPI.get(`/admin/vaults/${apiVaultId}/`).then(data => {
+                if (data.heartbeat_schedule) {
+                    setTxt('detail-vault-heartbeat', `${data.heartbeat_schedule} (Status: ${data.heartbeat_status || 'Healthy'})`);
+                }
+                if (data.shares) {
+                    const activeShares = data.shares.filter(s => (s.status || '').toLowerCase() === 'active').length;
+                    setTxt('detail-vault-threshold', `${data.required_shares || 2} of ${data.total_shares || 3} (${activeShares}/${data.total_shares || 3} Verified)`);
+                }
+            }).catch(e => {});
+        }
     },
 
     openAccessModal(vaultId) {
@@ -738,8 +752,11 @@ const AegisVaultController = {
         listWrap.innerHTML = '<div style="text-align: center; padding: 1.5rem; color: var(--text-muted); font-size: 0.8rem;">Loading assigned trustees...</div>';
         this.openModal('manage-access-modal');
 
+        const vault = (window.AegisVaultData && window.AegisVaultData.vaults) ? window.AegisVaultData.vaults.find(v => v.id === vaultId) : null;
+        const apiVaultId = (vault && vault.rawId) ? vault.rawId : vaultId;
+
         if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-            window.AegisAPI.get(`/admin/vaults/${vaultId}/`).then(data => {
+            window.AegisAPI.get(`/admin/vaults/${apiVaultId}/`).then(data => {
                 const shares = data.shares || [];
                 if (shares.length === 0) {
                     listWrap.innerHTML = '<div style="text-align: center; padding: 1.5rem; color: var(--text-muted); font-size: 0.8rem;">No trustees currently assigned to this vault.</div>';
@@ -751,7 +768,7 @@ const AegisVaultController = {
                             <div style="font-weight: 700; font-size: 0.82rem; color: var(--text-heading);">${this.escapeHtml(t.trustee_name || 'Trustee')}</div>
                             <div style="font-size: 0.72rem; color: var(--text-muted);">${this.escapeHtml(t.trustee_email || '')} · ${t.access_level || 'Shard Holder'}</div>
                         </div>
-                        <span class="badge-status ${(t.status || '').toLowerCase() === 'active' || (t.status || '').toLowerCase() === 'verified' ? 'active' : 'pending'}" style="font-size: 0.7rem;">${t.status || 'Active'}</span>
+                        <span class="badge-status ${(t.status || '').toLowerCase() === 'active' || (t.status || '').toLowerCase() === 'verified' ? 'active' : 'pending'}" style="font-size: 0.7rem;">${t.status ? (t.status.charAt(0).toUpperCase() + t.status.slice(1)) : 'Active'}</span>
                     </div>
                 `).join('');
             }).catch(err => {

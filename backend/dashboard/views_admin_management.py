@@ -299,9 +299,13 @@ class AdminVaultListView(APIView):
         if search:
             vaults = vaults.filter(name__icontains=search)
 
+        from heartbeat.models import HeartbeatConfig
         data = []
         for v in vaults.order_by('-updated_at')[:100]:
             shares = v.shares.count()
+            hc = HeartbeatConfig.objects.filter(owner=v.owner).first()
+            hb_days = v.inactivity_days if (v.inactivity_days and v.inactivity_days > 0) else (hc.interval_days if hc else 7)
+            hb_status = hc.state.capitalize() if (hc and hc.state) else 'Healthy'
             data.append({
                 'id': str(v.id),
                 'name': v.name,
@@ -313,8 +317,12 @@ class AdminVaultListView(APIView):
                 'required_shares': v.required_shares,
                 'total_shares': v.total_shares,
                 'active_shares': shares,
+                'inactivity_days': hb_days,
+                'heartbeat_schedule': f"{hb_days} Days",
+                'heartbeat_status': hb_status,
                 'storage_used': v.storage_used_display,
                 'encryption': v.encryption_algorithm,
+                'items_count': v.assets.count(),
                 'created_at': v.created_at.isoformat(),
                 'updated_at': v.updated_at.isoformat(),
             })
@@ -386,6 +394,10 @@ class AdminVaultDetailView(APIView):
     def get(self, request, pk):
         v = get_object_or_404(Vault.objects.select_related('owner'), pk=pk)
         shares = v.shares.select_related('trustee').all()
+        from heartbeat.models import HeartbeatConfig
+        hc = HeartbeatConfig.objects.filter(owner=v.owner).first()
+        hb_days = v.inactivity_days if (v.inactivity_days and v.inactivity_days > 0) else (hc.interval_days if hc else 7)
+        hb_status = hc.state.capitalize() if (hc and hc.state) else 'Healthy'
 
         return Response({
             'id': str(v.id),
@@ -399,8 +411,11 @@ class AdminVaultDetailView(APIView):
             'total_shares': v.total_shares,
             'storage_used': v.storage_used_display,
             'encryption': v.encryption_algorithm,
-            'release_condition': v.release_condition,
-            'items_count': v.items.count(),
+            'release_condition': v.release_condition or f"Threshold Verification ({v.required_shares}-of-{v.total_shares})",
+            'inactivity_days': hb_days,
+            'heartbeat_schedule': f"{hb_days} Days",
+            'heartbeat_status': hb_status,
+            'items_count': v.assets.count(),
             'shares': [
                 {
                     'trustee_name': s.trustee.name,
