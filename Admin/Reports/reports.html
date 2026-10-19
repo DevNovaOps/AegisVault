@@ -406,13 +406,6 @@
                         </svg>
                         <span>Vault Reports</span>
                     </button>
-                    <button class="report-tab-btn" data-tab="System Reports">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="3"></circle>
-                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                        </svg>
-                        <span>System Reports</span>
-                    </button>
                 </div>
 
                 <!-- Date Range Pill -->
@@ -500,84 +493,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Card 4: Quick Actions -->
-                <div class="widget-card-box">
-                    <div class="card-header-bar">
-                        <div class="card-title-group actions-title">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                            </svg>
-                            <span>Quick Actions</span>
-                        </div>
-                    </div>
-
-                    <div class="quick-actions-list">
-                        <!-- Action 1: Generate New Report -->
-                        <button class="quick-action-btn-row" id="qa-generate-report" title="Create a custom report">
-                            <div class="qa-left-wrap">
-                                <div class="qa-icon-wrap orange">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                        <polyline points="14 2 14 8 20 8"></polyline>
-                                        <line x1="12" y1="18" x2="12" y2="12"></line>
-                                        <line x1="9" y1="15" x2="15" y2="15"></line>
-                                    </svg>
-                                </div>
-                                <div class="qa-text-col">
-                                    <span class="qa-title">Generate New Report</span>
-                                    <span class="qa-subtitle">Create a custom report</span>
-                                </div>
-                            </div>
-                            <svg class="qa-arrow-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="9 18 15 12 9 6"></polyline>
-                            </svg>
-                        </button>
-
-                        <!-- Action 2: Schedule Report -->
-                        <button class="quick-action-btn-row" id="qa-schedule-report" title="Automate periodic reports">
-                            <div class="qa-left-wrap">
-                                <div class="qa-icon-wrap blue">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                                        <line x1="12" y1="14" x2="12" y2="18"></line>
-                                        <line x1="10" y1="16" x2="14" y2="16"></line>
-                                    </svg>
-                                </div>
-                                <div class="qa-text-col">
-                                    <span class="qa-title">Schedule Report</span>
-                                    <span class="qa-subtitle">Automate periodic reports</span>
-                                </div>
-                            </div>
-                            <svg class="qa-arrow-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="9 18 15 12 9 6"></polyline>
-                            </svg>
-                        </button>
-
-                        <!-- Action 3: Export All Reports -->
-                        <button class="quick-action-btn-row" id="qa-export-all" title="Download in CSV / PDF">
-                            <div class="qa-left-wrap">
-                                <div class="qa-icon-wrap blue">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                        <polyline points="7 10 12 15 17 10"></polyline>
-                                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                                    </svg>
-                                </div>
-                                <div class="qa-text-col">
-                                    <span class="qa-title">Export All Reports</span>
-                                    <span class="qa-subtitle">Download in CSV / PDF</span>
-                                </div>
-                            </div>
-                            <svg class="qa-arrow-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="9 18 15 12 9 6"></polyline>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
             </section>
 
             <!-- ==============================================================
@@ -618,8 +533,6 @@
                                 <option value="User">User</option>
                                 <option value="Security">Security</option>
                                 <option value="Vault">Vault</option>
-                                <option value="System">System</option>
-                                <option value="Compliance">Compliance</option>
                             </select>
 
                             <!-- Filter 2: Status -->
@@ -770,8 +683,6 @@
                             <option value="Security">Security Events & Threat Mitigations</option>
                             <option value="User">User Activity & Authentication Telemetry</option>
                             <option value="Vault">Vault Operations & Shard Allocation</option>
-                            <option value="System">System Infrastructure & Heartbeat</option>
-                            <option value="Compliance">Compliance, SOC 2 & Access Ledgers</option>
                         </select>
                     </div>
                     <div class="form-group-row">

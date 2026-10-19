@@ -247,7 +247,7 @@
    ========================================================================== */
 .middle-grid-row {
     display: grid;
-    grid-template-columns: 2.2fr 1.4fr 1.3fr 1.2fr;
+    grid-template-columns: 1.7fr 1.15fr 1.15fr;
     gap: 1rem;
 }
 
@@ -1174,6 +1174,10 @@ body.dark-theme .pill-type-badge.badge-compliance {
 @media (max-width: 1200px) {
     .middle-grid-row {
         grid-template-columns: 1fr 1fr;
+    }
+
+    .middle-grid-row .chart-card-box:first-child {
+        grid-column: 1 / -1;
     }
 
     .bottom-grid-row {

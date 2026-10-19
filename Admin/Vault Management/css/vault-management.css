@@ -826,7 +826,8 @@ body.dark-theme .custom-checkbox,
     flex-shrink: 0;
 }
 
-.donut-center-label {
+.donut-center-label,
+.donut-chart-center-label {
     position: absolute;
     inset: 0;
     display: flex;
@@ -835,16 +836,19 @@ body.dark-theme .custom-checkbox,
     justify-content: center;
     text-align: center;
     pointer-events: none;
+    z-index: 2;
 }
 
-.donut-center-num {
+.donut-center-num,
+.center-percent {
     font-size: 1.15rem;
     font-weight: 800;
     color: var(--text-heading);
     line-height: 1;
 }
 
-.donut-center-sub {
+.donut-center-sub,
+.center-subtext {
     font-size: 0.65rem;
     color: var(--text-muted);
     line-height: 1;

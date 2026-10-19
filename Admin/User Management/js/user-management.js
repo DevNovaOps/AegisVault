@@ -424,7 +424,7 @@ window.AegisUserManagement = {
         if (this.filteredUsers.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="10" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+                    <td colspan="9" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
                         <div style="font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem;">No matching users found</div>
                         <p style="font-size: 0.8rem;">Try adjusting your search criteria or active filters.</p>
                     </td>
@@ -469,15 +469,6 @@ window.AegisUserManagement = {
                 <td style="font-weight: 600; color: var(--text-heading); text-align: center;">${u.vaults}</td>
                 <td style="font-weight: 600; color: var(--text-heading); text-align: center;">${u.trustees}</td>
                 <td style="white-space: nowrap; color: var(--text-secondary);">${u.joinedOn}</td>
-                <td>
-                    <button class="btn-row-action" title="User Actions" onclick="window.AegisUserManagement.openRowMenu(event, '${u.id}');">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                            <circle cx="5" cy="12" r="2"></circle>
-                            <circle cx="12" cy="12" r="2"></circle>
-                            <circle cx="19" cy="12" r="2"></circle>
-                        </svg>
-                    </button>
-                </td>
             `;
 
             tr.addEventListener('click', () => {

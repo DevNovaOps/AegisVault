@@ -52,8 +52,7 @@ window.AegisReportData = window.AegisReportData || {
     reportsByType: [
         { label: 'User Reports', percentage: 72, color: '#2563EB', count: 70 },
         { label: 'Vault Reports', percentage: 25, color: '#F59E0B', count: 24 },
-        { label: 'Security Reports', percentage: 2, color: '#10B981', count: 2 },
-        { label: 'System Reports', percentage: 1, color: '#8B5CF6', count: 1 }
+        { label: 'Security Reports', percentage: 3, color: '#10B981', count: 3 }
     ],
     reportStatus: [
         { label: 'Completed', percentage: 100, color: '#10B981', count: 97 },
@@ -133,7 +132,7 @@ window.AegisReportData = window.AegisReportData || {
                             auth: 'User',
                             vault: 'Vault',
                             security: 'Security',
-                            system: 'System',
+                            system: 'Security',
                             trustee: 'User',
                             release: 'Vault'
                         };
@@ -497,7 +496,6 @@ window.AegisReportData = window.AegisReportData || {
                 if (this.currentTab === 'User Reports' && report.type !== 'User') return false;
                 if (this.currentTab === 'Security Reports' && report.type !== 'Security') return false;
                 if (this.currentTab === 'Vault Reports' && report.type !== 'Vault') return false;
-                if (this.currentTab === 'System Reports' && report.type !== 'System') return false;
 
                 // Type select filter
                 if (this.typeFilter !== 'all' && report.type.toLowerCase() !== this.typeFilter.toLowerCase()) {
@@ -572,13 +570,6 @@ window.AegisReportData = window.AegisReportData || {
                                     <circle cx="12" cy="12" r="3"></circle>
                                 </svg>
                             </button>
-                            <button class="row-action-btn btn-more-row" title="More options" data-id="${report.id}">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="1"></circle>
-                                    <circle cx="19" cy="12" r="1"></circle>
-                                    <circle cx="5" cy="12" r="1"></circle>
-                                </svg>
-                            </button>
                         </div>
                     </td>
                 </tr>
@@ -596,14 +587,6 @@ window.AegisReportData = window.AegisReportData || {
                 btn.addEventListener('click', () => {
                     const id = btn.getAttribute('data-id');
                     this.openReportDetailsModal(id);
-                });
-            });
-
-            tbody.querySelectorAll('.btn-more-row').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const id = btn.getAttribute('data-id');
-                    const rep = this.reportsData.find(r => r.id === id);
-                    this.showToast(`Options: ${rep?.name || 'Report'} ready for verification or re-run`, 'info');
                 });
             });
         },

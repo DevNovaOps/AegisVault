@@ -220,9 +220,9 @@ const AegisVaultController = {
                 <svg viewBox="0 0 ${size} ${size}">
                     <circle cx="${center}" cy="${center}" r="${radius}" fill="none" stroke="${trackColor}" stroke-width="${strokeWidth}" />
                 </svg>
-                <div class="donut-chart-center-label">
-                    <span class="center-percent">0</span>
-                    <span class="center-subtext">Vaults</span>
+                <div class="donut-chart-center-label donut-center-label">
+                    <span class="center-percent donut-center-num">0</span>
+                    <span class="center-subtext donut-center-sub">Vaults</span>
                 </div>
             `;
             legendWrap.innerHTML = '<div style="font-size: 0.74rem; color: var(--text-muted); padding: 0.5rem 0; text-align: center;">No vault records to categorize</div>';
@@ -258,9 +258,9 @@ const AegisVaultController = {
             <svg viewBox="0 0 ${size} ${size}">
                 ${svgCircles}
             </svg>
-            <div class="donut-chart-center-label" id="donut-center-text">
-                <span class="center-percent">${dominant.percentage}%</span>
-                <span class="center-subtext">${dominant.label}</span>
+            <div class="donut-chart-center-label donut-center-label" id="donut-center-text">
+                <span class="center-percent donut-center-num">${dominant.percentage}%</span>
+                <span class="center-subtext donut-center-sub">${dominant.label}</span>
             </div>
         `;
 
@@ -284,8 +284,8 @@ const AegisVaultController = {
                 const centerLabel = document.getElementById('donut-center-text');
                 if (centerLabel) {
                     centerLabel.innerHTML = `
-                        <span class="center-percent">${pct}</span>
-                        <span class="center-subtext">${label}</span>
+                        <span class="center-percent donut-center-num">${pct}</span>
+                        <span class="center-subtext donut-center-sub">${label}</span>
                     `;
                 }
             });
