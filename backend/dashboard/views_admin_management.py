@@ -8,11 +8,14 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from datetime import timedelta
+import secrets
 from accounts.permissions import IsAdminUser
 from accounts.models import User
 from accounts.serializers import UserSerializer
 from vaults.models import Vault, VaultShare
 from trustees.models import TrusteeProfile, Invitation
+from trustees.services import TrusteeEmailService
 from audit.services import AuditService
 
 # ─── User Management ─────────────────────────────────────────────────────────
@@ -477,32 +480,32 @@ class AdminVaultDetailView(APIView):
 
 class AdminTrusteeListView(APIView):
     """
-    GET  /api/v1/admin/trustees/ — List all trustees
+    GET  /api/v1/admin/trustees/ — List all trustees platform-wide (registered & pending)
     POST /api/v1/admin/trustees/ — Add or invite a trustee
     """
     permission_classes = [IsAuthenticated, IsAdminUser]
 
     def get(self, request):
-        trustees = User.objects.filter(role='trustee')
-
         status_filter = request.query_params.get('status')
-        search = request.query_params.get('search', '')
-
-        if status_filter == 'active':
-            trustees = trustees.filter(is_active=True)
-        elif status_filter == 'suspended':
-            trustees = trustees.filter(is_active=False)
-        if search:
-            trustees = trustees.filter(name__icontains=search) | \
-                       trustees.filter(email__icontains=search)
+        search = request.query_params.get('search', '').lower()
 
         data = []
+        registered_emails = set()
+
+        # 1. Registered User trustees
+        trustees = User.objects.filter(role='trustee')
+        if search:
+            trustees = trustees.filter(name__icontains=search) | trustees.filter(email__icontains=search)
+
         for t in trustees.order_by('-date_joined')[:100]:
+            registered_emails.add(t.email.lower())
             shares = VaultShare.objects.filter(trustee=t).select_related('vault', 'vault__owner')
             linked_vaults = [s.vault.name for s in shares if s.vault]
+
             profile = getattr(t, 'trustee_profile', None)
             if not profile:
                 profile = TrusteeProfile.objects.filter(email__iexact=t.email).first()
+
             phone = profile.phone if profile else getattr(t, 'phone', '') or '+1 (555) 234-8901'
             trustee_type = 'Primary' if len(linked_vaults) > 0 else 'Designated'
 
@@ -516,14 +519,37 @@ class AdminTrusteeListView(APIView):
 
             relationship = profile.relationship if profile else 'Designated Trustee'
 
+            # Determine accurate status: Pending vs Verified vs Suspended
+            has_pending_inv = Invitation.objects.filter(invitee_email__iexact=t.email, status='pending').exists()
+            if not t.is_active:
+                status_val = 'Suspended'
+                status_type = 'rejected'
+            elif (profile and profile.verification_status in ['Pending', 'Not Started']) or (profile and profile.status == 'Invited') or has_pending_inv:
+                status_val = 'Pending'
+                status_type = 'pending'
+            elif not profile and len(linked_vaults) == 0:
+                status_val = 'Pending'
+                status_type = 'pending'
+            else:
+                status_val = 'Verified'
+                status_type = 'verified'
+
+            # Status filtering
+            if status_filter == 'active' and status_val != 'Verified':
+                continue
+            if status_filter == 'pending' and status_val != 'Pending':
+                continue
+            if status_filter == 'suspended' and status_val not in ['Suspended', 'Rejected']:
+                continue
+
             data.append({
                 'id': str(t.id),
                 'name': t.name or (t.email.split('@')[0] if t.email else 'Trustee'),
                 'email': t.email,
                 'phone': phone,
                 'trusteeType': trustee_type,
-                'status': 'Verified' if t.is_active else 'Suspended',
-                'statusType': 'verified' if t.is_active else 'rejected',
+                'status': status_val,
+                'statusType': status_type,
                 'joined': t.date_joined.strftime('%d %b %Y'),
                 'vaults_assigned': len(linked_vaults),
                 'linked_vaults': linked_vaults,
@@ -531,8 +557,61 @@ class AdminTrusteeListView(APIView):
                 'owner_email': owner_email,
                 'relationship': relationship,
                 'notes': f'Designated custody trustee linked to {len(linked_vaults)} active vault(s).' + (f' Designated by {owner_name}.' if owner_name else ''),
-                'documentsVerified': True,
+                'documentsVerified': (status_val == 'Verified'),
                 'is_2fa_enabled': t.is_2fa_enabled,
+            })
+
+        # 2. Designated / Pending Trustees who have not yet completed user signup (user=None)
+        unregistered_profiles = TrusteeProfile.objects.filter(user=None).select_related('owner')
+        for tp in unregistered_profiles.order_by('-date_added')[:50]:
+            if tp.email.lower() in registered_emails:
+                continue
+
+            if search and search not in tp.name.lower() and search not in tp.email.lower():
+                continue
+
+            # Linked vaults from invitation
+            invitations = Invitation.objects.filter(trustee_profile=tp).select_related('vault')
+            linked_vaults = [i.vault.name for i in invitations if i.vault]
+            if not linked_vaults:
+                owner_vault = Vault.objects.filter(owner=tp.owner).first()
+                if owner_vault:
+                    linked_vaults = [owner_vault.name]
+
+            if tp.status == 'Removed' or tp.verification_status == 'Revoked':
+                status_val = 'Rejected'
+                status_type = 'rejected'
+            elif tp.verification_status == 'Verified':
+                status_val = 'Verified'
+                status_type = 'verified'
+            else:
+                status_val = 'Pending'
+                status_type = 'pending'
+
+            if status_filter == 'active' and status_val != 'Verified':
+                continue
+            if status_filter == 'pending' and status_val != 'Pending':
+                continue
+            if status_filter == 'suspended' and status_val not in ['Suspended', 'Rejected']:
+                continue
+
+            data.append({
+                'id': str(tp.id),
+                'name': tp.name or tp.email.split('@')[0],
+                'email': tp.email,
+                'phone': tp.phone or '+1 (555) 234-8901',
+                'trusteeType': tp.relationship or 'Designated',
+                'status': status_val,
+                'statusType': status_type,
+                'joined': tp.date_added.strftime('%d %b %Y'),
+                'vaults_assigned': len(linked_vaults),
+                'linked_vaults': linked_vaults,
+                'owner_name': tp.owner.name if tp.owner else 'Platform Owner',
+                'owner_email': tp.owner.email if tp.owner else '',
+                'relationship': tp.relationship,
+                'notes': f'Designated custody trustee invited by {tp.owner.name if tp.owner else "Owner"}. Pending invitation verification.',
+                'documentsVerified': False,
+                'is_2fa_enabled': False,
             })
 
         return Response(data)
@@ -543,26 +622,51 @@ class AdminTrusteeListView(APIView):
         phone = request.data.get('phone', '').strip()
         if not email:
             return Response({'error': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
-        if User.objects.filter(email=email).exists():
-            return Response({'error': 'A user with this email already exists'}, status=status.HTTP_400_BAD_REQUEST)
 
-        user = User.objects.create_user(
-            email=email,
-            password='DemoPass123!',
-            name=name or email.split('@')[0],
-            role='trustee'
-        )
-        owner = User.objects.filter(role='owner').first()
-        if owner:
-            TrusteeProfile.objects.create(
-                user=user,
-                owner=owner,
-                name=user.name,
-                email=user.email,
-                phone=phone or '+1 (555) 000-0000',
-                status='Active',
-                verification_status='Verified'
+        owner = User.objects.filter(role='owner').first() or request.user
+        vault = Vault.objects.filter(owner=owner).first() or Vault.objects.first()
+
+        user = User.objects.filter(email=email).first()
+        if not user:
+            user = User.objects.create_user(
+                email=email,
+                password='DemoPass123!',
+                name=name or email.split('@')[0],
+                role='trustee'
             )
+
+        profile, _ = TrusteeProfile.objects.get_or_create(
+            owner=owner,
+            email=email,
+            defaults={
+                'user': user,
+                'name': user.name,
+                'phone': phone or '+1 (555) 000-0000',
+                'status': 'Active',
+                'verification_status': 'Verified'
+            }
+        )
+        if not profile.user:
+            profile.user = user
+            profile.save(update_fields=['user'])
+
+        # Create invitation if vault is present
+        email_sent = False
+        email_msg = ''
+        if vault:
+            invitation, _ = Invitation.objects.get_or_create(
+                owner=owner,
+                invitee_email=email,
+                defaults={
+                    'trustee_profile': profile,
+                    'invitee_name': user.name,
+                    'relationship': 'Primary Trustee',
+                    'vault': vault,
+                    'note': 'Direct administrator enrollment.',
+                    'expires_at': timezone.now() + timedelta(days=14)
+                }
+            )
+            email_sent, email_msg = TrusteeEmailService.send_trustee_invitation_email(invitation, request)
 
         AuditService.log(
             user=request.user,
@@ -580,11 +684,13 @@ class AdminTrusteeListView(APIView):
             'status': 'Verified',
             'statusType': 'verified',
             'joined': user.date_joined.strftime('%d %b %Y'),
-            'vaults_assigned': 0,
-            'linked_vaults': [],
-            'notes': 'New enrolled trustee',
+            'vaults_assigned': 1 if vault else 0,
+            'linked_vaults': [vault.name] if vault else [],
+            'notes': 'Enrolled trustee',
             'documentsVerified': True,
             'is_2fa_enabled': user.is_2fa_enabled,
+            'email_sent': email_sent,
+            'email_status': email_msg,
         }, status=status.HTTP_201_CREATED)
 
 
@@ -597,77 +703,117 @@ class AdminTrusteeDetailView(APIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
 
     def get(self, request, pk):
-        trustee = get_object_or_404(User.objects.filter(role='trustee'), pk=pk)
-        shares = VaultShare.objects.filter(trustee=trustee).select_related('vault', 'vault__owner')
-        linked_vaults = [s.vault.name for s in shares if s.vault]
-        profile = getattr(trustee, 'trustee_profile', None)
-        if not profile:
-            profile = TrusteeProfile.objects.filter(email__iexact=trustee.email).first()
+        trustee = User.objects.filter(role='trustee', pk=pk).first()
+        if trustee:
+            shares = VaultShare.objects.filter(trustee=trustee).select_related('vault', 'vault__owner')
+            linked_vaults = [s.vault.name for s in shares if s.vault]
+            profile = getattr(trustee, 'trustee_profile', None)
+            if not profile:
+                profile = TrusteeProfile.objects.filter(email__iexact=trustee.email).first()
 
-        owner_name = profile.owner.name if profile and profile.owner else ''
-        owner_email = profile.owner.email if profile and profile.owner else ''
-        if not owner_name:
-            first_share = shares.first()
-            if first_share and first_share.vault and first_share.vault.owner:
-                owner_name = first_share.vault.owner.name
-                owner_email = first_share.vault.owner.email
+            owner_name = profile.owner.name if profile and profile.owner else ''
+            owner_email = profile.owner.email if profile and profile.owner else ''
+            if not owner_name:
+                first_share = shares.first()
+                if first_share and first_share.vault and first_share.vault.owner:
+                    owner_name = first_share.vault.owner.name
+                    owner_email = first_share.vault.owner.email
 
+            return Response({
+                'id': str(trustee.id),
+                'name': trustee.name,
+                'email': trustee.email,
+                'phone': profile.phone if profile else '+1 (555) 234-8901',
+                'status': 'Verified' if trustee.is_active else 'Suspended',
+                'statusType': 'verified' if trustee.is_active else 'rejected',
+                'joined': trustee.date_joined.strftime('%d %b %Y'),
+                'vaults_assigned': len(linked_vaults),
+                'linked_vaults': linked_vaults,
+                'owner_name': owner_name,
+                'owner_email': owner_email,
+                'relationship': profile.relationship if profile else 'Designated Trustee',
+                'notes': f'Designated custody trustee linked to {len(linked_vaults)} active vault(s).' + (f' Designated by {owner_name}.' if owner_name else ''),
+                'documentsVerified': trustee.is_active,
+                'is_2fa_enabled': trustee.is_2fa_enabled,
+            })
+
+        profile = get_object_or_404(TrusteeProfile, pk=pk)
+        invitations = Invitation.objects.filter(trustee_profile=profile).select_related('vault')
+        linked_vaults = [i.vault.name for i in invitations if i.vault]
         return Response({
-            'id': str(trustee.id),
-            'name': trustee.name,
-            'email': trustee.email,
-            'phone': profile.phone if profile else '+1 (555) 234-8901',
-            'status': 'Verified' if trustee.is_active else 'Suspended',
-            'statusType': 'verified' if trustee.is_active else 'rejected',
-            'joined': trustee.date_joined.strftime('%d %b %Y'),
+            'id': str(profile.id),
+            'name': profile.name,
+            'email': profile.email,
+            'phone': profile.phone or '+1 (555) 234-8901',
+            'status': 'Pending' if profile.verification_status != 'Verified' else 'Verified',
+            'statusType': 'pending' if profile.verification_status != 'Verified' else 'verified',
+            'joined': profile.date_added.strftime('%d %b %Y'),
             'vaults_assigned': len(linked_vaults),
             'linked_vaults': linked_vaults,
-            'owner_name': owner_name,
-            'owner_email': owner_email,
-            'relationship': profile.relationship if profile else 'Designated Trustee',
-            'notes': f'Designated custody trustee linked to {len(linked_vaults)} active vault(s).' + (f' Designated by {owner_name}.' if owner_name else ''),
-            'documentsVerified': True,
-            'is_2fa_enabled': trustee.is_2fa_enabled,
+            'owner_name': profile.owner.name if profile.owner else '',
+            'owner_email': profile.owner.email if profile.owner else '',
+            'relationship': profile.relationship,
+            'notes': 'Designated trustee pending identity verification.',
+            'documentsVerified': profile.verification_status == 'Verified',
+            'is_2fa_enabled': False,
         })
 
     def put(self, request, pk):
-        trustee = get_object_or_404(User.objects.filter(role='trustee'), pk=pk)
+        trustee = User.objects.filter(role='trustee', pk=pk).first()
+        if trustee:
+            if 'name' in request.data:
+                trustee.name = request.data['name'].strip()
+            if 'email' in request.data:
+                trustee.email = request.data['email'].strip()
+            if 'status' in request.data:
+                trustee.is_active = (str(request.data['status']).lower() in ['verified', 'active'])
+            if 'is_active' in request.data:
+                trustee.is_active = request.data['is_active']
+            trustee.save()
+
+            profile = getattr(trustee, 'trustee_profile', None)
+            if profile and 'phone' in request.data:
+                profile.phone = request.data['phone'].strip()
+                profile.save(update_fields=['phone'])
+
+            AuditService.log(
+                user=request.user,
+                action_key='admin_trustee_updated',
+                action_title=f'Trustee Updated: {trustee.email}',
+                details=f'Admin updated profile for trustee {trustee.name}',
+                category='trustee',
+            )
+            return Response({'detail': f'Trustee {trustee.email} updated.'})
+
+        profile = get_object_or_404(TrusteeProfile, pk=pk)
         if 'name' in request.data:
-            trustee.name = request.data['name'].strip()
-        if 'email' in request.data:
-            trustee.email = request.data['email'].strip()
-        if 'status' in request.data:
-            trustee.is_active = (str(request.data['status']).lower() in ['verified', 'active'])
-        if 'is_active' in request.data:
-            trustee.is_active = request.data['is_active']
-        trustee.save()
-
-        profile = getattr(trustee, 'trustee_profile', None)
-        if profile and 'phone' in request.data:
+            profile.name = request.data['name'].strip()
+        if 'phone' in request.data:
             profile.phone = request.data['phone'].strip()
-            profile.save(update_fields=['phone'])
-
-        AuditService.log(
-            user=request.user,
-            action_key='admin_trustee_updated',
-            action_title=f'Trustee Updated: {trustee.email}',
-            details=f'Admin updated profile for trustee {trustee.name}',
-            category='trustee',
-        )
-        return Response({'detail': f'Trustee {trustee.email} updated.'})
+        if 'relationship' in request.data:
+            profile.relationship = request.data['relationship'].strip()
+        profile.save()
+        return Response({'detail': f'Trustee profile {profile.email} updated.'})
 
     def delete(self, request, pk):
-        trustee = get_object_or_404(User.objects.filter(role='trustee'), pk=pk)
-        trustee.is_active = False
-        trustee.save(update_fields=['is_active'])
-        AuditService.log(
-            user=request.user,
-            action_key='admin_trustee_deactivated',
-            action_title=f'Trustee Deactivated: {trustee.email}',
-            details=f'Admin deactivated trustee {trustee.name}',
-            category='trustee',
-        )
-        return Response({'detail': f'Trustee {trustee.email} has been deactivated.'})
+        trustee = User.objects.filter(role='trustee', pk=pk).first()
+        if trustee:
+            trustee.is_active = False
+            trustee.save(update_fields=['is_active'])
+            AuditService.log(
+                user=request.user,
+                action_key='admin_trustee_deactivated',
+                action_title=f'Trustee Deactivated: {trustee.email}',
+                details=f'Admin deactivated trustee {trustee.name}',
+                category='trustee',
+            )
+            return Response({'detail': f'Trustee {trustee.email} has been deactivated.'})
+
+        profile = get_object_or_404(TrusteeProfile, pk=pk)
+        profile.status = 'Removed'
+        profile.verification_status = 'Revoked'
+        profile.save(update_fields=['status', 'verification_status'])
+        return Response({'detail': f'Trustee nomination for {profile.email} has been removed.'})
 
 
 class AdminTrusteeApproveView(APIView):
@@ -675,23 +821,36 @@ class AdminTrusteeApproveView(APIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
 
     def post(self, request, pk):
-        trustee = get_object_or_404(User.objects.filter(role='trustee'), pk=pk)
-        trustee.is_active = True
-        trustee.save(update_fields=['is_active'])
-        profile = getattr(trustee, 'trustee_profile', None)
-        if profile:
+        trustee = User.objects.filter(role='trustee', pk=pk).first()
+        if trustee:
+            trustee.is_active = True
+            trustee.save(update_fields=['is_active'])
+            profile = getattr(trustee, 'trustee_profile', None) or TrusteeProfile.objects.filter(email__iexact=trustee.email).first()
+            if profile:
+                profile.verification_status = 'Verified'
+                profile.status = 'Active'
+                profile.save(update_fields=['verification_status', 'status'])
+            target_name = trustee.name
+            target_email = trustee.email
+        else:
+            profile = get_object_or_404(TrusteeProfile, pk=pk)
             profile.verification_status = 'Verified'
             profile.status = 'Active'
             profile.save(update_fields=['verification_status', 'status'])
+            if profile.user:
+                profile.user.is_active = True
+                profile.user.save(update_fields=['is_active'])
+            target_name = profile.name
+            target_email = profile.email
 
         AuditService.log(
             user=request.user,
             action_key='admin_trustee_approved',
-            action_title=f'Trustee Approved: {trustee.email}',
-            details=f'Admin approved verification credentials for {trustee.name}',
+            action_title=f'Trustee Approved: {target_email}',
+            details=f'Admin approved verification credentials for {target_name}',
             category='trustee',
         )
-        return Response({'detail': f'Trustee {trustee.email} verified and approved.'})
+        return Response({'detail': f'Trustee {target_email} verified and approved.'})
 
 
 class AdminTrusteeRejectView(APIView):
@@ -699,24 +858,243 @@ class AdminTrusteeRejectView(APIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
 
     def post(self, request, pk):
-        trustee = get_object_or_404(User.objects.filter(role='trustee'), pk=pk)
         reason = request.data.get('reason', 'Verification rejected by administrator')
-        trustee.is_active = False
-        trustee.save(update_fields=['is_active'])
-        profile = getattr(trustee, 'trustee_profile', None)
-        if profile:
+        trustee = User.objects.filter(role='trustee', pk=pk).first()
+        if trustee:
+            trustee.is_active = False
+            trustee.save(update_fields=['is_active'])
+            profile = getattr(trustee, 'trustee_profile', None) or TrusteeProfile.objects.filter(email__iexact=trustee.email).first()
+            if profile:
+                profile.verification_status = 'Revoked'
+                profile.status = 'Suspended'
+                profile.save(update_fields=['verification_status', 'status'])
+            target_name = trustee.name
+            target_email = trustee.email
+        else:
+            profile = get_object_or_404(TrusteeProfile, pk=pk)
             profile.verification_status = 'Revoked'
             profile.status = 'Suspended'
             profile.save(update_fields=['verification_status', 'status'])
+            if profile.user:
+                profile.user.is_active = False
+                profile.user.save(update_fields=['is_active'])
+            target_name = profile.name
+            target_email = profile.email
 
         AuditService.log(
             user=request.user,
             action_key='admin_trustee_rejected',
-            action_title=f'Trustee Rejected: {trustee.email}',
-            details=f'Admin rejected verification credentials for {trustee.name}: {reason}',
+            action_title=f'Trustee Rejected: {target_email}',
+            details=f'Admin rejected verification credentials for {target_name}: {reason}',
             category='trustee',
         )
-        return Response({'detail': f'Trustee {trustee.email} marked as rejected.'})
+        return Response({'detail': f'Trustee {target_email} marked as rejected.'})
+
+
+class AdminTrusteeInvitationsView(APIView):
+    """
+    GET  /api/v1/admin/trustees/invitations/ — List all trustee invitations across platform with KPI counts
+    POST /api/v1/admin/trustees/invitations/ — Dispatch a new trustee invitation from admin
+    """
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def get(self, request):
+        invitations = Invitation.objects.select_related('owner', 'vault', 'trustee_profile').all().order_by('-sent_at')
+
+        pending_count = invitations.filter(status='pending').count()
+        accepted_count = invitations.filter(status='accepted').count()
+        expired_count = invitations.filter(status='expired').count()
+        cancelled_count = invitations.filter(status__in=['declined', 'revoked']).count()
+
+        data = []
+        for inv in invitations[:100]:
+            status_display = inv.status.capitalize() if inv.status != 'revoked' else 'Cancelled'
+            data.append({
+                'id': str(inv.id),
+                'recipient': inv.invitee_name or (inv.invitee_email.split('@')[0] if inv.invitee_email else 'Trustee Candidate'),
+                'email': inv.invitee_email,
+                'trusteeType': inv.relationship or 'Co-Trustee',
+                'vault': inv.vault.name if inv.vault else 'Legacy Custody Vault',
+                'invitedBy': (inv.owner.name or inv.owner.email) if inv.owner else 'Administrator',
+                'ownerEmail': inv.owner.email if inv.owner else '',
+                'sentOn': inv.sent_at.strftime('%d %b %Y'),
+                'expiresOn': inv.expires_at.strftime('%d %b %Y') if inv.expires_at else 'In 14 Days',
+                'status': status_display,
+                'statusClass': 'cancelled' if inv.status == 'revoked' else inv.status.lower(),
+                'message': inv.note or 'Nomination link for AegisVault custody protocol.',
+                'token': inv.token,
+            })
+
+        return Response({
+            'kpis': {
+                'pending': pending_count,
+                'accepted': accepted_count,
+                'expired': expired_count,
+                'cancelled': cancelled_count,
+            },
+            'invitations': data
+        })
+
+    def post(self, request):
+        name = (request.data.get('name') or request.data.get('recipient') or '').strip()
+        email = (request.data.get('email') or '').strip()
+        trustee_type = request.data.get('trustee_type') or request.data.get('type') or 'Co-Trustee'
+        vault_param = request.data.get('vault') or request.data.get('vault_id') or ''
+        expiry_param = request.data.get('expiry') or request.data.get('expiry_days') or '14 Days'
+        message = (request.data.get('message') or request.data.get('note') or '').strip()
+
+        if not email:
+            return Response({'error': 'Recipient email is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        expiry_days = 14
+        if '7' in str(expiry_param):
+            expiry_days = 7
+        elif '30' in str(expiry_param):
+            expiry_days = 30
+
+        owner = User.objects.filter(role='owner').first() or request.user
+
+        vault = None
+        if vault_param:
+            vault = Vault.objects.filter(name__iexact=str(vault_param).strip()).first()
+            if not vault:
+                import uuid
+                try:
+                    v_uuid = uuid.UUID(str(vault_param).strip())
+                    vault = Vault.objects.filter(id=v_uuid).first()
+                except (ValueError, AttributeError):
+                    pass
+        if not vault:
+            vault = Vault.objects.filter(owner=owner).first() or Vault.objects.first()
+
+        if not vault:
+            vault = Vault.objects.create(
+                name='Primary Security Vault',
+                owner=owner,
+                vault_type='personal',
+                status='active',
+                required_shares=2,
+                total_shares=3,
+                encryption_algorithm='AES-256-GCM',
+                description='Primary custody vault initialized by administrator'
+            )
+
+        profile, _ = TrusteeProfile.objects.get_or_create(
+            owner=owner,
+            email=email,
+            defaults={
+                'name': name or email.split('@')[0],
+                'relationship': trustee_type,
+                'status': 'Invited',
+                'verification_status': 'Not Started',
+            }
+        )
+        if name and profile.name != name:
+            profile.name = name
+            profile.save(update_fields=['name'])
+
+        existing_user = User.objects.filter(email=email).first()
+        if existing_user:
+            profile.user = existing_user
+            profile.save(update_fields=['user'])
+
+        invitation = Invitation.objects.create(
+            owner=owner,
+            trustee_profile=profile,
+            invitee_name=name or email.split('@')[0],
+            invitee_email=email,
+            relationship=trustee_type,
+            vault=vault,
+            note=message or 'Nomination link for AegisVault custody protocol.',
+            expires_at=timezone.now() + timedelta(days=expiry_days)
+        )
+
+        AuditService.log(
+            user=request.user,
+            action_key='admin_trustee_invitation_dispatched',
+            action_title=f'Admin Dispatched Invitation: {email}',
+            details=f'Admin dispatched invitation for {name} ({email}) assigned to vault "{vault.name}"',
+            category='trustee',
+            vault_name=vault.name,
+        )
+
+        email_sent, email_msg = TrusteeEmailService.send_trustee_invitation_email(invitation, request)
+
+        return Response({
+            'id': str(invitation.id),
+            'recipient': invitation.invitee_name,
+            'email': invitation.invitee_email,
+            'trusteeType': invitation.relationship,
+            'vault': vault.name,
+            'invitedBy': owner.name or 'Admin',
+            'ownerEmail': owner.email,
+            'sentOn': invitation.sent_at.strftime('%d %b %Y'),
+            'expiresOn': invitation.expires_at.strftime('%d %b %Y'),
+            'status': 'Pending',
+            'statusClass': 'pending',
+            'message': invitation.note,
+            'token': invitation.token,
+            'email_sent': email_sent,
+            'email_status': email_msg,
+        }, status=status.HTTP_201_CREATED)
+
+
+class AdminTrusteeInvitationResendView(APIView):
+    """POST /api/v1/admin/trustees/invitations/{id}/resend/"""
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def post(self, request, pk):
+        invitation = get_object_or_404(Invitation, pk=pk)
+
+        invitation.token = secrets.token_urlsafe(64)
+        invitation.token_used = False
+        invitation.status = 'pending'
+        invitation.sent_at = timezone.now()
+        invitation.expires_at = timezone.now() + timedelta(days=14)
+        invitation.save()
+
+        email_sent, email_msg = TrusteeEmailService.send_trustee_invitation_email(invitation, request)
+
+        AuditService.log(
+            user=request.user,
+            action_key='admin_invitation_resent',
+            action_title=f'Invitation Resent: {invitation.invitee_email}',
+            details=f'Admin re-dispatched invitation for {invitation.invitee_email}',
+            category='trustee',
+        )
+
+        return Response({
+            'detail': f'Invitation refreshed and dispatched to {invitation.invitee_email}.',
+            'id': str(invitation.id),
+            'status': 'Pending',
+            'email_sent': email_sent,
+            'email_status': email_msg,
+        })
+
+
+class AdminTrusteeInvitationCancelView(APIView):
+    """POST /api/v1/admin/trustees/invitations/{id}/cancel/"""
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def post(self, request, pk):
+        invitation = get_object_or_404(Invitation, pk=pk)
+        invitation.status = 'revoked'
+        invitation.save(update_fields=['status'])
+
+        if invitation.trustee_profile and not invitation.trustee_profile.user:
+            invitation.trustee_profile.status = 'Removed'
+            invitation.trustee_profile.verification_status = 'Revoked'
+            invitation.trustee_profile.save(update_fields=['status', 'verification_status'])
+
+        AuditService.log(
+            user=request.user,
+            action_key='admin_invitation_cancelled',
+            action_title=f'Invitation Cancelled: {invitation.invitee_email}',
+            details=f'Admin cancelled invitation #{invitation.id} for {invitation.invitee_name}',
+            category='trustee',
+        )
+
+        return Response({'detail': f'Invitation for {invitation.invitee_name} has been cancelled.'})
 
 
 # ─── Pending Actions ─────────────────────────────────────────────────────────

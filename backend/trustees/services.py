@@ -301,6 +301,25 @@ AegisVault — Digital Legacy Custody
         host_password = getattr(settings, 'EMAIL_HOST_PASSWORD', '').strip()
         host_user = getattr(settings, 'EMAIL_HOST_USER', '').strip()
 
+        # Fallback to reading backend/.env directly in case runserver process has not reloaded
+        if not host_password:
+            try:
+                from decouple import config
+                host_password = config('EMAIL_HOST_PASSWORD', default='').strip()
+                if host_password:
+                    settings.EMAIL_HOST_PASSWORD = host_password
+            except Exception:
+                pass
+
+        if not host_user:
+            try:
+                from decouple import config
+                host_user = config('EMAIL_HOST_USER', default='').strip()
+                if host_user:
+                    settings.EMAIL_HOST_USER = host_user
+            except Exception:
+                pass
+
         # If password is not configured yet, simulate safely without raising SMTPAuthenticationError
         if not host_password:
             logger.warning(
@@ -319,7 +338,8 @@ AegisVault — Digital Legacy Custody
             print(f"=======================================================\n")
             return False, "Simulated (Add EMAIL_HOST_PASSWORD in backend/.env for live Gmail delivery)"
 
-        # Password is set -> Send live email via SMTP
+        # Password is set -> Ensure Django SMTP connection uses it
+        settings.EMAIL_HOST_PASSWORD = host_password
         try:
             msg = EmailMultiAlternatives(
                 subject=subject,

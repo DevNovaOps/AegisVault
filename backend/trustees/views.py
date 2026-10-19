@@ -183,6 +183,9 @@ class TrusteeRemindView(APIView):
             invitee_email=trustee.email
         ).order_by('-sent_at').first()
 
+        import secrets
+        from datetime import timedelta
+
         if not invitation:
             vault = Vault.objects.filter(owner=request.user).first()
             if vault:
@@ -194,7 +197,17 @@ class TrusteeRemindView(APIView):
                     relationship=trustee.relationship,
                     vault=vault,
                     note='Please complete verification.',
+                    expires_at=timezone.now() + timedelta(days=14)
                 )
+        else:
+            # Refresh invitation token and expiry to ensure active valid link
+            invitation.token = secrets.token_urlsafe(64)
+            invitation.token_used = False
+            invitation.sent_at = timezone.now()
+            invitation.expires_at = timezone.now() + timedelta(days=14)
+            if invitation.status in ['expired', 'revoked']:
+                invitation.status = 'pending'
+            invitation.save()
 
         email_sent = False
         email_msg = ''

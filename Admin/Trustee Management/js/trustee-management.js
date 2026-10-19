@@ -143,7 +143,7 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
         const total = state.trustees ? state.trustees.length : 0;
         const verified = state.trustees ? state.trustees.filter(t => t.status === 'Verified').length : 0;
         const pending = state.trustees ? state.trustees.filter(t => t.status === 'Pending').length : 0;
-        const rejected = state.trustees ? state.trustees.filter(t => t.status === 'Rejected' || t.status === 'Inactive').length : 0;
+        const rejected = state.trustees ? state.trustees.filter(t => t.status === 'Rejected' || t.status === 'Inactive' || t.status === 'Suspended').length : 0;
 
         const setTxt = (id, val) => { const elem = document.getElementById(id); if (elem) elem.textContent = val; };
         setTxt('kpi-total-trustees', total.toLocaleString());
@@ -169,15 +169,26 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
         }
 
         if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-            window.AegisAPI.get('/admin/trustees/').then(data => {
-                state.trustees = (data || []).map((t, i) => ({
+            try {
+                const [trusteesData, invRes] = await Promise.all([
+                    window.AegisAPI.get('/admin/trustees/').catch(err => {
+                        console.warn('Failed to fetch trustees:', err);
+                        return [];
+                    }),
+                    window.AegisAPI.get('/admin/trustees/invitations/').catch(err => {
+                        console.warn('Failed to fetch invitations:', err);
+                        return { kpis: {}, invitations: [] };
+                    })
+                ]);
+
+                state.trustees = (trusteesData || []).map((t, i) => ({
                     id: t.id,
                     index: i + 1,
                     name: t.name || 'Unnamed Trustee',
                     email: t.email,
                     phone: t.phone || '+1 (555) 234-8901',
                     trusteeType: t.trusteeType || 'Primary',
-                    status: t.status || (t.is_active ? 'Verified' : 'Rejected'),
+                    status: t.status || (t.is_active ? 'Verified' : 'Pending'),
                     linkedVaultsCount: t.vaults_assigned || (t.linked_vaults ? t.linked_vaults.length : 0),
                     linkedVaults: t.linked_vaults || [],
                     ownerName: t.owner_name || '',
@@ -187,27 +198,57 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
                     addedOn: t.joined || 'Recent',
                     initials: (t.name || t.email || 'TR').split(' ').map(n=>n[0]).join('').substring(0, 2).toUpperCase(),
                     avatarColor: '#1E40AF',
-                    documentsVerified: true
+                    documentsVerified: (t.status === 'Verified')
                 }));
-                state.invitations = [];
+
+                const invList = (invRes && invRes.invitations) ? invRes.invitations : (Array.isArray(invRes) ? invRes : []);
+                state.invitations = invList.map(inv => ({
+                    id: inv.id,
+                    recipient: inv.recipient || 'Trustee Candidate',
+                    email: inv.email,
+                    trusteeType: inv.trusteeType || 'Co-Trustee',
+                    vault: inv.vault || 'Primary Vault',
+                    invitedBy: inv.invitedBy || 'Admin',
+                    sentOn: inv.sentOn || 'Recent',
+                    expiresOn: inv.expiresOn || 'In 14 Days',
+                    status: inv.status || 'Pending',
+                    message: inv.message || 'Nomination link for AegisVault custody protocol.'
+                }));
+
+                // Update invitation KPI cards
+                const invKpis = (invRes && invRes.kpis) ? invRes.kpis : {
+                    pending: state.invitations.filter(i => i.status.toLowerCase() === 'pending').length,
+                    accepted: state.invitations.filter(i => i.status.toLowerCase() === 'accepted').length,
+                    expired: state.invitations.filter(i => i.status.toLowerCase() === 'expired').length,
+                    cancelled: state.invitations.filter(i => i.status.toLowerCase() === 'cancelled' || i.status.toLowerCase() === 'revoked').length,
+                };
+                const setTxt = (id, val) => { const elem = document.getElementById(id); if (elem) elem.textContent = val; };
+                setTxt('inv-kpi-pending', invKpis.pending ?? 0);
+                setTxt('inv-kpi-accepted', invKpis.accepted ?? 0);
+                setTxt('inv-kpi-expired', invKpis.expired ?? 0);
+                setTxt('inv-kpi-cancelled', invKpis.cancelled ?? 0);
+
                 updateDynamicKPIs();
                 renderTrusteeTable();
+                renderInvitationsTable();
                 renderDonutChart();
                 renderTrusteeTypesProgress();
-            }).catch(err => {
-                console.warn('Failed to fetch trustees:', err);
+            } catch (err) {
+                console.warn('initData error:', err);
                 state.trustees = [];
                 state.invitations = [];
                 updateDynamicKPIs();
                 renderTrusteeTable();
+                renderInvitationsTable();
                 renderDonutChart();
                 renderTrusteeTypesProgress();
-            });
+            }
         } else {
             state.trustees = [];
             state.invitations = [];
             updateDynamicKPIs();
             renderTrusteeTable();
+            renderInvitationsTable();
             renderDonutChart();
             renderTrusteeTypesProgress();
         }
@@ -538,7 +579,11 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
         t.documentsVerified = true;
 
         if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-            window.AegisAPI.post(`/admin/trustees/${id}/approve/`, {}).catch(err => console.warn('Approve API error:', err));
+            window.AegisAPI.post(`/admin/trustees/${id}/approve/`, {})
+                .then(() => {
+                    initData();
+                })
+                .catch(err => console.warn('Approve API error:', err));
         }
 
         updateKpiCounters(oldStatus, 'Verified');
@@ -867,7 +912,14 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
                 el.formAddTrustee.reset();
 
                 if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-                    window.AegisAPI.post('/admin/trustees/', { name, email, phone }).catch(err => console.warn('Add trustee API error:', err));
+                    window.AegisAPI.post('/admin/trustees/', { name, email, phone })
+                        .then(res => {
+                            if (res && res.email_sent) {
+                                showToast(`Trustee "${name}" created & invitation email delivered!`, 'success');
+                            }
+                            initData();
+                        })
+                        .catch(err => console.warn('Add trustee API error:', err));
                 }
 
                 // Update Pending KPI and Overview
@@ -894,29 +946,61 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
                 const expiry = document.getElementById('inv-expiry').value;
                 const message = document.getElementById('inv-message').value.trim();
 
-                const newInv = {
-                    id: `INV-${Math.floor(700 + Math.random() * 200)}`,
-                    recipient,
-                    email,
-                    trusteeType: type,
-                    vault,
-                    invitedBy: 'Admin Officer',
-                    sentOn: 'Today',
-                    expiresOn: `In ${expiry}`,
-                    status: 'Pending',
-                    message: message || 'Nomination link for AegisVault custody protocol.'
-                };
-
-                state.invitations.unshift(newInv);
-                closeModal(el.modalInvite);
-                el.formInvite.reset();
-
-                if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-                    window.AegisAPI.post('/admin/trustees/', { name: recipient, email, phone: '' }).catch(err => console.warn('Invite API error:', err));
+                const submitBtn = el.formInvite.querySelector('button[type="submit"]');
+                const origText = submitBtn ? submitBtn.textContent : 'Send Invitation';
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Dispatching...';
                 }
 
-                renderInvitationsTable();
-                showToast(`Invitation dispatched to ${recipient} (${email})`, 'success');
+                if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+                    window.AegisAPI.post('/admin/trustees/invitations/', {
+                        name: recipient,
+                        email: email,
+                        trustee_type: type,
+                        vault: vault,
+                        expiry: expiry,
+                        message: message
+                    }).then(res => {
+                        closeModal(el.modalInvite);
+                        el.formInvite.reset();
+                        if (res && res.email_sent) {
+                            showToast(`Invitation dispatched and email delivered to ${recipient} (${email})!`, 'success');
+                        } else {
+                            showToast(`Invitation dispatched to ${recipient} (${email}).`, 'info');
+                        }
+                        initData();
+                    }).catch(err => {
+                        showToast(`Failed to dispatch invitation: ${err.message || 'Error'}`, 'error');
+                    }).finally(() => {
+                        if (submitBtn) {
+                            submitBtn.disabled = false;
+                            submitBtn.textContent = origText;
+                        }
+                    });
+                } else {
+                    const newInv = {
+                        id: `INV-${Math.floor(700 + Math.random() * 200)}`,
+                        recipient,
+                        email,
+                        trusteeType: type,
+                        vault,
+                        invitedBy: 'Admin Officer',
+                        sentOn: 'Today',
+                        expiresOn: `In ${expiry}`,
+                        status: 'Pending',
+                        message: message || 'Nomination link for AegisVault custody protocol.'
+                    };
+                    state.invitations.unshift(newInv);
+                    closeModal(el.modalInvite);
+                    el.formInvite.reset();
+                    renderInvitationsTable();
+                    showToast(`Invitation dispatched to ${recipient} (${email})`, 'success');
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = origText;
+                    }
+                }
             });
         }
 
@@ -1261,7 +1345,25 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
             btn.addEventListener('click', () => {
                 const id = btn.getAttribute('data-id');
                 const inv = state.invitations.find(i => i.id === id);
-                if (inv) showToast(`Invitation dispatch refreshed for ${inv.email}`, 'info');
+                if (!inv) return;
+
+                btn.disabled = true;
+                if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+                    window.AegisAPI.post(`/admin/trustees/invitations/${id}/resend/`, {}).then(res => {
+                        if (res && res.email_sent) {
+                            showToast(`Invitation refreshed and email delivered to ${inv.email}!`, 'success');
+                        } else {
+                            showToast(`Invitation token refreshed for ${inv.email}.`, 'info');
+                        }
+                        initData();
+                    }).catch(err => {
+                        showToast(`Failed to resend invitation: ${err.message || 'Error'}`, 'error');
+                        btn.disabled = false;
+                    });
+                } else {
+                    showToast(`Invitation dispatch refreshed for ${inv.email}`, 'info');
+                    btn.disabled = false;
+                }
             });
         });
 
@@ -1270,7 +1372,22 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
             btn.addEventListener('click', () => {
                 const id = btn.getAttribute('data-id');
                 const inv = state.invitations.find(i => i.id === id);
-                if (inv) {
+                if (!inv) return;
+
+                if (!confirm(`Are you sure you want to cancel the invitation for ${inv.recipient} (${inv.email})?`)) {
+                    return;
+                }
+
+                btn.disabled = true;
+                if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+                    window.AegisAPI.post(`/admin/trustees/invitations/${id}/cancel/`, {}).then(() => {
+                        showToast(`Invitation for ${inv.recipient} cancelled`, 'warning');
+                        initData();
+                    }).catch(err => {
+                        showToast(`Failed to cancel invitation: ${err.message || 'Error'}`, 'error');
+                        btn.disabled = false;
+                    });
+                } else {
                     inv.status = 'Cancelled';
                     renderInvitationsTable();
                     showToast(`Invitation for ${inv.recipient} cancelled`, 'warning');
