@@ -148,12 +148,25 @@ body.dark-theme .metric-coral .metric-icon-circle {
 }
 
 /* ==========================================================================
-   10. Dashboard 3-Column Grid Rows
+   10. Dashboard Grid Rows (2-col, Table+Health, 3-col)
    ========================================================================== */
 .dashboard-grid-row {
     display: grid;
-    grid-template-columns: 1.15fr 1.15fr 0.9fr;
     gap: 1.15rem;
+    margin-bottom: 1.15rem;
+}
+
+.dashboard-grid-row.grid-row-2col {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.dashboard-grid-row.grid-row-table-health {
+    grid-template-columns: minmax(0, 1.8fr) minmax(0, 1.1fr);
+    align-items: stretch;
+}
+
+.dashboard-grid-row.grid-row-3col {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .dashboard-card {
@@ -165,6 +178,8 @@ body.dark-theme .metric-coral .metric-icon-circle {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .card-header-row {
@@ -299,6 +314,7 @@ body.dark-theme .icon-purple {
     position: relative;
 }
 
+.aegis-chart-svg,
 .interactive-chart-svg {
     width: 100%;
     height: auto;
@@ -826,6 +842,10 @@ body.dark-theme .sev-low {
     display: flex;
     gap: 1.25rem;
     align-items: center;
+    box-shadow: var(--shadow-card);
+    transition: var(--transition);
+    min-width: 0;
+    height: 100%;
 }
 
 body.dark-theme .status-summary-card {
@@ -1021,11 +1041,15 @@ body.dark-theme .status-summary-title {
         grid-template-columns: repeat(3, 1fr);
     }
 
-    .dashboard-grid-row {
+    .dashboard-grid-row.grid-row-table-health {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-grid-row.grid-row-3col {
         grid-template-columns: 1fr 1fr;
     }
 
-    .dashboard-grid-row .dashboard-card:last-child {
+    .dashboard-grid-row.grid-row-3col .status-summary-card {
         grid-column: span 2;
     }
 
@@ -1049,11 +1073,14 @@ body.dark-theme .status-summary-title {
         justify-content: space-between;
     }
 
+    .dashboard-grid-row.grid-row-2col,
+    .dashboard-grid-row.grid-row-table-health,
+    .dashboard-grid-row.grid-row-3col,
     .dashboard-grid-row {
         grid-template-columns: 1fr;
     }
 
-    .dashboard-grid-row .dashboard-card:last-child {
+    .dashboard-grid-row.grid-row-3col .status-summary-card {
         grid-column: span 1;
     }
 }

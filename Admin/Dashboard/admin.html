@@ -414,8 +414,8 @@
                     </div>
                 </section>
 
-                <!-- C. ROW 2: USER GROWTH, VAULT ACTIVITY, SYSTEM HEALTH -->
-                <section class="dashboard-grid-row" aria-label="Activity & Surveillance">
+                <!-- C. ROW 2: USER GROWTH, VAULT ACTIVITY -->
+                <section class="dashboard-grid-row grid-row-2col" aria-label="Activity & Surveillance">
                     
                     <!-- 1. User Growth Line Chart -->
                     <div class="dashboard-card" id="card-user-growth">
@@ -481,30 +481,10 @@
                         </div>
                     </div>
 
-                    <!-- 3. System Health Checklist -->
-                    <div class="dashboard-card" id="card-system-health">
-                        <div class="card-header-row">
-                            <div class="card-header-left">
-                                <span class="card-header-icon icon-green">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-                                </span>
-                                <h2 class="card-main-title">System Health</h2>
-                            </div>
-                            <a href="#system-health" class="card-view-all-link" id="link-view-health-details">
-                                <span>View Details</span>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                            </a>
-                        </div>
-
-                        <div class="services-health-list" id="system-health-services-list">
-                            <!-- Populated dynamically by dashboard.js -->
-                        </div>
-                    </div>
-
                 </section>
 
-                <!-- D. ROW 3: RECENT USERS, RECENT SECURITY EVENTS, PENDING ACTIONS -->
-                <section class="dashboard-grid-row" aria-label="Management and Security Events">
+                <!-- D. ROW 3: RECENT USERS & SYSTEM HEALTH -->
+                <section class="dashboard-grid-row grid-row-table-health" aria-label="Recent Users & System Operations">
                     
                     <!-- 1. Recent Users Table -->
                     <div class="dashboard-card" id="card-recent-users">
@@ -539,49 +519,22 @@
                         </div>
                     </div>
 
-                    <!-- 2. Recent Security Events Table -->
-                    <div class="dashboard-card" id="card-recent-events">
+                    <!-- 2. System Health Checklist -->
+                    <div class="dashboard-card" id="card-system-health">
                         <div class="card-header-row">
                             <div class="card-header-left">
-                                <span class="card-header-icon icon-red">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                <span class="card-header-icon icon-green">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
                                 </span>
-                                <h2 class="card-main-title">Recent Security Events</h2>
+                                <h2 class="card-main-title">System Health</h2>
                             </div>
-                            <a href="../System Health/system-health.html" class="card-view-all-link" id="link-view-all-events">
-                                <span>View All</span>
+                            <a href="../System Health/system-health.html" class="card-view-all-link" id="link-view-health-details" title="View full System Health telemetry">
+                                <span>View Details</span>
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                             </a>
                         </div>
 
-                        <div class="table-responsive-wrapper">
-                            <table class="admin-data-table" aria-label="Recent security logs table">
-                                <thead>
-                                    <tr>
-                                        <th>Time</th>
-                                        <th>Event</th>
-                                        <th>Severity</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="recent-security-events-tbody">
-                                    <!-- Populated dynamically by dashboard.js -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- 3. Pending Actions -->
-                    <div class="dashboard-card" id="card-pending-actions">
-                        <div class="card-header-row">
-                            <div class="card-header-left">
-                                <span class="card-header-icon icon-purple">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                                </span>
-                                <h2 class="card-main-title">Pending Actions</h2>
-                            </div>
-                        </div>
-
-                        <div class="pending-actions-list" id="pending-actions-list-container">
+                        <div class="services-health-list" id="system-health-services-list">
                             <!-- Populated dynamically by dashboard.js -->
                         </div>
                     </div>
@@ -589,7 +542,7 @@
                 </section>
 
                 <!-- E. ROW 4: USER ROLES, VAULT CATEGORIES, EVERYTHING UNDER CONTROL -->
-                <section class="dashboard-grid-row" aria-label="Distributions & Operational State">
+                <section class="dashboard-grid-row grid-row-3col" aria-label="Distributions & Operational State">
                     
                     <!-- 1. User Role Distribution Donut -->
                     <div class="dashboard-card" id="card-user-roles">
