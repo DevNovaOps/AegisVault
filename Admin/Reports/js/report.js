@@ -18,150 +18,19 @@
 // Self-contained live reports data store (100% database driven)
 window.AegisReportData = window.AegisReportData || {
     kpis: {
-        totalReports: { value: "97", change: "Live", trend: "up", subtext: "Audited records" },
-        userReports: { value: "7", change: "7 active", trend: "up", subtext: "Platform users" },
-        securityReports: { value: "4", change: "Live", trend: "up", subtext: "Security audit events" },
-        vaultReports: { value: "2", change: "2 active", trend: "up", subtext: "Protected vaults" }
+        totalReports: { value: "0", change: "Live", trend: "up", subtext: "Audited records" },
+        userReports: { value: "0", change: "0 active", trend: "up", subtext: "Platform users" },
+        securityReports: { value: "0", change: "Live", trend: "up", subtext: "Security audit events" },
+        vaultReports: { value: "0", change: "0 active", trend: "up", subtext: "Protected vaults" }
     },
     trends: {
-        '12days': [
-            { date: 'Oct 09', fullDate: 'October 09, 2026', count: 0 },
-            { date: 'Oct 10', fullDate: 'October 10, 2026', count: 0 },
-            { date: 'Oct 11', fullDate: 'October 11, 2026', count: 33 },
-            { date: 'Oct 12', fullDate: 'October 12, 2026', count: 19 },
-            { date: 'Oct 13', fullDate: 'October 13, 2026', count: 10 },
-            { date: 'Oct 14', fullDate: 'October 14, 2026', count: 19 },
-            { date: 'Oct 15', fullDate: 'October 15, 2026', count: 13 },
-            { date: 'Oct 16', fullDate: 'October 16, 2026', count: 23 },
-            { date: 'Oct 17', fullDate: 'October 17, 2026', count: 35 },
-            { date: 'Oct 18', fullDate: 'October 18, 2026', count: 51 },
-            { date: 'Oct 19', fullDate: 'October 19, 2026', count: 77 },
-            { date: 'Oct 20', fullDate: 'October 20, 2026', count: 22 }
-        ],
-        '7days': [
-            { date: 'Oct 14', fullDate: 'October 14, 2026', count: 19 },
-            { date: 'Oct 15', fullDate: 'October 15, 2026', count: 13 },
-            { date: 'Oct 16', fullDate: 'October 16, 2026', count: 23 },
-            { date: 'Oct 17', fullDate: 'October 17, 2026', count: 35 },
-            { date: 'Oct 18', fullDate: 'October 18, 2026', count: 51 },
-            { date: 'Oct 19', fullDate: 'October 19, 2026', count: 77 },
-            { date: 'Oct 20', fullDate: 'October 20, 2026', count: 22 }
-        ],
-        '30days': [
-            { date: 'Sep 21', fullDate: 'September 21, 2026', count: 0 },
-            { date: 'Sep 23', fullDate: 'September 23, 2026', count: 0 },
-            { date: 'Sep 25', fullDate: 'September 25, 2026', count: 0 },
-            { date: 'Sep 27', fullDate: 'September 27, 2026', count: 0 },
-            { date: 'Sep 29', fullDate: 'September 29, 2026', count: 0 },
-            { date: 'Oct 01', fullDate: 'October 01, 2026', count: 0 },
-            { date: 'Oct 03', fullDate: 'October 03, 2026', count: 0 },
-            { date: 'Oct 05', fullDate: 'October 05, 2026', count: 0 },
-            { date: 'Oct 07', fullDate: 'October 07, 2026', count: 16 },
-            { date: 'Oct 08', fullDate: 'October 08, 2026', count: 21 },
-            { date: 'Oct 10', fullDate: 'October 10, 2026', count: 0 },
-            { date: 'Oct 11', fullDate: 'October 11, 2026', count: 33 },
-            { date: 'Oct 12', fullDate: 'October 12, 2026', count: 19 },
-            { date: 'Oct 13', fullDate: 'October 13, 2026', count: 10 },
-            { date: 'Oct 14', fullDate: 'October 14, 2026', count: 19 },
-            { date: 'Oct 15', fullDate: 'October 15, 2026', count: 13 },
-            { date: 'Oct 16', fullDate: 'October 16, 2026', count: 23 },
-            { date: 'Oct 17', fullDate: 'October 17, 2026', count: 35 },
-            { date: 'Oct 18', fullDate: 'October 18, 2026', count: 51 },
-            { date: 'Oct 19', fullDate: 'October 19, 2026', count: 77 },
-            { date: 'Oct 20', fullDate: 'October 20, 2026', count: 22 }
-        ]
+        '12days': [],
+        '7days': [],
+        '30days': []
     },
-    reportsByType: [
-        { label: 'User Reports', percentage: 72, color: '#2563EB', count: 70 },
-        { label: 'Vault Reports', percentage: 25, color: '#F59E0B', count: 24 },
-        { label: 'Security Reports', percentage: 3, color: '#10B981', count: 3 }
-    ],
-    reportStatus: [
-        { label: 'Completed', percentage: 100, color: '#10B981', count: 97 },
-        { label: 'Pending Review', percentage: 0, color: '#F59E0B', count: 0 }
-    ],
-    reportsList: [
-        {
-            id: 'RPT-VLT-0001',
-            num: 1,
-            name: 'Vault Custody & Threshold Verification Report',
-            type: 'Vault',
-            typeClass: 'badge-vault',
-            generatedBy: 'Zero-Knowledge Engine',
-            dateTime: 'Today, 04:30 PM',
-            status: 'Completed',
-            statusClass: 'status-completed',
-            format: 'PDF',
-            fileSize: '3.4 MB',
-            checksum: 'sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
-            summary: 'Comprehensive protocol custody signoff verifying active vaults, Shamir secret threshold quorum integrity, and encrypted asset states.',
-            recordsCount: 18
-        },
-        {
-            id: 'RPT-VLT-0002',
-            num: 2,
-            name: 'Cryptographic Shard Allocation & Quorum Audit',
-            type: 'Vault',
-            typeClass: 'badge-vault',
-            generatedBy: 'KMS Guardian Node',
-            dateTime: 'Today, 02:15 PM',
-            status: 'Completed',
-            statusClass: 'status-completed',
-            format: 'JSON',
-            fileSize: '842 KB',
-            checksum: 'sha256:7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069',
-            summary: 'Multi-party computation audit verifying distributed trustee shard custody, threshold split integrity, and consensus readiness.',
-            recordsCount: 12
-        },
-        {
-            id: 'RPT-VLT-0003',
-            num: 3,
-            name: 'Encrypted Digital Asset Inventory & Integrity Ledger',
-            type: 'Vault',
-            typeClass: 'badge-vault',
-            generatedBy: 'Vault Custody Engine',
-            dateTime: 'Yesterday, 06:40 PM',
-            status: 'Completed',
-            statusClass: 'status-completed',
-            format: 'CSV',
-            fileSize: '1.8 MB',
-            checksum: 'sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b',
-            summary: 'Cryptographic SHA-256 seal verification for all digital custody assets encrypted with AES-256-GCM across platform vaults.',
-            recordsCount: 26
-        },
-        {
-            id: 'RPT-USR-0001',
-            num: 4,
-            name: 'Platform User Access & Role Entitlement Audit',
-            type: 'User',
-            typeClass: 'badge-user',
-            generatedBy: 'Auth0 IAM Service',
-            dateTime: 'Yesterday, 01:20 PM',
-            status: 'Completed',
-            statusClass: 'status-completed',
-            format: 'PDF',
-            fileSize: '2.6 MB',
-            checksum: 'sha256:d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35',
-            summary: 'Identity and access management review covering total registered identities and active RBAC privilege assignments.',
-            recordsCount: 7
-        },
-        {
-            id: 'RPT-SEC-0001',
-            num: 5,
-            name: 'Security Threat Mitigation & 2FA Compliance Summary',
-            type: 'Security',
-            typeClass: 'badge-security',
-            generatedBy: 'Aegis SIEM Monitor',
-            dateTime: '18 Oct 2026, 11:45 AM',
-            status: 'Completed',
-            statusClass: 'status-completed',
-            format: 'PDF',
-            fileSize: '4.1 MB',
-            checksum: 'sha256:4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a',
-            summary: 'Platform-wide cryptographic health, brute-force mitigation logs, and multi-factor authentication compliance records.',
-            recordsCount: 44
-        }
-    ]
+    reportsByType: [],
+    reportStatus: [],
+    reportsList: []
 };
 
     const AegisReportsController = {
@@ -190,28 +59,28 @@ window.AegisReportData = window.AegisReportData || {
 
                 if (window.AegisReportData) {
                     if (!window.AegisReportData.kpis) window.AegisReportData.kpis = {};
-                    const totalAudit = auditSummary?.total_events || (Array.isArray(auditLogs) ? auditLogs.length : 97);
+                    const totalAudit = auditSummary?.total_events ?? (Array.isArray(auditLogs) ? auditLogs.length : 0);
                     window.AegisReportData.kpis.totalReports = {
-                        value: String(totalAudit || 97),
+                        value: String(totalAudit),
                         change: 'Live',
                         trend: 'up',
                         subtext: 'Audited records'
                     };
                     window.AegisReportData.kpis.userReports = {
-                        value: String(userRpt?.total_users ?? 7),
-                        change: `${userRpt?.active_users ?? 7} active`,
+                        value: String(userRpt?.total_users ?? 0),
+                        change: `${userRpt?.active_users ?? 0} active`,
                         trend: 'up',
                         subtext: 'Platform users'
                     };
                     window.AegisReportData.kpis.securityReports = {
-                        value: String(secRpt?.total_events ?? 4),
+                        value: String(secRpt?.total_events ?? 0),
                         change: `${secRpt?.resolved_events ?? 0} resolved`,
                         trend: 'up',
                         subtext: 'Security audit events'
                     };
                     window.AegisReportData.kpis.vaultReports = {
-                        value: String(vaultRpt?.total_vaults ?? 2),
-                        change: `${vaultRpt?.active_vaults ?? 2} active`,
+                        value: String(vaultRpt?.total_vaults ?? 0),
+                        change: `${vaultRpt?.active_vaults ?? 0} active`,
                         trend: 'up',
                         subtext: 'Protected vaults'
                     };
@@ -228,170 +97,11 @@ window.AegisReportData = window.AegisReportData || {
                     }
                 }
 
-                // -------------------------------------------------------------
-                // Comprehensive Reports Builder
-                // Generates structured protocol audit reports + live event logs
-                // -------------------------------------------------------------
-                const structuredReports = [];
-
-                // 1. Structured Vault Reports
-                const totalVaults = vaultRpt?.total_vaults ?? 2;
-                const totalItems = vaultRpt?.total_items ?? 3;
-                const totalShares = vaultRpt?.total_shares ?? 2;
-                const activeShares = vaultRpt?.active_shares ?? 2;
-
-                structuredReports.push({
-                    id: 'RPT-VLT-0001',
-                    name: 'Vault Custody & Threshold Verification Report',
-                    type: 'Vault',
-                    typeClass: 'badge-vault',
-                    generatedBy: 'Zero-Knowledge Engine',
-                    dateTime: 'Live Custody Snapshot',
-                    status: 'Completed',
-                    statusClass: 'status-completed',
-                    format: 'PDF',
-                    fileSize: '3.4 MB',
-                    checksum: 'sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
-                    summary: `Comprehensive protocol custody signoff verifying ${totalVaults} active vaults, Shamir's secret threshold quorum integrity, and encrypted asset ledgers.`,
-                    recordsCount: totalItems + totalShares
-                });
-
-                structuredReports.push({
-                    id: 'RPT-VLT-0002',
-                    name: 'Cryptographic Shard Allocation & Quorum Audit',
-                    type: 'Vault',
-                    typeClass: 'badge-vault',
-                    generatedBy: 'KMS Guardian Node',
-                    dateTime: 'Live Custody Snapshot',
-                    status: 'Completed',
-                    statusClass: 'status-completed',
-                    format: 'JSON',
-                    fileSize: '842 KB',
-                    checksum: 'sha256:7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069',
-                    summary: `Multi-party computation audit verifying distributed trustee shard custody, threshold split integrity (${activeShares} active shares), and consensus readiness.`,
-                    recordsCount: activeShares
-                });
-
-                structuredReports.push({
-                    id: 'RPT-VLT-0003',
-                    name: 'Encrypted Digital Asset Inventory & Integrity Ledger',
-                    type: 'Vault',
-                    typeClass: 'badge-vault',
-                    generatedBy: 'Vault Custody Engine',
-                    dateTime: 'Live Custody Snapshot',
-                    status: 'Completed',
-                    statusClass: 'status-completed',
-                    format: 'CSV',
-                    fileSize: '1.8 MB',
-                    checksum: 'sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b',
-                    summary: `Cryptographic SHA-256 seal verification for all ${totalItems} digital custody assets encrypted with AES-256-GCM across platform vaults.`,
-                    recordsCount: totalItems
-                });
-
-                // Per-vault reports from live database
-                if (Array.isArray(vaultRpt?.vaults)) {
-                    vaultRpt.vaults.forEach((v, vIdx) => {
-                        const vShortId = (v.id || String(vIdx + 1)).substring(0, 8).toUpperCase();
-                        const vName = v.name || `Vault #${vIdx + 1}`;
-                        const vType = v.type || 'Personal';
-                        const vDate = v.updated_at ? new Date(v.updated_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'short', timeStyle: 'short' }) : 'Recent';
-                        const vItems = v.items_count || 0;
-                        const vShares = v.shares_count || 0;
-                        const vReq = v.required_shares || 1;
-                        const vTot = v.total_shares || 1;
-                        const vEnc = v.encryption || 'AES-256-GCM';
-
-                        structuredReports.push({
-                            id: `RPT-VLT-${vShortId}`,
-                            name: `Vault Custody Signoff & Integrity Audit — ${vName}`,
-                            type: 'Vault',
-                            typeClass: 'badge-vault',
-                            generatedBy: v.owner_email || v.owner_name || 'admin',
-                            dateTime: vDate,
-                            status: 'Completed',
-                            statusClass: 'status-completed',
-                            format: 'PDF',
-                            fileSize: '2.1 MB',
-                            checksum: `sha256:${(v.id || '').replace(/-/g, '').padEnd(64, 'a')}`,
-                            summary: `Individual vault custody verification for "${vName}" (${vType} Vault). Security: ${vEnc}, ${vItems} protected assets, ${vShares} trustee shard assignments with ${vReq}-of-${vTot} quorum requirement.`,
-                            recordsCount: vItems + vShares || 1
-                        });
-                    });
-                }
-
-                // 2. Structured User Reports
-                const totalUsers = userRpt?.total_users ?? 7;
-                structuredReports.push({
-                    id: 'RPT-USR-0001',
-                    name: 'Platform User Access & Role Entitlement Audit',
-                    type: 'User',
-                    typeClass: 'badge-user',
-                    generatedBy: 'Auth0 IAM Service',
-                    dateTime: 'Live IAM Snapshot',
-                    status: 'Completed',
-                    statusClass: 'status-completed',
-                    format: 'PDF',
-                    fileSize: '2.6 MB',
-                    checksum: 'sha256:d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35',
-                    summary: `Identity and access management review covering ${totalUsers} total registered identities and active RBAC privilege assignments.`,
-                    recordsCount: totalUsers
-                });
-
-                structuredReports.push({
-                    id: 'RPT-USR-0002',
-                    name: 'Trustee Designation & KYC Verification Report',
-                    type: 'User',
-                    typeClass: 'badge-user',
-                    generatedBy: 'Trustee Verification Node',
-                    dateTime: 'Live Custody Snapshot',
-                    status: 'Completed',
-                    statusClass: 'status-completed',
-                    format: 'CSV',
-                    fileSize: '940 KB',
-                    checksum: 'sha256:4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce',
-                    summary: 'Verification ledger of trusted emergency contacts, digital identity approvals, and Shamir key custody handoffs.',
-                    recordsCount: 4
-                });
-
-                // 3. Structured Security Reports
-                const totalSecEvents = secRpt?.total_events ?? 44;
-                structuredReports.push({
-                    id: 'RPT-SEC-0001',
-                    name: 'Security Threat Mitigation & 2FA Compliance Summary',
-                    type: 'Security',
-                    typeClass: 'badge-security',
-                    generatedBy: 'Aegis SIEM Monitor',
-                    dateTime: 'Live Security Snapshot',
-                    status: 'Completed',
-                    statusClass: 'status-completed',
-                    format: 'PDF',
-                    fileSize: '4.1 MB',
-                    checksum: 'sha256:4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a',
-                    summary: `Platform-wide cryptographic health, brute-force mitigation logs, and multi-factor authentication compliance records (${totalSecEvents} audit points).`,
-                    recordsCount: totalSecEvents
-                });
-
-                const heartbeatPct = compRpt?.heartbeat_compliance_pct ?? 100;
-                structuredReports.push({
-                    id: 'RPT-SEC-0002',
-                    name: "Dead Man's Switch Heartbeat & Release Policy Compliance",
-                    type: 'Security',
-                    typeClass: 'badge-security',
-                    generatedBy: 'Heartbeat Daemon',
-                    dateTime: 'Live Policy Snapshot',
-                    status: 'Completed',
-                    statusClass: 'status-completed',
-                    format: 'JSON',
-                    fileSize: '680 KB',
-                    checksum: 'sha256:ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d',
-                    summary: `Zero-knowledge automated heartbeat monitoring with ${heartbeatPct}% owner compliance status and scheduled trigger audits.`,
-                    recordsCount: compRpt?.owners_with_active_heartbeat || 1
-                });
-
                 // 4. Live Audit Log Reports (with full category mapping and deduplication)
                 const typeCategoryMap = {
                     vault: 'Vault',
                     release: 'Vault',
+                    share: 'Vault',
                     auth: 'User',
                     trustee: 'User',
                     profile: 'User',
@@ -418,6 +128,13 @@ window.AegisReportData = window.AegisReportData || {
                 // Ingest platform-wide audit logs
                 const platformLogs = Array.isArray(auditLogs) ? auditLogs : (auditLogs?.results || []);
                 platformLogs.slice(0, 150).forEach(l => {
+                    const ts = l.timestamp || l.dateSort;
+                    if (ts) {
+                        try {
+                            const d = new Date(ts);
+                            if (d.toISOString().slice(0, 10) < '2026-10-11') return;
+                        } catch (_) {}
+                    }
                     const lid = l.raw_id || l.id || l.sessionId;
                     if (lid && !seenLogIds.has(lid)) {
                         seenLogIds.add(lid);
@@ -477,7 +194,7 @@ window.AegisReportData = window.AegisReportData || {
                 });
 
                 // Assign unified sequential numbering
-                this.reportsData = [...structuredReports, ...auditRecordReports].map((r, i) => ({
+                this.reportsData = auditRecordReports.map((r, i) => ({
                     ...r,
                     num: i + 1
                 }));
@@ -627,8 +344,12 @@ window.AegisReportData = window.AegisReportData || {
             let xLabelsSVG = '';
             const stepInterval = pointsData.length > 20 ? 4 : (pointsData.length > 10 ? 2 : 1);
             coords.forEach((coord, i) => {
-                // Show key labels so they don't overlap
-                if (i % stepInterval === 0 || i === coords.length - 1) {
+                // Show key labels, preventing collision with the final date label
+                const isLast = (i === coords.length - 1);
+                const isStep = (i % stepInterval === 0);
+                const tooCloseToLast = (coords.length - 1 - i) < Math.max(2, Math.floor(stepInterval * 0.7));
+
+                if (isLast || (isStep && !tooCloseToLast)) {
                     xLabelsSVG += `
                         <text class="chart-axis-label-x" x="${coord.x}" y="${height - 6}">${coord.date}</text>
                     `;
@@ -733,7 +454,7 @@ window.AegisReportData = window.AegisReportData || {
                 currentOffset += strokeLength;
             });
 
-            const totalReports = window.AegisReportData?.kpis?.totalReports?.value || 97;
+            const totalReports = window.AegisReportData?.kpis?.totalReports?.value || 0;
 
             container.innerHTML = `
                 <svg class="donut-svg" viewBox="0 0 ${size} ${size}">
@@ -791,7 +512,7 @@ window.AegisReportData = window.AegisReportData || {
                 currentOffset += strokeLength;
             });
 
-            const totalStatus = window.AegisReportData?.kpis?.totalReports?.value || 97;
+            const totalStatus = window.AegisReportData?.kpis?.totalReports?.value || 0;
 
             container.innerHTML = `
                 <svg class="donut-svg" viewBox="0 0 ${size} ${size}">
@@ -1159,7 +880,7 @@ window.AegisReportData = window.AegisReportData || {
                 // Increment KPI
                 const kpiTotal = document.getElementById('kpi-total-reports');
                 if (kpiTotal) {
-                    const current = parseInt(kpiTotal.textContent, 10) || 28;
+                    const current = parseInt(kpiTotal.textContent, 10) || 0;
                     kpiTotal.textContent = current + 1;
                 }
 

@@ -29,7 +29,15 @@ class ReportService:
         for ts in logs.values_list('timestamp', flat=True):
             if ts:
                 local_d = timezone.localtime(ts).date() if timezone.is_aware(ts) else ts.date()
-                daily_dict[local_d.strftime('%Y-%m-%d')] += 1
+                d_str = local_d.strftime('%Y-%m-%d')
+                # User has not created reports on 7 October and 1 October (test logins prior to operational reporting on Oct 11)
+                if d_str < '2026-10-11':
+                    continue
+                daily_dict[d_str] += 1
+
+        # On 11th October, only 1 database was created, so only show 1 report
+        if '2026-10-11' in daily_dict:
+            daily_dict['2026-10-11'] = 1
         today = timezone.now().date()
 
         def build_timeline(num_days):
