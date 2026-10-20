@@ -13,7 +13,7 @@
      */
     function initScrollReveals() {
         const revealTargets = document.querySelectorAll(
-            '.feature-card, .security-card, .category-pill-card, .pricing-card, .timeline-step, .about-card-wrap, .final-cta-card, .trusted-strip-container'
+            '.feature-card, .security-card, .category-pill-card, .timeline-step, .about-card-wrap, .final-cta-card, .trusted-strip-container'
         );
 
         revealTargets.forEach((target, index) => {
