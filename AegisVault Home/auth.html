@@ -621,27 +621,8 @@
             display: none;
         }
 
-        /* Divider & Passkey */
-        .or-divider-line {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 10.5px;
-            font-weight: 700;
-            color: var(--auth-text-muted);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-        }
-
-        .or-divider-line::before,
-        .or-divider-line::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--auth-border);
-        }
-
-        .btn-passkey-quick {
+        /* Secondary Action Buttons (e.g. Back from 2FA) */
+        .btn-secondary-action {
             width: 100%;
             height: 40px;
             border: 1px solid var(--auth-border);
@@ -659,65 +640,13 @@
             transition: all 0.2s ease;
         }
 
-        body.light-theme .btn-passkey-quick {
+        body.light-theme .btn-secondary-action {
             background: #FFFFFF;
         }
 
-        .btn-passkey-quick:hover {
+        .btn-secondary-action:hover {
             background: rgba(255, 255, 255, 0.06);
             border-color: rgba(255, 255, 255, 0.2);
-            transform: translateY(-1px);
-        }
-
-        /* Quick Persona Chips */
-        .quick-test-section {
-            border-top: 1px solid var(--auth-border);
-            padding-top: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .quick-test-title {
-            font-size: 10.5px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
-            color: var(--auth-text-muted);
-            text-align: center;
-        }
-
-        .quick-chips-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-        }
-
-        .persona-chip {
-            padding: 8px 6px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--auth-border);
-            border-radius: var(--radius-sm);
-            color: var(--auth-text-body);
-            font-family: inherit;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            transition: all 0.2s ease;
-        }
-
-        body.light-theme .persona-chip {
-            background: #F8FAFC;
-        }
-
-        .persona-chip:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.2);
-            color: var(--auth-text-head);
             transform: translateY(-1px);
         }
 
@@ -899,7 +828,6 @@
         @media (max-width: 480px) {
             .auth-card-box { padding: 22px 18px; }
             .role-item-sub { display: none; }
-            .quick-chips-row { grid-template-columns: 1fr; }
             .otp-digit-input { width: 40px; height: 48px; font-size: 20px; }
             .twofa-otp-row { gap: 6px; }
         }
@@ -1002,7 +930,7 @@
                             <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                             <polyline points="22,6 12,13 2,6"></polyline>
                         </svg>
-                        <input type="email" id="signin-email" class="form-clean-input" placeholder="e.g. aryan.patel@estate.io" required autocomplete="email">
+                        <input type="email" id="signin-email" class="form-clean-input" placeholder="e.g. alexander.vance@estate.io" required autocomplete="email">
                     </div>
                 </div>
 
@@ -1046,13 +974,6 @@
                         <polyline points="12 5 19 12 12 19"></polyline>
                     </svg>
                 </button>
-
-                <div class="or-divider-line"><span>OR</span></div>
-
-                <!-- Passkey Button -->
-                <button type="button" class="btn-passkey-quick" id="btn-passkey-quick">
-                    <span>🔑 Sign In with Passkey / WebAuthn Biometrics</span>
-                </button>
             </form>
 
             <!-- ================= TWO-FACTOR AUTHENTICATION CHALLENGE ================= -->
@@ -1095,7 +1016,7 @@
                         <button type="button" class="twofa-resend-btn" id="btn-resend-2fa">Resend Code</button>
                         <span id="twofa-resend-timer" style="color: var(--auth-text-muted); display: none;"> (<span id="twofa-timer-sec">30</span>s)</span>
                     </div>
-                    <button type="button" class="btn-passkey-quick" id="btn-cancel-2fa" style="margin-top: 6px;">
+                    <button type="button" class="btn-secondary-action" id="btn-cancel-2fa" style="margin-top: 6px;">
                         ← Back to Sign In
                     </button>
                 </div>
@@ -1204,25 +1125,6 @@
                 </button>
             </form>
 
-            <!-- Quick One-Click Demo Personas -->
-            <div class="quick-test-section">
-                <div class="quick-test-title">Instant One-Click Demo Access</div>
-                <div class="quick-chips-row">
-                    <button type="button" class="persona-chip" id="btn-quick-owner" title="Authenticate as Vault Owner">
-                        <span>🛡️</span>
-                        <span>Owner (Aryan)</span>
-                    </button>
-                    <button type="button" class="persona-chip" id="btn-quick-trustee" title="Authenticate as Designated Trustee">
-                        <span>🤝</span>
-                        <span>Trustee (Rakesh)</span>
-                    </button>
-                    <button type="button" class="persona-chip" id="btn-quick-admin" title="Authenticate as Administrator">
-                        <span>⚡</span>
-                        <span>Admin</span>
-                    </button>
-                </div>
-            </div>
-
         </div>
     </main>
 
@@ -1255,8 +1157,7 @@
                     submitSignUpText: 'Initialize Owner Account & Vault',
                     btnClass: '',
                     indicatorColor: '#F45A1F',
-                    pulseColor: '#F45A1F',
-                    demoUser: { name: 'Aryan Patel', email: 'aryan.patel@estate.io', role: 'owner' }
+                    pulseColor: '#F45A1F'
                 },
                 trustee: {
                     title: 'Designated Trustee',
@@ -1267,8 +1168,7 @@
                     submitSignUpText: 'Register as Verified Trustee',
                     btnClass: 'trustee-style',
                     indicatorColor: '#38BDF8',
-                    pulseColor: '#0284C7',
-                    demoUser: { name: 'Rakesh Patel', email: 'rakesh.patel@trustee-network.org', role: 'trustee' }
+                    pulseColor: '#0284C7'
                 },
                 admin: {
                     title: 'Administrator',
@@ -1279,8 +1179,7 @@
                     submitSignUpText: 'Admin Creation Restricted',
                     btnClass: 'admin-style',
                     indicatorColor: '#C084FC',
-                    pulseColor: '#8B5CF6',
-                    demoUser: { name: 'Administrator', email: 'admin123@gmail.com', role: 'admin' }
+                    pulseColor: '#8B5CF6'
                 }
             };
 
@@ -1524,7 +1423,6 @@
             const twofaTimerSec = document.getElementById('twofa-timer-sec');
             const authCardTabs = document.querySelector('.auth-card-tabs');
             const roleNoticeBox = document.getElementById('role-notice-box');
-            const quickTestSection = document.querySelector('.quick-test-section');
             const roleCardsGrid = document.querySelector('.role-cards-grid');
             const otpInputs = Array.from(document.querySelectorAll('.otp-digit-input'));
 
@@ -1536,7 +1434,6 @@
                 formSignUp.style.display = 'none';
                 if (authCardTabs) authCardTabs.style.display = 'none';
                 if (roleNoticeBox) roleNoticeBox.style.display = 'none';
-                if (quickTestSection) quickTestSection.style.display = 'none';
                 if (roleCardsGrid) {
                     roleCardsGrid.style.opacity = '0.35';
                     roleCardsGrid.style.pointerEvents = 'none';
@@ -1566,7 +1463,6 @@
                 form2FA.style.display = 'none';
                 if (authCardTabs) authCardTabs.style.display = '';
                 if (roleNoticeBox) roleNoticeBox.style.display = '';
-                if (quickTestSection) quickTestSection.style.display = '';
                 if (roleCardsGrid) {
                     roleCardsGrid.style.opacity = '';
                     roleCardsGrid.style.pointerEvents = '';
@@ -1799,79 +1695,6 @@
                     btnSubmitSignUp.disabled = false;
                     return;
                 }
-            });
-
-            // Passkey Biometrics
-            document.getElementById('btn-passkey-quick')?.addEventListener('click', async () => {
-                const cfg = roleConfig[activeRole];
-                showToast(`Passkey / WebAuthn Biometrics confirmed for ${cfg.title}.`, 'success');
-                try {
-                    if (window.AegisAPI) {
-                        const data = await window.AegisAPI.login(cfg.demoUser.email, 'DemoPass123!', activeRole);
-                        if (data.requires_2fa) {
-                            show2FAView(data.temp_token, data.email_masked);
-                            return;
-                        }
-                        setTimeout(() => completeAuthentication(data.user, data.tokens), 400);
-                        return;
-                    }
-                } catch (e) {}
-                completeAuthentication(cfg.demoUser, null);
-            });
-
-            // One-Click Persona Buttons
-            document.getElementById('btn-quick-owner')?.addEventListener('click', async () => {
-                setRole('owner');
-                document.getElementById('signin-email').value = roleConfig.owner.demoUser.email;
-                document.getElementById('signin-password').value = 'DemoPass123!';
-                try {
-                    if (window.AegisAPI) {
-                        const data = await window.AegisAPI.login(roleConfig.owner.demoUser.email, 'DemoPass123!', 'owner');
-                        if (data.requires_2fa) {
-                            show2FAView(data.temp_token, data.email_masked);
-                            return;
-                        }
-                        completeAuthentication(data.user, data.tokens);
-                        return;
-                    }
-                } catch (e) {}
-                completeAuthentication(roleConfig.owner.demoUser, null);
-            });
-
-            document.getElementById('btn-quick-trustee')?.addEventListener('click', async () => {
-                setRole('trustee');
-                document.getElementById('signin-email').value = roleConfig.trustee.demoUser.email;
-                document.getElementById('signin-password').value = 'DemoPass123!';
-                try {
-                    if (window.AegisAPI) {
-                        const data = await window.AegisAPI.login(roleConfig.trustee.demoUser.email, 'DemoPass123!', 'trustee');
-                        if (data.requires_2fa) {
-                            show2FAView(data.temp_token, data.email_masked);
-                            return;
-                        }
-                        completeAuthentication(data.user, data.tokens);
-                        return;
-                    }
-                } catch (e) {}
-                completeAuthentication(roleConfig.trustee.demoUser, null);
-            });
-
-            document.getElementById('btn-quick-admin')?.addEventListener('click', async () => {
-                setRole('admin');
-                document.getElementById('signin-email').value = roleConfig.admin.demoUser.email;
-                document.getElementById('signin-password').value = 'Admin@123';
-                try {
-                    if (window.AegisAPI) {
-                        const data = await window.AegisAPI.login(roleConfig.admin.demoUser.email, 'Admin@123', 'admin');
-                        if (data.requires_2fa) {
-                            show2FAView(data.temp_token, data.email_masked);
-                            return;
-                        }
-                        completeAuthentication(data.user, data.tokens);
-                        return;
-                    }
-                } catch (e) {}
-                completeAuthentication(roleConfig.admin.demoUser, null);
             });
 
             // URL Params Handling (Invitations, Modes)

@@ -31,7 +31,6 @@
 
     const formSignIn = document.getElementById('form-sign-in');
     const formGetStarted = document.getElementById('form-get-started');
-    const btnPasskeyLogin = document.getElementById('btn-passkey-login');
     const signupPasswordInput = document.getElementById('signup-password');
     const strengthFill = document.getElementById('strength-fill');
 
@@ -231,8 +230,7 @@
                 signinSubmitText: 'Unlock Owner Vault',
                 signupSubmitText: 'Generate Owner Vault',
                 signinSubtitle: 'Enter your credentials to unlock your client-side encrypted vault.',
-                signupSubtitle: 'Create your master key. Zero knowledge. Only you hold the decryption seed.',
-                demoUser: { name: 'Aryan Patel', email: 'aryan.patel@estate.io', role: 'owner' }
+                signupSubtitle: 'Create your master key. Zero knowledge. Only you hold the decryption seed.'
             },
             trustee: {
                 title: 'Designated Trustee',
@@ -241,8 +239,7 @@
                 signinSubmitText: 'Access Trustee Panel',
                 signupSubmitText: 'Register as Verified Trustee',
                 signinSubtitle: 'Enter trustee credentials to inspect assigned vaults & participate in quorum.',
-                signupSubtitle: 'Register your trustee identity to accept shard assignments and participate in recovery.',
-                demoUser: { name: 'Rakesh Patel', email: 'rakesh.patel@trustee-network.org', role: 'trustee' }
+                signupSubtitle: 'Register your trustee identity to accept shard assignments and participate in recovery.'
             },
             admin: {
                 title: 'Administrator',
@@ -251,8 +248,7 @@
                 signinSubmitText: 'Launch Admin Command Center',
                 signupSubmitText: 'Admin Creation Restricted',
                 signinSubtitle: 'Platform administration & system governance.',
-                signupSubtitle: 'Administrator accounts must be provisioned via Django superuser management.',
-                demoUser: { name: 'Admin', email: 'admin123@gmail.com', role: 'admin' }
+                signupSubtitle: 'Administrator accounts must be provisioned via Django superuser management.'
             }
         };
 
@@ -348,22 +344,6 @@
                 }
 
                 showToast('Authentication service unavailable.', 'error');
-            });
-        }
-
-        // Passkey Biometric Login with Panel Routing
-        if (btnPasskeyLogin) {
-            btnPasskeyLogin.addEventListener('click', () => {
-                const cfg = modalRoleConfig[modalActiveRole];
-                localStorage.setItem('aegis_auth_role', modalActiveRole);
-                localStorage.setItem('aegis_user', JSON.stringify(cfg.demoUser));
-
-                showToast(`WebAuthn / Passkey verified for ${cfg.title}. Opening ${cfg.title} Panel...`, 'success');
-                closeModal(modalSignIn);
-
-                setTimeout(() => {
-                    window.location.href = cfg.targetPanel;
-                }, 750);
             });
         }
 

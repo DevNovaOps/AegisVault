@@ -70,7 +70,7 @@ class AdminUserListView(APIView):
         name = request.data.get('name', '').strip()
         email = request.data.get('email', '').strip()
         role = request.data.get('role', 'owner').lower()
-        password = request.data.get('password', 'DemoPass123!')
+        password = request.data.get('password') or User.objects.make_random_password()
         if not email:
             return Response({'error': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
         if User.objects.filter(email=email).exists():
@@ -630,7 +630,7 @@ class AdminTrusteeListView(APIView):
         if not user:
             user = User.objects.create_user(
                 email=email,
-                password='DemoPass123!',
+                password=User.objects.make_random_password(),
                 name=name or email.split('@')[0],
                 role='trustee'
             )

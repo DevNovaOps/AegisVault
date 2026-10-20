@@ -559,27 +559,8 @@
             display: none;
         }
 
-        /* Divider & Passkey */
-        .or-divider-line {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 10.5px;
-            font-weight: 700;
-            color: var(--auth-text-muted);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-        }
-
-        .or-divider-line::before,
-        .or-divider-line::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--auth-border);
-        }
-
-        .btn-passkey-quick {
+        /* Secondary Action Buttons (e.g. Back from 2FA) */
+        .btn-secondary-action {
             width: 100%;
             height: 40px;
             border: 1px solid var(--auth-border);
@@ -597,65 +578,13 @@
             transition: all 0.2s ease;
         }
 
-        body.light-theme .btn-passkey-quick {
+        body.light-theme .btn-secondary-action {
             background: #FFFFFF;
         }
 
-        .btn-passkey-quick:hover {
+        .btn-secondary-action:hover {
             background: rgba(255, 255, 255, 0.06);
             border-color: rgba(255, 255, 255, 0.2);
-            transform: translateY(-1px);
-        }
-
-        /* Quick Persona Chips */
-        .quick-test-section {
-            border-top: 1px solid var(--auth-border);
-            padding-top: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .quick-test-title {
-            font-size: 10.5px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
-            color: var(--auth-text-muted);
-            text-align: center;
-        }
-
-        .quick-chips-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-        }
-
-        .persona-chip {
-            padding: 8px 6px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--auth-border);
-            border-radius: var(--radius-sm);
-            color: var(--auth-text-body);
-            font-family: inherit;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            transition: all 0.2s ease;
-        }
-
-        body.light-theme .persona-chip {
-            background: #F8FAFC;
-        }
-
-        .persona-chip:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.2);
-            color: var(--auth-text-head);
             transform: translateY(-1px);
         }
 
@@ -715,5 +644,4 @@
         @media (max-width: 480px) {
             .auth-card-box { padding: 22px 18px; }
             .role-item-sub { display: none; }
-            .quick-chips-row { grid-template-columns: 1fr; }
         }
