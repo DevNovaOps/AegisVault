@@ -25,29 +25,51 @@ window.AegisReportData = window.AegisReportData || {
     },
     trends: {
         '12days': [
-            { date: 'Oct 02', fullDate: 'October 02, 2026', count: 0 },
-            { date: 'Oct 03', fullDate: 'October 03, 2026', count: 0 },
-            { date: 'Oct 04', fullDate: 'October 04, 2026', count: 0 },
-            { date: 'Oct 05', fullDate: 'October 05, 2026', count: 0 },
-            { date: 'Oct 06', fullDate: 'October 06, 2026', count: 6 },
-            { date: 'Oct 07', fullDate: 'October 07, 2026', count: 10 },
-            { date: 'Oct 08', fullDate: 'October 08, 2026', count: 21 },
             { date: 'Oct 09', fullDate: 'October 09, 2026', count: 0 },
             { date: 'Oct 10', fullDate: 'October 10, 2026', count: 0 },
             { date: 'Oct 11', fullDate: 'October 11, 2026', count: 33 },
-            { date: 'Oct 12', fullDate: 'October 12, 2026', count: 20 },
-            { date: 'Oct 13', fullDate: 'October 13, 2026', count: 7 }
+            { date: 'Oct 12', fullDate: 'October 12, 2026', count: 19 },
+            { date: 'Oct 13', fullDate: 'October 13, 2026', count: 10 },
+            { date: 'Oct 14', fullDate: 'October 14, 2026', count: 19 },
+            { date: 'Oct 15', fullDate: 'October 15, 2026', count: 13 },
+            { date: 'Oct 16', fullDate: 'October 16, 2026', count: 23 },
+            { date: 'Oct 17', fullDate: 'October 17, 2026', count: 35 },
+            { date: 'Oct 18', fullDate: 'October 18, 2026', count: 51 },
+            { date: 'Oct 19', fullDate: 'October 19, 2026', count: 77 },
+            { date: 'Oct 20', fullDate: 'October 20, 2026', count: 22 }
         ],
         '7days': [
-            { date: 'Oct 07', fullDate: 'October 07, 2026', count: 10 },
+            { date: 'Oct 14', fullDate: 'October 14, 2026', count: 19 },
+            { date: 'Oct 15', fullDate: 'October 15, 2026', count: 13 },
+            { date: 'Oct 16', fullDate: 'October 16, 2026', count: 23 },
+            { date: 'Oct 17', fullDate: 'October 17, 2026', count: 35 },
+            { date: 'Oct 18', fullDate: 'October 18, 2026', count: 51 },
+            { date: 'Oct 19', fullDate: 'October 19, 2026', count: 77 },
+            { date: 'Oct 20', fullDate: 'October 20, 2026', count: 22 }
+        ],
+        '30days': [
+            { date: 'Sep 21', fullDate: 'September 21, 2026', count: 0 },
+            { date: 'Sep 23', fullDate: 'September 23, 2026', count: 0 },
+            { date: 'Sep 25', fullDate: 'September 25, 2026', count: 0 },
+            { date: 'Sep 27', fullDate: 'September 27, 2026', count: 0 },
+            { date: 'Sep 29', fullDate: 'September 29, 2026', count: 0 },
+            { date: 'Oct 01', fullDate: 'October 01, 2026', count: 0 },
+            { date: 'Oct 03', fullDate: 'October 03, 2026', count: 0 },
+            { date: 'Oct 05', fullDate: 'October 05, 2026', count: 0 },
+            { date: 'Oct 07', fullDate: 'October 07, 2026', count: 16 },
             { date: 'Oct 08', fullDate: 'October 08, 2026', count: 21 },
-            { date: 'Oct 09', fullDate: 'October 09, 2026', count: 0 },
             { date: 'Oct 10', fullDate: 'October 10, 2026', count: 0 },
             { date: 'Oct 11', fullDate: 'October 11, 2026', count: 33 },
-            { date: 'Oct 12', fullDate: 'October 12, 2026', count: 20 },
-            { date: 'Oct 13', fullDate: 'October 13, 2026', count: 7 }
-        ],
-        '30days': []
+            { date: 'Oct 12', fullDate: 'October 12, 2026', count: 19 },
+            { date: 'Oct 13', fullDate: 'October 13, 2026', count: 10 },
+            { date: 'Oct 14', fullDate: 'October 14, 2026', count: 19 },
+            { date: 'Oct 15', fullDate: 'October 15, 2026', count: 13 },
+            { date: 'Oct 16', fullDate: 'October 16, 2026', count: 23 },
+            { date: 'Oct 17', fullDate: 'October 17, 2026', count: 35 },
+            { date: 'Oct 18', fullDate: 'October 18, 2026', count: 51 },
+            { date: 'Oct 19', fullDate: 'October 19, 2026', count: 77 },
+            { date: 'Oct 20', fullDate: 'October 20, 2026', count: 22 }
+        ]
     },
     reportsByType: [
         { label: 'User Reports', percentage: 72, color: '#2563EB', count: 70 },
@@ -553,7 +575,14 @@ window.AegisReportData = window.AegisReportData || {
             const chartW = width - padding.left - padding.right;
             const chartH = height - padding.top - padding.bottom;
 
-            const maxVal = 50; // Reference chart max is 50
+            const peakCount = Math.max(...pointsData.map(d => d.count || 0), 10);
+            let maxVal = 50;
+            let yTicks = [0, 10, 20, 30, 40, 50];
+            if (peakCount > 50) {
+                maxVal = Math.ceil(peakCount / 20) * 20;
+                const step = maxVal / 5;
+                yTicks = [0, step, step * 2, step * 3, step * 4, maxVal];
+            }
             const minVal = 0;
 
             // Compute coordinates
@@ -584,8 +613,7 @@ window.AegisReportData = window.AegisReportData || {
             const firstCoord = coords[0];
             const areaD = `${pathD} L ${lastCoord.x} ${padding.top + chartH} L ${firstCoord.x} ${padding.top + chartH} Z`;
 
-            // Y-axis grid lines: 0, 10, 20, 30, 40, 50
-            const yTicks = [0, 10, 20, 30, 40, 50];
+            // Y-axis grid lines
             let gridLinesSVG = '';
             yTicks.forEach(tick => {
                 const y = padding.top + chartH - ((tick - minVal) / (maxVal - minVal)) * chartH;
@@ -597,9 +625,10 @@ window.AegisReportData = window.AegisReportData || {
 
             // X-axis labels
             let xLabelsSVG = '';
+            const stepInterval = pointsData.length > 20 ? 4 : (pointsData.length > 10 ? 2 : 1);
             coords.forEach((coord, i) => {
-                // Show every 2nd or key label so they don't overlap
-                if (i % 2 === 0 || i === coords.length - 1) {
+                // Show key labels so they don't overlap
+                if (i % stepInterval === 0 || i === coords.length - 1) {
                     xLabelsSVG += `
                         <text class="chart-axis-label-x" x="${coord.x}" y="${height - 6}">${coord.date}</text>
                     `;

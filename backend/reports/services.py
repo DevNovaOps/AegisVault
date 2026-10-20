@@ -24,8 +24,12 @@ class ReportService:
         total = logs.count() or 1
 
         # Build daily trends timelines (7 days, 12 days, 30 days)
-        daily_qs = logs.annotate(day=TruncDate('timestamp')).values('day').annotate(count=Count('id')).order_by('day')
-        daily_dict = {item['day'].strftime('%Y-%m-%d'): item['count'] for item in daily_qs}
+        from collections import Counter
+        daily_dict = Counter()
+        for ts in logs.values_list('timestamp', flat=True):
+            if ts:
+                local_d = timezone.localtime(ts).date() if timezone.is_aware(ts) else ts.date()
+                daily_dict[local_d.strftime('%Y-%m-%d')] += 1
         today = timezone.now().date()
 
         def build_timeline(num_days):
