@@ -26,7 +26,7 @@ window.AegisHealthData = window.AegisHealthData || {
     overviewMetrics: {
         systemUptime: { title: "System Uptime", value: "99.9%", trend: "Live", trendType: "positive", subtext: "Active Monitoring SLA", icon: "pulse" },
         activeUsers: { title: "Active Users", value: "--", trend: "Live", trendType: "positive", subtext: "Accounts Registered", icon: "users" },
-        storageUsed: { title: "Storage Used", value: "--", percent: 0.02, total: "10.0 GB", progressLabel: "10.0 GB", percentLabel: "0.02%", subtext: "Database Vault Custody", icon: "database" },
+        storageUsed: { title: "Storage Used", value: "--", percent: 0.01, total: "100.0 GB", progressLabel: "100.0 GB", percentLabel: "0.01%", subtext: "Database Vault Custody", icon: "database" },
         cpuUsage: { title: "CPU Usage", value: "--", trend: "Normal", trendType: "positive", subtext: "Multi-Core Cluster", icon: "cpu" },
         memoryUsage: { title: "Memory Usage", value: "--", percent: 0, progressLabel: "-- GB", percentLabel: "--", subtext: "System Memory", icon: "memory" }
     },
@@ -265,10 +265,10 @@ const AegisSystemHealth = {
                         uptime: s.uptime || ((s.uptime_percent || 99.9) + '%'),
                         responseTime: latencyStr,
                         latency: latencyStr,
-                        lastChecked: 'Just now',
-                        version: '2.4.0-prod',
-                        requests: '12,480 req/min',
-                        errorRate: '0.00%',
+                        lastChecked: s.last_checked || 'Just now',
+                        version: s.version || 'v2.4.0',
+                        requests: s.requests || 'Active Node',
+                        errorRate: s.errorRate || '0.00%',
                         description: s.details || `${s.name} is running normally in cluster.`
                     };
                 });
@@ -309,19 +309,20 @@ const AegisSystemHealth = {
                 }
 
                 const storageDisplay = summary?.storage_used || stats?.storage_used || '2.1 MB';
-                const storageQuota = summary?.storage_quota || '10.0 GB';
+                const storageQuota = summary?.storage_quota || '100.0 GB';
                 const elStorage = document.getElementById('kpi-sys-storage');
                 if (elStorage) elStorage.textContent = storageDisplay;
 
                 const storageBytes = summary?.storage_used_bytes || 2204730;
-                const quotaBytes = 10 * 1024 * 1024 * 1024; // 10.0 GB
-                const storagePct = ((storageBytes / quotaBytes) * 100).toFixed(2);
+                const quotaBytes = 100 * 1024 * 1024 * 1024; // 100.0 GB
+                const rawPct = (storageBytes / quotaBytes) * 100;
+                const storagePct = rawPct < 0.01 ? (rawPct > 0 ? '0.01%' : '0.00%') : `${rawPct.toFixed(2)}%`;
                 
                 const elStorageQuota = document.getElementById('kpi-sys-storage-quota');
                 if (elStorageQuota) elStorageQuota.textContent = storageQuota;
 
                 const elStoragePct = document.getElementById('kpi-sys-storage-percent');
-                if (elStoragePct) elStoragePct.textContent = `${storagePct}%`;
+                if (elStoragePct) elStoragePct.textContent = storagePct;
 
                 const elStorageBar = document.getElementById('kpi-sys-storage-bar');
                 if (elStorageBar) elStorageBar.style.width = `${Math.max(4, parseFloat(storagePct))}%`;
@@ -600,7 +601,7 @@ const AegisSystemHealth = {
                             </div>
                         </td>
                         <td>
-                            <span class="status-badge-pill badge-operational">
+                            <span class="status-badge-pill ${s.statusClass || 'badge-operational'}">
                                 <span class="status-badge-dot"></span>
                                 <span>${s.status}</span>
                             </span>

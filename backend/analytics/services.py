@@ -36,14 +36,28 @@ class AnalyticsService:
         }
 
     @staticmethod
-    def get_user_growth(period='6m'):
+    def get_user_growth(period='30d'):
         """User growth chart data matching Admin mockData.userGrowth."""
         from accounts.models import User
 
         now = timezone.now()
         data = {'labels': [], 'values': []}
 
-        if period == '30d':
+        if period == '7d':
+            for i in range(6, -1, -1):
+                day = now - timedelta(days=i)
+                end = day.replace(hour=23, minute=59, second=59) if i > 0 else now
+                count = User.objects.filter(date_joined__lte=end).count()
+                data['labels'].append(day.strftime('%a'))
+                data['values'].append(count)
+        elif period == '90d':
+            for i in range(5, -1, -1):
+                day = now - timedelta(days=i * 18)
+                end = day if i > 0 else now
+                count = User.objects.filter(date_joined__lte=end).count()
+                data['labels'].append(day.strftime('%d %b'))
+                data['values'].append(count)
+        elif period == '30d':
             for i in range(4, -1, -1):
                 start = now - timedelta(days=(i + 1) * 7)
                 end = now - timedelta(days=i * 7) if i > 0 else now
@@ -66,7 +80,7 @@ class AnalyticsService:
         return data
 
     @staticmethod
-    def get_vault_activity(period='6m'):
+    def get_vault_activity(period='30d'):
         """Vault activity chart data matching Admin mockData.vaultActivity."""
         from vaults.models import Vault
         from releases.models import ReleaseRequest
@@ -75,7 +89,38 @@ class AnalyticsService:
         now = timezone.now()
         data = {'labels': [], 'created': [], 'accessed': [], 'released': []}
 
-        if period == '30d':
+        if period == '7d':
+            for i in range(6, -1, -1):
+                day = now - timedelta(days=i)
+                start = day.replace(hour=0, minute=0, second=0)
+                end = day.replace(hour=23, minute=59, second=59) if i > 0 else now
+                created = Vault.objects.filter(created_at__gte=start, created_at__lte=end).count()
+                accessed = AuditLog.objects.filter(
+                    category='vault', timestamp__gte=start, timestamp__lte=end
+                ).count()
+                released = ReleaseRequest.objects.filter(
+                    released_at__gte=start, released_at__lte=end
+                ).count()
+                data['labels'].append(day.strftime('%a'))
+                data['created'].append(created)
+                data['accessed'].append(accessed)
+                data['released'].append(released)
+        elif period == '90d':
+            for i in range(5, -1, -1):
+                start = now - timedelta(days=(i + 1) * 15)
+                end = now - timedelta(days=i * 15) if i > 0 else now
+                created = Vault.objects.filter(created_at__gte=start, created_at__lte=end).count()
+                accessed = AuditLog.objects.filter(
+                    category='vault', timestamp__gte=start, timestamp__lte=end
+                ).count()
+                released = ReleaseRequest.objects.filter(
+                    released_at__gte=start, released_at__lte=end
+                ).count()
+                data['labels'].append((now - timedelta(days=i * 15)).strftime('%d %b'))
+                data['created'].append(created)
+                data['accessed'].append(accessed)
+                data['released'].append(released)
+        elif period == '30d':
             for i in range(4, -1, -1):
                 start = now - timedelta(days=(i + 1) * 7)
                 end = now - timedelta(days=i * 7) if i > 0 else now

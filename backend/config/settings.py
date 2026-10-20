@@ -125,7 +125,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Storage Quota Config
 MAX_UPLOAD_SIZE = config('MAX_UPLOAD_SIZE', default=50 * 1024 * 1024, cast=int) # 50 MB
-STORAGE_QUOTA = config('STORAGE_QUOTA', default=10 * 1024 * 1024 * 1024, cast=int) # 10 GB
+STORAGE_QUOTA = config('STORAGE_QUOTA', default=100 * 1024 * 1024 * 1024, cast=int) # 100 GB
 
 # ─── Default Primary Key ─────────────────────────────────────────────────────
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
