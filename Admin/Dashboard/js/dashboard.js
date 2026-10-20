@@ -32,7 +32,7 @@ window.AegisDashboardData = window.AegisDashboardData || {
         "1y": { labels: ["Q1", "Q2", "Q3", "Q4"], created: [0, 0, 0, 0], accessed: [0, 0, 0, 0], released: [0, 0, 0, 0], min: 0, max: 10, step: 2 }
     },
     systemHealth: [
-        { id: "srv-db", name: "Database (MySQL / MariaDB)", icon: "database", status: "Healthy", statusClass: "healthy", latency: "2ms", uptime: "100.0%", details: "Primary persistence layer responsive." },
+        { id: "srv-db", name: "Database (MySQL)", icon: "database", status: "Healthy", statusClass: "healthy", latency: "2ms", uptime: "100.0%", details: "Primary persistence layer responsive." },
         { id: "srv-app", name: "Django API Core", icon: "server", status: "Healthy", statusClass: "healthy", latency: "8ms", uptime: "99.99%", details: "REST Framework endpoints online with JWT authentication." },
         { id: "srv-crypto", name: "Cryptographic Subsystem", icon: "cpu", status: "Healthy", statusClass: "healthy", latency: "1ms", uptime: "100.0%", details: "AES-256-GCM zero-knowledge encryption modules operational." },
         { id: "srv-email", name: "SMTP Relay", icon: "mail", status: "Healthy", statusClass: "healthy", latency: "14ms", uptime: "99.95%", details: "Transactional verification dispatch service connected." }
@@ -743,7 +743,7 @@ const AegisDashboard = {
                 return;
             }
 
-            const results = AegisDashboardData.searchIndex.filter(item => 
+            const results = AegisDashboardData.searchIndex.filter(item =>
                 item.title.toLowerCase().includes(query) ||
                 item.category.toLowerCase().includes(query) ||
                 item.snippet.toLowerCase().includes(query)
@@ -1300,8 +1300,8 @@ const AegisDashboard = {
         const markAllBtn = document.getElementById('btn-mark-all-read');
         if (!container) return;
 
-        const notifs = (window.AegisDashboardData && Array.isArray(AegisDashboardData.notifications)) 
-            ? AegisDashboardData.notifications 
+        const notifs = (window.AegisDashboardData && Array.isArray(AegisDashboardData.notifications))
+            ? AegisDashboardData.notifications
             : [];
 
         if (notifs.length === 0) {
