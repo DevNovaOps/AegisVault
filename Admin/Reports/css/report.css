@@ -247,7 +247,7 @@
    ========================================================================== */
 .middle-grid-row {
     display: grid;
-    grid-template-columns: 1.7fr 1.15fr 1.15fr;
+    grid-template-columns: minmax(0, 1.7fr) minmax(0, 1.15fr) minmax(0, 1.15fr);
     gap: 1rem;
 }
 
@@ -261,6 +261,7 @@
     flex-direction: column;
     box-shadow: var(--shadow-card);
     transition: var(--transition);
+    min-width: 0;
 }
 
 .chart-card-box:hover,
@@ -585,8 +586,9 @@ body.light-theme .chart-tooltip-box {
    ========================================================================== */
 .bottom-grid-row {
     display: grid;
-    grid-template-columns: 3.8fr 1.2fr;
+    grid-template-columns: minmax(0, 1fr) 290px;
     gap: 1rem;
+    align-items: start;
 }
 
 .table-card-box {
@@ -598,6 +600,8 @@ body.light-theme .chart-tooltip-box {
     flex-direction: column;
     box-shadow: var(--shadow-card);
     transition: var(--transition);
+    min-width: 0;
+    overflow: hidden;
 }
 
 .table-controls-bar {
@@ -883,6 +887,8 @@ body.dark-theme .pill-type-badge.badge-compliance {
     flex-direction: column;
     box-shadow: var(--shadow-card);
     transition: var(--transition);
+    min-width: 0;
+    width: 100%;
 }
 
 .formats-grid-2x2 {
@@ -1171,6 +1177,16 @@ body.dark-theme .pill-type-badge.badge-compliance {
 }
 
 /* Responsive */
+@media (max-width: 1366px) {
+    .bottom-grid-row {
+        grid-template-columns: 1fr;
+    }
+
+    .formats-grid-2x2 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
 @media (max-width: 1200px) {
     .middle-grid-row {
         grid-template-columns: 1fr 1fr;
@@ -1178,10 +1194,6 @@ body.dark-theme .pill-type-badge.badge-compliance {
 
     .middle-grid-row .chart-card-box:first-child {
         grid-column: 1 / -1;
-    }
-
-    .bottom-grid-row {
-        grid-template-columns: 1fr;
     }
 }
 
@@ -1201,6 +1213,10 @@ body.dark-theme .pill-type-badge.badge-compliance {
     .middle-grid-row {
         grid-template-columns: 1fr;
     }
+
+    .formats-grid-2x2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 @media (max-width: 768px) {
@@ -1217,5 +1233,29 @@ body.dark-theme .pill-type-badge.badge-compliance {
         overflow-x: auto;
         width: 100%;
         padding-bottom: 4px;
+    }
+
+    .table-controls-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .table-filters-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .table-search-input {
+        width: 100%;
+    }
+
+    .table-search-input:focus {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .formats-grid-2x2 {
+        grid-template-columns: 1fr;
     }
 }
