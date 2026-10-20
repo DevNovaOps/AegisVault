@@ -351,7 +351,7 @@
                     </div>
 
                     <!-- Card 4: CPU Usage -->
-                    <div class="metric-kpi-card card-cpu" onclick="window.AegisSystemHealth.showToast('CPU load stable (8 vCPU Dedicated Node)', 'info')" title="CPU Cluster Utilization">
+                    <div class="metric-kpi-card card-cpu" id="kpi-card-cpu" onclick="window.AegisSystemHealth.showCpuDetails();" title="Real-time CPU Utilization">
                         <div class="metric-icon-circle">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                                 <rect x="4" y="4" width="16" height="16" rx="2"></rect>
@@ -367,17 +367,17 @@
                             </svg>
                         </div>
                         <div class="metric-content-col">
-                            <div class="metric-number-display" id="kpi-sys-cpu">24%</div>
+                            <div class="metric-number-display" id="kpi-sys-cpu">--</div>
                             <div class="metric-title-trend-row">
                                 <span class="metric-title-text">CPU Usage</span>
                                 <span class="metric-trend-badge badge-cpu-down" id="kpi-sys-cpu-badge">↓ Stable</span>
                             </div>
-                            <span class="metric-subtext-label">8 vCPU Cluster</span>
+                            <span class="metric-subtext-label" id="kpi-sys-cpu-subtext">Multi-Core Cluster</span>
                         </div>
                     </div>
 
                     <!-- Card 5: Memory Usage -->
-                    <div class="metric-kpi-card card-memory" onclick="window.AegisSystemHealth.showToast('Memory allocation: 4.8 GB out of 16 GB dedicated RAM', 'info')" title="Dedicated Memory Allocation">
+                    <div class="metric-kpi-card card-memory" id="kpi-card-memory" onclick="window.AegisSystemHealth.showMemoryDetails();" title="Real-time Dedicated Memory Allocation">
                         <div class="metric-icon-circle">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                                 <rect x="3" y="5" width="18" height="14" rx="2"></rect>
@@ -390,12 +390,12 @@
                             </svg>
                         </div>
                         <div class="metric-content-col">
-                            <div class="metric-number-display" id="kpi-sys-memory">30%</div>
+                            <div class="metric-number-display" id="kpi-sys-memory">--</div>
                             <div class="metric-title-trend-row">
                                 <span class="metric-title-text">Memory Usage</span>
                                 <span class="metric-trend-badge badge-memory-down" id="kpi-sys-memory-badge">↓ Normal</span>
                             </div>
-                            <span class="metric-subtext-label">4.8 GB / 16 GB</span>
+                            <span class="metric-subtext-label" id="kpi-sys-memory-subtext">System Memory</span>
                         </div>
                     </div>
                 </section>
@@ -695,7 +695,7 @@
                 <div class="modal-grid-details">
                     <div class="modal-detail-item">
                         <span class="modal-detail-label">Hardware Architecture</span>
-                        <span class="modal-detail-value">8 vCPU • 16 GB ECC RAM • NVMe Tier 1</span>
+                        <span class="modal-detail-value" id="modal-server-hardware">Multi-Core Host • Dedicated RAM • NVMe Tier 1</span>
                     </div>
                     <div class="modal-detail-item">
                         <span class="modal-detail-label">Primary Region</span>

@@ -23,3 +23,11 @@ class SystemHealthServicesView(APIView):
 
     def get(self, request):
         return Response(SystemHealthService.get_all_services())
+
+
+class SystemHealthTelemetryView(APIView):
+    """GET /api/v1/admin/system-health/telemetry"""
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def get(self, request):
+        return Response(SystemHealthService.get_system_telemetry())
