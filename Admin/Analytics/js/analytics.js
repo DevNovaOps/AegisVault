@@ -22,8 +22,7 @@ window.AegisAnalyticsData = window.AegisAnalyticsData || {
         { id: "metric-users", label: "Total Users", value: "0", numericValue: 0, trend: "Live", trendDirection: "up", trendColor: "green", subtext: "Platform Accounts", icon: "users", themeColor: "#3B82F6" },
         { id: "metric-active-users", label: "Active Vaults", value: "0", numericValue: 0, trend: "Live", trendDirection: "up", trendColor: "green", subtext: "Secured Vaults", icon: "shield", themeColor: "#10B981" },
         { id: "metric-trustees", label: "Total Trustees", value: "0", numericValue: 0, trend: "Live", trendDirection: "up", trendColor: "green", subtext: "Designated Guardians", icon: "users-three", themeColor: "#F59E0B" },
-        { id: "metric-pending", label: "Pending Quorum", value: "0", numericValue: 0, trend: "Live", trendDirection: "up", trendColor: "orange", subtext: "Quorum In Progress", icon: "user-check", themeColor: "#8B5CF6" },
-        { id: "metric-security", label: "Security Events", value: "0", numericValue: 0, trend: "Secure", trendDirection: "down", trendColor: "green", subtext: "Live Telemetry", icon: "alert-triangle", themeColor: "#EF4444" }
+        { id: "metric-pending", label: "Pending Quorum", value: "0", numericValue: 0, trend: "Live", trendDirection: "up", trendColor: "orange", subtext: "Quorum In Progress", icon: "user-check", themeColor: "#8B5CF6" }
     ],
     userGrowth: {
         "30d": { labels: ["W1", "W2", "W3", "W4", "W5"], values: [6, 8, 9, 10, 10], min: 0, max: 12, step: 3, tooltipPoint: { label: "Live", value: "10" }, stats: [{ value: "10", label: "Total Users", color: "green" }, { value: "+4", label: "Period Gain", color: "green" }, { value: "100%", label: "Active Ratio", color: "green" }] },
@@ -36,7 +35,6 @@ window.AegisAnalyticsData = window.AegisAnalyticsData || {
         "90d": { labels: ["06 Aug", "21 Aug", "05 Sep", "20 Sep", "05 Oct", "Today"], series: { personal: [0, 0, 0, 0, 0, 2], family: [0, 0, 0, 0, 5, 45], business: [0, 0, 0, 0, 0, 0] }, max: 50, step: 10, stats: [{ id: "stat-total", icon: "shield-purple", value: "2", label: "Active Vaults", trend: "Live" }, { id: "stat-active", icon: "lock-orange", value: "45", label: "Accessed", trend: "Live" }, { id: "stat-archived", icon: "hourglass-red", value: "0", label: "Released", trend: "Live" }] }
     },
     userDistribution: { totalUsers: 0, totalLabel: "Total Users", segments: [] },
-    securityOverview: { "30d": [] },
     systemUsageTrends: {
         "30d": {
             ySteps: [0, 25, 50, 75, 100],
@@ -121,7 +119,6 @@ window.AegisAnalyticsData = window.AegisAnalyticsData || {
         donutCenterTotal: document.getElementById("donut-center-total"),
         donutLegendContainer: document.getElementById("donut-legend-container"),
         geoStatsContainer: document.getElementById("geo-stats-container"),
-        secMiniGrid: document.getElementById("sec-mini-grid"),
         selectUsagePeriod: document.getElementById("select-usage-period"),
         systemUsageContainer: document.getElementById("system-usage-chart-container"),
         activityTableBody: document.getElementById("activity-table-body"),
@@ -534,51 +531,6 @@ window.AegisAnalyticsData = window.AegisAnalyticsData || {
     }
 
     /* ==========================================================================
-       8. Security Overview (4 Mini Cards matching reference screenshot)
-       ========================================================================== */
-    function renderSecurityOverview() {
-        if (!elements.secMiniGrid || !AegisAnalyticsData.securityOverview) return;
-
-        const items = AegisAnalyticsData.securityOverview["30d"] || [];
-        elements.secMiniGrid.innerHTML = items.map((item, idx) => {
-            let iconSvg = "";
-            let cardThemeClass = "card-sec-red";
-
-            if (idx === 0) {
-                cardThemeClass = "card-sec-red";
-                iconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>';
-            } else if (idx === 1) {
-                cardThemeClass = "card-sec-orange";
-                iconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>';
-            } else if (idx === 2) {
-                cardThemeClass = "card-sec-green";
-                iconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>';
-            } else if (idx === 3) {
-                cardThemeClass = "card-sec-blue";
-                iconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
-            }
-
-            let trendColorStyle = "color: #10B981;";
-            if (idx === 0 || idx === 1) {
-                trendColorStyle = "color: #EF4444;";
-            } else if (idx === 2) {
-                trendColorStyle = "color: var(--text-muted);";
-            }
-
-            return `
-                <div class="sec-kpi-item ${cardThemeClass}" title="${item.label}: ${item.value}">
-                    <div class="sec-icon-circle">
-                        ${iconSvg}
-                    </div>
-                    <div class="sec-kpi-num">${item.value}</div>
-                    <div class="sec-kpi-title">${item.label}</div>
-                    <div class="sec-kpi-trend" style="${trendColorStyle}">${item.trend}</div>
-                </div>
-            `;
-        }).join("");
-    }
-
-    /* ==========================================================================
        9. Pure SVG Chart 4: System Usage Trends (Multi-series Lines)
        ========================================================================== */
     function renderSystemUsageTrends(period = state.usagePeriod) {
@@ -967,7 +919,6 @@ window.AegisAnalyticsData = window.AegisAnalyticsData || {
             vaultStatistics: AegisAnalyticsData.vaultStatistics,
             userDistribution: AegisAnalyticsData.userDistribution,
             geographicDistribution: AegisAnalyticsData.geographicDistribution,
-            securityOverview: AegisAnalyticsData.securityOverview,
             systemUsageTrends: AegisAnalyticsData.systemUsageTrends,
             recentActivity: AegisAnalyticsData.recentActivity
         };
@@ -1068,14 +1019,6 @@ window.AegisAnalyticsData = window.AegisAnalyticsData || {
             });
         }
 
-        // Security Overview Period
-        const selectSec = document.getElementById("select-sec-period");
-        if (selectSec) {
-            selectSec.addEventListener("change", (e) => {
-                showToast(`Security Overview filtered for ${e.target.selectedOptions[0].text}`, "info");
-            });
-        }
-
         // Geographic Country Filter
         const selectGeo = document.getElementById("select-geo-country");
         if (selectGeo) {
@@ -1169,29 +1112,8 @@ window.AegisAnalyticsData = window.AegisAnalyticsData || {
                         subtext: "Quorum In Progress",
                         icon: "user-check",
                         themeColor: "#8B5CF6"
-                    },
-                    {
-                        id: "metric-security",
-                        label: "Security Events",
-                        value: String(overview.security_events ?? 4),
-                        numericValue: overview.security_events ?? 4,
-                        trend: (overview.security_events > 0) ? "Alert" : "Secure",
-                        trendDirection: (overview.security_events > 0) ? "up" : "down",
-                        trendColor: (overview.security_events > 0) ? "red" : "green",
-                        subtext: "Live Telemetry",
-                        icon: "alert-triangle",
-                        themeColor: "#EF4444"
                     }
                 ];
-
-                if (AegisAnalyticsData.securityOverview && AegisAnalyticsData.securityOverview["30d"]) {
-                    AegisAnalyticsData.securityOverview["30d"] = [
-                        { value: String(overview.security_events ?? 4), label: "Security Events", trend: "Live Audited" },
-                        { value: "0", label: "Failed Logins", trend: "Zero Critical" },
-                        { value: "0", label: "Data Breaches", trend: "0%" },
-                        { value: String(logs.length || 97), label: "Audit Actions", trend: "↑ Verified" }
-                    ];
-                }
             }
 
             if (userRoles && userRoles.segments && window.AegisAnalyticsData) {
@@ -1331,7 +1253,6 @@ window.AegisAnalyticsData = window.AegisAnalyticsData || {
 
         // Render Static & Telemetry Content
         renderOverviewMetrics();
-        renderSecurityOverview();
         renderRecentActivityTable();
 
         // Render Pure SVG Charts with Live DB Data

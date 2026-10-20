@@ -9,8 +9,8 @@
    ========================================================================== */
 .overview-kpi-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 1rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
 }
 
 .kpi-card {
@@ -567,162 +567,13 @@ body.dark-theme .chart-floating-tooltip {
 }
 
 /* ==========================================================================
-   9. Row 3: Security Overview, System Usage, Recent Activity
+   9. Row 3: System Usage Trends, Recent Activity
    ========================================================================== */
 .analytics-bottom-grid {
     display: grid;
-    grid-template-columns: 1fr 1.55fr 1.15fr;
+    grid-template-columns: 1.35fr 1fr;
     gap: 1.25rem;
     align-items: stretch;
-}
-
-/* Security Overview Card */
-#sec-overview-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-}
-
-#sec-overview-card .security-mini-grid {
-    flex: 1;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.65rem;
-    align-items: stretch;
-    margin-top: 0.85rem;
-}
-
-.sec-kpi-item {
-    border-radius: var(--radius-md);
-    padding: 1.2rem 0.5rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    transition: var(--transition);
-}
-
-.sec-kpi-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-/* Light Mode Pastel Tint Cards matching reference screenshot */
-.card-sec-red {
-    background-color: #FEF2F2;
-    border: 1px solid #FEE2E2;
-}
-
-.card-sec-red .sec-icon-circle {
-    background-color: #FEE2E2;
-    color: #EF4444;
-}
-
-.card-sec-orange {
-    background-color: #FFFBEB;
-    border: 1px solid #FEF3C7;
-}
-
-.card-sec-orange .sec-icon-circle {
-    background-color: #FEF3C7;
-    color: #F59E0B;
-}
-
-.card-sec-green {
-    background-color: #ECFDF5;
-    border: 1px solid #D1FAE5;
-}
-
-.card-sec-green .sec-icon-circle {
-    background-color: #D1FAE5;
-    color: #10B981;
-}
-
-.card-sec-blue {
-    background-color: #EFF6FF;
-    border: 1px solid #DBEAFE;
-}
-
-.card-sec-blue .sec-icon-circle {
-    background-color: #DBEAFE;
-    color: #3B82F6;
-}
-
-/* Dark Mode Tint Cards */
-body.dark-theme .card-sec-red {
-    background-color: rgba(239, 68, 68, 0.08);
-    border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
-body.dark-theme .card-sec-red .sec-icon-circle {
-    background-color: rgba(239, 68, 68, 0.2);
-    color: #F87171;
-}
-
-body.dark-theme .card-sec-orange {
-    background-color: rgba(245, 158, 11, 0.08);
-    border: 1px solid rgba(245, 158, 11, 0.2);
-}
-
-body.dark-theme .card-sec-orange .sec-icon-circle {
-    background-color: rgba(245, 158, 11, 0.2);
-    color: #FBBF24;
-}
-
-body.dark-theme .card-sec-green {
-    background-color: rgba(16, 185, 129, 0.08);
-    border: 1px solid rgba(16, 185, 129, 0.2);
-}
-
-body.dark-theme .card-sec-green .sec-icon-circle {
-    background-color: rgba(16, 185, 129, 0.2);
-    color: #34D399;
-}
-
-body.dark-theme .card-sec-blue {
-    background-color: rgba(59, 130, 246, 0.08);
-    border: 1px solid rgba(59, 130, 246, 0.2);
-}
-
-body.dark-theme .card-sec-blue .sec-icon-circle {
-    background-color: rgba(59, 130, 246, 0.2);
-    color: #60A5FA;
-}
-
-.sec-icon-circle {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 0.6rem;
-    flex-shrink: 0;
-}
-
-.sec-icon-circle svg {
-    width: 18px;
-    height: 18px;
-}
-
-.sec-kpi-num {
-    font-size: 1.45rem;
-    font-weight: 800;
-    color: var(--text-heading);
-    line-height: 1.1;
-}
-
-.sec-kpi-title {
-    font-size: 0.72rem;
-    color: var(--text-secondary);
-    margin: 4px 0 6px 0;
-    white-space: nowrap;
-}
-
-.sec-kpi-trend {
-    font-size: 0.72rem;
-    font-weight: 700;
 }
 
 /* System Usage Multi-line Chart Legend */
@@ -938,7 +789,8 @@ body.dark-theme .card-sec-blue .sec-icon-circle {
    ========================================================================== */
 @media (max-width: 1440px) {
     .overview-kpi-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
     }
 
     .analytics-main-grid {
@@ -952,11 +804,13 @@ body.dark-theme .card-sec-blue .sec-icon-circle {
     }
 
     .analytics-bottom-grid {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1.35fr 1fr;
     }
+}
 
-    .activity-card-content {
-        grid-column: span 2;
+@media (max-width: 1100px) {
+    .overview-kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
@@ -978,10 +832,6 @@ body.dark-theme .card-sec-blue .sec-icon-circle {
         grid-template-columns: 1fr;
     }
 
-    .activity-card-content {
-        grid-column: span 1;
-    }
-
     .hero-center-col {
         display: none;
     }
@@ -992,10 +842,6 @@ body.dark-theme .card-sec-blue .sec-icon-circle {
         grid-template-columns: 1fr;
     }
 
-    .security-mini-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
     .hero-card {
         min-height: 260px;
         padding: 1.5rem 1.25rem;
@@ -1003,5 +849,4 @@ body.dark-theme .card-sec-blue .sec-icon-circle {
         align-items: flex-start;
         gap: 1rem;
     }
-
 }
