@@ -2427,6 +2427,40 @@ body.light-theme .video-brand-shield .brand-logo-light {
     margin-left: 3px;
 }
 
+/* ── Themed Video Elements ────────────────────────── */
+.aegis-themed-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 0;
+    background: #000;
+}
+
+/* Dark theme video: visible by default */
+.aegis-video-dark  { display: block; }
+/* Light theme video: hidden by default */
+.aegis-video-light { display: none; }
+
+/* Swap when light theme is active */
+[data-theme="light"] .aegis-video-dark,
+body.light-theme     .aegis-video-dark  { display: none;  }
+[data-theme="light"] .aegis-video-light,
+body.light-theme     .aegis-video-light { display: block; }
+
+/* Light theme: brighten the modal card */
+[data-theme="light"] .modal-video-overlay .video-modal-card,
+body.light-theme     .modal-video-overlay .video-modal-card {
+    background: #f5f0e8;
+    border-color: rgba(0, 0, 0, 0.12);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+[data-theme="light"] .video-close-btn,
+body.light-theme     .video-close-btn {
+    color: #1a1a1a;
+    background: rgba(0, 0, 0, 0.1);
+}
+
 /* ==========================================================================
    16. TOAST NOTIFICATIONS
    ========================================================================== */

@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support — Help Center, Privacy, Terms & Docs | AegisVault</title>
+    <meta name="description" content="AegisVault Protocol Support — Searchable knowledge base, FAQs, Privacy Policy, Terms of Service, and Developer Documentation.">
+    <meta name="theme-color" content="#050B14">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Favicon & Brand Icons -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/logo/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/logo/favicon-16x16.png">
+
+    <!-- Immediate Zero-Flash Theme Initializer -->
+    <script>
+        (function() {
+            var params = new URLSearchParams(window.location.search);
+            var queryTheme = params.get('theme');
+            var savedTheme = localStorage.getItem('aegisvault_theme');
+            var theme = queryTheme || savedTheme || 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+            if (theme === 'light') {
+                document.documentElement.classList.add('light-theme');
+            } else {
+                document.documentElement.classList.add('dark-theme');
+            }
+        })();
+    </script>
+
+    <!-- Main Core Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        /* ── Support Page Custom Styles (Inherits CSS Tokens) ── */
+        .page-hero {
+            padding: 130px 24px 60px;
+            text-align: center;
+            position: relative;
+            background: radial-gradient(circle at 50% 20%, rgba(244, 90, 31, 0.12) 0%, transparent 65%);
+        }
+        .page-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: var(--brand-orange-soft);
+            border: 1px solid rgba(244, 90, 31, 0.3);
+            border-radius: var(--radius-pill);
+            color: var(--brand-orange);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        .page-title {
+            font-size: clamp(32px, 5vw, 52px);
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1.15;
+            margin-bottom: 18px;
+            letter-spacing: -0.5px;
+        }
+        .page-title .accent-orange {
+            color: var(--brand-orange);
+            background: linear-gradient(135deg, #F45A1F 0%, #FF7A2F 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .page-subtitle {
+            font-size: clamp(16px, 2vw, 19px);
+            color: var(--text-secondary);
+            max-width: 680px;
+            margin: 0 auto 36px;
+            line-height: 1.6;
+        }
+
+        /* ── Section Navigation Tab Bar ── */
+        .section-tabs-nav {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 6px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-pill);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            overflow-x: auto;
+        }
+        .section-tab-btn {
+            padding: 10px 22px;
+            border-radius: var(--radius-pill);
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .section-tab-btn:hover {
+            color: var(--text-primary);
+        }
+        .section-tab-btn.active {
+            background: var(--brand-orange);
+            color: #FFFFFF;
+            box-shadow: 0 4px 16px var(--brand-orange-glow);
+        }
+
+        /* ── Content Sections Container ── */
+        .page-content-wrapper {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 40px var(--container-padding) 100px;
+        }
+
+        .support-panel {
+            display: none;
+            animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .support-panel.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── FAQ Search Box ── */
+        .faq-search-wrapper {
+            max-width: 680px;
+            margin: 0 auto 36px;
+            position: relative;
+        }
+        .faq-search-input {
+            width: 100%;
+            padding: 16px 20px 16px 50px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-pill);
+            color: var(--text-primary);
+            font-size: 15px;
+            backdrop-filter: blur(10px);
+            transition: all var(--transition-fast);
+        }
+        .faq-search-input:focus {
+            outline: none;
+            border-color: var(--brand-orange);
+            box-shadow: 0 0 0 3px var(--brand-orange-soft);
+        }
+        .faq-search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        /* ── FAQ Accordion ── */
+        .faq-list {
+            max-width: 860px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .faq-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: all var(--transition-fast);
+        }
+        .faq-item:hover {
+            border-color: var(--border-hover);
+        }
+        .faq-question {
+            width: 100%;
+            padding: 20px 24px;
+            background: transparent;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-primary);
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: left;
+            transition: color var(--transition-fast);
+        }
+        .faq-question:hover {
+            color: var(--brand-orange);
+        }
+        .faq-icon-arrow {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.28s ease;
+            color: var(--brand-orange);
+            flex-shrink: 0;
+        }
+        .faq-item.open .faq-icon-arrow {
+            transform: rotate(180deg);
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1), padding 0.3s ease;
+            padding: 0 24px;
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        .faq-item.open .faq-answer {
+            max-height: 400px;
+            padding: 0 24px 22px;
+        }
+
+        /* ── Legal & Policy Document Layout ── */
+        .legal-document-card {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius-xl);
+            padding: 44px;
+            backdrop-filter: blur(16px);
+        }
+        @media (max-width: 768px) {
+            .legal-document-card { padding: 24px; }
+        }
+        .legal-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+        .legal-section-block {
+            margin-bottom: 32px;
+        }
+        .legal-section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .legal-section-title .section-num {
+            color: var(--brand-orange);
+            font-family: var(--font-mono);
+            font-size: 16px;
+        }
+        .legal-paragraph {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.75;
+            margin-bottom: 12px;
+        }
+        .legal-list {
+            padding-left: 20px;
+            margin: 14px 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        /* ── Documentation Layout ── */
+        .docs-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 36px;
+            align-items: start;
+        }
+        @media (max-width: 900px) {
+            .docs-grid { grid-template-columns: 1fr; }
+            .docs-sidebar { display: none; }
+        }
+        .docs-sidebar {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            position: sticky;
+            top: 90px;
+        }
+        .docs-nav-group-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 800;
+            color: var(--brand-orange);
+            margin-bottom: 10px;
+            margin-top: 14px;
+        }
+        .docs-nav-group-title:first-child { margin-top: 0; }
+        .docs-nav-link {
+            display: block;
+            padding: 7px 12px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-fast);
+        }
+        .docs-nav-link:hover, .docs-nav-link.active {
+            background: var(--brand-orange-soft);
+            color: var(--brand-orange);
+            font-weight: 600;
+        }
+        .docs-content-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius-xl);
+            padding: 40px;
+        }
+        .code-snippet {
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: #38BDF8;
+            margin: 16px 0;
+            overflow-x: auto;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Glows -->
+    <div class="ambient-glow ambient-glow-1"></div>
+    <div class="ambient-glow ambient-glow-2"></div>
+
+    <!-- Header Navigation -->
+    <header class="main-header" id="navbar" role="banner">
+        <div class="nav-container">
+            <a href="index.html" class="brand-wrapper" aria-label="AegisVault Home">
+                <div class="brand-shield-icon">
+                    <img src="assets/logo/ageis_dark.png" alt="AegisVault Shield" class="brand-logo-dark">
+                    <img src="assets/logo/ageis_light.png" alt="AegisVault Shield" class="brand-logo-light">
+                </div>
+                <div class="brand-text-col">
+                    <span class="brand-title">AegisVault</span>
+                    <span class="brand-subtitle">What matters, lives on.</span>
+                </div>
+            </a>
+
+            <nav class="nav-links-center" aria-label="Primary Navigation">
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="index.html#hero" class="nav-link">Home</a></li>
+                    <li class="nav-item"><a href="index.html#how-it-works" class="nav-link">How It Works</a></li>
+                    <li class="nav-item"><a href="index.html#features" class="nav-link">Features</a></li>
+                    <li class="nav-item"><a href="index.html#security" class="nav-link">Security</a></li>
+                    <li class="nav-item"><a href="company.html#about" class="nav-link">Company</a></li>
+                    <li class="nav-item"><a href="support.html#help" class="nav-link active">Support</a></li>
+                </ul>
+            </nav>
+
+            <div class="nav-actions-right">
+                <button class="theme-toggle-btn" id="theme-toggle" aria-label="Toggle light and dark theme" title="Toggle theme">
+                    <div class="theme-toggle-track">
+                        <span class="theme-icon theme-icon-sun" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="5"></circle>
+                                <line x1="12" y1="1" x2="12" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="23"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="1" y1="12" x2="3" y2="12"></line>
+                                <line x1="21" y1="12" x2="23" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                        </span>
+                        <span class="theme-icon theme-icon-moon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
+                        </span>
+                        <div class="theme-toggle-thumb"></div>
+                    </div>
+                </button>
+
+                <a href="auth.html?mode=signin" class="btn btn-ghost" id="btn-sign-in">Sign In</a>
+                <a href="auth.html?mode=signup" class="btn btn-primary btn-nav-cta" id="btn-get-started">
+                    <span>Get Started</span>
+                    <span class="btn-arrow" aria-hidden="true">→</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="page-hero">
+        <div class="page-badge">
+            <span class="pulse-dot"></span>
+            <span>Knowledge Base &amp; Protocol Assistance</span>
+        </div>
+        <h1 class="page-title">AegisVault <span class="accent-orange">Support Center</span></h1>
+        <p class="page-subtitle">Access comprehensive user guides, searchable FAQs, legal policies, and technical protocol specifications.</p>
+
+        <!-- Interactive Tabs Bar -->
+        <div class="section-tabs-nav" role="tablist">
+            <button class="section-tab-btn active" data-tab="help" role="tab" aria-selected="true">Help Center &amp; FAQ</button>
+            <button class="section-tab-btn" data-tab="privacy" role="tab" aria-selected="false">Privacy Policy</button>
+            <button class="section-tab-btn" data-tab="terms" role="tab" aria-selected="false">Terms of Service</button>
+            <button class="section-tab-btn" data-tab="docs" role="tab" aria-selected="false">Documentation</button>
+        </div>
+    </section>
+
+    <!-- Main Content Wrapper -->
+    <main class="page-content-wrapper">
+
+        <!-- TAB 1: HELP CENTER & FAQ -->
+        <div class="support-panel active" id="panel-help" role="tabpanel">
+            <!-- Search Box -->
+            <div class="faq-search-wrapper">
+                <svg class="faq-search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="faq-search" class="faq-search-input" placeholder="Search questions, keywords (e.g. heartbeat, trustees, shards)..." aria-label="Search FAQs">
+            </div>
+
+            <!-- Accordion FAQ Items -->
+            <div class="faq-list" id="faq-list">
+                <!-- Item 1 -->
+                <div class="faq-item open">
+                    <button class="faq-question" type="button" aria-expanded="true">
+                        <span>How does the Dead-Man's Switch Heartbeat protocol function?</span>
+                        <svg class="faq-icon-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>The Dead-Man's Switch operates on user-configured intervals (e.g. every 30, 90, or 180 days). You check in simply by logging in, confirming via email/SMS, or tapping a biometric WebAuthn prompt. If a check-in is missed, AegisVault initiates a multi-stage grace period (with escalation pings to your private emergency channels) before release protocols can be invoked by trustees.</p>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="faq-item">
+                    <button class="faq-question" type="button" aria-expanded="false">
+                        <span>What is Shamir's Secret Sharing (M-of-N Threshold)?</span>
+                        <svg class="faq-icon-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Shamir's Secret Sharing mathematically splits your Master Decryption Key into N distinct encrypted shards (e.g., 3 shards). You set a threshold M (e.g., 2 shards). No single trustee holds enough data to unlock your vault alone. Reconstruction is mathematically impossible until at least M authorized trustees collaborate and submit their cryptographic shards.</p>
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="faq-item">
+                    <button class="faq-question" type="button" aria-expanded="false">
+                        <span>Can AegisVault employees or cloud providers read my data?</span>
+                        <svg class="faq-icon-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>No. AegisVault is built on a strict Zero-Knowledge architecture. All encryption occurs client-side in your browser or device using AES-256-GCM before payload transmission. We store only ciphertext and encrypted cryptographic shards. Plaintext data and master keys never touch our servers.</p>
+                    </div>
+                </div>
+
+                <!-- Item 4 -->
+                <div class="faq-item">
+                    <button class="faq-question" type="button" aria-expanded="false">
+                        <span>What happens if one of my designated trustees loses their shard?</span>
+                        <svg class="faq-icon-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Because of the M-of-N threshold property (e.g. 2-of-3 or 3-of-5), a single lost shard does not compromise recovery. As long as the minimum threshold M trustees submit their valid shards, your vault can be fully reconstructed. In addition, vault owners can re-shard and rotate trustee keys at any time from the Owner Dashboard.</p>
+                    </div>
+                </div>
+
+                <!-- Item 5 -->
+                <div class="faq-item">
+                    <button class="faq-question" type="button" aria-expanded="false">
+                        <span>What digital asset types can be deposited into a vault?</span>
+                        <svg class="faq-icon-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>You can safeguard cryptocurrency seed phrases (BIP-39 mnemonic seeds), private keys, password manager master credentials, digital identity certificates, scanned legal deeds/wills, family letters, and arbitrary encrypted document archives up to your storage quota.</p>
+                    </div>
+                </div>
+
+                <!-- Item 6 -->
+                <div class="faq-item">
+                    <button class="faq-question" type="button" aria-expanded="false">
+                        <span>How can I reach emergency technical support?</span>
+                        <svg class="faq-icon-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>For urgent custody or trustee verification issues, contact our 24/7 SecOps Desk at <a href="mailto:support@aegisvault.io" style="color: var(--brand-orange); font-weight: 700;">support@aegisvault.io</a> or submit an inquiry through the <a href="company.html#contact" style="color: var(--brand-orange); font-weight: 700;">Company Contact Form</a>. Enterprise accounts receive dedicated SLA phone routing.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: PRIVACY POLICY -->
+        <div class="support-panel" id="panel-privacy" role="tabpanel">
+            <div class="legal-document-card">
+                <div class="legal-meta-row">
+                    <span>EFFECTIVE DATE: OCTOBER 21, 2026</span>
+                    <span>GDPR &amp; CCPA ZERO-KNOWLEDGE COMPLIANT</span>
+                </div>
+
+                <div class="legal-section-block">
+                    <h3 class="legal-section-title"><span class="section-num">01.</span> Zero-Knowledge Commitment</h3>
+                    <p class="legal-paragraph">AegisVault ("Protocol", "we", "us") operates under a strict Zero-Knowledge paradigm. All digital assets, files, credentials, and cryptographic shares stored within your vaults are encrypted client-side using authenticated AES-256-GCM. We possess neither the mathematical capability nor the architectural keys to decrypt, inspect, or disclose your plaintext vault contents.</p>
+                </div>
+
+                <div class="legal-section-block">
+                    <h3 class="legal-section-title"><span class="section-num">02.</span> Telemetry &amp; Account Data</h3>
+                    <p class="legal-paragraph">To maintain the autonomous heartbeat protocol and deliver notifications, we process minimal operational metadata:</p>
+                    <ul class="legal-list">
+                        <li>Account email addresses and optional phone numbers for heartbeat verification pings.</li>
+                        <li>Public cryptographic identity keys (WebAuthn credentials and public shard handles).</li>
+                        <li>System logs recording check-in timestamps, threshold fulfillment events, and node health telemetry.</li>
+                    </ul>
+                </div>
+
+                <div class="legal-section-block">
+                    <h3 class="legal-section-title"><span class="section-num">03.</span> Data Retention &amp; Erasure</h3>
+                    <p class="legal-paragraph">You retain absolute mathematical sovereignty over your vault records. If you execute a "Vault Purge" from the Owner Command Center, ciphertext payloads, cryptographic shares, and associated metadata are immediately overwritten and permanently erased using cryptographic multi-pass zeroization standards.</p>
+                </div>
+
+                <div class="legal-section-block">
+                    <h3 class="legal-section-title"><span class="section-num">04.</span> Third-Party Disclosure</h3>
+                    <p class="legal-paragraph">Because we do not store plaintext encryption keys, subpoena requests or government inquiries cannot compel plaintext revelation of your stored assets. We do not sell, rent, or monetize personal telemetry under any circumstances.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: TERMS OF SERVICE -->
+        <div class="support-panel" id="panel-terms" role="tabpanel">
+            <div class="legal-document-card">
+                <div class="legal-meta-row">
+                    <span>REVISION: V4.2 ENTERPRISE</span>
+                    <span>AUTONOMOUS CUSTODY AGREEMENT</span>
+                </div>
+
+                <div class="legal-section-block">
+                    <h3 class="legal-section-title"><span class="section-num">01.</span> Non-Custodial Architecture</h3>
+                    <p class="legal-paragraph">AegisVault is a non-custodial cryptographic management protocol. You maintain primary responsibility for the preservation of your account authentication credentials, emergency recovery codes, and trustee appointments. AegisVault does not act as a traditional fiduciary or financial depository.</p>
+                </div>
+
+                <div class="legal-section-block">
+                    <h3 class="legal-section-title"><span class="section-num">02.</span> Heartbeat &amp; Release Conditions</h3>
+                    <p class="legal-paragraph">By setting heartbeat intervals, you explicitly authorize the AegisVault automated release engine to dispatch threshold claims to your designated trustees upon the expiration of your configured check-in grace period. You agree to maintain active communication channels to prevent unintentional trigger execution.</p>
+                </div>
+
+                <div class="legal-section-block">
+                    <h3 class="legal-section-title"><span class="section-num">03.</span> Trustee Fiduciary Conduct</h3>
+                    <p class="legal-paragraph">Designated trustees must independently satisfy any identity verification standards established by the vault owner. AegisVault enforces mathematical threshold compliance ($M\text{-of-}N$) but is not liable for interpersonal disputes among appointed trustees.</p>
+                </div>
+
+                <div class="legal-section-block">
+                    <h3 class="legal-section-title"><span class="section-num">04.</span> Limitation of Liability</h3>
+                    <p class="legal-paragraph">To the maximum extent permitted by applicable law, AegisVault shall not be liable for losses resulting from lost user credentials, forgotten passwords, compromised hardware keys, or failure of trustees to claim and reconstruct shards within specified timeframes.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: TECHNICAL DOCUMENTATION -->
+        <div class="support-panel" id="panel-docs" role="tabpanel">
+            <div class="docs-grid">
+                <!-- Sidebar -->
+                <div class="docs-sidebar">
+                    <div class="docs-nav-group-title">Architecture</div>
+                    <a href="#sec-crypto" class="docs-nav-link active">Cryptographic Spec</a>
+                    <a href="#sec-heartbeat" class="docs-nav-link">Heartbeat Ping API</a>
+                    <a href="#sec-trustees" class="docs-nav-link">Shamir M-of-N Sharding</a>
+                    <div class="docs-nav-group-title">Integration</div>
+                    <a href="#sec-api" class="docs-nav-link">REST Endpoints</a>
+                    <a href="#sec-webhooks" class="docs-nav-link">Webhook Events</a>
+                    <a href="#sec-secops" class="docs-nav-link">SecOps Telemetry</a>
+                </div>
+
+                <!-- Main Content -->
+                <div class="docs-content-card">
+                    <h2 style="font-size: 26px; color: var(--text-primary); margin-bottom: 8px;">Technical Protocol Specification</h2>
+                    <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 24px;">Complete mathematical and architectural reference for AegisVault custody workflows.</p>
+
+                    <section id="sec-crypto" style="margin-bottom: 36px;">
+                        <h3 style="font-size: 19px; color: var(--brand-orange); margin-bottom: 8px;">1. Client-Side Encryption (AES-256-GCM)</h3>
+                        <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.6;">Every payload is encrypted using a unique 256-bit symmetric data key generated via cryptographically secure pseudo-random numbers (CSPRNG). The master key is derived with Argon2id using salt length $\ge 128$ bits.</p>
+                        <div class="code-snippet">
+// Cryptographic Initialization Vector (IV) & Cipher Spec:
+Cipher: AES-256-GCM (Galois/Counter Mode)
+IV Length: 96 bits (12 bytes) CSPRNG unique per encryption
+Auth Tag: 128 bits authenticated integrity verification
+Key Derivation: Argon2id (m=64MB, t=4, p=4)
+                        </div>
+                    </section>
+
+                    <section id="sec-heartbeat" style="margin-bottom: 36px;">
+                        <h3 style="font-size: 19px; color: var(--brand-orange); margin-bottom: 8px;">2. Heartbeat Ping Endpoint</h3>
+                        <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.6;">Owners can automate heartbeats via CLI scripts, hardware tokens, or curl triggers with JWT authentication:</p>
+                        <div class="code-snippet">
+POST /api/v1/owner/heartbeat/ping/ HTTP/1.1
+Host: aegisvault.io
+Authorization: Bearer &lt;aegis_access_token&gt;
+Content-Type: application/json
+
+{
+  "client_timestamp": "2026-10-21T17:00:00Z",
+  "client_signature": "0x4a9b...ed25519"
+}
+
+// Response: HTTP 200 OK
+{
+  "status": "HEARTBEAT_RECORDED",
+  "next_check_in_due": "2026-11-20T17:00:00Z",
+  "grace_period_days": 14
+}
+                        </div>
+                    </section>
+
+                    <section id="sec-trustees">
+                        <h3 style="font-size: 19px; color: var(--brand-orange); margin-bottom: 8px;">3. Shamir M-of-N Reconstruction</h3>
+                        <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.6;">Secret sharing polynomials are evaluated over the Galois Field $GF(2^8)$. Given polynomial $f(x) = a_0 + a_1 x + \dots + a_{M-1} x^{M-1}$ where $a_0$ is the Master Secret, Lagrange interpolation reconstructs $f(0)$ with any $M$ coordinates $(x_i, y_i)$.</p>
+                        <div class="code-snippet">
+f(0) = \sum_{j=1}^{M} y_j \prod_{k \neq j} \frac{x_k}{x_k - x_j} \pmod{P(x)}
+Threshold Condition: |Shares_submitted| >= M
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer" role="contentinfo">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand-col">
+                    <a href="index.html" class="brand-wrapper" aria-label="AegisVault Home">
+                        <div class="brand-shield-icon">
+                            <img src="assets/logo/ageis_dark.png" alt="AegisVault Shield" class="brand-logo-dark">
+                            <img src="assets/logo/ageis_light.png" alt="AegisVault Shield" class="brand-logo-light">
+                        </div>
+                        <div class="brand-text-col">
+                            <span class="brand-title">AegisVault</span>
+                            <span class="brand-subtitle">What matters, lives on.</span>
+                        </div>
+                    </a>
+                    <p class="footer-brand-tagline">Automated Time-Locked Digital Asset &amp; Legacy Custody Protocol.</p>
+                </div>
+
+                <div class="footer-links-col">
+                    <h5 class="footer-col-title">Product</h5>
+                    <ul class="footer-link-list">
+                        <li><a href="index.html#features" class="footer-link">Features</a></li>
+                        <li><a href="index.html#security" class="footer-link">Security</a></li>
+                        <li><a href="index.html#categories" class="footer-link">Categories</a></li>
+                        <li><a href="index.html#how-it-works" class="footer-link">How It Works</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links-col">
+                    <h5 class="footer-col-title">Company</h5>
+                    <ul class="footer-link-list">
+                        <li><a href="company.html#about" class="footer-link">About</a></li>
+                        <li><a href="company.html#careers" class="footer-link">Careers</a></li>
+                        <li><a href="company.html#blog" class="footer-link">Blog</a></li>
+                        <li><a href="company.html#contact" class="footer-link">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links-col">
+                    <h5 class="footer-col-title">Support</h5>
+                    <ul class="footer-link-list">
+                        <li><a href="support.html#help" class="footer-link">Help Center</a></li>
+                        <li><a href="support.html#privacy" class="footer-link">Privacy Policy</a></li>
+                        <li><a href="support.html#terms" class="footer-link">Terms of Service</a></li>
+                        <li><a href="support.html#docs" class="footer-link">Documentation</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-newsletter-col">
+                    <h5 class="footer-col-title">Stay Updated</h5>
+                    <p class="newsletter-sub">Get the latest updates and security insights.</p>
+                    <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Subscribed to security bulletins!');">
+                        <div class="newsletter-input-group">
+                            <input type="email" class="newsletter-input" placeholder="Enter your email" required>
+                            <button type="submit" class="btn-newsletter-submit"><span>→</span></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="footer-bottom-row">
+                <span class="footer-copyright">&copy; 2026 AegisVault. All rights reserved.</span>
+                <span class="footer-pledge">Built for people. Designed to last.</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Navigation & Theme Switcher Script -->
+    <script>
+        (function() {
+            // Theme Management
+            const THEME_STORAGE_KEY = 'aegisvault_theme';
+            const htmlElement = document.documentElement;
+            const bodyElement = document.body;
+            const themeToggleBtn = document.getElementById('theme-toggle');
+
+            function applyTheme(theme) {
+                if (theme === 'light') {
+                    htmlElement.setAttribute('data-theme', 'light');
+                    bodyElement.classList.remove('dark-theme');
+                    bodyElement.classList.add('light-theme');
+                } else {
+                    htmlElement.setAttribute('data-theme', 'dark');
+                    bodyElement.classList.remove('light-theme');
+                    bodyElement.classList.add('dark-theme');
+                }
+                localStorage.setItem(THEME_STORAGE_KEY, theme);
+            }
+
+            const initialTheme = localStorage.getItem(THEME_STORAGE_KEY) || 'dark';
+            applyTheme(initialTheme);
+
+            if (themeToggleBtn) {
+                themeToggleBtn.addEventListener('click', () => {
+                    const current = htmlElement.getAttribute('data-theme') || 'dark';
+                    applyTheme(current === 'dark' ? 'light' : 'dark');
+                });
+            }
+
+            // Tab Switching Logic
+            const tabButtons = document.querySelectorAll('.section-tab-btn');
+            const tabPanels = document.querySelectorAll('.support-panel');
+
+            function switchTab(tabId) {
+                tabButtons.forEach(btn => {
+                    const isActive = btn.getAttribute('data-tab') === tabId;
+                    btn.classList.toggle('active', isActive);
+                    btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                });
+                tabPanels.forEach(panel => {
+                    panel.classList.toggle('active', panel.id === `panel-${tabId}`);
+                });
+            }
+
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tabId = btn.getAttribute('data-tab');
+                    switchTab(tabId);
+                    history.replaceState(null, null, `#${tabId}`);
+                });
+            });
+
+            // Handle hash on page load (e.g. support.html#privacy)
+            function checkHash() {
+                const hash = (window.location.hash || '').replace('#', '').toLowerCase();
+                if (hash && ['help', 'privacy', 'terms', 'docs'].includes(hash)) {
+                    switchTab(hash);
+                }
+            }
+            window.addEventListener('hashchange', checkHash);
+            checkHash();
+
+            // Accordion FAQ Toggle
+            document.querySelectorAll('.faq-question').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const item = btn.closest('.faq-item');
+                    const isOpen = item.classList.contains('open');
+                    
+                    // Optional: Close other open items
+                    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+                    
+                    if (!isOpen) {
+                        item.classList.add('open');
+                        btn.setAttribute('aria-expanded', 'true');
+                    } else {
+                        btn.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            });
+
+            // FAQ Search Filtering
+            const searchInput = document.getElementById('faq-search');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase().trim();
+                    document.querySelectorAll('.faq-item').forEach(item => {
+                        const text = item.textContent.toLowerCase();
+                        if (text.includes(query)) {
+                            item.style.display = 'block';
+                            if (query.length > 2) item.classList.add('open');
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

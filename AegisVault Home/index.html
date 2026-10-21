@@ -49,7 +49,7 @@
                     <li class="nav-item"><a href="#how-it-works" class="nav-link" data-nav="how-it-works">How It Works</a></li>
                     <li class="nav-item"><a href="#features" class="nav-link" data-nav="features">Features</a></li>
                     <li class="nav-item"><a href="#security" class="nav-link" data-nav="security">Security</a></li>
-                    <li class="nav-item"><a href="#about" class="nav-link" data-nav="about">About</a></li>
+                    <li class="nav-item"><a href="company.html#about" class="nav-link" data-nav="about">About</a></li>
                 </ul>
             </nav>
 
@@ -954,10 +954,10 @@
                 <div class="footer-links-col">
                     <h5 class="footer-col-title">Company</h5>
                     <ul class="footer-link-list">
-                        <li><a href="#about" class="footer-link">About</a></li>
-                        <li><a href="#about" class="footer-link">Careers</a></li>
-                        <li><a href="#about" class="footer-link">Blog</a></li>
-                        <li><a href="#about" class="footer-link">Contact</a></li>
+                        <li><a href="company.html#about" class="footer-link">About</a></li>
+                        <li><a href="company.html#careers" class="footer-link">Careers</a></li>
+                        <li><a href="company.html#blog" class="footer-link">Blog</a></li>
+                        <li><a href="company.html#contact" class="footer-link">Contact</a></li>
                     </ul>
                 </div>
 
@@ -965,10 +965,10 @@
                 <div class="footer-links-col">
                     <h5 class="footer-col-title">Support</h5>
                     <ul class="footer-link-list">
-                        <li><a href="#about" class="footer-link">Help Center</a></li>
-                        <li><a href="#about" class="footer-link">Privacy Policy</a></li>
-                        <li><a href="#about" class="footer-link">Terms of Service</a></li>
-                        <li><a href="#about" class="footer-link">Documentation</a></li>
+                        <li><a href="support.html#help" class="footer-link">Help Center</a></li>
+                        <li><a href="support.html#privacy" class="footer-link">Privacy Policy</a></li>
+                        <li><a href="support.html#terms" class="footer-link">Terms of Service</a></li>
+                        <li><a href="support.html#docs" class="footer-link">Documentation</a></li>
                     </ul>
                 </div>
 
@@ -1035,21 +1035,28 @@
         <div class="video-modal-card">
             <button class="modal-close-btn video-close-btn" id="btn-close-video" aria-label="Close video">&times;</button>
             <div class="video-player-container">
-                <div class="video-player-poster">
-                    <div class="poster-inner">
-                        <div class="video-brand-shield">
-                            <img src="assets/logo/ageis_dark.png" alt="AegisVault Shield" class="brand-logo-dark">
-                            <img src="assets/logo/ageis_light.png" alt="AegisVault Shield" class="brand-logo-light">
-                        </div>
-                        <h4 class="poster-title">AegisVault Protocol Overview</h4>
-                        <p class="poster-sub">A 3-minute cinematic tour of time-locked digital custody and trustee thresholds.</p>
-                        <button class="video-play-trigger" id="btn-play-video-stream" type="button" aria-label="Play video">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <polygon points="8 5 19 12 8 19 8 5"></polygon>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
+                <!-- Dark Theme Video -->
+                <video
+                    id="aegis-video-dark"
+                    class="aegis-themed-video aegis-video-dark"
+                    controls
+                    poster="assets/video-poster-dark.jpg"
+                    preload="none"
+                    aria-label="AegisVault Protocol Overview - Dark Theme">
+                    <source src="assets/aegisvault-overview-dark.mp4" type="video/mp4">
+                    Your browser does not support HTML5 video.
+                </video>
+                <!-- Light Theme Video -->
+                <video
+                    id="aegis-video-light"
+                    class="aegis-themed-video aegis-video-light"
+                    controls
+                    poster="assets/video-poster-light.jpg"
+                    preload="none"
+                    aria-label="AegisVault Protocol Overview - Light Theme">
+                    <source src="assets/aegisvault-overview-light.mp4" type="video/mp4">
+                    Your browser does not support HTML5 video.
+                </video>
             </div>
         </div>
     </div>

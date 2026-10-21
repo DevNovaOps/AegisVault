@@ -179,13 +179,56 @@
         });
 
         // Video Modal Triggers
-        if (btnHeroWatchVideo) btnHeroWatchVideo.addEventListener('click', () => openModal(modalVideo));
-        if (btnCloseVideo) btnCloseVideo.addEventListener('click', () => closeModal(modalVideo));
-        if (btnPlayVideoStream) {
-            btnPlayVideoStream.addEventListener('click', () => {
-                showToast('Streaming AegisVault Protocol architecture demo...', 'info');
+        const videoDark  = document.getElementById('aegis-video-dark');
+        const videoLight = document.getElementById('aegis-video-light');
+
+        /** Return the currently active video based on page theme */
+        function getActiveVideo() {
+            const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+            return theme === 'light' ? videoLight : videoDark;
+        }
+
+        /** Pause and reset both videos */
+        function pauseAllVideos() {
+            [videoDark, videoLight].forEach(v => { if (v) { v.pause(); v.currentTime = 0; } });
+        }
+
+        if (btnHeroWatchVideo) {
+            btnHeroWatchVideo.addEventListener('click', () => {
+                openModal(modalVideo);
+                // Small delay to let modal animate in, then play active video
+                setTimeout(() => { const v = getActiveVideo(); if (v) v.play(); }, 300);
             });
         }
+
+        if (btnCloseVideo) {
+            btnCloseVideo.addEventListener('click', () => {
+                pauseAllVideos();
+                closeModal(modalVideo);
+            });
+        }
+
+        // Also pause when clicking backdrop
+        if (modalVideo) {
+            modalVideo.addEventListener('click', (e) => {
+                if (e.target === modalVideo) { pauseAllVideos(); }
+            });
+        }
+
+        // Seamless video switch if theme is changed while modal is open
+        window.addEventListener('aegisThemeChanged', (e) => {
+            if (modalVideo && !modalVideo.hidden) {
+                const isLight = e.detail && e.detail.theme === 'light';
+                const fromVid = isLight ? videoDark : videoLight;
+                const toVid   = isLight ? videoLight : videoDark;
+                if (fromVid && toVid && !fromVid.paused) {
+                    const currentTime = fromVid.currentTime;
+                    fromVid.pause();
+                    toVid.currentTime = currentTime;
+                    toVid.play().catch(() => {});
+                }
+            }
+        });
 
         // Switch between modals
         if (switchToSignup) {

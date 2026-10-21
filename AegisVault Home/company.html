@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company — About, Careers & Contact | AegisVault</title>
+    <meta name="description" content="Discover the team, mission, open career roles, and security research behind AegisVault, the autonomous digital legacy and time-locked custody protocol.">
+    <meta name="theme-color" content="#050B14">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Favicon & Brand Icons -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/logo/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/logo/favicon-16x16.png">
+
+    <!-- Immediate Zero-Flash Theme Initializer -->
+    <script>
+        (function() {
+            var params = new URLSearchParams(window.location.search);
+            var queryTheme = params.get('theme');
+            var savedTheme = localStorage.getItem('aegisvault_theme');
+            var theme = queryTheme || savedTheme || 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+            if (theme === 'light') {
+                document.documentElement.classList.add('light-theme');
+            } else {
+                document.documentElement.classList.add('dark-theme');
+            }
+        })();
+    </script>
+
+    <!-- Main Core Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        /* ── Company Page Custom Styles (Inherits CSS Tokens) ── */
+        .page-hero {
+            padding: 130px 24px 60px;
+            text-align: center;
+            position: relative;
+            background: radial-gradient(circle at 50% 20%, rgba(244, 90, 31, 0.12) 0%, transparent 65%);
+        }
+        .page-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: var(--brand-orange-soft);
+            border: 1px solid rgba(244, 90, 31, 0.3);
+            border-radius: var(--radius-pill);
+            color: var(--brand-orange);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        .page-title {
+            font-size: clamp(32px, 5vw, 52px);
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1.15;
+            margin-bottom: 18px;
+            letter-spacing: -0.5px;
+        }
+        .page-title .accent-orange {
+            color: var(--brand-orange);
+            background: linear-gradient(135deg, #F45A1F 0%, #FF7A2F 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .page-subtitle {
+            font-size: clamp(16px, 2vw, 19px);
+            color: var(--text-secondary);
+            max-width: 680px;
+            margin: 0 auto 36px;
+            line-height: 1.6;
+        }
+
+        /* ── Section Navigation Tab Bar ── */
+        .section-tabs-nav {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 6px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-pill);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            overflow-x: auto;
+        }
+        .section-tab-btn {
+            padding: 10px 22px;
+            border-radius: var(--radius-pill);
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .section-tab-btn:hover {
+            color: var(--text-primary);
+        }
+        .section-tab-btn.active {
+            background: var(--brand-orange);
+            color: #FFFFFF;
+            box-shadow: 0 4px 16px var(--brand-orange-glow);
+        }
+
+        /* ── Content Sections Container ── */
+        .page-content-wrapper {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            padding: 40px var(--container-padding) 100px;
+        }
+
+        .company-panel {
+            display: none;
+            animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .company-panel.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Grid & Card Layouts ── */
+        .cards-grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 24px;
+            margin-top: 32px;
+        }
+        .cards-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-top: 32px;
+        }
+        .company-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius-xl);
+            padding: 32px;
+            backdrop-filter: blur(14px);
+            transition: all var(--transition-normal);
+            position: relative;
+        }
+        .company-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25);
+        }
+        .card-icon-wrap {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            background: var(--brand-orange-soft);
+            border: 1px solid rgba(244, 90, 31, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brand-orange);
+            margin-bottom: 20px;
+        }
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+        .card-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.65;
+        }
+
+        /* ── Statistics Strip ── */
+        .stats-banner {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: 32px;
+            margin: 48px 0;
+            text-align: center;
+        }
+        .stat-item-number {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--brand-orange);
+            font-family: var(--font-sans);
+        }
+        .stat-item-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        /* ── Career Listing Rows ── */
+        .job-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius-lg);
+            padding: 24px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 16px;
+            transition: all var(--transition-fast);
+        }
+        .job-card:hover {
+            border-color: var(--brand-orange);
+            background: var(--bg-card-hover);
+            transform: translateX(4px);
+        }
+        .job-info-left h4 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+        .job-tags-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .job-tag {
+            font-size: 12px;
+            padding: 3px 10px;
+            background: var(--brand-orange-soft);
+            color: var(--brand-orange);
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+        }
+
+        /* ── Blog Cards ── */
+        .blog-card {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            transition: all var(--transition-normal);
+        }
+        .blog-card:hover {
+            border-color: var(--brand-orange);
+            transform: translateY(-5px);
+        }
+        .blog-card-header {
+            height: 160px;
+            background: linear-gradient(135deg, rgba(244, 90, 31, 0.2) 0%, rgba(5, 11, 20, 0.8) 100%);
+            display: flex;
+            align-items: flex-end;
+            padding: 20px;
+        }
+        .blog-card-body {
+            padding: 24px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .blog-date {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .blog-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            line-height: 1.35;
+        }
+        .blog-snippet {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 20px;
+            flex: 1;
+        }
+
+        /* ── Contact Form ── */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+        @media (max-width: 860px) {
+            .contact-grid { grid-template-columns: 1fr; }
+            .job-card { flex-direction: column; align-items: flex-start; }
+        }
+        .contact-form-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius-xl);
+            padding: 36px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 14px;
+            transition: all var(--transition-fast);
+        }
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--brand-orange);
+            box-shadow: 0 0 0 3px var(--brand-orange-soft);
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Decor -->
+    <div class="ambient-glow ambient-glow-1"></div>
+    <div class="ambient-glow ambient-glow-2"></div>
+
+    <!-- Header Navigation -->
+    <header class="main-header" id="navbar" role="banner">
+        <div class="nav-container">
+            <a href="index.html" class="brand-wrapper" aria-label="AegisVault Home">
+                <div class="brand-shield-icon">
+                    <img src="assets/logo/ageis_dark.png" alt="AegisVault Shield" class="brand-logo-dark">
+                    <img src="assets/logo/ageis_light.png" alt="AegisVault Shield" class="brand-logo-light">
+                </div>
+                <div class="brand-text-col">
+                    <span class="brand-title">AegisVault</span>
+                    <span class="brand-subtitle">What matters, lives on.</span>
+                </div>
+            </a>
+
+            <nav class="nav-links-center" aria-label="Primary Navigation">
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="index.html#hero" class="nav-link">Home</a></li>
+                    <li class="nav-item"><a href="index.html#how-it-works" class="nav-link">How It Works</a></li>
+                    <li class="nav-item"><a href="index.html#features" class="nav-link">Features</a></li>
+                    <li class="nav-item"><a href="index.html#security" class="nav-link">Security</a></li>
+                    <li class="nav-item"><a href="company.html#about" class="nav-link active">Company</a></li>
+                    <li class="nav-item"><a href="support.html#help" class="nav-link">Support</a></li>
+                </ul>
+            </nav>
+
+            <div class="nav-actions-right">
+                <button class="theme-toggle-btn" id="theme-toggle" aria-label="Toggle light and dark theme" title="Toggle theme">
+                    <div class="theme-toggle-track">
+                        <span class="theme-icon theme-icon-sun" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="5"></circle>
+                                <line x1="12" y1="1" x2="12" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="23"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="1" y1="12" x2="3" y2="12"></line>
+                                <line x1="21" y1="12" x2="23" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                        </span>
+                        <span class="theme-icon theme-icon-moon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
+                        </span>
+                        <div class="theme-toggle-thumb"></div>
+                    </div>
+                </button>
+
+                <a href="auth.html?mode=signin" class="btn btn-ghost" id="btn-sign-in">Sign In</a>
+                <a href="auth.html?mode=signup" class="btn btn-primary btn-nav-cta" id="btn-get-started">
+                    <span>Get Started</span>
+                    <span class="btn-arrow" aria-hidden="true">→</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="page-hero">
+        <div class="page-badge">
+            <span class="pulse-dot"></span>
+            <span>AegisVault Global Protocol</span>
+        </div>
+        <h1 class="page-title">Securing Humanity's <span class="accent-orange">Digital Eternity</span></h1>
+        <p class="page-subtitle">We build the zero-knowledge mathematical infrastructure that guarantees your critical assets, crypto keys, and private legacy endure across generations.</p>
+
+        <!-- Interactive Navigation Tabs -->
+        <div class="section-tabs-nav" role="tablist">
+            <button class="section-tab-btn active" data-tab="about" role="tab" aria-selected="true">About Us</button>
+            <button class="section-tab-btn" data-tab="careers" role="tab" aria-selected="false">Careers (5)</button>
+            <button class="section-tab-btn" data-tab="blog" role="tab" aria-selected="false">Research &amp; Blog</button>
+            <button class="section-tab-btn" data-tab="contact" role="tab" aria-selected="false">Contact &amp; Security</button>
+        </div>
+    </section>
+
+    <!-- Main Content Panels -->
+    <main class="page-content-wrapper">
+
+        <!-- TAB 1: ABOUT US -->
+        <div class="company-panel active" id="panel-about" role="tabpanel">
+            <div class="cards-grid-3">
+                <div class="company-card">
+                    <div class="card-icon-wrap">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <h3 class="card-title">Mathematical Trust</h3>
+                    <p class="card-desc">We eliminate the human vulnerability in traditional trusts and wills. Shamir's Secret Sharing ensures no single entity can access your vault without threshold consensus.</p>
+                </div>
+                <div class="company-card">
+                    <div class="card-icon-wrap">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
+                    <h3 class="card-title">Autonomous Execution</h3>
+                    <p class="card-desc">Dead-man's switch heartbeats continuously monitor your vitality. Upon missed check-ins and verified grace countdowns, assets transfer seamlessly to your designated trustees.</p>
+                </div>
+                <div class="company-card">
+                    <div class="card-icon-wrap">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    </div>
+                    <h3 class="card-title">Zero-Knowledge Sovereignty</h3>
+                    <p class="card-desc">All client data is encrypted client-side using AES-256-GCM. Neither AegisVault staff, cloud providers, nor unauthorized parties can read your plaintext contents.</p>
+                </div>
+            </div>
+
+            <div class="stats-banner">
+                <div class="stat-item">
+                    <div class="stat-item-number">$480M+</div>
+                    <div class="stat-item-label">Digital Assets Secured</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-item-number">100%</div>
+                    <div class="stat-item-label">Mathematical Guarantee</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-item-number">142</div>
+                    <div class="stat-item-label">Countries Supported</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-item-number">0</div>
+                    <div class="stat-item-label">Single Points of Failure</div>
+                </div>
+            </div>
+
+            <div class="company-card" style="margin-top: 30px;">
+                <h3 class="card-title">Our Origin Story</h3>
+                <p class="card-desc" style="font-size: 15px; margin-bottom: 14px;">Founded in 2024 by veteran cryptographers and security engineers, AegisVault was born from a painful reality: each year, billions in digital assets, family archives, and intellectual property vanish forever because estate planning failed to keep pace with the digital age.</p>
+                <p class="card-desc" style="font-size: 15px;">We engineered an autonomous custody protocol combining time-lock smart contracts, threshold cryptography, and multi-factor heartbeat surveillance — giving individuals and institutions unbreakable sovereignty over their lifetime achievements.</p>
+            </div>
+        </div>
+
+        <!-- TAB 2: CAREERS -->
+        <div class="company-panel" id="panel-careers" role="tabpanel">
+            <div style="margin-bottom: 30px;">
+                <h2 style="font-size: 26px; color: var(--text-primary); margin-bottom: 8px;">Open Engineering &amp; Design Roles</h2>
+                <p style="color: var(--text-secondary); font-size: 15px;">Join a globally distributed team building mission-critical cryptographic custody infrastructure.</p>
+            </div>
+
+            <div class="job-card">
+                <div class="job-info-left">
+                    <h4>Staff Cryptography Architect (Threshold / ZKPs)</h4>
+                    <div class="job-tags-row">
+                        <span class="job-tag">Engineering</span>
+                        <span class="job-tag">Remote (Global)</span>
+                        <span class="job-tag">Rust / C++</span>
+                        <span class="job-tag">$180k – $240k + Equity</span>
+                    </div>
+                </div>
+                <a href="#contact" class="btn btn-secondary btn-apply" data-role="Staff Cryptography Architect">Apply Now</a>
+            </div>
+
+            <div class="job-card">
+                <div class="job-info-left">
+                    <h4>Senior Full-Stack Security Engineer</h4>
+                    <div class="job-tags-row">
+                        <span class="job-tag">Engineering</span>
+                        <span class="job-tag">Remote / Hybrid (Zurich / SF)</span>
+                        <span class="job-tag">Python / Django / TS</span>
+                        <span class="job-tag">$150k – $195k + Equity</span>
+                    </div>
+                </div>
+                <a href="#contact" class="btn btn-secondary btn-apply" data-role="Senior Full-Stack Security Engineer">Apply Now</a>
+            </div>
+
+            <div class="job-card">
+                <div class="job-info-left">
+                    <h4>Lead Product Designer (Web3 / Security UX)</h4>
+                    <div class="job-tags-row">
+                        <span class="job-tag">Design</span>
+                        <span class="job-tag">Remote (US / EU)</span>
+                        <span class="job-tag">Figma / Systems</span>
+                        <span class="job-tag">$140k – $180k + Equity</span>
+                    </div>
+                </div>
+                <a href="#contact" class="btn btn-secondary btn-apply" data-role="Lead Product Designer">Apply Now</a>
+            </div>
+
+            <div class="job-card">
+                <div class="job-info-left">
+                    <h4>Distributed Systems &amp; Consensus Specialist</h4>
+                    <div class="job-tags-row">
+                        <span class="job-tag">Core Protocol</span>
+                        <span class="job-tag">Remote (Global)</span>
+                        <span class="job-tag">Go / Raft / libp2p</span>
+                        <span class="job-tag">$165k – $210k + Equity</span>
+                    </div>
+                </div>
+                <a href="#contact" class="btn btn-secondary btn-apply" data-role="Distributed Systems Specialist">Apply Now</a>
+            </div>
+
+            <div class="job-card">
+                <div class="job-info-left">
+                    <h4>SecOps &amp; Infrastructure Director</h4>
+                    <div class="job-tags-row">
+                        <span class="job-tag">Security &amp; Ops</span>
+                        <span class="job-tag">Zurich, Switzerland</span>
+                        <span class="job-tag">SOC 2 / ISO 27001</span>
+                        <span class="job-tag">$170k – $220k + Equity</span>
+                    </div>
+                </div>
+                <a href="#contact" class="btn btn-secondary btn-apply" data-role="SecOps Director">Apply Now</a>
+            </div>
+        </div>
+
+        <!-- TAB 3: BLOG & RESEARCH -->
+        <div class="company-panel" id="panel-blog" role="tabpanel">
+            <div style="margin-bottom: 24px;">
+                <h2 style="font-size: 26px; color: var(--text-primary); margin-bottom: 8px;">Security Research &amp; Protocol Notes</h2>
+                <p style="color: var(--text-secondary); font-size: 15px;">Peer-reviewed whitepapers, threat models, and architectural deep-dives from the AegisVault lab.</p>
+            </div>
+
+            <div class="cards-grid-3">
+                <article class="blog-card">
+                    <div class="blog-card-header">
+                        <span class="job-tag" style="background: rgba(244, 90, 31, 0.9); color: #fff;">Cryptography</span>
+                    </div>
+                    <div class="blog-card-body">
+                        <div class="blog-date">OCTOBER 14, 2026 • 8 MIN READ</div>
+                        <h4 class="blog-title">Shamir's Secret Sharing in Practice: Designing Fail-Safe Threshold Key Custody</h4>
+                        <p class="blog-snippet">How AegisVault splits Master Encryption Keys across polynomials in GF(2^8) to guarantee tamper-proof threshold reconstruction.</p>
+                        <a href="support.html#docs" class="footer-link" style="color: var(--brand-orange); font-weight: 700;">Read Whitepaper →</a>
+                    </div>
+                </article>
+
+                <article class="blog-card">
+                    <div class="blog-card-header">
+                        <span class="job-tag" style="background: rgba(244, 90, 31, 0.9); color: #fff;">Architecture</span>
+                    </div>
+                    <div class="blog-card-body">
+                        <div class="blog-date">SEPTEMBER 28, 2026 • 6 MIN READ</div>
+                        <h4 class="blog-title">The Mathematics of Dead-Man's Switches: Mitigating False Trigger Catastrophes</h4>
+                        <p class="blog-snippet">Analyzing cascading multi-channel heartbeat pings, multi-sig grace period vetoes, and anti-tamper heartbeat mechanisms.</p>
+                        <a href="support.html#docs" class="footer-link" style="color: var(--brand-orange); font-weight: 700;">Read Analysis →</a>
+                    </div>
+                </article>
+
+                <article class="blog-card">
+                    <div class="blog-card-header">
+                        <span class="job-tag" style="background: rgba(244, 90, 31, 0.9); color: #fff;">Zero-Knowledge</span>
+                    </div>
+                    <div class="blog-card-body">
+                        <div class="blog-date">AUGUST 19, 2026 • 11 MIN READ</div>
+                        <h4 class="blog-title">Post-Quantum Cryptography in Digital Estate Planning</h4>
+                        <p class="blog-snippet">Evaluating lattice-based cryptography (Kyber &amp; Dilithium) to preserve time-locked inheritance vaults against quantum decryption.</p>
+                        <a href="support.html#docs" class="footer-link" style="color: var(--brand-orange); font-weight: 700;">Read Research →</a>
+                    </div>
+                </article>
+            </div>
+        </div>
+
+        <!-- TAB 4: CONTACT & SECURITY -->
+        <div class="company-panel" id="panel-contact" role="tabpanel">
+            <div class="contact-grid">
+                <!-- Left: Contact Form -->
+                <div class="contact-form-card">
+                    <h3 style="font-size: 22px; color: var(--text-primary); margin-bottom: 8px;">Direct Inquiries</h3>
+                    <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 24px;">Our engineering and compliance teams respond within 24 hours.</p>
+
+                    <form id="contact-form" novalidate>
+                        <div class="form-group">
+                            <label class="form-label" for="contact-name">Full Name</label>
+                            <input type="text" id="contact-name" class="form-input" placeholder="Alexander Vance" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="contact-email">Business Email</label>
+                            <input type="email" id="contact-email" class="form-input" placeholder="alexander@domain.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="contact-dept">Subject Category</label>
+                            <select id="contact-dept" class="form-select">
+                                <option value="general">General Protocol Inquiry</option>
+                                <option value="careers">Career Application</option>
+                                <option value="enterprise">Institutional Custody Solutions</option>
+                                <option value="security">Security Vulnerability Disclosure</option>
+                                <option value="legal">Legal &amp; Compliance</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="contact-msg">Message</label>
+                            <textarea id="contact-msg" rows="4" class="form-textarea" placeholder="Provide details regarding your inquiry..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">
+                            <span>Transmit Message</span>
+                            <span class="btn-arrow">→</span>
+                        </button>
+                    </form>
+                    <div id="contact-status" style="margin-top: 14px; font-size: 14px; font-weight: 600; text-align: center;"></div>
+                </div>
+
+                <!-- Right: Security Contact & Offices -->
+                <div>
+                    <div class="company-card" style="margin-bottom: 24px;">
+                        <h4 class="card-title">Security &amp; Vulnerability Disclosure</h4>
+                        <p class="card-desc" style="margin-bottom: 14px;">We maintain an active bug bounty and zero-tolerance policy for critical vulnerabilities.</p>
+                        <p class="card-desc"><strong>Encrypted PGP Key:</strong></p>
+                        <code style="display: block; font-size: 11px; padding: 10px; background: var(--bg-input); border-radius: var(--radius-sm); margin-top: 6px; color: var(--brand-orange); word-break: break-all;">
+                            4A8B 91F3 D20E 88B1 C990 71AE 005B F24A 89D1 AE23
+                        </code>
+                        <div style="margin-top: 14px;">
+                            <a href="mailto:security@aegisvault.io" style="color: var(--brand-orange); font-size: 14px; font-weight: 600; text-decoration: none;">security@aegisvault.io ↗</a>
+                        </div>
+                    </div>
+
+                    <div class="company-card">
+                        <h4 class="card-title">Global Research Centers</h4>
+                        <div style="margin-top: 14px; display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: var(--text-secondary);">
+                            <div><strong>Zurich Protocol Lab:</strong> Gotthardstrasse 26, 8002 Zurich, Switzerland</div>
+                            <div><strong>Singapore Operations:</strong> Marina Bay Financial Centre, Tower 2, Singapore</div>
+                            <div><strong>San Francisco Cryptography Hub:</strong> 555 Mission St, San Francisco, CA</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer" role="contentinfo">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand-col">
+                    <a href="index.html" class="brand-wrapper" aria-label="AegisVault Home">
+                        <div class="brand-shield-icon">
+                            <img src="assets/logo/ageis_dark.png" alt="AegisVault Shield" class="brand-logo-dark">
+                            <img src="assets/logo/ageis_light.png" alt="AegisVault Shield" class="brand-logo-light">
+                        </div>
+                        <div class="brand-text-col">
+                            <span class="brand-title">AegisVault</span>
+                            <span class="brand-subtitle">What matters, lives on.</span>
+                        </div>
+                    </a>
+                    <p class="footer-brand-tagline">Automated Time-Locked Digital Asset &amp; Legacy Custody Protocol.</p>
+                </div>
+
+                <div class="footer-links-col">
+                    <h5 class="footer-col-title">Product</h5>
+                    <ul class="footer-link-list">
+                        <li><a href="index.html#features" class="footer-link">Features</a></li>
+                        <li><a href="index.html#security" class="footer-link">Security</a></li>
+                        <li><a href="index.html#categories" class="footer-link">Categories</a></li>
+                        <li><a href="index.html#how-it-works" class="footer-link">How It Works</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links-col">
+                    <h5 class="footer-col-title">Company</h5>
+                    <ul class="footer-link-list">
+                        <li><a href="company.html#about" class="footer-link">About</a></li>
+                        <li><a href="company.html#careers" class="footer-link">Careers</a></li>
+                        <li><a href="company.html#blog" class="footer-link">Blog</a></li>
+                        <li><a href="company.html#contact" class="footer-link">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links-col">
+                    <h5 class="footer-col-title">Support</h5>
+                    <ul class="footer-link-list">
+                        <li><a href="support.html#help" class="footer-link">Help Center</a></li>
+                        <li><a href="support.html#privacy" class="footer-link">Privacy Policy</a></li>
+                        <li><a href="support.html#terms" class="footer-link">Terms of Service</a></li>
+                        <li><a href="support.html#docs" class="footer-link">Documentation</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-newsletter-col">
+                    <h5 class="footer-col-title">Stay Updated</h5>
+                    <p class="newsletter-sub">Get the latest updates and security insights.</p>
+                    <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Subscribed to security bulletins!');">
+                        <div class="newsletter-input-group">
+                            <input type="email" class="newsletter-input" placeholder="Enter your email" required>
+                            <button type="submit" class="btn-newsletter-submit"><span>→</span></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="footer-bottom-row">
+                <span class="footer-copyright">&copy; 2026 AegisVault. All rights reserved.</span>
+                <span class="footer-pledge">Built for people. Designed to last.</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Navigation & Theme Switcher Script -->
+    <script>
+        (function() {
+            // Theme Management
+            const THEME_STORAGE_KEY = 'aegisvault_theme';
+            const htmlElement = document.documentElement;
+            const bodyElement = document.body;
+            const themeToggleBtn = document.getElementById('theme-toggle');
+
+            function applyTheme(theme) {
+                if (theme === 'light') {
+                    htmlElement.setAttribute('data-theme', 'light');
+                    bodyElement.classList.remove('dark-theme');
+                    bodyElement.classList.add('light-theme');
+                } else {
+                    htmlElement.setAttribute('data-theme', 'dark');
+                    bodyElement.classList.remove('light-theme');
+                    bodyElement.classList.add('dark-theme');
+                }
+                localStorage.setItem(THEME_STORAGE_KEY, theme);
+            }
+
+            const initialTheme = localStorage.getItem(THEME_STORAGE_KEY) || 'dark';
+            applyTheme(initialTheme);
+
+            if (themeToggleBtn) {
+                themeToggleBtn.addEventListener('click', () => {
+                    const current = htmlElement.getAttribute('data-theme') || 'dark';
+                    applyTheme(current === 'dark' ? 'light' : 'dark');
+                });
+            }
+
+            // Tab Switching Logic
+            const tabButtons = document.querySelectorAll('.section-tab-btn');
+            const tabPanels = document.querySelectorAll('.company-panel');
+
+            function switchTab(tabId) {
+                tabButtons.forEach(btn => {
+                    const isActive = btn.getAttribute('data-tab') === tabId;
+                    btn.classList.toggle('active', isActive);
+                    btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                });
+                tabPanels.forEach(panel => {
+                    panel.classList.toggle('active', panel.id === `panel-${tabId}`);
+                });
+            }
+
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tabId = btn.getAttribute('data-tab');
+                    switchTab(tabId);
+                    history.replaceState(null, null, `#${tabId}`);
+                });
+            });
+
+            // Handle hash on page load (e.g. company.html#careers)
+            function checkHash() {
+                const hash = (window.location.hash || '').replace('#', '').toLowerCase();
+                if (hash && ['about', 'careers', 'blog', 'contact'].includes(hash)) {
+                    switchTab(hash);
+                }
+            }
+            window.addEventListener('hashchange', checkHash);
+            checkHash();
+
+            // Job Apply Buttons
+            document.querySelectorAll('.btn-apply').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    switchTab('contact');
+                    const role = btn.getAttribute('data-role');
+                    const select = document.getElementById('contact-dept');
+                    if (select) select.value = 'careers';
+                    const msg = document.getElementById('contact-msg');
+                    if (msg) msg.value = `Applying for: ${role}\n\n`;
+                    document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' });
+                });
+            });
+
+            // Contact Form Submission
+            const contactForm = document.getElementById('contact-form');
+            const contactStatus = document.getElementById('contact-status');
+            if (contactForm) {
+                contactForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    contactStatus.style.color = '#10B981';
+                    contactStatus.textContent = '✓ Inquiry securely transmitted. Reference ID: #AEGIS-' + Math.floor(100000 + Math.random() * 900000);
+                    contactForm.reset();
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

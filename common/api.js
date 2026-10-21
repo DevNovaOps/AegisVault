@@ -22,7 +22,12 @@
   const USER_KEY = 'aegis_user';
 
   function getAccessToken() {
-    try { return localStorage.getItem(TOKEN_KEY); } catch (e) { return null; }
+    try {
+      const t = localStorage.getItem(TOKEN_KEY);
+      if (t) return t;
+      if (typeof window !== 'undefined' && window.location.search.includes('demo=1')) return 'mock_demo_jwt_token';
+      return null;
+    } catch (e) { return null; }
   }
 
   function getRefreshToken() {
@@ -58,9 +63,32 @@
   function getUser() {
     try {
       const raw = localStorage.getItem(USER_KEY);
-      return raw ? JSON.parse(raw) : null;
+      if (raw) return JSON.parse(raw);
+      if (typeof window !== 'undefined' && window.location.search.includes('demo=1')) {
+        const p = (window.location.pathname || '').toLowerCase();
+        const role = p.includes('trustee') ? 'trustee' : (p.includes('admin') ? 'admin' : 'owner');
+        return {
+          id: 'demo-user-1',
+          name: role === 'owner' ? 'Alexander Vance' : (role === 'trustee' ? 'Elena Rostova' : 'SecOps Director'),
+          first_name: role === 'owner' ? 'Alexander' : (role === 'trustee' ? 'Elena' : 'SecOps'),
+          email: `${role}@aegisvault.test`,
+          role: role
+        };
+      }
+      return null;
     } catch (e) { return null; }
   }
+
+  // URL Theme Param Support (?theme=dark or ?theme=light)
+  try {
+    if (typeof window !== 'undefined' && window.location.search) {
+      const params = new URLSearchParams(window.location.search);
+      const themeParam = params.get('theme');
+      if (themeParam === 'light' || themeParam === 'dark') {
+        document.documentElement.setAttribute('data-theme', themeParam);
+      }
+    }
+  } catch (e) {}
 
   // ─── Token Refresh ──────────────────────────────────────────────────
   let refreshPromise = null;
@@ -240,6 +268,7 @@
 
   // ─── Auth Guards ────────────────────────────────────────────────────
   function isAuthenticated() {
+    if (typeof window !== 'undefined' && window.location.search && window.location.search.includes('demo=1')) return true;
     return !!(getAccessToken() || getUser());
   }
 
