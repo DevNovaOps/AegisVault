@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 from .models import ReleaseRequest, ReleaseParticipant, SecretShare
 from vaults.models import Vault
@@ -101,12 +102,16 @@ class ReleaseListCreateView(APIView):
             from django.utils.dateparse import parse_datetime
             scheduled_at = parse_datetime(str(scheduled_at_raw))
 
+        trigger_type = request.data.get('trigger_type', 'Upon Inactivity')
+        if 'manual' in trigger_type.lower():
+            scheduled_at = None
+
         release = ReleaseRequest.objects.create(
             vault=vault,
             owner=request.user,
             title=request.data.get('title', '') or f"Release for {vault.name}",
             description=request.data.get('description', ''),
-            trigger_type=request.data.get('trigger_type', 'Upon Inactivity'),
+            trigger_type=trigger_type,
             trigger_detail=request.data.get('trigger_detail', ''),
             status=request.data.get('status', 'scheduled'),
             note=request.data.get('note', ''),
@@ -202,9 +207,19 @@ class ReleaseCancelView(APIView):
             release.cancelled_at = timezone.now()
             release.save()
 
-            # Reset any VaultShare records for this vault that were in 'submitted' state back to 'active'
+            # Revert all VaultShare records for this vault: revoke View & Download access
+            # back to 'No Access' so trustees cannot view or download assets after cancellation
             from vaults.models import VaultShare
-            VaultShare.objects.filter(vault=release.vault, status='submitted').update(status='active')
+            VaultShare.objects.filter(vault=release.vault).update(
+                access_level='No Access',
+                status='active'
+            )
+
+            # Revert participants back to pending
+            for p in release.participants.all():
+                if p.status in ('submitted', 'verified'):
+                    p.status = 'pending'
+                    p.save(update_fields=['status'])
 
             # Notify all participating trustees
             for p in release.participants.all():

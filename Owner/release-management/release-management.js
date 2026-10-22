@@ -725,6 +725,27 @@
       });
     }
 
+    // Trigger select change handler: toggle schedule date input for Manual Release
+    const triggerSelectEl = document.getElementById('releaseTriggerType');
+    const schedInputEl = document.getElementById('releaseScheduledDate');
+    if (triggerSelectEl && schedInputEl) {
+      triggerSelectEl.addEventListener('change', () => {
+        const val = triggerSelectEl.value.toLowerCase();
+        if (val.includes('manual')) {
+          schedInputEl.value = '';
+          schedInputEl.disabled = true;
+          schedInputEl.placeholder = 'Manual trigger (no scheduled date)';
+        } else if (val.includes('event') || val.includes('death')) {
+          schedInputEl.value = '';
+          schedInputEl.disabled = true;
+          schedInputEl.placeholder = 'Triggered on event verification';
+        } else {
+          schedInputEl.disabled = false;
+          schedInputEl.placeholder = 'e.g. 2026-12-31';
+        }
+      });
+    }
+
     // Form Submit (Create Release)
     if (formCreateRelease) {
       formCreateRelease.addEventListener('submit', function(e) {
@@ -747,33 +768,38 @@
         const note = noteInput ? noteInput.value.trim() : '';
 
         const newId = 'rel-' + Date.now();
-        const schedParts = sched ? sched.split(' ') : [];
-        const sDate = schedParts.slice(0, 3).join(' ') || new Date().toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' });
-        const sTime = schedParts.slice(3).join(' ') || new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' });
-
         const vaultName = vaultSelect && vaultSelect.options && vaultSelect.selectedIndex >= 0 ? vaultSelect.options[vaultSelect.selectedIndex]?.text : 'Designated Vault';
         const triggerType = trigger.split('(')[0].trim();
         const triggerDetail = trigger.includes('(') ? '(' + trigger.split('(')[1] : '';
 
+        const isManual = triggerType.toLowerCase().includes('manual');
+        const isEvent = triggerType.toLowerCase().includes('event') || triggerType.toLowerCase().includes('death');
+
         let scheduledIso = null;
-        if (sched) {
-          const parsed = new Date(sched);
-          if (!isNaN(parsed.getTime())) {
-            scheduledIso = parsed.toISOString();
-          } else {
-            const combined = new Date(sDate + ' ' + sTime);
-            if (!isNaN(combined.getTime())) {
-              scheduledIso = combined.toISOString();
-            } else {
-              const fallback = new Date();
-              fallback.setMonth(fallback.getMonth() + 12);
-              scheduledIso = fallback.toISOString();
+        let sDate = '-';
+        let sTime = '';
+
+        if (!isManual && !isEvent) {
+          if (sched) {
+            const parsed = new Date(sched);
+            if (!isNaN(parsed.getTime())) {
+              scheduledIso = parsed.toISOString();
+              sDate = parsed.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' });
+              sTime = parsed.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' });
             }
+          } else if (trigger.includes('6 months')) {
+            const d = new Date();
+            d.setMonth(d.getMonth() + 6);
+            scheduledIso = d.toISOString();
+            sDate = d.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' });
+            sTime = d.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' });
+          } else if (trigger.includes('12 months')) {
+            const d = new Date();
+            d.setMonth(d.getMonth() + 12);
+            scheduledIso = d.toISOString();
+            sDate = d.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' });
+            sTime = d.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' });
           }
-        } else {
-          const fallback = new Date();
-          fallback.setMonth(fallback.getMonth() + 12);
-          scheduledIso = fallback.toISOString();
         }
 
         if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {

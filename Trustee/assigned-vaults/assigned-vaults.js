@@ -414,11 +414,16 @@ function openVaultModal(vault) {
 
   const accessBadge = document.getElementById('modalVaultAccessBadge');
   if (accessBadge) {
-    let accessClass = 'verified';
-    if (vault.accessLevel === 'View Only') accessClass = 'pending';
-    else if (vault.accessLevel === 'No Access') accessClass = 'denied';
-    accessBadge.className = `status-badge ${accessClass}`;
-    accessBadge.innerHTML = `<span class="badge-dot"></span>${vault.accessLevel}`;
+    if (vault.releaseStatus === 'Cancelled' && !vault.isReleased) {
+      accessBadge.className = 'status-badge denied';
+      accessBadge.innerHTML = `<span class="badge-dot"></span>No Access`;
+    } else {
+      let accessClass = 'verified';
+      if (vault.accessLevel === 'View Only') accessClass = 'pending';
+      else if (vault.accessLevel === 'No Access' || (vault.accessLevel && vault.accessLevel.includes('Cancelled'))) accessClass = 'denied';
+      accessBadge.className = `status-badge ${accessClass}`;
+      accessBadge.innerHTML = `<span class="badge-dot"></span>${vault.accessLevel}`;
+    }
   }
 
   const hintEl = document.getElementById('modalAccessLevelHint');
@@ -426,10 +431,13 @@ function openVaultModal(vault) {
     if (vault.isReleased) {
       hintEl.textContent = 'Vault Released: Full Download Access Granted';
       hintEl.style.color = 'var(--status-success)';
+    } else if (vault.releaseStatus === 'Cancelled') {
+      hintEl.textContent = 'Release Cancelled: Asset Access Locked';
+      hintEl.style.color = 'var(--status-danger)';
     } else if (vault.isRevoked) {
       hintEl.textContent = 'Access Revoked by Owner';
       hintEl.style.color = 'var(--status-danger)';
-    } else if (vault.accessLevel === 'No Access') {
+    } else if (vault.accessLevel === 'No Access' || (vault.accessLevel && vault.accessLevel.includes('Cancelled'))) {
       hintEl.textContent = 'Permissions: No Access (Assets Hidden)';
       hintEl.style.color = 'var(--status-danger)';
     } else if (vault.accessLevel === 'View & Download') {
@@ -470,7 +478,24 @@ function loadVaultAssets(vault) {
     return;
   }
 
-  if (vault.accessLevel === 'No Access' && !vault.isReleased) {
+  if (vault.releaseStatus === 'Cancelled' && !vault.isReleased) {
+    if (loadingEl) loadingEl.style.display = 'none';
+    if (emptyEl) {
+      emptyEl.style.display = 'block';
+      emptyEl.innerHTML = `
+        <div style="padding: 1.5rem; text-align: center; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: var(--radius-md);">
+          <div style="font-size: 1.5rem; margin-bottom: 0.4rem;">🔒</div>
+          <div style="font-weight: 700; color: #ef4444; margin-bottom: 0.25rem;">Release Cancelled</div>
+          <div style="font-size: 0.82rem; color: var(--text-muted); max-width: 380px; margin: 0 auto;">
+            The vault owner cancelled this release. All asset permissions have been revoked and decrypted documents are securely locked.
+          </div>
+        </div>`;
+    }
+    if (countBadge) countBadge.textContent = '0';
+    return;
+  }
+
+  if ((vault.accessLevel === 'No Access' || (vault.accessLevel && vault.accessLevel.includes('Cancelled'))) && !vault.isReleased) {
     if (loadingEl) loadingEl.style.display = 'none';
     if (emptyEl) {
       emptyEl.style.display = 'block';

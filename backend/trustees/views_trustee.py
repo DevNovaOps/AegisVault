@@ -482,10 +482,17 @@ class TrusteeAssignedVaultsView(APIView):
             is_expired = (share.status == 'expired' or share.is_expired)
             is_no_access = (share.access_level == 'No Access')
 
+            is_cancelled = (latest_rel and latest_rel.status == 'cancelled' and not is_released)
+
             if is_released:
                 can_view = True
                 can_download = True
                 access_level_display = 'View & Download (Released)'
+            elif is_cancelled:
+                can_view = False
+                can_download = False
+                is_no_access = True
+                access_level_display = 'No Access (Cancelled)'
             else:
                 can_view = not is_revoked and not is_expired and not is_no_access
                 can_download = (share.status == 'active' and share.access_level == 'View & Download' and not is_expired and not is_revoked)
@@ -596,6 +603,14 @@ class TrusteeVaultAssetsView(APIView):
             vault=vault, status__in=['released', 'authorized']
         ).exists()
 
+        # 2b. Check if the release for this vault was cancelled
+        latest_rel = ReleaseRequest.objects.filter(vault=vault).order_by('-created_at').first()
+        if latest_rel and latest_rel.status == 'cancelled' and not is_released:
+            return Response(
+                {'detail': 'Release for this vault was cancelled by the owner. Asset access is locked.', 'status': 'cancelled'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
         # 3. Check revocation status
         if share and share.status == 'revoked' and not is_released:
             return Response(
@@ -681,6 +696,10 @@ class TrusteeVaultAssetPreviewView(APIView):
         if not share and not is_released:
             return Response({'detail': 'No access permissions.'}, status=status.HTTP_403_FORBIDDEN)
 
+        latest_rel = ReleaseRequest.objects.filter(vault=vault).order_by('-created_at').first()
+        if latest_rel and latest_rel.status == 'cancelled' and not is_released:
+            return Response({'detail': 'Release for this vault was cancelled by the owner. Asset access is locked.', 'status': 'cancelled'}, status=status.HTTP_403_FORBIDDEN)
+
         if share and share.status == 'revoked' and not is_released:
             return Response({'detail': 'Access revoked by vault owner.'}, status=status.HTTP_403_FORBIDDEN)
 
@@ -728,6 +747,10 @@ class TrusteeVaultAssetDownloadView(APIView):
 
         if not share and not is_released:
             return Response({'detail': 'No access permissions.'}, status=status.HTTP_403_FORBIDDEN)
+
+        latest_rel = ReleaseRequest.objects.filter(vault=vault).order_by('-created_at').first()
+        if latest_rel and latest_rel.status == 'cancelled' and not is_released:
+            return Response({'detail': 'Release for this vault was cancelled by the owner. Asset access is locked.', 'status': 'cancelled'}, status=status.HTTP_403_FORBIDDEN)
 
         if not is_released:
             if share and share.status == 'revoked':

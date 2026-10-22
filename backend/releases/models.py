@@ -83,16 +83,19 @@ class ReleaseRequest(models.Model):
         return f"{self.title} - {self.vault.name} ({self.status})"
 
     def cancel(self):
-        """Cancel this release. Only allowed from pending/in_progress/scheduled."""
-        if self.status not in ('pending', 'in_progress', 'scheduled'):
+        """Cancel this release. Allowed from pending/in_progress/scheduled/released/authorized."""
+        if self.status not in ('pending', 'in_progress', 'scheduled', 'released', 'authorized'):
             return False
         self.status = self.ReleaseStatus.CANCELLED
         self.cancelled_at = timezone.now()
         self.save()
 
-        # Reset any VaultShare records for this vault that were in 'submitted' state back to 'active'
+        # Revert any VaultShare records for this vault: revoke View & Download access back to 'No Access'
         from vaults.models import VaultShare
-        VaultShare.objects.filter(vault=self.vault, status='submitted').update(status='active')
+        VaultShare.objects.filter(vault=self.vault).update(
+            access_level='No Access',
+            status='active'
+        )
 
         return True
 
