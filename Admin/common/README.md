@@ -7,11 +7,9 @@ Centralized common styles and client-side scripts specifically for the `Admin` p
 ```
 Admin/common/
 ├── css/
-│   ├── admin-common.css    # Complete common Admin stylesheet (tokens, layout, header, sidebar, modals, toasts, tables, responsive)
-│   └── common.css          # Entry point importing admin-common.css
+│   └── admin-common.css    # Complete common Admin stylesheet (tokens, layout, header, sidebar, modals, toasts, tables, responsive)
 ├── js/
-│   ├── admin-common.js     # Complete common Admin JavaScript controller (theme, modals, toasts, dropdowns, drawer, clock, shortcuts)
-│   └── common.js           # Alias entry point exposing AegisAdminCommon
+│   └── admin-common.js     # Complete common Admin JavaScript controller (theme, modals, toasts, dropdowns, drawer, clock, shortcuts)
 └── README.md               # Documentation and integration guide
 ```
 
