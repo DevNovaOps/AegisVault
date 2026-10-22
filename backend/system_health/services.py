@@ -10,7 +10,7 @@ import logging
 from django.db import connection
 from django.utils import timezone
 from django.conf import settings
-
+import os
 try:
     import psutil
 except ImportError:

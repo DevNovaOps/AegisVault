@@ -92,13 +92,7 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
         el.rejectTrusteeId = document.getElementById('reject-trustee-id');
         el.rejectTrusteeName = document.getElementById('reject-trustee-name');
 
-        // Permission Modal
-        el.modalPerms = document.getElementById('modal-trustee-permissions');
-        el.formPerms = document.getElementById('form-trustee-permissions');
-        el.permTrusteeId = document.getElementById('perm-trustee-id');
-        el.permTrusteeName = document.getElementById('perm-trustee-name');
-        el.permTrusteeSub = document.getElementById('perm-trustee-sub');
-        el.permTrusteeBadge = document.getElementById('perm-trustee-badge');
+
     }
 
     // =========================================================================
@@ -303,35 +297,11 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
                                         <circle cx="12" cy="12" r="3"></circle>
                                     </svg>
                                 </button>
-                                ${t.status === 'Pending' ? `
-                                    <button class="action-icon-btn approve btn-approve-trustee" data-id="${t.id}" title="Approve Trustee Verification" aria-label="Approve ${t.name}">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                            <polyline points="20 6 9 17 4 12"></polyline>
-                                        </svg>
-                                    </button>
-                                    <button class="action-icon-btn reject btn-reject-trustee" data-id="${t.id}" title="Reject Trustee Verification" aria-label="Reject ${t.name}">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                                        </svg>
-                                    </button>
-                                ` : ''}
-                                <button class="action-icon-btn permission btn-permission-trustee" data-id="${t.id}" title="Manage Custody Permissions & Vault Access" aria-label="Manage Permissions for ${t.name}">
+                                <button class="action-icon-btn btn-more-trustee" data-id="${t.id}" title="More Actions" aria-label="More Actions for ${t.name}">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                                    </svg>
-                                </button>
-                                <button class="action-icon-btn btn-edit-trustee" data-id="${t.id}" title="Edit Profile" aria-label="Edit Profile for ${t.name}">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M12 20h9"></path>
-                                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-                                    </svg>
-                                </button>
-                                <button class="action-icon-btn btn-more-trustee" data-id="${t.id}" title="Deactivate Trustee" aria-label="Deactivate ${t.name}">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <circle cx="12" cy="12" r="1"></circle>
-                                        <circle cx="19" cy="12" r="1"></circle>
-                                        <circle cx="5" cy="12" r="1"></circle>
+                                        <circle cx="12" cy="12" r="1.5"></circle>
+                                        <circle cx="19" cy="12" r="1.5"></circle>
+                                        <circle cx="5" cy="12" r="1.5"></circle>
                                     </svg>
                                 </button>
                             </div>
@@ -780,27 +750,6 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
             });
         }
 
-        // Form Submit: Manage Permissions
-        if (el.formPerms) {
-            el.formPerms.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const id = el.permTrusteeId.value;
-                const t = state.trustees.find(item => item.id === id);
-                if (!t) return;
-
-                const selectedVaults = [];
-                document.querySelectorAll('input[name="perm-vault-item"]:checked').forEach(cb => {
-                    selectedVaults.push(cb.value);
-                });
-
-                t.linkedVaults = selectedVaults;
-                t.linkedVaultsCount = selectedVaults.length;
-
-                closeModal(el.modalPerms);
-                renderTrusteeTable();
-                showToast(`Custody permissions and vault allocations saved for "${t.name}".`, 'success');
-            });
-        }
 
         // Confirm Deactivate
         if (el.btnConfirmDeactivate) {
@@ -934,112 +883,67 @@ window.AegisTrusteeData = window.AegisTrusteeData || {
                             <p style="margin-top: 2px;">${t.notes}</p>
                         </div>
                     `;
-
-                    // Edit button from view modal
-                    const btnEditFromView = document.getElementById('btn-edit-from-view');
-                    if (btnEditFromView) {
-                        btnEditFromView.onclick = () => {
-                            closeModal(el.modalViewTrustee);
-                            openEditModal(t);
-                        };
-                    }
-
-                    // Approve button from view modal (only shown if Pending)
-                    const btnApproveFromView = document.getElementById('btn-approve-from-view');
-                    if (btnApproveFromView) {
-                        btnApproveFromView.style.display = t.status === 'Pending' ? 'inline-flex' : 'none';
-                        btnApproveFromView.onclick = () => {
-                            closeModal(el.modalViewTrustee);
-                            approveTrustee(t.id);
-                        };
-                    }
-
-                    // Reject button from view modal (only shown if Pending)
-                    const btnRejectFromView = document.getElementById('btn-reject-from-view');
-                    if (btnRejectFromView) {
-                        btnRejectFromView.style.display = t.status === 'Pending' ? 'inline-flex' : 'none';
-                        btnRejectFromView.onclick = () => {
-                            closeModal(el.modalViewTrustee);
-                            if (el.modalReject && el.rejectTrusteeId && el.rejectTrusteeName) {
-                                el.rejectTrusteeId.value = t.id;
-                                el.rejectTrusteeName.textContent = t.name;
-                                openModal(el.modalReject);
-                            }
-                        };
-                    }
-
                     openModal(el.modalViewTrustee);
                 }
             });
         });
 
-        // Approve Trustee Action
-        document.querySelectorAll('.btn-approve-trustee').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const id = btn.getAttribute('data-id');
-                approveTrustee(id);
-            });
-        });
-
-        // Reject Trustee Action
-        document.querySelectorAll('.btn-reject-trustee').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const id = btn.getAttribute('data-id');
-                const t = state.trustees.find(item => item.id === id);
-                if (t && el.modalReject && el.rejectTrusteeId && el.rejectTrusteeName) {
-                    el.rejectTrusteeId.value = t.id;
-                    el.rejectTrusteeName.textContent = t.name;
-                    openModal(el.modalReject);
-                }
-            });
-        });
-
-        // Manage Permissions Action
-        document.querySelectorAll('.btn-permission-trustee').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const id = btn.getAttribute('data-id');
-                const t = state.trustees.find(item => item.id === id);
-                if (t && el.modalPerms && el.permTrusteeId) {
-                    el.permTrusteeId.value = t.id;
-                    if (el.permTrusteeName) el.permTrusteeName.textContent = t.name;
-                    if (el.permTrusteeSub) el.permTrusteeSub.textContent = `${t.id} • ${t.email}`;
-                    if (el.permTrusteeBadge) {
-                        el.permTrusteeBadge.className = `badge-pill ${t.status.toLowerCase()}`;
-                        el.permTrusteeBadge.textContent = t.status;
-                    }
-
-                    // Pre-check trustee's linked vaults
-                    document.querySelectorAll('input[name="perm-vault-item"]').forEach(cb => {
-                        cb.checked = t.linkedVaults.includes(cb.value);
-                    });
-
-                    openModal(el.modalPerms);
-                }
-            });
-        });
-
-        // Edit Trustee
-        document.querySelectorAll('.btn-edit-trustee').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const id = btn.getAttribute('data-id');
-                const t = state.trustees.find(item => item.id === id);
-                if (t) openEditModal(t);
-            });
-        });
-
-        // Deactivate Trustee
+        // 3-Dot More Actions Menu
         document.querySelectorAll('.btn-more-trustee').forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
                 const id = btn.getAttribute('data-id');
                 const t = state.trustees.find(item => item.id === id);
-                if (t && el.modalDeactivate && el.btnConfirmDeactivate && el.deactTrusteeName) {
-                    el.deactTrusteeName.textContent = t.name;
-                    el.btnConfirmDeactivate.setAttribute('data-id', t.id);
-                    openModal(el.modalDeactivate);
-                }
+                if (!t) return;
+
+                // Close any existing dropdowns
+                document.querySelectorAll('.trustee-action-dropdown').forEach(d => d.remove());
+
+                const rect = btn.getBoundingClientRect();
+                const dropdown = document.createElement('div');
+                dropdown.className = 'trustee-action-dropdown';
+                dropdown.style.top = `${rect.bottom + 6}px`;
+                dropdown.style.left = `${Math.max(10, rect.right - 195)}px`;
+
+                const isInactive = t.status === 'Inactive' || t.status === 'Suspended';
+
+                dropdown.innerHTML = `
+                    <div style="padding: 0.35rem 0.85rem; font-weight: 700; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; border-bottom: 1px solid var(--border-color); margin-bottom: 0.25rem;">
+                        ${t.name}
+                    </div>
+                    <div class="trustee-dropdown-item danger btn-menu-deact" style="cursor: pointer;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+                        </svg>
+                        <span>${isInactive ? 'Reactivate Trustee' : 'Deactivate Trustee'}</span>
+                    </div>
+                `;
+
+                document.body.appendChild(dropdown);
+
+                dropdown.querySelector('.btn-menu-deact').addEventListener('click', (ev) => {
+                    ev.stopPropagation();
+                    dropdown.remove();
+                    if (isInactive) {
+                        t.status = 'Verified';
+                        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+                            window.AegisAPI.put(`/admin/trustees/${t.id}/`, { status: 'Verified', is_active: true }).catch(err => console.warn('Activate API error:', err));
+                        }
+                        renderTrusteeTable();
+                        showToast(`Trustee "${t.name}" reactivated`, 'success');
+                    } else if (el.modalDeactivate && el.btnConfirmDeactivate && el.deactTrusteeName) {
+                        el.deactTrusteeName.textContent = t.name;
+                        el.btnConfirmDeactivate.setAttribute('data-id', t.id);
+                        openModal(el.modalDeactivate);
+                    }
+                });
+
+                const closeMenu = () => {
+                    dropdown.remove();
+                    document.removeEventListener('click', closeMenu);
+                };
+                setTimeout(() => document.addEventListener('click', closeMenu), 10);
             });
         });
     }

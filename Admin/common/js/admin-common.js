@@ -282,38 +282,20 @@
            4. Header Dropdowns & Mobile Navigation Drawer
            ===================================================================== */
         initHeaderDropdowns() {
-            // Support both old ID and new Trustee-style ID
-            const notifBtn = document.getElementById('btn-notifications') || document.getElementById('notificationBtn');
-            const notifDropdown = document.getElementById('notifications-dropdown') || document.getElementById('notificationDropdown');
             const profileBtn = document.getElementById('user-profile-btn') || document.getElementById('profileBtn');
             const profileDropdown = document.getElementById('profile-dropdown') || document.getElementById('profileDropdown');
-
-            if (notifBtn && notifDropdown && !notifBtn.dataset.bound) {
-                notifBtn.dataset.bound = 'true';
-                notifBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    if (profileDropdown) profileDropdown.classList.remove('active');
-                    notifDropdown.classList.toggle('active');
-                });
-            }
 
             if (profileBtn && profileDropdown && !profileBtn.dataset.bound) {
                 profileBtn.dataset.bound = 'true';
                 profileBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    if (notifDropdown) notifDropdown.classList.remove('active');
                     profileDropdown.classList.toggle('active');
                     profileBtn.classList.toggle('active');
                 });
             }
 
-            // Click outside to close all dropdowns
+            // Click outside to close profile dropdown
             document.addEventListener('click', (e) => {
-                if (notifDropdown && notifDropdown.classList.contains('active')) {
-                    if (!notifDropdown.contains(e.target) && (!notifBtn || !notifBtn.contains(e.target))) {
-                        notifDropdown.classList.remove('active');
-                    }
-                }
                 if (profileDropdown && (profileDropdown.classList.contains('active') || profileDropdown.classList.contains('show'))) {
                     if (!profileDropdown.contains(e.target) && (!profileBtn || !profileBtn.contains(e.target))) {
                         profileDropdown.classList.remove('active', 'show');
@@ -321,19 +303,6 @@
                     }
                 }
             });
-
-            // Mark all read button
-            const markReadBtn = document.getElementById('btn-mark-all-read');
-            if (markReadBtn && !markReadBtn.dataset.bound) {
-                markReadBtn.dataset.bound = 'true';
-                markReadBtn.addEventListener('click', () => {
-                    const unreadItems = document.querySelectorAll('.notification-item.unread');
-                    unreadItems.forEach(item => item.classList.remove('unread'));
-                    const badges = document.querySelectorAll('.notif-badge-pill, .notif-badge-indicator, .btn-badge, .notification-badge-dot');
-                    badges.forEach(b => b.style.display = 'none');
-                    this.showToast('All notifications marked as read', 'info');
-                });
-            }
         },
 
         /* =====================================================================

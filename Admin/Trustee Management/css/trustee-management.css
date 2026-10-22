@@ -665,6 +665,84 @@ body.dark-theme .action-icon-btn.permission {
     border-color: rgba(168, 85, 247, 0.3);
 }
 
+/* 3-Dot Action Dropdown Menu */
+.trustee-action-dropdown {
+    position: fixed;
+    z-index: 9999;
+    min-width: 195px;
+    background-color: var(--bg-surface, #FFFFFF);
+    border: 1px solid var(--border-color, #E2E8F0);
+    border-radius: var(--radius-md, 8px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+    padding: 0.35rem;
+    font-size: 0.78rem;
+    animation: dropdownFadeIn 0.15s ease-out;
+}
+
+body.dark-theme .trustee-action-dropdown {
+    background-color: var(--bg-surface, #1E293B);
+    border-color: var(--border-color, rgba(255, 255, 255, 0.1));
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.trustee-dropdown-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.45rem 0.65rem;
+    border-radius: var(--radius-sm, 6px);
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: var(--transition, all 0.15s ease);
+}
+
+.trustee-dropdown-item:hover {
+    background-color: var(--bg-hover, rgba(0, 0, 0, 0.05));
+    color: var(--text-heading);
+}
+
+body.dark-theme .trustee-dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.trustee-dropdown-item svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+.trustee-dropdown-item.danger {
+    color: #DC2626;
+}
+
+.trustee-dropdown-item.danger:hover {
+    background-color: rgba(239, 68, 68, 0.12);
+    color: #EF4444;
+}
+
+body.dark-theme .trustee-dropdown-item.danger {
+    color: #F87171;
+}
+
+body.dark-theme .trustee-dropdown-item.danger:hover {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: #FCA5A5;
+}
+
 /* Permission Checkboxes Grid inside Modal */
 .perm-toggle-grid {
     display: grid;
