@@ -31,7 +31,7 @@ function loadAssignedVaults() {
         const isRevoked = Boolean(share.is_revoked || statusLower === 'revoked');
         const isExpired = Boolean(share.is_expired || statusLower === 'expired');
         const isReleased = Boolean(share.is_released || (share.release_status && (share.release_status.toLowerCase() === 'completed' || share.release_status.toLowerCase() === 'released')));
-        const hasActiveRelease = Boolean(share.has_active_release || (share.release_status && share.release_status.toLowerCase() === 'in progress'));
+        const hasActiveRelease = Boolean(!isReleased && (share.has_active_release || (share.release_status && share.release_status.toLowerCase() === 'in progress')));
         const isVerified = (statusLower === 'active' || statusLower === 'submitted') && !isRevoked && !isExpired;
         const isShardSubmitted = Boolean(hasActiveRelease && statusLower === 'submitted');
 
@@ -46,7 +46,7 @@ function loadAssignedVaults() {
         } else if (statusLower === 'pending' || statusLower === 'pending_verification') {
           categories.push('pending_verification');
         }
-        if (hasActiveRelease) {
+        if (hasActiveRelease && !isReleased) {
           categories.push('release_in_progress');
         }
 

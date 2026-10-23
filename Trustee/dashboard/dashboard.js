@@ -81,6 +81,20 @@ function populateAssignedVaults(vaults) {
     card.setAttribute('tabindex', '0');
 
     const lockColor = v.status === 'active' ? 'blue' : 'amber';
+    const isReleased = Boolean(v.is_released || v.release_status === 'Completed' || (v.share_status && v.share_status.toLowerCase() === 'released'));
+    const shareStatusText = isReleased ? 'Released' : (v.share_status || (v.status === 'active' ? 'Active' : 'Pending'));
+    const shareStatusClass = (isReleased || shareStatusText === 'Active' || shareStatusText === 'Released') ? 'submitted' : 'not-submitted';
+
+    let relStatusClass = 'no-release';
+    const relStatusText = isReleased ? 'Completed' : (v.release_status || 'No Release');
+    if (isReleased || relStatusText === 'Completed') {
+      relStatusClass = 'completed';
+    } else if (relStatusText === 'In Progress') {
+      relStatusClass = 'in-progress';
+    } else if (relStatusText === 'Cancelled') {
+      relStatusClass = 'denied';
+    }
+
     card.innerHTML = `
       <div class="vault-left-group">
         <div class="vault-lock-box ${lockColor}">
@@ -93,20 +107,22 @@ function populateAssignedVaults(vaults) {
           <span class="vault-owner">Owner: ${escapeHtmlDash(v.owner_name || 'Vault Owner')}</span>
           <div class="vault-tags">
             <span class="tag-pill">${escapeHtmlDash(v.vault_type || 'Assigned')}</span>
-            <span class="tag-pill">Protected</span>
+            <span class="tag-pill">${isReleased ? 'Unlocked' : 'Protected'}</span>
           </div>
         </div>
       </div>
       <div class="vault-statuses-group">
         <div class="vault-status-column">
           <span class="vault-status-label">Share Status</span>
-          <span class="status-badge ${v.status === 'active' ? 'submitted' : 'not-submitted'}">
-            <span class="badge-dot"></span>${v.status === 'active' ? 'Active' : 'Pending'}
+          <span class="status-badge ${shareStatusClass}">
+            <span class="badge-dot"></span>${escapeHtmlDash(shareStatusText)}
           </span>
         </div>
         <div class="vault-status-column">
           <span class="vault-status-label">Release Status</span>
-          <span class="status-badge no-release"><span class="badge-dot"></span>${escapeHtmlDash(v.release_status || 'No Release')}</span>
+          <span class="status-badge ${relStatusClass}">
+            <span class="badge-dot"></span>${escapeHtmlDash(relStatusText)}
+          </span>
         </div>
         <svg class="vault-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="9 18 15 12 9 6"/>
@@ -115,7 +131,7 @@ function populateAssignedVaults(vaults) {
     `;
 
     card.addEventListener('click', () => {
-      showVaultDetailModal(v.name, `Owner: ${v.owner_name} (${v.owner_email})`, v.status === 'active' ? 'Active' : 'Pending', v.release_status || 'No Release');
+      showVaultDetailModal(v.name, `Owner: ${v.owner_name} (${v.owner_email})`, shareStatusText, relStatusText);
     });
 
     container.appendChild(card);

@@ -478,29 +478,6 @@ const AegisVaultController = {
                                         <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                                     </svg>
                                 </button>
-                                <div class="row-actions-wrapper">
-                                    <button class="row-action-btn btn-more-vault" data-id="${v.id}" title="More Actions">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <circle cx="12" cy="12" r="1.5"></circle>
-                                            <circle cx="19" cy="12" r="1.5"></circle>
-                                            <circle cx="5" cy="12" r="1.5"></circle>
-                                        </svg>
-                                    </button>
-                                    <div class="action-dropdown-menu" id="menu-${v.id}">
-                                        <button class="dropdown-action-item" onclick="AegisVaultController.openDetailsModal('${v.id}')">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                                            Inspect Metadata
-                                        </button>
-                                        <button class="dropdown-action-item" onclick="AegisVaultController.openAccessModal('${v.id}')">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
-                                            Manage Trustees
-                                        </button>
-                                        <button class="dropdown-action-item" onclick="AegisVaultController.toggleVaultStatus('${v.id}')">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                                            ${v.status === 'Archived' ? 'Restore to Active' : 'Archive Vault'}
-                                        </button>
-                                    </div>
-                                </div>
                             </div>
                         </td>
                     </tr>
@@ -521,22 +498,6 @@ const AegisVaultController = {
                 e.stopPropagation();
                 this.openAccessModal(btn.getAttribute('data-id'));
             });
-        });
-
-        tbody.querySelectorAll('.btn-more-vault').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const id = btn.getAttribute('data-id');
-                const menu = document.getElementById(`menu-${id}`);
-                document.querySelectorAll('.action-dropdown-menu').forEach(m => {
-                    if (m !== menu) m.classList.remove('show');
-                });
-                if (menu) menu.classList.toggle('show');
-            });
-        });
-
-        document.addEventListener('click', () => {
-            document.querySelectorAll('.action-dropdown-menu').forEach(m => m.classList.remove('show'));
         });
 
         tbody.querySelectorAll('.row-checkbox').forEach(cb => {

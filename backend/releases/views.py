@@ -256,6 +256,7 @@ class ReleaseExecuteView(APIView):
 
         release.status = ReleaseRequest.ReleaseStatus.RELEASED
         release.released_at = timezone.now()
+        release.collected_shares = release.required_shares
         release.note = (release.note + " | Transferred & unlocked to trustees by owner.").strip(" |")
         release.save()
 

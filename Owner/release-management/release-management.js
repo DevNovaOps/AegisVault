@@ -102,31 +102,39 @@
   }
 
   function getStatusPill(status) {
-    if (status === 'scheduled') {
+    const s = (status || '').toLowerCase();
+    if (s === 'scheduled') {
       return `
         <span class="status-pill scheduled">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           Scheduled
         </span>`;
     }
-    if (status === 'in progress') {
+    if (s === 'in progress' || s === 'in_progress') {
       return `
         <span class="status-pill in-progress">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           In Progress
         </span>`;
     }
-    if (status === 'completed') {
+    if (s === 'completed' || s === 'released') {
       return `
         <span class="status-pill completed">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
           Completed
         </span>`;
     }
+    if (s === 'cancelled') {
+      return `
+        <span class="status-pill cancelled">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          Cancelled
+        </span>`;
+    }
     return `
-      <span class="status-pill cancelled">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-        Cancelled
+      <span class="status-pill scheduled">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        ${escapeHtml(status || 'Scheduled')}
       </span>`;
   }
 
@@ -148,7 +156,10 @@
                           item.recipientName.toLowerCase().includes(searchTerm) ||
                           item.status.toLowerCase().includes(searchTerm);
       
-      const matchStatus = (statusVal === 'all') || (item.status.toLowerCase() === statusVal.toLowerCase());
+      const isItemCompleted = item.status.toLowerCase() === 'completed' || item.status.toLowerCase() === 'released';
+      const matchStatus = (statusVal === 'all') ||
+                          (statusVal === 'completed' && isItemCompleted) ||
+                          (item.status.toLowerCase() === statusVal.toLowerCase());
       const matchVault = (vaultVal === 'all') || (item.vault.toLowerCase() === vaultVal.toLowerCase());
       const matchRecipient = (recipientVal === 'all') || (item.recipientName.toLowerCase().includes(recipientVal.toLowerCase()));
 
@@ -239,14 +250,11 @@
           <span class="sched-sub">${item.scheduledTime}</span>
         </div>`;
 
-      // Actions cell with 3 buttons
+      // Actions cell (View Details + More Options)
       const actionsHtml = `
         <div class="release-actions-cell">
           <button class="btn-action-icon" onclick="window.AegisReleases.openViewModal('${item.id}')" title="View Release Details">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          </button>
-          <button class="btn-action-icon" onclick="window.AegisReleases.openEditModal('${item.id}')" title="Edit Release">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           </button>
           <button class="btn-action-icon more-dots" data-action="more" data-id="${item.id}" onclick="window.AegisReleases.openMoreOptions('${item.id}', event)" title="More Options" aria-label="More options for ${escapeHtml(item.title)}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/><circle cx="5" cy="12" r="1.5"/></svg>
@@ -273,10 +281,10 @@
   // =========================================================================
   function updateKPIsAndDonut() {
     const total = releases.length;
-    const scheduled = releases.filter(r => r.status === 'scheduled').length;
-    const inProgress = releases.filter(r => r.status === 'in progress').length;
-    const completed = releases.filter(r => r.status === 'completed').length;
-    const cancelled = releases.filter(r => r.status === 'cancelled').length;
+    const scheduled = releases.filter(r => (r.status || '').toLowerCase() === 'scheduled').length;
+    const inProgress = releases.filter(r => (r.status || '').toLowerCase() === 'in progress' || (r.status || '').toLowerCase() === 'in_progress').length;
+    const completed = releases.filter(r => (r.status || '').toLowerCase() === 'completed' || (r.status || '').toLowerCase() === 'released').length;
+    const cancelled = releases.filter(r => (r.status || '').toLowerCase() === 'cancelled').length;
 
     if (statTotal) statTotal.textContent = total;
     if (statScheduled) statScheduled.textContent = scheduled;
@@ -437,47 +445,8 @@
   }
 
   function openEditModal(id) {
-    const item = releases.find(r => r.id === id);
-    if (!item) return;
-    activeReleaseItem = item;
-
-    if (editReleaseModalTitle) {
-      editReleaseModalTitle.textContent = `Configure Release: ${item.title}`;
-    }
-
-    if (editReleaseModalBody) {
-      editReleaseModalBody.innerHTML = `
-        <div style="margin-bottom: 1.15rem;">
-          <label style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Release Title</label>
-          <input type="text" id="editReleaseTitleInput" value="${item.title}" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
-        </div>
-
-        <div style="margin-bottom: 1.15rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-          <div>
-            <label style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Status</label>
-            <select id="editReleaseStatusSelect" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
-              <option value="scheduled" ${item.status === 'scheduled' ? 'selected' : ''}>Scheduled</option>
-              <option value="in progress" ${item.status === 'in progress' ? 'selected' : ''}>In Progress</option>
-              <option value="completed" ${item.status === 'completed' ? 'selected' : ''}>Completed</option>
-              <option value="cancelled" ${item.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
-            </select>
-          </div>
-          <div>
-            <label style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Scheduled Execution</label>
-            <input type="text" id="editReleaseScheduleInput" value="${item.scheduledDate} ${item.scheduledTime}" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary);">
-          </div>
-        </div>
-
-        <div>
-          <label style="display:block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary);">Directives Note</label>
-          <textarea id="editReleaseNoteTextarea" rows="2" style="width: 100%; padding: 0.65rem 0.85rem; border-radius: var(--radius-md); background: var(--bg-input); border: 1px solid var(--bg-input-border); color: var(--text-primary); resize: none;">${item.note || ''}</textarea>
-        </div>`;
-    }
-
-    if (editReleaseModal) {
-      editReleaseModal.classList.add('show', 'active');
-      document.body.style.overflow = 'hidden';
-    }
+    // Edit functionality removed - fallback to viewing details
+    openViewModal(id);
   }
 
   // Floating Context Menu for Releases
@@ -521,8 +490,9 @@
     menu.addEventListener('click', (ev) => ev.stopPropagation());
 
     const isCancelled = item.status === 'cancelled';
+    const isCompleted = item.status === 'completed' || item.status === 'released';
 
-    menu.innerHTML = `
+    let actionsDropdownHtml = `
       <div class="dropdown-header" style="padding: 0.4rem 0.6rem 0.25rem; font-size: 0.74rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
         ${escapeHtml(item.title)} • ${escapeHtml(item.vault)}
       </div>
@@ -530,14 +500,13 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         <span>View Details</span>
       </button>
-      <button class="dropdown-item" data-action="edit" style="width:100%; border:none; background:none; text-align:left; cursor:pointer; display:flex; align-items:center; gap:0.6rem; padding:0.55rem 0.75rem; font-size:0.84rem; color:var(--text-primary); border-radius:var(--radius-md);">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        <span>Edit Parameters</span>
-      </button>
       <button class="dropdown-item" data-action="test" style="width:100%; border:none; background:none; text-align:left; cursor:pointer; display:flex; align-items:center; gap:0.6rem; padding:0.55rem 0.75rem; font-size:0.84rem; color:var(--text-primary); border-radius:var(--radius-md);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         <span>Simulate Trigger Ping</span>
-      </button>
+      </button>`;
+
+    if (!isCompleted) {
+      actionsDropdownHtml += `
       <button class="dropdown-item" data-action="release-now" style="width:100%; border:none; background:none; text-align:left; cursor:pointer; display:flex; align-items:center; gap:0.6rem; padding:0.55rem 0.75rem; font-size:0.84rem; color:var(--status-success); border-radius:var(--radius-md);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="20 6 9 17 4 12"/></svg>
         <span>Release Vault to Trustees</span>
@@ -546,8 +515,17 @@
       <button class="dropdown-item" data-action="toggle-status" style="width:100%; border:none; background:none; text-align:left; cursor:pointer; display:flex; align-items:center; gap:0.6rem; padding:0.55rem 0.75rem; font-size:0.84rem; color:var(--status-danger); border-radius:var(--radius-md);">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
         <span>${isCancelled ? 'Resume Schedule' : 'Cancel Release'}</span>
-      </button>
-    `;
+      </button>`;
+    } else {
+      actionsDropdownHtml += `
+      <div style="height:1px; background:var(--border-subtle); margin:0.35rem 0;"></div>
+      <div style="padding: 0.55rem 0.75rem; font-size: 0.82rem; color: var(--status-success); display: flex; align-items: center; gap: 0.5rem; font-weight: 600;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>Vault Released & Unlocked</span>
+      </div>`;
+    }
+
+    menu.innerHTML = actionsDropdownHtml;
 
     const rect = anchorEl.getBoundingClientRect();
     menu.style.top = `${rect.bottom + 6}px`;
@@ -558,15 +536,13 @@
       openViewModal(id);
     });
 
-    menu.querySelector('[data-action="edit"]').addEventListener('click', () => {
-      closeReleaseMenu();
-      openEditModal(id);
-    });
-
-    menu.querySelector('[data-action="test"]').addEventListener('click', () => {
-      closeReleaseMenu();
-      window.AegisOwner?.showToast(`Dead-man heartbeat test dispatched for "${item.title}". Ping received: OK!`, 'success');
-    });
+    const btnTest = menu.querySelector('[data-action="test"]');
+    if (btnTest) {
+      btnTest.addEventListener('click', () => {
+        closeReleaseMenu();
+        window.AegisOwner?.showToast(`Dead-man heartbeat test dispatched for "${item.title}". Ping received: OK!`, 'success');
+      });
+    }
 
     const btnReleaseNow = menu.querySelector('[data-action="release-now"]');
     if (btnReleaseNow) {
@@ -575,7 +551,7 @@
         if (!confirm(`Are you sure you want to release and unlock "${item.title}" directly to assigned trustees now? All vault assets will become immediately accessible.`)) return;
         if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
           window.AegisAPI.post(`/owner/releases/${id}/release/`).then(() => {
-            item.status = 'released';
+            item.status = 'completed';
             updateKPIsAndDonut();
             renderTable();
             window.AegisOwner?.showToast(`Vault successfully released to trustees! All assets are now unlocked.`, 'success');
@@ -586,26 +562,29 @@
       });
     }
 
-    menu.querySelector('[data-action="toggle-status"]').addEventListener('click', () => {
-      closeReleaseMenu();
-      if (item.status === 'cancelled') {
-        item.status = 'scheduled';
-        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-          window.AegisAPI.put(`/owner/releases/${id}/`, { status: 'scheduled' }).catch(err => console.warn('Resume release API error:', err));
+    const btnToggle = menu.querySelector('[data-action="toggle-status"]');
+    if (btnToggle) {
+      btnToggle.addEventListener('click', () => {
+        closeReleaseMenu();
+        if (item.status === 'cancelled') {
+          item.status = 'scheduled';
+          if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+            window.AegisAPI.put(`/owner/releases/${id}/`, { status: 'scheduled' }).catch(err => console.warn('Resume release API error:', err));
+          }
+          window.AegisOwner?.showToast(`Release "${item.title}" resumed as scheduled.`, 'success');
+        } else {
+          item.status = 'cancelled';
+          if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
+            window.AegisAPI.post(`/owner/releases/${id}/cancel/`).catch(() => {
+              window.AegisAPI.put(`/owner/releases/${id}/`, { status: 'cancelled' }).catch(e => console.warn('Cancel release API error:', e));
+            });
+          }
+          window.AegisOwner?.showToast(`Release "${item.title}" has been cancelled.`, 'warning');
         }
-        window.AegisOwner?.showToast(`Release "${item.title}" resumed as scheduled.`, 'success');
-      } else {
-        item.status = 'cancelled';
-        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-          window.AegisAPI.post(`/owner/releases/${id}/cancel/`).catch(() => {
-            window.AegisAPI.put(`/owner/releases/${id}/`, { status: 'cancelled' }).catch(e => console.warn('Cancel release API error:', e));
-          });
-        }
-        window.AegisOwner?.showToast(`Release "${item.title}" has been cancelled.`, 'warning');
-      }
-      updateKPIsAndDonut();
-      renderTable();
-    });
+        updateKPIsAndDonut();
+        renderTable();
+      });
+    }
 
     document.body.appendChild(menu);
     activeReleaseMenu = menu;
@@ -849,78 +828,6 @@
         }
       });
     }
-
-    // Form Submit (Edit Release)
-    if (formEditRelease) {
-      formEditRelease.addEventListener('submit', function(e) {
-        e.preventDefault();
-        if (!activeReleaseItem) return;
-
-        const titleInput = document.getElementById('editReleaseTitleInput');
-        const statusSelect = document.getElementById('editReleaseStatusSelect');
-        const schedInput = document.getElementById('editReleaseScheduleInput');
-        const noteText = document.getElementById('editReleaseNoteTextarea');
-
-        if (titleInput) activeReleaseItem.title = titleInput.value.trim();
-        if (statusSelect) activeReleaseItem.status = statusSelect.value;
-        if (schedInput) {
-          const parts = schedInput.value.trim().split(' ');
-          activeReleaseItem.scheduledDate = parts.slice(0, 3).join(' ') || '-';
-          activeReleaseItem.scheduledTime = parts.slice(3).join(' ') || '';
-        }
-        if (noteText) activeReleaseItem.note = noteText.value.trim();
-
-        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-          window.AegisAPI.put(`/owner/releases/${activeReleaseItem.id}/`, {
-            title: activeReleaseItem.title,
-            status: activeReleaseItem.status,
-            trigger_type: activeReleaseItem.trigger,
-            trigger_detail: activeReleaseItem.triggerDetail,
-            note: activeReleaseItem.note
-          }).then(() => {
-            updateKPIsAndDonut();
-            renderTable();
-            if (editReleaseModal) editReleaseModal.classList.remove('show', 'active');
-            document.body.style.overflow = '';
-            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Release parameters updated for "${activeReleaseItem.title}".`);
-          }).catch(err => {
-            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Failed to update release: ${err.message}`, 'error');
-          });
-        } else {
-          updateKPIsAndDonut();
-          renderTable();
-          if (editReleaseModal) editReleaseModal.classList.remove('show', 'active');
-          document.body.style.overflow = '';
-          if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Release parameters updated for "${activeReleaseItem.title}".`);
-        }
-      });
-    }
-
-    // Cancel Release Action Button
-    if (btnCancelReleaseAction) {
-      btnCancelReleaseAction.addEventListener('click', function() {
-        if (!activeReleaseItem) return;
-        if (window.AegisAPI && window.AegisAPI.isAuthenticated()) {
-          window.AegisAPI.post(`/owner/releases/${activeReleaseItem.id}/cancel/`).then(() => {
-            activeReleaseItem.status = 'cancelled';
-            updateKPIsAndDonut();
-            renderTable();
-            if (editReleaseModal) editReleaseModal.classList.remove('show', 'active');
-            document.body.style.overflow = '';
-            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Release "${activeReleaseItem.title}" has been cancelled.`, 'warning');
-          }).catch(err => {
-            if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Failed to cancel release: ${err.message}`, 'error');
-          });
-        } else {
-          activeReleaseItem.status = 'cancelled';
-          updateKPIsAndDonut();
-          renderTable();
-          if (editReleaseModal) editReleaseModal.classList.remove('show', 'active');
-          document.body.style.overflow = '';
-          if (window.AegisOwner && typeof window.AegisOwner.showToast === 'function') window.AegisOwner.showToast(`Release "${activeReleaseItem.title}" has been cancelled.`, 'warning');
-        }
-      });
-    }
   }
 
   // =========================================================================
@@ -983,7 +890,7 @@
           initials: getInitials(r.participants && r.participants.length > 0 ? r.participants[0].trustee_name : 'Designated Trustee'),
           trigger: r.trigger_type,
           triggerDetail: r.trigger_detail,
-          status: r.status.toLowerCase(),
+          status: (r.status.toLowerCase() === 'released' ? 'completed' : r.status.toLowerCase()),
           scheduledDate: r.scheduled_at ? new Date(r.scheduled_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }) : '-',
           scheduledTime: r.scheduled_at ? new Date(r.scheduled_at).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }) : '',
           note: r.note || ''

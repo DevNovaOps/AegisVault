@@ -83,6 +83,9 @@ function renderReleaseTable() {
     const dateStr = dateObj.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' });
     const timeStr = dateObj.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' });
 
+    const isReleasedReq = statusLower.includes('released') || statusLower.includes('completed');
+    const quorumText = isReleasedReq ? `${req.required_shares || 2} of ${req.required_shares || 2} Shares Verified (Quorum Met)` : `${req.collected_shares || 0} of ${req.required_shares || 0} Shares Received`;
+
     tr.innerHTML = `
       <td class="table-row-num">${index + 1}</td>
       <td>
@@ -108,7 +111,7 @@ function renderReleaseTable() {
       </td>
       <td class="next-step-cell">${nextStepText}</td>
       <td style="text-align: right;">
-        <button type="button" class="view-details-link" onclick="openReleaseDetails('${req.release_id || 'REQ-000'}', '${req.vault_name || 'Vault'}', '${req.trigger_type || 'Release'}', '${dateStr}, ${timeStr}', '${displayStatus}', '${nextStepText}', 'Owner', '${req.collected_shares || 0} of ${req.required_shares || 0} Shares Received', ${statusLower.includes('cancel') ? 1 : (statusLower.includes('released') ? 4 : 2)})">
+        <button type="button" class="view-details-link" onclick="openReleaseDetails('${req.release_id || 'REQ-000'}', '${req.vault_name || 'Vault'}', '${req.trigger_type || 'Release'}', '${dateStr}, ${timeStr}', '${displayStatus}', '${nextStepText}', 'Owner', '${quorumText}', ${statusLower.includes('cancel') ? 1 : (isReleasedReq ? 4 : 2)})">
           <span>View Details</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </button>
@@ -236,9 +239,13 @@ window.openReleaseDetails = function(reqId, vaultName, reqType, timestamp, statu
   if (modalOwnerName) modalOwnerName.textContent = ownerName;
   if (modalReqType) modalReqType.textContent = reqType;
   if (modalTimestamp) modalTimestamp.textContent = timestamp;
+  const statusLower = (status || '').toLowerCase();
+  const isReleased = statusLower.includes('released') || statusLower.includes('completed');
+  const isCancelled = statusLower.includes('cancel') || statusLower.includes('denied');
+
   if (modalQuorum) {
     modalQuorum.textContent = quorumInfo;
-    if (status.toLowerCase() === 'approved' || status.toLowerCase() === 'released') {
+    if (isReleased || statusLower === 'approved') {
       modalQuorum.style.color = 'var(--accent-emerald)';
     } else {
       modalQuorum.style.color = 'var(--brand-orange)';
@@ -250,10 +257,17 @@ window.openReleaseDetails = function(reqId, vaultName, reqType, timestamp, statu
     const node = document.getElementById(`trackStep${i}`);
     if (node) {
       node.className = 'track-step-node';
-      if (i < stepIndex) {
+      if (isReleased) {
+        // When released, all lifecycle steps including Dispatched are completed!
         node.classList.add('completed');
-      } else if (i === stepIndex) {
-        node.classList.add('active');
+      } else if (isCancelled) {
+        if (i === 1) node.classList.add('completed');
+      } else {
+        if (i < stepIndex) {
+          node.classList.add('completed');
+        } else if (i === stepIndex) {
+          node.classList.add('active');
+        }
       }
     }
   }

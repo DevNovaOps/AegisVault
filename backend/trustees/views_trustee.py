@@ -51,9 +51,9 @@ class TrusteeDashboardView(APIView):
             trustee=user, status='pending', release__status__in=['pending', 'in_progress', 'authorized']
         ).count()
 
-        completed_releases = ReleaseParticipant.objects.filter(
-            trustee=user, status='verified', release__status='released'
-        ).count()
+        completed_releases = ReleaseRequest.objects.filter(
+            vault__shares__trustee=user, status='released'
+        ).distinct().count()
 
         # Auto-reconcile VaultShare for any accepted invitations
         for inv in Invitation.objects.filter(invitee_email__iexact=user.email, status='accepted').select_related('vault'):
@@ -69,20 +69,47 @@ class TrusteeDashboardView(APIView):
         ).select_related('vault', 'vault__owner')
         assigned_vaults = []
         for s in shares:
-            has_release = ReleaseRequest.objects.filter(
-                vault=s.vault, status__in=['pending', 'in_progress', 'authorized']
+            has_released_req = ReleaseRequest.objects.filter(
+                vault=s.vault, status='released'
             ).exists()
-            if not has_release and s.status == 'submitted':
+            active_rel = ReleaseRequest.objects.filter(
+                vault=s.vault, status__in=['pending', 'in_progress', 'authorized']
+            ).first()
+            latest_rel = ReleaseRequest.objects.filter(
+                vault=s.vault
+            ).order_by('-created_at').first()
+
+            if not active_rel and s.status == 'submitted':
                 s.status = 'active'
                 s.save(update_fields=['status', 'updated_at'])
+
+            if has_released_req:
+                rel_status = 'Completed'
+                share_status = 'Released'
+                is_released = True
+            elif active_rel:
+                rel_status = 'In Progress'
+                share_status = 'Active'
+                is_released = False
+            elif latest_rel and latest_rel.status == 'cancelled':
+                rel_status = 'Cancelled'
+                share_status = 'Active'
+                is_released = False
+            else:
+                rel_status = 'No Release'
+                share_status = s.status.capitalize()
+                is_released = False
+
             assigned_vaults.append({
                 'id': str(s.vault.id),
                 'name': s.vault.name,
                 'owner_name': s.vault.owner.name,
                 'owner_email': s.vault.owner.email,
                 'status': s.status,
+                'share_status': share_status,
+                'is_released': is_released,
                 'vault_type': s.vault.vault_type,
-                'release_status': 'In Progress' if has_release else 'No Release',
+                'release_status': rel_status,
             })
 
         # Pending Actions
@@ -454,6 +481,10 @@ class TrusteeAssignedVaultsView(APIView):
                 share.status = 'expired'
                 share.save(update_fields=['status', 'updated_at'])
 
+            has_released_req = ReleaseRequest.objects.filter(
+                vault=share.vault, status='released'
+            ).exists()
+
             # Check for any active release for this vault
             active_rel = ReleaseRequest.objects.filter(
                 vault=share.vault,
@@ -471,7 +502,11 @@ class TrusteeAssignedVaultsView(APIView):
 
             release_status = 'No Release'
             is_released = False
-            if active_rel:
+            if has_released_req:
+                release_status = 'Completed'
+                is_released = True
+                active_rel = None
+            elif active_rel:
                 release_status = 'In Progress'
             elif latest_rel and latest_rel.status == 'cancelled':
                 release_status = 'Cancelled'
@@ -564,7 +599,7 @@ class TrusteeReleasesView(APIView):
                 'participant_status': p.status,
                 'next_step': next_step,
                 'required_shares': p.release.required_shares,
-                'collected_shares': p.release.collected_shares,
+                'collected_shares': p.release.required_shares if rel_status == 'released' else p.release.collected_shares,
                 'submitted_at': p.submitted_at,
                 'created_at': p.created_at,
             })
